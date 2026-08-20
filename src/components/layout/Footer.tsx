@@ -41,7 +41,7 @@ export const Footer: React.FC<FooterProps> = ({ lang }) => {
             </Link>
 
             <p className="text-xs text-slate-300 leading-relaxed max-w-sm">
-              {footer.tagline}
+              {footer.about}
             </p>
 
             {/* Badges / Trust stamps */}
@@ -64,57 +64,87 @@ export const Footer: React.FC<FooterProps> = ({ lang }) => {
           {/* Links Column 1: Operating Modes */}
           <div className="space-y-3">
             <div className="text-xs font-bold text-white uppercase tracking-wider">
-              {lang === 'ro' ? 'Moduri de Operare' : 'Operating Modes'}
+              {footer.solutionsTitle}
             </div>
             <ul className="space-y-2 text-xs">
-              {footer.links.modes.map((item, idx) => (
-                <li key={idx}>
-                  <Link
-                    href={`/${lang}${item.href}`}
-                    className="text-slate-300 hover:text-white transition-colors"
-                  >
-                    {item.label}
-                  </Link>
-                </li>
-              ))}
+              <li>
+                <Link href={`/${lang}/association`} className="text-slate-300 hover:text-white transition-colors">
+                  {footer.links.association}
+                </Link>
+              </li>
+              <li>
+                <Link href={`/${lang}/portfolio`} className="text-slate-300 hover:text-white transition-colors">
+                  {footer.links.portfolio}
+                </Link>
+              </li>
+              <li>
+                <Link href={`/${lang}/manager`} className="text-slate-300 hover:text-white transition-colors">
+                  {footer.links.manager}
+                </Link>
+              </li>
+              <li>
+                <Link href={`/${lang}/pricing`} className="text-slate-300 hover:text-white transition-colors">
+                  {footer.links.pricing}
+                </Link>
+              </li>
             </ul>
           </div>
 
           {/* Links Column 2: Platform Cores */}
           <div className="space-y-3">
             <div className="text-xs font-bold text-white uppercase tracking-wider">
-              {lang === 'ro' ? 'Platformă & Tehnologie' : 'Platform & Tech'}
+              {lang === 'ro' ? 'Platformă & Tehnologie' : 'Platform & Technology'}
             </div>
             <ul className="space-y-2 text-xs">
-              {footer.links.platform.map((item, idx) => (
-                <li key={idx}>
-                  <Link
-                    href={`/${lang}${item.href}`}
-                    className="text-slate-300 hover:text-white transition-colors"
-                  >
-                    {item.label}
-                  </Link>
-                </li>
-              ))}
+              <li>
+                <Link href={`/${lang}/financial-truth`} className="text-slate-300 hover:text-white transition-colors">
+                  {footer.links.financialTruth}
+                </Link>
+              </li>
+              <li>
+                <Link href={`/${lang}/building-dna`} className="text-slate-300 hover:text-white transition-colors">
+                  {footer.links.buildingDna}
+                </Link>
+              </li>
+              <li>
+                <Link href={`/${lang}/meters`} className="text-slate-300 hover:text-white transition-colors">
+                  {footer.links.meters}
+                </Link>
+              </li>
+              <li>
+                <Link href={`/${lang}/migration`} className="text-slate-300 hover:text-white transition-colors">
+                  {footer.links.migration}
+                </Link>
+              </li>
             </ul>
           </div>
 
           {/* Links Column 3: Trust & Company */}
           <div className="space-y-3">
             <div className="text-xs font-bold text-white uppercase tracking-wider">
-              {lang === 'ro' ? 'Securitate & Pilot' : 'Security & Pilot'}
+              {footer.complianceTitle}
             </div>
             <ul className="space-y-2 text-xs">
-              {footer.links.trust.map((item, idx) => (
-                <li key={idx}>
-                  <Link
-                    href={`/${lang}${item.href}`}
-                    className="text-slate-300 hover:text-white transition-colors"
-                  >
-                    {item.label}
-                  </Link>
-                </li>
-              ))}
+              <li>
+                <Link href={`/${lang}/trust`} className="text-slate-300 hover:text-white transition-colors">
+                  {footer.links.security}
+                </Link>
+              </li>
+              <li>
+                <Link href={`/${lang}/pilot`} className="text-slate-300 hover:text-white transition-colors">
+                  {footer.links.pilot}
+                </Link>
+              </li>
+              <li>
+                <Link href={`/${lang}/trust#privacy`} className="text-slate-300 hover:text-white transition-colors">
+                  {footer.links.privacy}
+                </Link>
+              </li>
+              <li>
+                <Link href={`/${lang}/trust#terms`} className="text-slate-300 hover:text-white transition-colors">
+                  {footer.links.terms}
+                </Link>
+              </li>
             </ul>
 
             <div className="pt-2">
@@ -133,15 +163,15 @@ export const Footer: React.FC<FooterProps> = ({ lang }) => {
         {/* Bottom Bar: Copyright & Legal */}
         <div className="pt-8 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-300">
           <div>
-            {footer.copyright}
+            © {new Date().getFullYear()} CLADORA. {lang === 'ro' ? 'Toate drepturile rezervate.' : 'All rights reserved.'}
           </div>
 
           <div className="flex items-center gap-6">
             <Link href={`/${lang}/trust#privacy`} className="text-slate-300 hover:text-white transition-colors">
-              {lang === 'ro' ? 'Politica de Confidențialitate (GDPR)' : 'Privacy Policy (GDPR)'}
+              {footer.links.privacy}
             </Link>
             <Link href={`/${lang}/trust#terms`} className="text-slate-300 hover:text-white transition-colors">
-              {lang === 'ro' ? 'Termeni și Condiții' : 'Terms & Conditions'}
+              {footer.links.terms}
             </Link>
             <Link href={lang === 'ro' ? '/en' : '/ro'} className="inline-flex items-center gap-1 text-brand-300 hover:text-brand-200 transition-colors">
               <Globe className="w-3 h-3" />

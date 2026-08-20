@@ -23,8 +23,8 @@ export const ThreeModesSection: React.FC<ThreeModesSectionProps> = ({ lang }) =>
   const dict = getDictionary(lang);
   const [activeTab, setActiveTab] = useState<'association' | 'portfolio' | 'manager'>('association');
 
-  const modes = dict.threeModes;
-  const currentMode = modes[activeTab];
+  const section = dict.modesSection;
+  const current = section[activeTab];
 
   return (
     <section id="modes" className="py-24 relative overflow-hidden bg-[#070B12]">
@@ -37,13 +37,13 @@ export const ThreeModesSection: React.FC<ThreeModesSectionProps> = ({ lang }) =>
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto space-y-4">
           <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full glass-panel border border-brand-500/20 text-xs font-semibold text-brand-300">
-            <span>{dict.threeModes.badge}</span>
+            <span>{section.badge}</span>
           </div>
           <h2 className="text-3xl sm:text-5xl font-display font-extrabold text-white tracking-tight">
-            {dict.threeModes.title}
+            {section.title}
           </h2>
           <p className="text-base sm:text-lg text-slate-300">
-            {dict.threeModes.description}
+            {section.description}
           </p>
         </div>
 
@@ -97,22 +97,22 @@ export const ThreeModesSection: React.FC<ThreeModesSectionProps> = ({ lang }) =>
               <div className="space-y-2">
                 <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold border text-brand-300 border-brand-400/40 bg-brand-500/15">
                   <Building2 className="w-3.5 h-3.5" />
-                  <span>{currentMode.audience}</span>
+                  <span>{current.target}</span>
                 </span>
                 <h3 className="text-2xl sm:text-3xl font-display font-bold text-white">
-                  {currentMode.title}
+                  {current.title}
                 </h3>
                 <p className="text-base text-slate-200 leading-relaxed font-normal">
-                  {currentMode.tagline}
+                  {current.tagline}
                 </p>
               </div>
 
               {/* Bullet points */}
               <div className="space-y-3 pt-2">
-                {currentMode.bullets.map((bullet, idx) => (
+                {current.features.map((feature, idx) => (
                   <div key={idx} className="flex items-start gap-3">
                     <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
-                    <span className="text-sm text-slate-100">{bullet}</span>
+                    <span className="text-sm text-slate-100">{feature}</span>
                   </div>
                 ))}
               </div>
@@ -120,10 +120,10 @@ export const ThreeModesSection: React.FC<ThreeModesSectionProps> = ({ lang }) =>
               {/* Deep dive link */}
               <div className="pt-4">
                 <Link
-                  href={currentMode.href}
+                  href={`/${lang}/${activeTab}`}
                   className="inline-flex items-center gap-2 text-sm font-bold text-brand-300 hover:text-brand-200 group"
                 >
-                  <span>{lang === 'ro' ? `Descoperă ${currentMode.title.split(' ')[1]} OS` : `Explore ${currentMode.title}`}</span>
+                  <span>{current.linkText}</span>
                   <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform text-brand-300" />
                 </Link>
               </div>
@@ -137,14 +137,18 @@ export const ThreeModesSection: React.FC<ThreeModesSectionProps> = ({ lang }) =>
                 </div>
 
                 <div className="grid grid-cols-1 gap-4">
-                  {currentMode.metrics.map((metric, mIdx) => (
-                    <div key={mIdx} className="p-4 rounded-xl glass-panel border border-white/10 flex items-center justify-between">
-                      <span className="text-sm text-slate-200 font-medium">{metric.label}</span>
-                      <span className="text-xl font-display font-extrabold text-emerald-400">
-                        {metric.value}
-                      </span>
-                    </div>
-                  ))}
+                  <div className="p-4 rounded-xl glass-panel border border-white/10 flex items-center justify-between">
+                    <span className="text-sm text-slate-200 font-medium">{lang === 'ro' ? 'Timp închidere lună' : 'Month-End Close Time'}</span>
+                    <span className="text-xl font-display font-extrabold text-emerald-400">-45%</span>
+                  </div>
+                  <div className="p-4 rounded-xl glass-panel border border-white/10 flex items-center justify-between">
+                    <span className="text-sm text-slate-200 font-medium">{lang === 'ro' ? 'Erori de calcul' : 'Variance & Calculation Errors'}</span>
+                    <span className="text-xl font-display font-extrabold text-emerald-400">0%</span>
+                  </div>
+                  <div className="p-4 rounded-xl glass-panel border border-white/10 flex items-center justify-between">
+                    <span className="text-sm text-slate-200 font-medium">{lang === 'ro' ? 'Prezență la adunări' : 'Quorum & AGM Turnout'}</span>
+                    <span className="text-xl font-display font-extrabold text-emerald-400">85%+</span>
+                  </div>
                 </div>
 
                 <div className="p-4 rounded-xl bg-brand-500/15 border border-brand-500/30 text-xs text-slate-100 leading-relaxed">
