@@ -75,14 +75,19 @@ export const AllocationSimulator: React.FC<AllocationSimulatorProps> = ({ lang }
         </div>
 
         <div className="flex items-center gap-2">
-          <label className="text-xs text-slate-400">{lang === 'ro' ? 'Sumă Factură:' : 'Invoice Amount:'}</label>
+          <label htmlFor="invoiceAmountInput" className="text-xs text-slate-300 font-medium">
+            {lang === 'ro' ? 'Sumă Factură:' : 'Invoice Amount:'}
+          </label>
           <input
+            id="invoiceAmountInput"
+            name="invoiceAmount"
             type="number"
+            aria-label={lang === 'ro' ? 'Sumă factură în RON' : 'Invoice amount in RON'}
             value={amount}
             onChange={(e) => setAmount(Number(e.target.value) || 0)}
-            className="w-28 px-3 py-1.5 rounded-lg bg-surface-100 border border-white/10 text-white font-mono text-sm font-bold text-right focus:border-brand-400 focus:outline-none"
+            className="w-28 px-3 py-1.5 rounded-lg bg-surface-100 border border-white/15 text-white font-mono text-sm font-bold text-right focus:border-brand-400 focus:outline-none"
           />
-          <span className="text-xs font-mono text-slate-400">RON</span>
+          <span className="text-xs font-mono text-slate-300 font-semibold">RON</span>
         </div>
       </div>
 
@@ -92,8 +97,8 @@ export const AllocationSimulator: React.FC<AllocationSimulatorProps> = ({ lang }
           onClick={() => setExpenseType('consumption')}
           className={`p-3 rounded-xl text-left text-xs font-semibold transition-all border ${
             expenseType === 'consumption'
-              ? 'bg-brand-500/20 border-brand-500/50 text-white shadow-glow-cyan'
-              : 'glass-panel border-white/5 text-slate-400 hover:text-white'
+              ? 'bg-brand-500/30 border-brand-400 text-white shadow-glow-cyan'
+              : 'glass-panel border-white/10 text-slate-200 hover:text-white'
           }`}
         >
           🚰 {lang === 'ro' ? 'Consum Curent Utilități' : 'Utility Consumption'}
@@ -103,8 +108,8 @@ export const AllocationSimulator: React.FC<AllocationSimulatorProps> = ({ lang }
           onClick={() => setExpenseType('repairFund')}
           className={`p-3 rounded-xl text-left text-xs font-semibold transition-all border ${
             expenseType === 'repairFund'
-              ? 'bg-emerald-500/20 border-emerald-500/50 text-white shadow-glow-emerald'
-              : 'glass-panel border-white/5 text-slate-400 hover:text-white'
+              ? 'bg-emerald-500/30 border-emerald-400 text-white shadow-glow-emerald'
+              : 'glass-panel border-white/10 text-slate-200 hover:text-white'
           }`}
         >
           🔨 {lang === 'ro' ? 'Fond Reparații Bloc' : 'Building Reserve Fund'}
@@ -114,8 +119,8 @@ export const AllocationSimulator: React.FC<AllocationSimulatorProps> = ({ lang }
           onClick={() => setExpenseType('brokenPipe')}
           className={`p-3 rounded-xl text-left text-xs font-semibold transition-all border ${
             expenseType === 'brokenPipe'
-              ? 'bg-amber-500/20 border-amber-500/50 text-white'
-              : 'glass-panel border-white/5 text-slate-400 hover:text-white'
+              ? 'bg-amber-500/30 border-amber-400 text-white'
+              : 'glass-panel border-white/10 text-slate-200 hover:text-white'
           }`}
         >
           ⚠️ {lang === 'ro' ? 'Daună Neglijență' : 'Occupant Damage'}
@@ -125,8 +130,8 @@ export const AllocationSimulator: React.FC<AllocationSimulatorProps> = ({ lang }
           onClick={() => setExpenseType('capitalUpgrade')}
           className={`p-3 rounded-xl text-left text-xs font-semibold transition-all border ${
             expenseType === 'capitalUpgrade'
-              ? 'bg-violet-500/20 border-violet-500/50 text-white'
-              : 'glass-panel border-white/5 text-slate-400 hover:text-white'
+              ? 'bg-violet-500/30 border-violet-400 text-white'
+              : 'glass-panel border-white/10 text-slate-200 hover:text-white'
           }`}
         >
           ⚡ {lang === 'ro' ? 'Investiție / Modernizare' : 'Capital Modernization'}
@@ -134,24 +139,24 @@ export const AllocationSimulator: React.FC<AllocationSimulatorProps> = ({ lang }
       </div>
 
       {/* 4 Dimensions Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 p-4 rounded-2xl bg-surface-100/60 border border-white/5">
-        <div className="p-3 rounded-xl bg-surface-200/40 space-y-1">
-          <span className="text-[11px] text-slate-400 block font-mono">1. Legal Debtor (Lege 196)</span>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 p-4 rounded-2xl bg-surface-100/80 border border-white/10">
+        <div className="p-3 rounded-xl bg-surface-200/60 space-y-1">
+          <span className="text-[11px] text-slate-300 block font-mono font-medium">1. Legal Debtor (Lege 196)</span>
           <span className="text-sm font-bold text-brand-300">{current.legalDebtor}</span>
         </div>
 
-        <div className="p-3 rounded-xl bg-surface-200/40 space-y-1">
-          <span className="text-[11px] text-slate-400 block font-mono">2. Operational Payer</span>
+        <div className="p-3 rounded-xl bg-surface-200/60 space-y-1">
+          <span className="text-[11px] text-slate-300 block font-mono font-medium">2. Operational Payer</span>
           <span className="text-sm font-bold text-emerald-300">{current.operationalPayer}</span>
         </div>
 
-        <div className="p-3 rounded-xl bg-surface-200/40 space-y-1">
-          <span className="text-[11px] text-slate-400 block font-mono">3. Economic Beneficiary</span>
-          <span className="text-sm font-bold text-slate-200">{current.beneficiary}</span>
+        <div className="p-3 rounded-xl bg-surface-200/60 space-y-1">
+          <span className="text-[11px] text-slate-300 block font-mono font-medium">3. Economic Beneficiary</span>
+          <span className="text-sm font-bold text-white">{current.beneficiary}</span>
         </div>
 
-        <div className="p-3 rounded-xl bg-surface-200/40 space-y-1">
-          <span className="text-[11px] text-slate-400 block font-mono">4. Reimbursement Flow</span>
+        <div className="p-3 rounded-xl bg-surface-200/60 space-y-1">
+          <span className="text-[11px] text-slate-300 block font-mono font-medium">4. Reimbursement Flow</span>
           <span className="text-sm font-bold text-gold-400">{current.reimbursement}</span>
         </div>
       </div>
@@ -163,11 +168,11 @@ export const AllocationSimulator: React.FC<AllocationSimulatorProps> = ({ lang }
         <div className="space-y-3">
           <div className="p-4 rounded-xl glass-panel border border-white/10 flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-emerald-500/10 text-emerald-400">
+              <div className="p-2 rounded-lg bg-emerald-500/20 text-emerald-300">
                 <Home className="w-4 h-4" />
               </div>
               <div>
-                <span className="text-xs text-slate-400 block">{lang === 'ro' ? 'Facturat către Proprietar' : 'Billed to Owner'}</span>
+                <span className="text-xs text-slate-300 block">{lang === 'ro' ? 'Facturat către Proprietar' : 'Billed to Owner'}</span>
                 <span className="text-sm font-semibold text-white">{lang === 'ro' ? 'Fonduri / Valoare Activ' : 'Capital & Reserve'}</span>
               </div>
             </div>
@@ -178,11 +183,11 @@ export const AllocationSimulator: React.FC<AllocationSimulatorProps> = ({ lang }
 
           <div className="p-4 rounded-xl glass-panel border border-white/10 flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-brand-500/10 text-brand-400">
+              <div className="p-2 rounded-lg bg-brand-500/20 text-brand-300">
                 <User className="w-4 h-4" />
               </div>
               <div>
-                <span className="text-xs text-slate-400 block">{lang === 'ro' ? 'Facturat către Chiriaș' : 'Billed to Tenant'}</span>
+                <span className="text-xs text-slate-300 block">{lang === 'ro' ? 'Facturat către Chiriaș' : 'Billed to Tenant'}</span>
                 <span className="text-sm font-semibold text-white">{lang === 'ro' ? 'Consum & Servicii Operative' : 'Operations & Utilities'}</span>
               </div>
             </div>
@@ -193,9 +198,9 @@ export const AllocationSimulator: React.FC<AllocationSimulatorProps> = ({ lang }
         </div>
 
         {/* Legal & Compliance Insight */}
-        <div className="p-4 rounded-xl bg-brand-500/10 border border-brand-500/20 text-xs text-slate-300 space-y-2">
-          <div className="flex items-center gap-2 font-semibold text-brand-300">
-            <Info className="w-4 h-4 text-brand-400" />
+        <div className="p-4 rounded-xl bg-brand-500/15 border border-brand-500/30 text-xs text-slate-200 space-y-2">
+          <div className="flex items-center gap-2 font-semibold text-brand-200">
+            <Info className="w-4 h-4 text-brand-300" />
             <span>{lang === 'ro' ? 'De ce contează această separare?' : 'Why this precision matters'}</span>
           </div>
           <p className="leading-relaxed">

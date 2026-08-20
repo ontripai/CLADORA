@@ -43,7 +43,7 @@ export const SavingsCalculator: React.FC<SavingsCalculatorProps> = ({ lang }) =>
           </h3>
         </div>
 
-        <span className="px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/10 border border-emerald-500/30 text-emerald-300">
+        <span className="px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/20 border border-emerald-500/40 text-emerald-200">
           {lang === 'ro' ? 'Garanție de Măsurare' : 'Verified Ledger Protocol'}
         </span>
       </div>
@@ -53,13 +53,16 @@ export const SavingsCalculator: React.FC<SavingsCalculatorProps> = ({ lang }) =>
         <div className="lg:col-span-6 space-y-6">
           {/* Archetype selector */}
           <div className="space-y-2">
-            <label className="text-xs font-semibold text-slate-300">
+            <label htmlFor="archetypeSelect" className="text-xs font-semibold text-slate-200">
               {lang === 'ro' ? 'Tipologia / Arhetipul Clădirii:' : 'Building Archetype:'}
             </label>
             <select
+              id="archetypeSelect"
+              name="archetypeSelect"
+              aria-label={lang === 'ro' ? 'Selectează arhetipul clădirii' : 'Select building archetype'}
               value={archetype}
               onChange={(e) => setArchetype(e.target.value as any)}
-              className="w-full px-3.5 py-2.5 rounded-xl bg-surface-100 border border-white/10 text-sm text-white focus:border-emerald-400 focus:outline-none"
+              className="w-full px-3.5 py-2.5 rounded-xl bg-surface-100 border border-white/15 text-sm text-white focus:border-emerald-400 focus:outline-none"
             >
               <option value="A1">A1: Bloc Clasic Pre-1990 (Coloane / RADET)</option>
               <option value="A2">A2: Bloc Reabilitat Termic</option>
@@ -72,10 +75,15 @@ export const SavingsCalculator: React.FC<SavingsCalculatorProps> = ({ lang }) =>
           {/* Apartments count slider */}
           <div className="space-y-2">
             <div className="flex justify-between text-xs">
-              <span className="text-slate-300 font-semibold">{lang === 'ro' ? 'Număr Apartamente:' : 'Number of Units:'}</span>
+              <label htmlFor="apartmentsRangeInput" className="text-slate-200 font-semibold">
+                {lang === 'ro' ? 'Număr Apartamente:' : 'Number of Units:'}
+              </label>
               <span className="font-mono font-bold text-emerald-400 text-sm">{apartments} {lang === 'ro' ? 'unități' : 'units'}</span>
             </div>
             <input
+              id="apartmentsRangeInput"
+              name="apartmentsRangeInput"
+              aria-label={lang === 'ro' ? 'Număr apartamente în clădire' : 'Number of units in building'}
               type="range"
               min="10"
               max="300"
@@ -89,10 +97,15 @@ export const SavingsCalculator: React.FC<SavingsCalculatorProps> = ({ lang }) =>
           {/* Monthly utilities bill slider */}
           <div className="space-y-2">
             <div className="flex justify-between text-xs">
-              <span className="text-slate-300 font-semibold">{lang === 'ro' ? 'Total Facturi Utilități Lunare Bloc:' : 'Monthly Building Utility Invoices:'}</span>
+              <label htmlFor="utilityBillRangeInput" className="text-slate-200 font-semibold">
+                {lang === 'ro' ? 'Total Facturi Utilități Lunare Bloc:' : 'Monthly Building Utility Invoices:'}
+              </label>
               <span className="font-mono font-bold text-emerald-400 text-sm">{monthlyUtilityBill.toLocaleString()} RON</span>
             </div>
             <input
+              id="utilityBillRangeInput"
+              name="utilityBillRangeInput"
+              aria-label={lang === 'ro' ? 'Total facturi lunare bloc în RON' : 'Monthly utility bill in RON'}
               type="range"
               min="3000"
               max="80000"
@@ -107,7 +120,7 @@ export const SavingsCalculator: React.FC<SavingsCalculatorProps> = ({ lang }) =>
         {/* Output Cards */}
         <div className="lg:col-span-6 space-y-4">
           <div className="p-5 rounded-2xl bg-surface-100/80 border border-emerald-500/20 space-y-4 glow-box-emerald">
-            <div className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
+            <div className="text-xs font-semibold text-slate-300 uppercase tracking-wider">
               {lang === 'ro' ? 'Economii Anuale Estimate prin CLADORA' : 'Estimated Annual Realized Savings'}
             </div>
 
@@ -115,27 +128,27 @@ export const SavingsCalculator: React.FC<SavingsCalculatorProps> = ({ lang }) =>
               <span className="text-3xl sm:text-4xl font-display font-extrabold text-emerald-400">
                 {Math.round(totalVerifiedSavingsAnnual).toLocaleString()}
               </span>
-              <span className="text-base font-mono text-slate-300">RON / an</span>
+              <span className="text-base font-mono text-slate-200">RON / an</span>
             </div>
 
             <div className="grid grid-cols-2 gap-3 pt-2 border-t border-white/10 text-xs">
               <div>
-                <span className="text-slate-400 block">{lang === 'ro' ? 'Economie per Apartament:' : 'Saving per Unit:'}</span>
+                <span className="text-slate-300 block">{lang === 'ro' ? 'Economie per Apartament:' : 'Saving per Unit:'}</span>
                 <span className="font-mono font-bold text-white text-sm">~{Math.round(perApartmentAnnualSaving).toLocaleString()} RON / an</span>
               </div>
               <div>
-                <span className="text-slate-400 block">{lang === 'ro' ? 'Ore de Muncă Salvate:' : 'Admin Hours Saved:'}</span>
+                <span className="text-slate-300 block">{lang === 'ro' ? 'Ore de Muncă Salvate:' : 'Admin Hours Saved:'}</span>
                 <span className="font-mono font-bold text-emerald-300 text-sm">~{Math.round(estimatedAdminHoursSavedMonthly)} ore / lună</span>
               </div>
             </div>
           </div>
 
-          <div className="p-4 rounded-xl glass-panel border border-white/5 text-xs text-slate-300 space-y-1.5">
+          <div className="p-4 rounded-xl glass-panel border border-white/5 text-xs text-slate-200 space-y-1.5">
             <div className="font-semibold text-white flex items-center gap-1.5">
               <CheckCircle className="w-4 h-4 text-emerald-400" />
               <span>{lang === 'ro' ? 'Cum se realizează această economie?' : 'How are these savings achieved?'}</span>
             </div>
-            <p className="text-slate-400 text-[11px] leading-relaxed">
+            <p className="text-slate-300 text-[11px] leading-relaxed">
               {lang === 'ro'
                 ? 'Prin eliminarea pierderilor ascunse de apă/căldură (OCR contoare), renegocierea contractelor de mentenanță peste prețul pieței (Contract Leakage) și reducerea cu 80% a timpului de emitere a listelor de plată.'
                 : 'Through automated riser leakage detection (OCR meters), peer-benchmarked vendor renegotiation (Contract Leakage alerts), and automated month-end billing.'}

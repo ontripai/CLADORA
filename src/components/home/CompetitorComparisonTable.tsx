@@ -3,7 +3,7 @@
 import React from 'react';
 import { Language } from '@/types';
 import { getDictionary } from '@/dictionaries';
-import { Scale, Check, X, Sparkles, HelpCircle } from 'lucide-react';
+import { Check, X, Sparkles, Shield, AlertTriangle } from 'lucide-react';
 
 interface CompetitorComparisonTableProps {
   lang: Language;
@@ -15,98 +15,98 @@ export const CompetitorComparisonTable: React.FC<CompetitorComparisonTableProps>
 
   return (
     <section className="py-24 relative bg-[#070B12] overflow-hidden">
-      {/* Subtle glow */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] bg-brand-500/5 rounded-full blur-[160px] pointer-events-none" />
-
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         
-        {/* Section Header */}
+        {/* Header */}
         <div className="text-center max-w-3xl mx-auto space-y-4">
           <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full glass-panel border border-brand-500/20 text-xs font-semibold text-brand-300">
-            <Scale className="w-3.5 h-3.5" />
+            <Sparkles className="w-3.5 h-3.5 text-brand-400" />
             <span>{comparison.badge}</span>
           </div>
           <h2 className="text-3xl sm:text-5xl font-display font-extrabold text-white tracking-tight">
             {comparison.title}
           </h2>
-          <p className="text-base sm:text-lg text-slate-400">
+          <p className="text-base sm:text-lg text-slate-300">
             {comparison.description}
           </p>
         </div>
 
-        {/* Comparison Table Container */}
-        <div className="mt-14 overflow-x-auto">
-          <div className="inline-block min-w-full align-middle">
-            <div className="rounded-3xl glass-panel border border-white/10 shadow-2xl overflow-hidden">
-              <table className="min-w-full divide-y divide-white/10 text-left">
-                
-                {/* Table Header */}
-                <thead>
-                  <tr className="bg-surface-100/80">
-                    <th scope="col" className="py-5 pl-6 pr-3 text-xs font-bold text-slate-300 uppercase tracking-wider w-1/4">
-                      {comparison.headers.feature}
-                    </th>
-                    <th scope="col" className="px-4 py-5 text-xs font-extrabold text-brand-300 uppercase tracking-wider bg-brand-500/10 border-x border-brand-500/20 w-1/3">
-                      <div className="flex items-center gap-1.5">
-                        <Sparkles className="w-4 h-4 text-brand-400" />
-                        <span>{comparison.headers.cladora}</span>
+        {/* Responsive Table Container */}
+        <div className="mt-14 overflow-x-auto pb-6">
+          <table className="w-full text-left border-collapse min-w-[720px]">
+            <thead>
+              <tr className="border-b border-white/15">
+                <th scope="col" className="py-4 px-4 text-xs font-semibold text-slate-200 uppercase tracking-wider w-1/3">
+                  {comparison.featureHeader}
+                </th>
+                <th scope="col" className="py-4 px-4 text-xs font-bold text-brand-300 uppercase tracking-wider bg-brand-500/15 rounded-t-xl border-x border-t border-brand-500/30 text-center">
+                  <div className="flex items-center justify-center gap-1.5">
+                    <Sparkles className="w-4 h-4 text-brand-400" />
+                    <span>{comparison.cladoraHeader}</span>
+                  </div>
+                </th>
+                <th scope="col" className="py-4 px-4 text-xs font-semibold text-slate-200 uppercase tracking-wider text-center">
+                  {comparison.legacyHeader}
+                </th>
+                <th scope="col" className="py-4 px-4 text-xs font-semibold text-slate-200 uppercase tracking-wider text-center">
+                  {comparison.basicPortalsHeader}
+                </th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-white/5 text-sm">
+              {comparison.rows.map((row, index) => (
+                <tr key={index} className="hover:bg-white/[0.02] transition-colors">
+                  {/* Feature description */}
+                  <td className="py-4 px-4 font-medium text-slate-100">
+                    <div className="flex flex-col">
+                      <span>{row.feature}</span>
+                    </div>
+                  </td>
+
+                  {/* CLADORA (Highlighted) */}
+                  <td className="py-4 px-4 bg-brand-500/10 border-x border-brand-500/30 text-center font-semibold text-white">
+                    <div className="flex items-center justify-center gap-2">
+                      <div className="w-5 h-5 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0">
+                        <Check className="w-3.5 h-3.5" />
                       </div>
-                    </th>
-                    <th scope="col" className="px-4 py-5 text-xs font-medium text-slate-400 uppercase tracking-wider">
-                      {comparison.headers.legacyDesktop}
-                    </th>
-                    <th scope="col" className="px-4 py-5 text-xs font-medium text-slate-400 uppercase tracking-wider">
-                      {comparison.headers.basicPortal}
-                    </th>
-                  </tr>
-                </thead>
+                      <span className="text-xs text-emerald-300 font-bold">{row.cladora}</span>
+                    </div>
+                  </td>
 
-                {/* Table Body */}
-                <tbody className="divide-y divide-white/5 bg-surface-50/40 text-xs sm:text-sm">
-                  {comparison.rows.map((row, idx) => (
-                    <tr key={idx} className="hover:bg-white/[0.02] transition-colors">
-                      {/* Feature Name */}
-                      <td className="py-4 pl-6 pr-3 font-semibold text-white">
-                        {row.feature}
-                      </td>
+                  {/* Legacy desktop soft */}
+                  <td className="py-4 px-4 text-center text-slate-300 text-xs">
+                    {row.legacy.includes('Nu') || row.legacy.includes('No') ? (
+                      <div className="flex items-center justify-center gap-1.5 text-rose-400">
+                        <X className="w-3.5 h-3.5" />
+                        <span>{row.legacy}</span>
+                      </div>
+                    ) : (
+                      <span className="text-slate-300">{row.legacy}</span>
+                    )}
+                  </td>
 
-                      {/* CLADORA (Highlighted) */}
-                      <td className="px-4 py-4 font-semibold text-brand-200 bg-brand-500/5 border-x border-brand-500/10">
-                        <div className="flex items-start gap-2">
-                          <span className="text-emerald-400 font-bold shrink-0 mt-0.5">✓</span>
-                          <span>{row.cladora}</span>
-                        </div>
-                      </td>
-
-                      {/* Legacy Desktop */}
-                      <td className="px-4 py-4 text-slate-400">
-                        <div className="flex items-start gap-2">
-                          <span className="text-red-400/70 font-bold shrink-0 mt-0.5">✕</span>
-                          <span>{row.legacyDesktop}</span>
-                        </div>
-                      </td>
-
-                      {/* Basic Portal */}
-                      <td className="px-4 py-4 text-slate-400">
-                        <div className="flex items-start gap-2">
-                          <span className="text-amber-400/70 font-bold shrink-0 mt-0.5">!</span>
-                          <span>{row.basicPortal}</span>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-
-              </table>
-            </div>
-          </div>
+                  {/* Basic portals */}
+                  <td className="py-4 px-4 text-center text-slate-300 text-xs">
+                    {row.basicPortals.includes('Nu') || row.basicPortals.includes('No') ? (
+                      <div className="flex items-center justify-center gap-1.5 text-rose-400">
+                        <X className="w-3.5 h-3.5" />
+                        <span>{row.basicPortals}</span>
+                      </div>
+                    ) : (
+                      <span className="text-slate-300">{row.basicPortals}</span>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
 
-        {/* Trust Footnote */}
-        <div className="mt-6 text-center text-xs text-slate-500">
-          {lang === 'ro' 
-            ? '* Comparație bazată pe specificațiile tehnice publice și standardele contabile din Legea 196/2018.'
-            : '* Comparison based on publicly documented architectures and statutory accounting requirements.'}
+        {/* Footnote */}
+        <div className="mt-6 text-center text-xs text-slate-300">
+          * {lang === 'ro' 
+              ? 'Comparație bazată pe specificațiile tehnice publice și standardele contabile impuse de Legea 196/2018.'
+              : 'Comparison based on publicly available specifications and Romanian Law 196/2018 compliance benchmarks.'}
         </div>
 
       </div>

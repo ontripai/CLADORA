@@ -51,7 +51,7 @@ export const SeventeenCoresExplorer: React.FC<SeventeenCoresExplorerProps> = ({ 
           <h2 className="text-3xl sm:text-5xl font-display font-extrabold text-white tracking-tight">
             {dict.seventeenCores.title}
           </h2>
-          <p className="text-base sm:text-lg text-slate-400">
+          <p className="text-base sm:text-lg text-slate-300">
             {dict.seventeenCores.description}
           </p>
         </div>
@@ -65,8 +65,8 @@ export const SeventeenCoresExplorer: React.FC<SeventeenCoresExplorerProps> = ({ 
               onClick={() => setSelectedPriority('ALL')}
               className={`px-4 py-2 rounded-lg text-xs font-semibold transition-all ${
                 selectedPriority === 'ALL'
-                  ? 'bg-white/15 text-white shadow'
-                  : 'text-slate-400 hover:text-white'
+                  ? 'bg-white/20 text-white shadow'
+                  : 'text-slate-200 hover:text-white'
               }`}
             >
               {lang === 'ro' ? 'Toate (17)' : 'All Cores (17)'}
@@ -76,7 +76,7 @@ export const SeventeenCoresExplorer: React.FC<SeventeenCoresExplorerProps> = ({ 
               className={`px-4 py-2 rounded-lg text-xs font-semibold transition-all ${
                 selectedPriority === 'P1'
                   ? 'bg-brand-500 text-white shadow-glow-cyan'
-                  : 'text-slate-400 hover:text-white'
+                  : 'text-slate-200 hover:text-white'
               }`}
             >
               {lang === 'ro' ? 'P1: Nucleu MVP (6)' : 'P1: Core MVP (6)'}
@@ -86,7 +86,7 @@ export const SeventeenCoresExplorer: React.FC<SeventeenCoresExplorerProps> = ({ 
               className={`px-4 py-2 rounded-lg text-xs font-semibold transition-all ${
                 selectedPriority === 'P2'
                   ? 'bg-emerald-500 text-white shadow-glow-emerald'
-                  : 'text-slate-400 hover:text-white'
+                  : 'text-slate-200 hover:text-white'
               }`}
             >
               {lang === 'ro' ? 'P2: Operațiuni & Betă (7)' : 'P2: Ops & Beta (7)'}
@@ -96,7 +96,7 @@ export const SeventeenCoresExplorer: React.FC<SeventeenCoresExplorerProps> = ({ 
               className={`px-4 py-2 rounded-lg text-xs font-semibold transition-all ${
                 selectedPriority === 'P3'
                   ? 'bg-violet-600 text-white shadow'
-                  : 'text-slate-400 hover:text-white'
+                  : 'text-slate-200 hover:text-white'
               }`}
             >
               {lang === 'ro' ? 'P3: AI & Valoare (4)' : 'P3: AI & Value (4)'}
@@ -105,13 +105,19 @@ export const SeventeenCoresExplorer: React.FC<SeventeenCoresExplorerProps> = ({ 
 
           {/* Quick Search */}
           <div className="relative w-full sm:w-72">
-            <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+            <label htmlFor="coreSearchInput" className="sr-only">
+              {lang === 'ro' ? 'Caută nucleu' : 'Search core'}
+            </label>
+            <Search className="w-4 h-4 text-slate-300 absolute left-3 top-1/2 -translate-y-1/2" />
             <input
+              id="coreSearchInput"
+              name="coreSearchInput"
               type="text"
+              aria-label={lang === 'ro' ? 'Caută nucleu sau domeniu' : 'Search core or domain'}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder={lang === 'ro' ? 'Caută nucleu sau domeniu...' : 'Search core or domain...'}
-              className="w-full pl-9 pr-4 py-2 text-xs bg-surface-100/80 border border-white/10 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-brand-400 transition-colors"
+              className="w-full pl-9 pr-4 py-2 text-xs bg-surface-100/90 border border-white/15 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:border-brand-400 transition-colors"
             />
           </div>
 
@@ -126,15 +132,15 @@ export const SeventeenCoresExplorer: React.FC<SeventeenCoresExplorerProps> = ({ 
             return (
               <div
                 key={core.code}
-                className="p-5 rounded-2xl glass-panel glass-panel-hover border border-white/10 flex flex-col justify-between space-y-4 group relative overflow-hidden"
+                className="p-5 rounded-2xl glass-panel glass-panel-hover border border-white/15 flex flex-col justify-between space-y-4 group relative overflow-hidden"
               >
                 {/* Top Row: Code + Priority badge */}
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <span className="font-mono text-xs font-bold px-2.5 py-1 rounded-md bg-white/10 text-white border border-white/10">
+                    <span className="font-mono text-xs font-bold px-2.5 py-1 rounded-md bg-white/15 text-white border border-white/10">
                       {core.code}
                     </span>
-                    <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">
+                    <span className="text-[11px] font-semibold text-slate-300 uppercase tracking-wider">
                       {core.domain}
                     </span>
                   </div>
@@ -142,10 +148,10 @@ export const SeventeenCoresExplorer: React.FC<SeventeenCoresExplorerProps> = ({ 
                   <span
                     className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${
                       isP1
-                        ? 'bg-brand-500/15 text-brand-300 border-brand-500/30'
+                        ? 'bg-brand-500/25 text-brand-200 border-brand-400'
                         : isP2
-                        ? 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30'
-                        : 'bg-violet-500/15 text-violet-300 border-violet-500/30'
+                        ? 'bg-emerald-500/25 text-emerald-200 border-emerald-400'
+                        : 'bg-violet-500/25 text-violet-200 border-violet-400'
                     }`}
                   >
                     {core.priority}
@@ -157,15 +163,15 @@ export const SeventeenCoresExplorer: React.FC<SeventeenCoresExplorerProps> = ({ 
                   <h3 className="text-base font-display font-bold text-white group-hover:text-brand-300 transition-colors">
                     {core.name}
                   </h3>
-                  <p className="text-xs text-slate-400 leading-relaxed">
+                  <p className="text-xs text-slate-300 leading-relaxed">
                     {core.desc}
                   </p>
                 </div>
 
                 {/* Bottom Highlight Tag */}
-                <div className="pt-2 border-t border-white/5 flex items-center justify-between text-xs">
-                  <span className="text-slate-500">Standard:</span>
-                  <span className="font-semibold text-slate-300 text-[11px] bg-surface-200/50 px-2 py-0.5 rounded">
+                <div className="pt-2 border-t border-white/10 flex items-center justify-between text-xs">
+                  <span className="text-slate-300 font-medium">Standard:</span>
+                  <span className="font-semibold text-white text-[11px] bg-surface-200/80 px-2 py-0.5 rounded border border-white/5">
                     {core.highlight}
                   </span>
                 </div>

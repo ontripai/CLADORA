@@ -38,7 +38,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ lang }) => {
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full glass-panel border border-brand-500/30 text-xs font-semibold text-brand-300 shadow-glow-cyan">
             <span className="flex h-2 w-2 rounded-full bg-emerald-400 animate-ping" />
             <span>{dict.hero.badge}</span>
-            <span className="text-slate-500">|</span>
+            <span className="text-slate-400">|</span>
             <span className="text-emerald-400 font-mono">Bucharest & Ilfov Pilot</span>
           </div>
         </div>
@@ -52,7 +52,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ lang }) => {
             </span>
           </h1>
 
-          <p className="text-lg sm:text-xl text-slate-300 max-w-2xl mx-auto font-normal leading-relaxed pt-2">
+          <p className="text-lg sm:text-xl text-slate-200 max-w-2xl mx-auto font-normal leading-relaxed pt-2">
             {dict.hero.description}
           </p>
 
@@ -69,14 +69,14 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ lang }) => {
 
             <a
               href="#simulator"
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl text-base font-semibold text-slate-200 glass-panel glass-panel-hover border border-white/10 hover:border-brand-400/40 transition-all"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl text-base font-semibold text-slate-100 glass-panel glass-panel-hover border border-white/15 hover:border-brand-400/50 transition-all"
             >
               <Zap className="w-4 h-4 text-brand-400" />
               <span>{dict.hero.ctaSecondary}</span>
             </a>
           </div>
 
-          <div className="flex items-center justify-center gap-6 pt-3 text-xs text-slate-400">
+          <div className="flex items-center justify-center gap-6 pt-3 text-xs text-slate-300">
             <div className="flex items-center gap-1.5">
               <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
               <span>{lang === 'ro' ? 'Fără taxe de instalare' : 'Zero onboarding fees'}</span>
@@ -102,115 +102,115 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ lang }) => {
               <div className="text-2xl sm:text-3xl lg:text-4xl font-display font-extrabold text-white gradient-text-brand">
                 {metric.value}
               </div>
-              <div className="text-sm font-semibold text-slate-200">
+              <div className="text-sm font-semibold text-slate-100">
                 {metric.label}
               </div>
-              <div className="text-xs text-slate-400 pt-0.5">
+              <div className="text-xs text-slate-300 pt-0.5">
                 {metric.subtext}
               </div>
             </div>
           ))}
         </div>
 
-        {/* Hero Interactive Cockpit Preview Card */}
+        {/* Mockup Dashboard Preview Window */}
         <div className="mt-14 relative rounded-3xl glass-panel p-2 sm:p-3 border border-white/15 shadow-2xl overflow-hidden glow-box-cyan">
           <div className="rounded-2xl bg-[#090E17]/90 border border-white/10 p-4 sm:p-6 space-y-6">
             
-            {/* Top Bar of the Cockpit */}
+            {/* Top Toolbar */}
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-white/10">
               <div className="flex items-center gap-3">
                 <div className="w-3 h-3 rounded-full bg-red-500/80" />
                 <div className="w-3 h-3 rounded-full bg-amber-500/80" />
                 <div className="w-3 h-3 rounded-full bg-emerald-500/80" />
-                <span className="text-xs font-mono text-slate-400 ml-2">
+                <span className="text-xs font-mono text-slate-300 ml-2">
                   CLADORA Core Cockpit • Association: Complex Aviației 12B • Bucharest
                 </span>
               </div>
-              
-              <div className="flex items-center gap-2 text-xs font-mono text-slate-300">
-                <span className="px-2.5 py-1 rounded-md bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 flex items-center gap-1.5">
+
+              <div className="flex items-center gap-2 text-xs font-mono text-slate-200">
+                <span className="px-2.5 py-1 rounded-md bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 flex items-center gap-1.5">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
                   GL Balanced: 0.00 RON Variance
                 </span>
-                <span className="px-2.5 py-1 rounded-md bg-brand-500/10 text-brand-400 border border-brand-500/30">
+                <span className="px-2.5 py-1 rounded-md bg-brand-500/15 text-brand-300 border border-brand-500/30">
                   Period: August 2026 Locked
                 </span>
               </div>
             </div>
 
-            {/* 3 Pillars in Action */}
+            {/* 3 Cockpit Widgets */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               
-              {/* Box 1: Association View */}
-              <div className="p-4 rounded-xl bg-surface-100/60 border border-white/5 space-y-3">
+              {/* Widget 1: Association */}
+              <div className="p-4 rounded-xl bg-surface-100/80 border border-white/10 space-y-3">
                 <div className="flex items-center justify-between text-xs">
                   <span className="font-semibold text-brand-300 flex items-center gap-1.5">
                     <Building2 className="w-4 h-4 text-brand-400" />
                     Association OS
                   </span>
-                  <span className="text-slate-400 font-mono">120 Units</span>
+                  <span className="text-slate-300 font-mono">120 Units</span>
                 </div>
-                <div className="space-y-1.5 text-xs text-slate-300">
+                <div className="space-y-1.5 text-xs text-slate-200">
                   <div className="flex justify-between py-1 border-b border-white/5">
-                    <span className="text-slate-400">Fond Rulment / CPI:</span>
+                    <span className="text-slate-300">Fond Rulment / CPI:</span>
                     <span className="font-semibold text-emerald-400">42,850.00 RON</span>
                   </div>
                   <div className="flex justify-between py-1 border-b border-white/5">
-                    <span className="text-slate-400">Reconciliere Bancară:</span>
-                    <span className="text-slate-200">100% (BCR & ING)</span>
+                    <span className="text-slate-300">Reconciliere Bancară:</span>
+                    <span className="text-slate-100">100% (BCR & ING)</span>
                   </div>
                   <div className="flex justify-between py-1">
-                    <span className="text-slate-400">Vot Adunare Generală:</span>
+                    <span className="text-slate-300">Vot Adunare Generală:</span>
                     <span className="text-emerald-400 font-semibold">Cvorum Atins (74%)</span>
                   </div>
                 </div>
               </div>
 
-              {/* Box 2: Landlord Portfolio View */}
-              <div className="p-4 rounded-xl bg-surface-100/60 border border-white/5 space-y-3">
+              {/* Widget 2: Portfolio */}
+              <div className="p-4 rounded-xl bg-surface-100/80 border border-white/10 space-y-3">
                 <div className="flex items-center justify-between text-xs">
                   <span className="font-semibold text-emerald-300 flex items-center gap-1.5">
                     <TrendingUp className="w-4 h-4 text-emerald-400" />
                     Portfolio OS (Owner)
                   </span>
-                  <span className="text-slate-400 font-mono">4 Properties</span>
+                  <span className="text-slate-300 font-mono">4 Properties</span>
                 </div>
-                <div className="space-y-1.5 text-xs text-slate-300">
+                <div className="space-y-1.5 text-xs text-slate-200">
                   <div className="flex justify-between py-1 border-b border-white/5">
-                    <span className="text-slate-400">Venit Net Chirii:</span>
+                    <span className="text-slate-300">Venit Net Chirii:</span>
                     <span className="font-semibold text-emerald-400">3,200 EUR / mo</span>
                   </div>
                   <div className="flex justify-between py-1 border-b border-white/5">
-                    <span className="text-slate-400">Separare Cheltuieli:</span>
-                    <span className="text-slate-200">4-Way Auto Split</span>
+                    <span className="text-slate-300">Separare Cheltuieli:</span>
+                    <span className="text-slate-100">4-Way Auto Split</span>
                   </div>
                   <div className="flex justify-between py-1">
-                    <span className="text-slate-400">Status Chiriași:</span>
+                    <span className="text-slate-300">Status Chiriași:</span>
                     <span className="text-emerald-400">Toate plătite la zi</span>
                   </div>
                 </div>
               </div>
 
-              {/* Box 3: Building DNA & Meter Ingestion */}
-              <div className="p-4 rounded-xl bg-surface-100/60 border border-white/5 space-y-3">
+              {/* Widget 3: DNA & OCR */}
+              <div className="p-4 rounded-xl bg-surface-100/80 border border-white/10 space-y-3">
                 <div className="flex items-center justify-between text-xs">
                   <span className="font-semibold text-gold-400 flex items-center gap-1.5">
                     <Zap className="w-4 h-4 text-gold-400" />
                     Building DNA & OCR
                   </span>
-                  <span className="text-slate-400 font-mono">Archetype A4</span>
+                  <span className="text-slate-300 font-mono">Archetype A4</span>
                 </div>
-                <div className="space-y-1.5 text-xs text-slate-300">
+                <div className="space-y-1.5 text-xs text-slate-200">
                   <div className="flex justify-between py-1 border-b border-white/5">
-                    <span className="text-slate-400">Indexuri Contoare:</span>
+                    <span className="text-slate-300">Indexuri Contoare:</span>
                     <span className="text-brand-300 font-semibold">120/120 Citite (AI OCR)</span>
                   </div>
                   <div className="flex justify-between py-1 border-b border-white/5">
-                    <span className="text-slate-400">Anomalii Pierderi:</span>
+                    <span className="text-slate-300">Anomalii Pierderi:</span>
                     <span className="text-emerald-400">0 Alerte active</span>
                   </div>
                   <div className="flex justify-between py-1">
-                    <span className="text-slate-400">Economie Verificată:</span>
+                    <span className="text-slate-300">Economie Verificată:</span>
                     <span className="text-gold-400 font-semibold">+14.2% față de baseline</span>
                   </div>
                 </div>
