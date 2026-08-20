@@ -23,15 +23,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
     routes.forEach((route) => {
       entries.push({
         url: `${baseUrl}/${lang}${route}`,
-        lastModified: new Date('2026-08-20'),
+        lastModified: new Date(),
         changeFrequency: 'weekly',
         priority: route === '' ? 1.0 : 0.8,
-        alternates: {
-          languages: {
-            ro: `${baseUrl}/ro${route}`,
-            en: `${baseUrl}/en${route}`,
-          },
-        },
       });
     });
   });

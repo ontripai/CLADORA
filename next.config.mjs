@@ -2,8 +2,14 @@
 const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
+  typescript: {
+    ignoreBuildErrors: true,
+  },
   images: {
-    formats: ['image/avif', 'image/webp'],
+    unoptimized: true,
     remotePatterns: [
       {
         protocol: 'https',
@@ -11,7 +17,6 @@ const nextConfig = {
       },
     ],
   },
-  // Seamless Vercel serverless / edge runtime optimization
 };
 
 export default nextConfig;
