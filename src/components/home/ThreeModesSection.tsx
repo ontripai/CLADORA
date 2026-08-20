@@ -42,48 +42,54 @@ export const ThreeModesSection: React.FC<ThreeModesSectionProps> = ({ lang }) =>
           <h2 className="text-3xl sm:text-5xl font-display font-extrabold text-white tracking-tight">
             {section.title}
           </h2>
-          <p className="text-base sm:text-lg text-slate-300">
+          <p className="text-base sm:text-lg text-slate-200 font-normal">
             {section.description}
           </p>
         </div>
 
         {/* Tab Selector */}
         <div className="flex justify-center mt-12 mb-10">
-          <div className="p-1.5 rounded-2xl glass-panel border border-white/10 flex flex-wrap gap-2 max-w-2xl w-full">
+          <div className="p-1.5 rounded-2xl glass-panel border border-white/15 flex flex-wrap gap-2 max-w-2xl w-full">
             <button
+              type="button"
+              aria-label="Select Association OS"
               onClick={() => setActiveTab('association')}
-              className={`flex-1 min-w-[160px] flex items-center justify-center gap-2.5 py-3 px-4 rounded-xl text-sm font-bold transition-all ${
+              className={`flex-1 min-w-[160px] flex items-center justify-center gap-2.5 py-3 px-4 rounded-xl text-sm font-extrabold transition-all ${
                 activeTab === 'association'
-                  ? 'bg-brand-500 text-white shadow-glow-cyan'
-                  : 'text-slate-200 hover:text-white hover:bg-white/10'
+                  ? 'bg-cyan-400 text-slate-950 shadow-glow-cyan'
+                  : 'bg-surface-200/50 text-slate-100 hover:bg-surface-200 hover:text-white border border-white/10'
               }`}
             >
-              <Building2 className="w-4 h-4 text-white" />
-              <span className="text-white">Association OS</span>
+              <Building2 className={`w-4 h-4 ${activeTab === 'association' ? 'text-slate-950' : 'text-cyan-400'}`} />
+              <span>Association OS</span>
             </button>
 
             <button
+              type="button"
+              aria-label="Select Portfolio OS"
               onClick={() => setActiveTab('portfolio')}
-              className={`flex-1 min-w-[160px] flex items-center justify-center gap-2.5 py-3 px-4 rounded-xl text-sm font-bold transition-all ${
+              className={`flex-1 min-w-[160px] flex items-center justify-center gap-2.5 py-3 px-4 rounded-xl text-sm font-extrabold transition-all ${
                 activeTab === 'portfolio'
-                  ? 'bg-emerald-500 text-white shadow-glow-emerald'
-                  : 'text-slate-200 hover:text-white hover:bg-white/10'
+                  ? 'bg-emerald-400 text-slate-950 shadow-glow-emerald'
+                  : 'bg-surface-200/50 text-slate-100 hover:bg-surface-200 hover:text-white border border-white/10'
               }`}
             >
-              <TrendingUp className="w-4 h-4 text-white" />
-              <span className="text-white">Portfolio OS</span>
+              <TrendingUp className={`w-4 h-4 ${activeTab === 'portfolio' ? 'text-slate-950' : 'text-emerald-400'}`} />
+              <span>Portfolio OS</span>
             </button>
 
             <button
+              type="button"
+              aria-label="Select Manager OS"
               onClick={() => setActiveTab('manager')}
-              className={`flex-1 min-w-[160px] flex items-center justify-center gap-2.5 py-3 px-4 rounded-xl text-sm font-bold transition-all ${
+              className={`flex-1 min-w-[160px] flex items-center justify-center gap-2.5 py-3 px-4 rounded-xl text-sm font-extrabold transition-all ${
                 activeTab === 'manager'
-                  ? 'bg-violet-600 text-white shadow-glow-cyan'
-                  : 'text-slate-200 hover:text-white hover:bg-white/10'
+                  ? 'bg-violet-400 text-slate-950 shadow-glow-cyan'
+                  : 'bg-surface-200/50 text-slate-100 hover:bg-surface-200 hover:text-white border border-white/10'
               }`}
             >
-              <Layers className="w-4 h-4 text-white" />
-              <span className="text-white">Manager OS</span>
+              <Layers className={`w-4 h-4 ${activeTab === 'manager' ? 'text-slate-950' : 'text-violet-400'}`} />
+              <span>Manager OS</span>
             </button>
           </div>
         </div>
@@ -95,7 +101,7 @@ export const ThreeModesSection: React.FC<ThreeModesSectionProps> = ({ lang }) =>
             {/* Left Content */}
             <div className="lg:col-span-7 space-y-6">
               <div className="space-y-2">
-                <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold border text-brand-300 border-brand-400/40 bg-brand-500/15">
+                <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold border text-brand-300 border-brand-400/40 bg-brand-500/20">
                   <Building2 className="w-3.5 h-3.5" />
                   <span>{current.target}</span>
                 </span>
@@ -112,7 +118,7 @@ export const ThreeModesSection: React.FC<ThreeModesSectionProps> = ({ lang }) =>
                 {current.features.map((feature, idx) => (
                   <div key={idx} className="flex items-start gap-3">
                     <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
-                    <span className="text-sm text-slate-100">{feature}</span>
+                    <span className="text-sm text-slate-100 font-medium">{feature}</span>
                   </div>
                 ))}
               </div>
@@ -131,27 +137,27 @@ export const ThreeModesSection: React.FC<ThreeModesSectionProps> = ({ lang }) =>
 
             {/* Right Metrics Box */}
             <div className="lg:col-span-5">
-              <div className="rounded-2xl bg-surface-100/90 border border-white/15 p-6 space-y-6">
-                <div className="text-xs font-semibold text-slate-300 uppercase tracking-wider">
+              <div className="rounded-2xl bg-surface-100/95 border border-white/15 p-6 space-y-6">
+                <div className="text-xs font-bold text-slate-200 uppercase tracking-wider">
                   {lang === 'ro' ? 'Impactul Măsurabil al Modulului' : 'Measurable Module Impact'}
                 </div>
 
                 <div className="grid grid-cols-1 gap-4">
                   <div className="p-4 rounded-xl glass-panel border border-white/10 flex items-center justify-between">
-                    <span className="text-sm text-slate-200 font-medium">{lang === 'ro' ? 'Timp închidere lună' : 'Month-End Close Time'}</span>
+                    <span className="text-sm text-slate-100 font-semibold">{lang === 'ro' ? 'Timp închidere lună' : 'Month-End Close Time'}</span>
                     <span className="text-xl font-display font-extrabold text-emerald-400">-45%</span>
                   </div>
                   <div className="p-4 rounded-xl glass-panel border border-white/10 flex items-center justify-between">
-                    <span className="text-sm text-slate-200 font-medium">{lang === 'ro' ? 'Erori de calcul' : 'Variance & Calculation Errors'}</span>
+                    <span className="text-sm text-slate-100 font-semibold">{lang === 'ro' ? 'Erori de calcul' : 'Variance & Calculation Errors'}</span>
                     <span className="text-xl font-display font-extrabold text-emerald-400">0%</span>
                   </div>
                   <div className="p-4 rounded-xl glass-panel border border-white/10 flex items-center justify-between">
-                    <span className="text-sm text-slate-200 font-medium">{lang === 'ro' ? 'Prezență la adunări' : 'Quorum & AGM Turnout'}</span>
+                    <span className="text-sm text-slate-100 font-semibold">{lang === 'ro' ? 'Prezență la adunări' : 'Quorum & AGM Turnout'}</span>
                     <span className="text-xl font-display font-extrabold text-emerald-400">85%+</span>
                   </div>
                 </div>
 
-                <div className="p-4 rounded-xl bg-brand-500/15 border border-brand-500/30 text-xs text-slate-100 leading-relaxed">
+                <div className="p-4 rounded-xl bg-brand-500/20 border border-brand-500/40 text-xs text-slate-100 leading-relaxed font-medium">
                   <span>⚖️ <strong>{lang === 'ro' ? 'Conformitate 100% Legea 196/2018:' : '100% Law 196/2018 Compliance:'}</strong> {lang === 'ro' ? 'Algoritmi aprobați pentru împărțirea pe cote-părți indivize (CPI), persoane și suprafață utilă.' : 'Certified statutory allocation engine for CPI shares, person counts, and heated surface area.'}</span>
                 </div>
               </div>
