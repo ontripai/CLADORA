@@ -37,67 +37,72 @@ export const CompetitorComparisonTable: React.FC<CompetitorComparisonTableProps>
             <thead>
               <tr className="border-b border-white/15">
                 <th scope="col" className="py-4 px-4 text-xs font-semibold text-slate-200 uppercase tracking-wider w-1/3">
-                  {comparison.featureHeader}
+                  {comparison.headers?.feature || (lang === 'ro' ? 'Capabilitate & Standard' : 'Capability & Standard')}
                 </th>
                 <th scope="col" className="py-4 px-4 text-xs font-bold text-brand-300 uppercase tracking-wider bg-brand-500/15 rounded-t-xl border-x border-t border-brand-500/30 text-center">
                   <div className="flex items-center justify-center gap-1.5">
                     <Sparkles className="w-4 h-4 text-brand-400" />
-                    <span>{comparison.cladoraHeader}</span>
+                    <span>{comparison.headers?.cladora || 'CLADORA Platform'}</span>
                   </div>
                 </th>
                 <th scope="col" className="py-4 px-4 text-xs font-semibold text-slate-200 uppercase tracking-wider text-center">
-                  {comparison.legacyHeader}
+                  {comparison.headers?.legacyDesktop || (lang === 'ro' ? 'Softuri Clasice Desktop' : 'Legacy Desktop Software')}
                 </th>
                 <th scope="col" className="py-4 px-4 text-xs font-semibold text-slate-200 uppercase tracking-wider text-center">
-                  {comparison.basicPortalsHeader}
+                  {comparison.headers?.basicPortal || (lang === 'ro' ? 'Portaluri Web Simple' : 'Basic Web Portals')}
                 </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-white/5 text-sm">
-              {comparison.rows.map((row, index) => (
-                <tr key={index} className="hover:bg-white/[0.02] transition-colors">
-                  {/* Feature description */}
-                  <td className="py-4 px-4 font-medium text-slate-100">
-                    <div className="flex flex-col">
-                      <span>{row.feature}</span>
-                    </div>
-                  </td>
+              {comparison.rows.map((row, index) => {
+                const legacyText = (row as any).legacyDesktop || (row as any).legacy || '';
+                const basicText = (row as any).basicPortal || (row as any).basicPortals || '';
 
-                  {/* CLADORA (Highlighted) */}
-                  <td className="py-4 px-4 bg-brand-500/10 border-x border-brand-500/30 text-center font-semibold text-white">
-                    <div className="flex items-center justify-center gap-2">
-                      <div className="w-5 h-5 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0">
-                        <Check className="w-3.5 h-3.5" />
+                return (
+                  <tr key={index} className="hover:bg-white/[0.02] transition-colors">
+                    {/* Feature description */}
+                    <td className="py-4 px-4 font-medium text-slate-100">
+                      <div className="flex flex-col">
+                        <span>{row.feature}</span>
                       </div>
-                      <span className="text-xs text-emerald-300 font-bold">{row.cladora}</span>
-                    </div>
-                  </td>
+                    </td>
 
-                  {/* Legacy desktop soft */}
-                  <td className="py-4 px-4 text-center text-slate-300 text-xs">
-                    {row.legacy.includes('Nu') || row.legacy.includes('No') ? (
-                      <div className="flex items-center justify-center gap-1.5 text-rose-400">
-                        <X className="w-3.5 h-3.5" />
-                        <span>{row.legacy}</span>
+                    {/* CLADORA (Highlighted) */}
+                    <td className="py-4 px-4 bg-brand-500/10 border-x border-brand-500/30 text-center font-semibold text-white">
+                      <div className="flex items-center justify-center gap-2">
+                        <div className="w-5 h-5 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0">
+                          <Check className="w-3.5 h-3.5" />
+                        </div>
+                        <span className="text-xs text-emerald-300 font-bold">{row.cladora}</span>
                       </div>
-                    ) : (
-                      <span className="text-slate-300">{row.legacy}</span>
-                    )}
-                  </td>
+                    </td>
 
-                  {/* Basic portals */}
-                  <td className="py-4 px-4 text-center text-slate-300 text-xs">
-                    {row.basicPortals.includes('Nu') || row.basicPortals.includes('No') ? (
-                      <div className="flex items-center justify-center gap-1.5 text-rose-400">
-                        <X className="w-3.5 h-3.5" />
-                        <span>{row.basicPortals}</span>
-                      </div>
-                    ) : (
-                      <span className="text-slate-300">{row.basicPortals}</span>
-                    )}
-                  </td>
-                </tr>
-              ))}
+                    {/* Legacy desktop soft */}
+                    <td className="py-4 px-4 text-center text-slate-300 text-xs">
+                      {legacyText.includes('Nu') || legacyText.includes('No') ? (
+                        <div className="flex items-center justify-center gap-1.5 text-rose-400">
+                          <X className="w-3.5 h-3.5" />
+                          <span>{legacyText}</span>
+                        </div>
+                      ) : (
+                        <span className="text-slate-300">{legacyText}</span>
+                      )}
+                    </td>
+
+                    {/* Basic portals */}
+                    <td className="py-4 px-4 text-center text-slate-300 text-xs">
+                      {basicText.includes('Nu') || basicText.includes('No') ? (
+                        <div className="flex items-center justify-center gap-1.5 text-rose-400">
+                          <X className="w-3.5 h-3.5" />
+                          <span>{basicText}</span>
+                        </div>
+                      ) : (
+                        <span className="text-slate-300">{basicText}</span>
+                      )}
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>
