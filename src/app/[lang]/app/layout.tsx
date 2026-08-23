@@ -56,8 +56,6 @@ export default function AppLayout({
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
   const [roleDropdownOpen, setRoleDropdownOpen] = useState(false);
 
-  const isFa = lang === 'fa';
-
   const navItems = [
     { label: lang === 'ro' ? 'Tablou Principal' : lang === 'fa' ? 'داشبورد اصلی' : 'Dashboard', href: `/${lang}/app/dashboard`, icon: Home },
     { label: lang === 'ro' ? 'Contabilitate & Partidă Dublă' : lang === 'fa' ? 'حسابداری و دفتر کل' : 'Accounting & Ledger', href: `/${lang}/app/accounting`, icon: FileSpreadsheet },

@@ -1,7 +1,7 @@
 import React from 'react';
 import type { Metadata } from 'next';
 import { Inter, Manrope, Vazirmatn } from 'next/font/google';
-import { Language } from '@/types';
+import { Language, SUPPORTED_LOCALES, getLocaleConfig, getIntlLocale } from '@/types';
 import { AppOrMarketingLayout } from '@/components/layout/AppOrMarketingLayout';
 
 const inter = Inter({
@@ -23,7 +23,7 @@ const vazirmatn = Vazirmatn({
 });
 
 export async function generateStaticParams() {
-  return [{ lang: 'en' }, { lang: 'ro' }, { lang: 'fa' }];
+  return SUPPORTED_LOCALES.map((lang) => ({ lang }));
 }
 
 export async function generateMetadata({
@@ -72,6 +72,8 @@ export async function generateMetadata({
     ];
   }
 
+  const intlLocale = getIntlLocale(params.lang).replace('-', '_');
+
   return {
     title: {
       default: title,
@@ -93,7 +95,7 @@ export async function generateMetadata({
       description,
       url: `https://cladora.ro/${params.lang}`,
       siteName: 'CLADORA Asset OS',
-      locale: isRo ? 'ro_RO' : isFa ? 'fa_IR' : 'en_US',
+      locale: intlLocale,
       type: 'website',
     },
     twitter: {
@@ -115,8 +117,7 @@ export default function LangLayout({
   children: React.ReactNode;
   params: { lang: Language };
 }) {
-  const isFa = params.lang === 'fa';
-  const dir = isFa ? 'rtl' : 'ltr';
+  const locale = getLocaleConfig(params.lang);
 
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -140,8 +141,8 @@ export default function LangLayout({
 
   return (
     <html 
-      lang={params.lang} 
-      dir={dir}
+      lang={locale.code} 
+      dir={locale.direction}
       className={`${inter.variable} ${manrope.variable} ${vazirmatn.variable} scroll-smooth`}
     >
       <head>
@@ -150,7 +151,7 @@ export default function LangLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
       </head>
-      <body className={`font-sans min-h-screen bg-[#F6F9FC] text-[#102A43] antialiased ${isFa ? 'font-vazirmatn' : ''}`}>
+      <body className={`font-sans min-h-screen bg-[#F6F9FC] text-[#102A43] antialiased ${locale.isRtl ? 'font-vazirmatn' : ''}`}>
         <AppOrMarketingLayout lang={params.lang}>
           {children}
         </AppOrMarketingLayout>

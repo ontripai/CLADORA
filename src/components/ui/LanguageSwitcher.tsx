@@ -3,7 +3,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Language } from '@/types';
+import { Language, Locale, localeConfig, SUPPORTED_LOCALES, isSupportedLocale } from '@/types';
 import { ChevronDown, Check } from 'lucide-react';
 
 interface LanguageSwitcherProps {
@@ -51,11 +51,22 @@ export const FlagIR = ({ className = "w-5 h-3.5" }: { className?: string }) => (
   </svg>
 );
 
-export const LANGUAGES: { code: Language; label: string; nativeName: string; dir: 'ltr' | 'rtl'; flag: React.FC<{ className?: string }> }[] = [
-  { code: 'ro', label: 'Română', nativeName: 'Română', dir: 'ltr', flag: FlagRO },
-  { code: 'en', label: 'English', nativeName: 'English', dir: 'ltr', flag: FlagGB },
-  { code: 'fa', label: 'فارسی', nativeName: 'فارسی', dir: 'rtl', flag: FlagIR },
-];
+const FLAG_COMPONENTS: Record<string, React.FC<{ className?: string }>> = {
+  ro: FlagRO,
+  gb: FlagGB,
+  ir: FlagIR,
+};
+
+export const LANGUAGES = SUPPORTED_LOCALES.map((code) => {
+  const cfg = localeConfig[code];
+  return {
+    code: cfg.code as Language,
+    label: cfg.englishName,
+    nativeName: cfg.nativeName,
+    dir: cfg.direction,
+    flag: FLAG_COMPONENTS[cfg.flag] || FlagRO,
+  };
+});
 
 export const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({
   currentLang,
@@ -71,7 +82,7 @@ export const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({
     if (!pathname) return `/${targetLang}`;
     // Replace leading /[lang] segment with targetLang
     const segments = pathname.split('/');
-    if (segments.length > 1 && (segments[1] === 'ro' || segments[1] === 'en' || segments[1] === 'fa')) {
+    if (segments.length > 1 && isSupportedLocale(segments[1])) {
       segments[1] = targetLang;
       return segments.join('/') || `/${targetLang}`;
     }
@@ -145,7 +156,7 @@ export const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({
   if (variant === 'footer') {
     return (
       <div className={`flex items-center gap-2 flex-wrap ${className}`}>
-        <span className="text-xs text-[#7B8A9A] font-medium mr-1">
+        <span className="text-xs text-[#7B8A9A] font-medium me-1">
           {currentLang === 'ro' ? 'Limbă:' : currentLang === 'fa' ? 'زبان:' : 'Language:'}
         </span>
         {LANGUAGES.map((item) => {
@@ -173,7 +184,7 @@ export const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({
 
   // Dropdown Variant (Default for Desktop Header and App Shell Topbar)
   return (
-    <div className={`relative inline-block text-left ${className}`} ref={dropdownRef}>
+    <div className={`relative inline-block text-start ${className}`} ref={dropdownRef}>
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}

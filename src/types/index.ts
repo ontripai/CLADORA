@@ -1,4 +1,6 @@
-export type Language = 'en' | 'ro' | 'fa';
+import type { Language } from '@/config/locales';
+export type { Locale, Language, Direction } from '@/config/locales';
+export { localeConfig, isSupportedLocale, getLocaleDirection, isRtlLocale, getIntlLocale, getLocaleConfig, SUPPORTED_LOCALES, DEFAULT_LOCALE } from '@/config/locales';
 
 export type UserRole = 
   | 'association_admin'

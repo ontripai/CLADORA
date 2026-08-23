@@ -38,7 +38,7 @@ export const PricingCalculator: React.FC<PricingCalculatorProps> = ({ lang }) =>
           >
             <div
               className={`w-5 h-5 rounded-full bg-[#0E9F8E] shadow-md transform transition-transform ${
-                isYearly ? (lang === 'fa' ? '-translate-x-7' : 'translate-x-7') : 'translate-x-0'
+                isYearly ? 'translate-x-7 rtl:-translate-x-7' : 'translate-x-0'
               }`}
             />
           </button>
