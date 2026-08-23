@@ -91,10 +91,10 @@ export default function PlatformPage({ params }: { params: { lang: Language } })
             </h2>
             <p className="text-xs text-[#52667A] leading-relaxed">
               {lang === 'ro'
-                ? 'Contabilitate în partidă dublă, jurnal general imutabil, reconciliere automată a extraselor de cont bancar și stornări auditate.'
+                ? 'Contabilitate în partidă dublă, jurnal general auditat, reconciliere asistată a extraselor de cont bancar și stornări auditate.'
                 : lang === 'fa'
                 ? 'دفتر کل دوطرفه، ثبت تراکنش‌ها بدون حذف خام، تطبیق خودکار با صورت‌حساب بانکی و اسناد اصلاحی کاملاً مستند.'
-                : 'General ledger, double-entry balance verification, bank statement reconciliation, and immutable audit logs.'}
+                : 'General ledger, double-entry balance verification, assisted bank statement reconciliation, and auditable event logs.'}
             </p>
             <ul className="space-y-2 text-xs text-[#52667A] pt-2 border-t border-[#F0F4F8]">
               <li className="flex items-center gap-2">

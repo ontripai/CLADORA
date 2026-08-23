@@ -238,15 +238,15 @@ export default function MonthClosePage({ params }: { params: { lang: Language } 
 
               <p className="text-xs text-[#52667A] leading-relaxed">
                 {lang === 'ro'
-                  ? 'După sigilare, jurnalele contabile ale lunii Octombrie 2026 devin imutabile. Orice corecție ulterioară se va putea efectua exclusiv prin notă de stornare în luna următoare.'
+                  ? 'După sigilare, jurnalele contabile ale lunii Octombrie 2026 devin blocate. Orice corecție ulterioară se va putea efectua exclusiv prin notă de stornare în luna următoare.'
                   : lang === 'fa'
                   ? 'پس از قفل قطعی، کلیه اسناد حسابداری دوره جاری غیرقابل ویرایش می‌شوند. هرگونه اصلاح بعدی منحصراً از طریق سند بستانکاری/استورنو در دوره آتی امکان‌پذیر خواهد بود.'
-                  : 'Once sealed, October 2026 ledgers become immutable. Any corrections will require an auditable reversing entry in the subsequent period.'}
+                  : 'Once sealed, October 2026 ledgers become locked. Any corrections will require an auditable reversing entry in the subsequent period.'}
               </p>
 
               <div className="p-3 rounded-xl bg-[#FFF7E6] text-xs text-[#B45309]">
                 {lang === 'ro' 
-                  ? 'ℹ️ În modul demo, această acțiune actualizează starea locală a sandbox-ului.' 
+                  ? 'ℹ️ În mediul demonstrativ, această acțiune actualizează starea locală de test.' 
                   : lang === 'fa' 
                   ? 'ℹ️ در محیط دمو، این اقدام وضعیت سندباکس آزمایشی را به‌روزرسانی می‌کند.' 
                   : 'ℹ️ In demo mode, this updates your local sandbox state.'}

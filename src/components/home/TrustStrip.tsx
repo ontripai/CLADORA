@@ -15,7 +15,7 @@ export const TrustStrip: React.FC<TrustStripProps> = ({ lang }) => {
     },
     {
       icon: FileCheck,
-      title: lang === 'ro' ? 'Contabilitate Imutabilă' : lang === 'fa' ? 'دفتر کل تغییرناپذیر' : 'Auditable Double-Entry',
+      title: lang === 'ro' ? 'Contabilitate în Partidă Dublă' : lang === 'fa' ? 'دفتر کل با اسناد اصلاحی' : 'Auditable Double-Entry',
       desc: lang === 'ro' ? 'Fără ștergeri de înregistrări — doar stornări auditate' : lang === 'fa' ? 'ثبت اسناد اصلاحی بدون حذف داده‌های تاریخی' : 'Reversals instead of silent deletions'
     },
     {
@@ -25,7 +25,7 @@ export const TrustStrip: React.FC<TrustStripProps> = ({ lang }) => {
     },
     {
       icon: Layers,
-      title: lang === 'ro' ? 'Migrare Fără Risc' : lang === 'fa' ? 'مهاجرت امن سوابق' : 'Safe Parallel Migration',
+      title: lang === 'ro' ? 'Migrare Controlată' : lang === 'fa' ? 'مهاجرت کنترل‌شده با اجرای موازی' : 'Controlled Migration',
       desc: lang === 'ro' ? 'Shadow Ledger identifică erorile din softurile vechi' : lang === 'fa' ? 'کشف و رفع مغایرت‌ها پیش از استقرار قطعی' : 'Identify historical variances prior to cutover'
     },
     {

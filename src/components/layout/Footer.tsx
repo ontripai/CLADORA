@@ -67,7 +67,7 @@ export const Footer: React.FC<FooterProps> = ({ lang }) => {
               </li>
               <li>
                 <Link href={`/${lang}/solutions/property-owners`} className="hover:text-white transition-colors">
-                  {lang === 'ro' ? 'Proprietari (Multi-Property)' : lang === 'fa' ? 'مالکان سبد املاک' : 'Portfolio Landlords'}
+                  {lang === 'ro' ? 'Proprietari Portofoliu' : lang === 'fa' ? 'مالکان سبد املاک' : 'Portfolio Landlords'}
                 </Link>
               </li>
               <li>
@@ -96,17 +96,17 @@ export const Footer: React.FC<FooterProps> = ({ lang }) => {
             <ul className="space-y-2 text-sm text-[#BCCCDC]">
               <li>
                 <Link href={`/${lang}/platform`} className="hover:text-white transition-colors">
-                  {lang === 'ro' ? 'Arhitectura Platformei' : lang === 'fa' ? 'معماری پلتفرم' : 'Platform Architecture'}
+                  {lang === 'ro' ? 'Arhitectura Platformei' : lang === 'fa' ? 'معماری جامع پلتفرم' : 'Platform Architecture'}
                 </Link>
               </li>
               <li>
                 <Link href={`/${lang}/modules`} className="hover:text-white transition-colors">
-                  {lang === 'ro' ? 'Cele 17 Module Logice' : lang === 'fa' ? '۱۷ هسته نرم‌افزاری' : 'The 17 Logical Cores'}
+                  {lang === 'ro' ? 'Toate cele 17 Module (C01-C17)' : lang === 'fa' ? 'کلیه ۱۷ ماژول سیستمی' : 'All 17 Modules (C01-C17)'}
                 </Link>
               </li>
               <li>
                 <Link href={`/${lang}/migration`} className="hover:text-white transition-colors">
-                  {lang === 'ro' ? 'Protocolul Shadow Ledger' : lang === 'fa' ? 'مهاجرت امن Shadow Ledger' : 'Shadow Ledger Migration'}
+                  {lang === 'ro' ? 'Protocolul Shadow Ledger' : lang === 'fa' ? 'پروتکل مهاجرت سوابق' : 'Shadow Ledger Migration'}
                 </Link>
               </li>
               <li>
@@ -116,7 +116,7 @@ export const Footer: React.FC<FooterProps> = ({ lang }) => {
               </li>
               <li>
                 <Link href={`/${lang}/demo`} className="hover:text-white transition-colors flex items-center gap-1">
-                  <span>{lang === 'ro' ? 'Demo Sandbox Public' : lang === 'fa' ? 'دموی تعاملی سندباکس' : 'Public Demo Sandbox'}</span>
+                  <span>{lang === 'ro' ? 'Mediu Demonstrativ Public' : lang === 'fa' ? 'دموی تعاملی سندباکس' : 'Public Demo Sandbox'}</span>
                   <ArrowUpRight className="w-3.5 h-3.5 text-[#0E9F8E]" />
                 </Link>
               </li>

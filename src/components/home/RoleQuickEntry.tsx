@@ -43,21 +43,21 @@ export const RoleQuickEntry: React.FC<RoleQuickEntryProps> = ({ lang }) => {
       desc: lang === 'ro' ? 'Sunt proprietar rezident și vreau transparență totală la cote și contoare' : lang === 'fa' ? 'مالک ساکن در مجتمع هستم و شفافیت کامل در فیش و کنتورها می‌خواهم' : 'I am a resident owner looking for transparent charges and meter submission',
       icon: Home,
       href: `/${lang}/solutions/residents`,
-      tag: lang === 'fa' ? 'اپلیکیشن مالکان و ساکنان' : 'Resident App'
+      tag: lang === 'ro' ? 'Aplicația Rezidenților' : lang === 'fa' ? 'اپلیکیشن مالکان و ساکنان' : 'Resident App'
     },
     {
       title: lang === 'ro' ? 'Un apartament în care locuiesc cu chirie' : lang === 'fa' ? 'واحدی که در آن مستأجر هستم' : 'A rented home where I live',
       desc: lang === 'ro' ? 'Sunt chiriaș și am nevoie de calculul corect al consumului și plăți directe' : lang === 'fa' ? 'مستأجر هستم و محاسبه دقیق مصارف انشعابات و پرداخت آسان شارژ می‌خواهم' : 'I am a tenant needing accurate consumption bills and direct maintenance',
       icon: KeyRound,
       href: `/${lang}/solutions/tenants`,
-      tag: lang === 'fa' ? 'پرتال مستأجران' : 'Tenant Portal'
+      tag: lang === 'ro' ? 'Portalul Chiriașilor' : lang === 'fa' ? 'پرتال مستأجران' : 'Tenant Portal'
     },
     {
       title: lang === 'ro' ? 'Operațiuni tehnice și mentenanță' : lang === 'fa' ? 'عملیات فنی و نگهداری تأسیسات' : 'Building operations and maintenance',
       desc: lang === 'ro' ? 'Sunt prestator tehnic, instalator sau responsabil revizii ISCIR' : lang === 'fa' ? 'تکنسین فنی، مجری نگهداری آسانسور یا تأسیسات ساختمان هستم' : 'I handle technical repairs, HVAC, elevator maintenance, and work orders',
       icon: Wrench,
       href: `/${lang}/demo`,
-      tag: lang === 'fa' ? 'عملیات فنی و نگهداری' : 'Operations'
+      tag: lang === 'ro' ? 'Operațiuni Tehnice' : lang === 'fa' ? 'عملیات فنی و نگهداری' : 'Operations'
     }
   ];
 

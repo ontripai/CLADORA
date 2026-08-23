@@ -14,6 +14,7 @@ import {
 import { MOCK_CHARGE_BREAKDOWN } from '@/data/mockData';
 import { Money } from '@/components/ui/Money';
 import { formatPercent } from '@/config/currencies';
+import { formatExpenseCategory, formatAllocationMethod } from '@/config/formatters';
 
 interface FinancialTruthSectionProps {
   lang: Language;
@@ -38,10 +39,10 @@ export const FinancialTruthSection: React.FC<FinancialTruthSectionProps> = ({ la
           </h2>
           <p className="text-base sm:text-lg text-[#52667A]">
             {lang === 'ro'
-              ? 'Fiecare sumă are o sursă. Fiecare cheltuială are o regulă de alocare. Fără ștergeri neautorizate — doar stornări înregistrate cu hash de audit.'
+              ? 'Fiecare sumă are o sursă. Fiecare cheltuială are o regulă de alocare. Fără ștergeri neautorizate — doar stornări înregistrate cu trasabilitate de audit.'
               : lang === 'fa'
               ? 'هر رقم دارای فاکتور مرجع است. هر هزینه از یک فرمول مشخص تبعیت می‌کند. بدون حذف خام اطلاعات؛ صرفاً اسناد اصلاحی با ردپای حسابرسی.'
-              : 'Every financial amount traces to a source invoice. Every expense follows an immutable rule. Zero silent deletions — strictly auditable reversals.'}
+              : 'Every financial amount traces to a source invoice. Every expense follows a defined statutory rule. No silent deletions — strictly auditable reversals.'}
           </p>
         </div>
 
@@ -58,49 +59,49 @@ export const FinancialTruthSection: React.FC<FinancialTruthSectionProps> = ({ la
                 ? 'Plan de conturi adaptat asociațiilor de proprietari. Balanță contabilă mereu echilibrată Debit = Credit.' 
                 : lang === 'fa'
                 ? 'کدینگ استاندارد حساب‌ها متناسب با مجتمع‌ها. تراز مالی همواره تراز با برابری بدهکار و بستانکار.'
-                : 'Full general ledger with debit/credit balance validation across all fund accounts.'}
+                : 'Condominium-adapted chart of accounts. Mathematical guarantee that total debits always equal total credits.'}
             </p>
           </div>
 
           <div className="card-proptech p-5 space-y-2 border-l-4 border-l-[#0E9F8E]">
             <div className="flex items-center gap-2 text-sm font-bold text-[#102A43]">
               <Scale className="w-4 h-4 text-[#0E9F8E]" />
-              <span>{lang === 'ro' ? 'Alocare 100% Explicabilă' : lang === 'fa' ? 'تخصیص شفاف و قابل دفاع' : 'Explainable Math'}</span>
+              <span>{lang === 'ro' ? 'Alocare Legea 196/2018' : lang === 'fa' ? 'محاسبات منطبق با قوانین' : 'Statutory Allocations'}</span>
             </div>
             <p className="text-xs text-[#52667A] leading-relaxed">
-              {lang === 'ro' 
-                ? 'Cote părți indivize (CPI), număr persoane, suprafață utilă sau consum contoare, vizibile detaliat fiecărui proprietar.' 
+              {lang === 'ro'
+                ? 'Calcul CPI automat, contoare individuale, număr de persoane, suprafață sau sume fixe.'
                 : lang === 'fa'
-                ? 'تسهیم بر مبنای سهام مشاع (CPI)، تعداد نفرات یا کنتورهای فرعی، قابل مشاهده با جزئیات برای هر مالک.'
-                : 'Statutory CPI, surface area, resident counts, and meter consumption rules.'}
+                ? 'تسهیم سهم مشاع، مصرف کنتورها، نفرات، متراژ و ارقام ثابت بدون خطای انسانی.'
+                : 'Automated CPI share ratio, individual submetering, headcount, square meters, or flat fees.'}
             </p>
           </div>
 
-          <div className="card-proptech p-5 space-y-2 border-l-4 border-l-[#FF7A59]">
+          <div className="card-proptech p-5 space-y-2 border-l-4 border-l-[#F2C94C]">
             <div className="flex items-center gap-2 text-sm font-bold text-[#102A43]">
-              <RotateCcw className="w-4 h-4 text-[#FF7A59]" />
-              <span>{lang === 'ro' ? 'Stornare, Nu Ștergere' : lang === 'fa' ? 'سند اصلاحی، نه حذف سوابق' : 'Reversals Not Deletions'}</span>
+              <RotateCcw className="w-4 h-4 text-[#0E9F8E]" />
+              <span>{lang === 'ro' ? 'Stornări Auditate' : lang === 'fa' ? 'اسناد اصلاحی قابل‌ردیابی' : 'Traceable Reversals'}</span>
             </div>
             <p className="text-xs text-[#52667A] leading-relaxed">
-              {lang === 'ro' 
-                ? 'Erorile se corectează exclusiv prin tranzacții de stornare. Istoricul financiar este protejat de modificări retroactive.' 
+              {lang === 'ro'
+                ? 'Fără suprascrieri secrete în baza de date. Orice ajustare devine o linie nouă de stornare.'
                 : lang === 'fa'
-                ? 'خطاها صرفاً از طریق صدور سند برگشتی اصلاح می‌شوند. سوابق مالی در برابر تغییرات سلیقه‌ای محافظت شده‌اند.'
-                : 'Past accounting entries are never silently deleted; corrections require explicit reversing entries.'}
+                ? 'بدون ویرایش یا حذف پنهانی در پایگاه داده. هرگونه تعدیل در قالب سند اصلاحی ثبت می‌شود.'
+                : 'No silent overrides. Every correction produces an explicit reversing journal entry.'}
             </p>
           </div>
 
-          <div className="card-proptech p-5 space-y-2 border-l-4 border-l-[#2F80ED]">
+          <div className="card-proptech p-5 space-y-2 border-l-4 border-l-[#27AE60]">
             <div className="flex items-center gap-2 text-sm font-bold text-[#102A43]">
-              <FileCheck2 className="w-4 h-4 text-[#2F80ED]" />
-              <span>{lang === 'ro' ? 'Pachet Audit Cenzor' : lang === 'fa' ? 'پکیج ممیزی بازرس و حسابرس' : 'Censor Audit Package'}</span>
+              <FileCheck2 className="w-4 h-4 text-[#0E9F8E]" />
+              <span>{lang === 'ro' ? 'Închidere Securizată de Lună' : lang === 'fa' ? 'بستن قطعی و امن دوره مالی' : 'Sealed Month-Close'}</span>
             </div>
             <p className="text-xs text-[#52667A] leading-relaxed">
-              {lang === 'ro' 
-                ? 'Raport complet de audit generat la un click: reconciliere bancară, facturi nealocate, jurnale operațiuni.' 
+              {lang === 'ro'
+                ? 'Blocare perioadă cu semnătură de integritate. Cenzorul și comitetul semnează digital balanța finală.'
                 : lang === 'fa'
-                ? 'گزارش حسابرسی آماده با یک کلیک: تطبیق صورت‌حساب بانکی، کنترل فاکتورها و دفاتر روزنامه.'
-                : 'One-click verification reports with bank balance match and missing document alerts.'}
+                ? 'قفل سوابق پس از تراز نهایی. بازرس مالی و هیئت‌مدیره دوره را با امضای دیجیتال تأیید می‌کنند.'
+                : 'Period lock with cryptographic hash. Auditors and board members sign off on the sealed balance.'}
             </p>
           </div>
 
@@ -131,19 +132,8 @@ export const FinancialTruthSection: React.FC<FinancialTruthSectionProps> = ({ la
             {/* Lines List */}
             <div className="lg:col-span-6 space-y-2">
               {MOCK_CHARGE_BREAKDOWN.map((line) => {
-                let category = line.expenseCategory;
-                let method = line.allocationMethod as string;
-                if (lang === 'fa') {
-                  if (line.id === 'CH-01') category = 'آب سرد (مصرف کنتور فرعی)';
-                  if (line.id === 'CH-02') category = 'برق مشاعات و روشنایی';
-                  if (line.id === 'CH-03') category = 'هزینه پسماند و نظافت';
-                  if (line.id === 'CH-04') category = 'صندوق ذخیره تعمیرات اساسی';
-                  if (line.id === 'CH-05') category = 'سرویس و نگهداری آسانسور';
-
-                  if (line.allocationMethod === 'METER_CONSUMPTION') method = 'کنتور اختصاصی';
-                  if (line.allocationMethod === 'CPI') method = 'سهم مشاع (CPI)';
-                  if (line.allocationMethod === 'PER_PERSON') method = 'تعداد نفرات';
-                }
+                const category = formatExpenseCategory(line.id, line.expenseCategory, lang);
+                const method = formatAllocationMethod(line.allocationMethod, lang);
 
                 return (
                   <button

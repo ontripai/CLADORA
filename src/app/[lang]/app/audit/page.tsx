@@ -50,20 +50,20 @@ export default function AuditTrailPage({ params }: { params: { lang: Language } 
         <div>
           <div className="text-xs font-bold text-[#0E9F8E] uppercase tracking-wider">
             {lang === 'ro' 
-              ? 'Nucleul C17 — Jurnal de Securitate & Audit Imutabil' 
+              ? 'Nucleul C17 — Jurnal de Securitate & Audit cu Trasabilitate' 
               : lang === 'fa' 
-              ? 'هسته C17 — لاگ امنیتی و ردپای ممیزی تغییرناپذیر' 
-              : 'Core C17 — Immutable Security & Audit Log'}
+              ? 'هسته C17 — لاگ امنیتی و ردپای ممیزی قابل‌ردیابی' 
+              : 'Core C17 — Security & Auditable Event Log'}
           </div>
           <h1 className="text-2xl font-display font-extrabold text-[#102A43] mt-1">
-            {lang === 'ro' ? 'Jurnal de Audit Imutabil' : lang === 'fa' ? 'سوابق و ردپای ممیزی تغییرناپذیر' : 'Immutable Audit Trail'}
+            {lang === 'ro' ? 'Jurnal de Audit cu Trasabilitate' : lang === 'fa' ? 'سوابق و ردپای ممیزی با قابلیت رهگیری' : 'Traceable Audit Trail'}
           </h1>
           <p className="text-xs text-[#52667A]">
             {lang === 'ro' 
-              ? 'Fiecare operațiune financiară, modificare de cotă și vot este înregistrat cu semnătură de integritate' 
+              ? 'Fiecare operațiune financiară, modificare de cotă și vot este înregistrat cu trasabilitate și timestamp' 
               : lang === 'fa' 
-              ? 'کلیه تراکنش‌های مالی، تغییرات سهام مشاع و آرای مجمع عمومی با امضای دیجیتال و هش تغییرناپذیر ثبت می‌شوند' 
-              : 'Every financial entry, quota adjustment, and AGM vote is cryptographically hashed'}
+              ? 'کلیه تراکنش‌های مالی، تغییرات سهام مشاع و آرای مجمع عمومی با برچسب زمانی و قابلیت رهگیری ثبت می‌شوند' 
+              : 'Every financial transaction, allocation edit, and vote is recorded with traceable timestamps'}
           </p>
         </div>
       </div>

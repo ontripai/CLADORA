@@ -174,14 +174,14 @@ export const ShadowLedgerDemo: React.FC<ShadowLedgerDemoProps> = ({ lang }) => {
           <ShieldCheck className="w-4 h-4 text-[#0E9F8E] shrink-0" />
           <span>
             {lang === 'ro' 
-              ? 'Rulăm în paralel 1-3 luni fără risc pentru asociație.' 
+              ? 'Rulăm în paralel 1-3 luni cu validare pas cu pas pentru asociație.' 
               : lang === 'fa'
-              ? 'فعالیت موازی ۱ تا ۳ دوره مالی بدون هیچ‌گونه ریسک یا اختلال در مجتمع.'
-              : 'Parallel run for 1-3 billing cycles with zero association risk.'}
+              ? 'اجرای موازی ۱ تا ۳ دوره مالی با اعتبارسنجی گام‌به‌گام مانده‌ها.'
+              : 'Parallel run for 1-3 billing cycles with step-by-step balance validation.'}
           </span>
         </div>
         <span className="font-mono text-[#059669] font-bold">
-          {lang === 'ro' ? 'Risc de migrare: 0%' : lang === 'fa' ? 'ریسک مهاجرت: ۰٪' : 'Migration Risk: 0%'}
+          {lang === 'ro' ? 'Statut: Validare Paralelă' : lang === 'fa' ? 'وضعیت: اعتبارسنجی موازی' : 'Status: Parallel Validation'}
         </span>
       </div>
     </div>

@@ -17,13 +17,13 @@ export async function generateMetadata({
     title: isRo 
       ? 'Adevăr Financiar & Contabilitate în Partidă Dublă | CLADORA' 
       : isFa
-      ? 'حقیقت مالی و حسابداری دوطرفه تغییرناپذیر | کلادورا'
+      ? 'حقیقت مالی و حسابداری دوطرفه | کلادورا'
       : 'Financial Truth Core & Double-Entry Accounting | CLADORA',
     description: isRo
-      ? 'Contabilitate imutabilă, reconciliere bancară automată, închidere sigilată de lună și audit trail fără reproș.'
+      ? 'Contabilitate în partidă dublă, reconciliere bancară asistată, închidere securizată de lună și jurnal de audit cu trasabilitate.'
       : isFa
-      ? 'دفتر کل دوطرفه تغییرناپذیر، تطبیق خودکار با صورت‌حساب بانکی، بستن قطعی دوره ماهانه و ردپای ممیزی با امضای دیجیتال.'
-      : 'Immutable double-entry accounting, automated bank reconciliation, sealed month-end closing, and complete audit trails.',
+      ? 'دفتر کل دوطرفه، تطبیق با صورت‌حساب بانکی، بستن ایمن دوره ماهانه و ردپای ممیزی با قابلیت رهگیری.'
+      : 'Double-entry accounting, assisted bank reconciliation, secure month-end closing, and auditable event trails.',
   };
 }
 

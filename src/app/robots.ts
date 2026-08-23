@@ -1,12 +1,15 @@
 import { MetadataRoute } from 'next';
+import { getSiteUrl } from '@/config/site';
 
 export default function robots(): MetadataRoute.Robots {
+  const baseUrl = getSiteUrl();
+
   return {
     rules: {
       userAgent: '*',
       allow: '/',
-      disallow: ['/api/private/', '/*/app/', '/*/demo'],
+      disallow: ['/api/', '/*/app/', '/*/demo'],
     },
-    sitemap: 'https://cladora.ro/sitemap.xml',
+    sitemap: `${baseUrl}/sitemap.xml`,
   };
 }

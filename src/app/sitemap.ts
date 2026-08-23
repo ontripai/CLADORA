@@ -1,39 +1,58 @@
 import { MetadataRoute } from 'next';
+import { getSiteUrl } from '@/config/site';
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = 'https://cladora.ro';
-  const languages = ['ro', 'en', 'fa'];
-  const routes = [
+  const baseUrl = getSiteUrl();
+  const languages = ['ro', 'en', 'fa'] as const;
+  const staticLastMod = new Date('2026-08-23T00:00:00.000Z');
+
+  const publicRoutes = [
     '',
+    '/about',
+    '/accessibility',
+    '/association',
+    '/building-dna',
+    '/contact',
+    '/cookies',
+    '/financial-truth',
+    '/login',
+    '/manager',
+    '/meters',
+    '/migration',
+    '/modules',
+    '/pilot',
     '/platform',
+    '/portfolio',
+    '/pricing',
+    '/privacy',
+    '/resources/faq',
+    '/security',
     '/solutions/associations',
-    '/solutions/property-owners',
     '/solutions/property-managers',
+    '/solutions/property-owners',
     '/solutions/residents',
     '/solutions/tenants',
-    '/modules',
-    '/migration',
-    '/pricing',
-    '/security',
-    '/resources/faq',
-    '/pilot',
-    '/about',
-    '/contact',
-    '/privacy',
     '/terms',
-    '/cookies',
-    '/accessibility',
+    '/trust',
   ];
 
   const entries: MetadataRoute.Sitemap = [];
 
   languages.forEach((lang) => {
-    routes.forEach((route) => {
+    publicRoutes.forEach((route) => {
       entries.push({
         url: `${baseUrl}/${lang}${route}`,
-        lastModified: new Date(),
-        changeFrequency: 'weekly',
-        priority: route === '' ? 1.0 : 0.8,
+        lastModified: staticLastMod,
+        changeFrequency: route === '' ? 'daily' : 'weekly',
+        priority: route === '' ? 1.0 : (route.startsWith('/solutions') || route === '/pricing' || route === '/platform' ? 0.9 : 0.7),
+        alternates: {
+          languages: {
+            ro: `${baseUrl}/ro${route}`,
+            en: `${baseUrl}/en${route}`,
+            fa: `${baseUrl}/fa${route}`,
+            'x-default': `${baseUrl}/ro${route}`,
+          },
+        },
       });
     });
   });

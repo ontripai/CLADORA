@@ -58,17 +58,17 @@ export const ShadowLedgerMigrationSection: React.FC<MigrationSectionProps> = ({ 
           </span>
           <h2 className="text-3xl sm:text-5xl font-display font-extrabold text-[#102A43] tracking-tight">
             {lang === 'ro' 
-              ? 'Migrare Fără Risc pentru Asociație' 
+              ? 'Migrare Controlată cu Rulare Paralelă' 
               : lang === 'fa'
-              ? 'مهاجرت امن سوابق مالی بدون ریسک عملیاتی'
-              : 'Safe Parallel Migration for Associations'}
+              ? 'مهاجرت کنترل‌شده با اجرای موازی'
+              : 'Controlled Migration with Parallel Validation'}
           </h2>
           <p className="text-base sm:text-lg text-[#52667A]">
             {lang === 'ro'
-              ? 'Schimbarea programului de administrare este adesea blocată de frica de a strica soldurile. Protocolul Shadow Ledger a fost proiectat special pentru a elimina orice risc operațional.'
+              ? 'Schimbarea programului de administrare este planificată riguros. Protocolul Shadow Ledger rulează în paralel pentru a valida fiecare sold înainte de migrarea definitivă.'
               : lang === 'fa'
-              ? 'تغییر نرم‌افزار حسابداری معمولاً به دلیل نگرانی از به‌هم‌ریختن مانده‌حساب‌ها به تعویق می‌افتد. پروتکل دفتر کل موازی کلادورا این دغدغه را به‌طور کامل مرتفع کرده است.'
-              : 'Switching property software usually stalls over fear of corrupting accounting balances. Shadow Ledger protocol runs side-by-side to discover errors before cutover.'}
+              ? 'تغییر نرم‌افزار حسابداری نیازمند دقت بالاست. پروتکل دفتر کل موازی کلادورا در کنار سیستم قبلی اجرا می‌شود تا کلیه مانده‌حساب‌ها پیش از استقرار نهایی اعتبارسنجی شوند.'
+              : 'Switching property software requires verified precision. Shadow Ledger runs side-by-side to validate ledger accuracy prior to final cutover.'}
           </p>
         </div>
 

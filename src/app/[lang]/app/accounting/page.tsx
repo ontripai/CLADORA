@@ -34,20 +34,20 @@ export default function AccountingPage({ params }: { params: { lang: Language } 
         <div>
           <div className="text-xs font-bold text-[#0E9F8E] uppercase tracking-wider">
             {lang === 'ro' 
-              ? 'Nucleul C01 — General Ledger & Jurnal Operațiuni' 
+              ? 'Nucleul C01 — Jurnal General & Contabilitate în Partidă Dublă' 
               : lang === 'fa' 
-              ? 'هسته C01 — دفتر کل و ثبت تغییرناپذیر اسناد حسابداری' 
-              : 'Core C01 — General Ledger & Immutable Journal'}
+              ? 'هسته C01 — دفتر کل و حسابداری دوطرفه' 
+              : 'Core C01 — General Ledger & Auditable Journal'}
           </div>
           <h1 className="text-2xl font-display font-extrabold text-[#102A43] mt-1">
             {lang === 'ro' ? 'Contabilitate în Partidă Dublă' : lang === 'fa' ? 'حسابداری دوطرفه و تراز مالی' : 'Double-Entry General Ledger'}
           </h1>
           <p className="text-xs text-[#52667A]">
             {lang === 'ro' 
-              ? 'Jurnal imutabil conform Legii 196/2018 · Plan de conturi standardizat' 
+              ? 'Jurnal auditat conform Legii 196/2018 · Plan de conturi standardizat' 
               : lang === 'fa' 
-              ? 'دفتر روزنامه تغییرناپذیر با ممیزی هش SHA-256 · کدینگ استاندارد حساب‌ها' 
-              : 'Immutable journal with SHA-256 audit trail · Standardized chart of accounts'}
+              ? 'دفتر روزنامه با قابلیت ممیزی و رهگیری · کدینگ استاندارد حساب‌ها' 
+              : 'Auditable journal with traceable event history · Standardized chart of accounts'}
           </p>
         </div>
 

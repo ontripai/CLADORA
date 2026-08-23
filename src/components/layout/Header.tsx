@@ -62,10 +62,10 @@ export const Header: React.FC<HeaderProps> = ({ lang }) => {
       desc: lang === 'ro' ? 'Gestiune Legea 196/2018, liste de plată, cenzori și adunări generale' : lang === 'fa' ? 'محاسبه شارژ قانونی، دسترسی بازرسان و برگزاری مجامع عمومی' : 'Statutory compliance, payment lists, censors, and AGM governance',
       href: `/${lang}/solutions/associations`,
       icon: Building2,
-      tag: lang === 'fa' ? 'Association OS • سیستم مدیریت انجمن مالکان' : 'Association OS'
+      tag: lang === 'ro' ? 'Association OS' : lang === 'fa' ? 'Association OS • سیستم مدیریت انجمن مالکان' : 'Association OS'
     },
     {
-      title: lang === 'ro' ? 'Proprietari Portofoliu (Multi-Property)' : lang === 'fa' ? 'مالکان سبد املاک (چند واحدی)' : 'Multi-Property Owners',
+      title: lang === 'ro' ? 'Proprietari Portofoliu' : lang === 'fa' ? 'مالکان سبد املاک' : 'Portfolio Landlords',
       desc: lang === 'ro' ? 'Consolidare apartamente, monitorizare chirii, yield net și contracte' : lang === 'fa' ? 'پایش تجمیعی املاک، بازده خالص، وصول اجاره و تفکیک هزینه‌ها' : 'Consolidated rental income, net yields, tenant costs, and contracts',
       href: `/${lang}/solutions/property-owners`,
       icon: TrendingUp,
@@ -83,21 +83,21 @@ export const Header: React.FC<HeaderProps> = ({ lang }) => {
       desc: lang === 'ro' ? 'Transparență totală la calculul cotelor, index contoare și plăți' : lang === 'fa' ? 'شفافیت کامل در فیش شارژ، ثبت تصویری کنتورها و پرداخت' : 'Explainable charges, online meter submission, and notices',
       href: `/${lang}/solutions/residents`,
       icon: Home,
-      tag: lang === 'fa' ? 'اپلیکیشن مالکان و ساکنان' : 'Resident App'
+      tag: lang === 'ro' ? 'Aplicația Rezidenților' : lang === 'fa' ? 'اپلیکیشن مالکان و ساکنان' : 'Resident App'
     },
     {
       title: lang === 'ro' ? 'Chiriași' : lang === 'fa' ? 'مستأجران' : 'Tenants',
       desc: lang === 'ro' ? 'Acces strict la cheltuielile operaționale de consum și tichete' : lang === 'fa' ? 'مشاهده مصارف انشعابات بدون دسترسی به صندوق‌های مالک' : 'Direct access to consumption costs without owner ledger access',
       href: `/${lang}/solutions/tenants`,
       icon: KeyRound,
-      tag: lang === 'fa' ? 'پرتال مستأجران' : 'Tenant Portal'
+      tag: lang === 'ro' ? 'Portalul Chiriașilor' : lang === 'fa' ? 'پرتال مستأجران' : 'Tenant Portal'
     }
   ];
 
   const modulesPreview = [
     {
       title: lang === 'ro' ? 'C01 — Financial Truth & Contabilitate' : lang === 'fa' ? 'C01 — حسابداری و دفتر کل دوطرفه' : 'C01 — Financial Truth & Accounting',
-      desc: lang === 'ro' ? 'Partidă dublă, jurnal operațiuni, fără ștergeri (stornare)' : lang === 'fa' ? 'دفتر کل دوبل، سند اصلاحی بدون حذف خام اطلاعات' : 'Double-entry ledger, immutable journals, no silent deletions',
+      desc: lang === 'ro' ? 'Partidă dublă, jurnal operațiuni, fără ștergeri (stornare)' : lang === 'fa' ? 'دفتر کل دوبل، سند اصلاحی بدون حذف خام اطلاعات' : 'Double-entry ledger, auditable journals, no silent deletions',
       href: `/${lang}/modules`
     },
     {
@@ -112,8 +112,8 @@ export const Header: React.FC<HeaderProps> = ({ lang }) => {
     },
     {
       title: lang === 'ro' ? 'C16 — Migrare & Shadow Ledger' : lang === 'fa' ? 'C16 — مهاجرت امن و دفتر کل موازی' : 'C16 — Shadow Ledger Migration',
-      desc: lang === 'ro' ? 'Reconciliere automată cu softurile vechi în paralel' : lang === 'fa' ? 'تطبیق هم‌زمان با سامانه‌های قبلی تا حذف کامل مغایرت‌ها' : 'Zero-risk parallel reconciliation against legacy exports',
-      href: `/${lang}/migration`
+      desc: lang === 'ro' ? 'Reconciliere asistată cu softurile vechi în paralel' : lang === 'fa' ? 'تطبیق هم‌زمان با سامانه‌های قبلی تا رفع کامل مغایرت‌ها' : 'Assisted parallel reconciliation against legacy exports',
+      href: `/${lang}/modules`
     }
   ];
 

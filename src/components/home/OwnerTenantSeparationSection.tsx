@@ -67,10 +67,10 @@ export const OwnerTenantSeparationSection: React.FC<OwnerTenantSectionProps> = (
           </span>
           <h2 className="text-3xl sm:text-5xl font-display font-extrabold text-[#102A43] tracking-tight">
             {lang === 'ro' 
-              ? 'Proprietar vs Chiriaș: Transparență Fără Dispute' 
+              ? 'Separare Clară a Cheltuielilor între Proprietar și Chiriaș' 
               : lang === 'fa'
-              ? 'مالک در برابر مستأجر: شفافیت کامل بدون تنش'
-              : 'Owner vs. Tenant Separation: Zero Friction'}
+              ? 'تفکیک روشن هزینه‌های مالک و مستأجر'
+              : 'Clear Owner–Tenant Expense Separation'}
           </h2>
           <p className="text-base sm:text-lg text-[#52667A]">
             {lang === 'ro'

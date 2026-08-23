@@ -75,7 +75,7 @@ export const BuildingArchetypesSection: React.FC<BuildingArchetypesProps> = ({ l
     {
       code: 'GATED-VILLA',
       name: lang === 'ro' 
-        ? 'Complex de Vile / Gated Community' 
+        ? 'Complex de Vile / Comunitate Rezidențială Închisă' 
         : lang === 'fa'
         ? 'شهرک ویلایی محصور (Gated Community)'
         : 'Gated Villa Community',

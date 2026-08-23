@@ -22,10 +22,10 @@ export async function generateMetadata({
       ? 'امنیت، سطوح دسترسی و انطباق با حریم خصوصی | کلادورا'
       : 'Security & Access Control Architecture | CLADORA',
     description: isRo
-      ? 'Află cum protejăm datele asociației tale: control granular al accesului, audit trails imutabile și conformitate GDPR.'
+      ? 'Află cum protejăm datele asociației tale: control granular al accesului, jurnale de audit cu trasabilitate și arhitectură conformă GDPR.'
       : isFa
-      ? 'کنترل دقیق سطوح دسترسی بر اساس نقش (RBAC/ABAC)، ثبت تغییرناپذیر لاگ‌های ممیزی و انطباق کامل با قوانین حریم خصوصی GDPR.'
-      : 'Granular role-based access control, immutable audit trails, and GDPR-compliant tenant isolation.',
+      ? 'کنترل دقیق سطوح دسترسی بر اساس نقش (RBAC/ABAC)، ثبت قابل‌ردیابی لاگ‌های ممیزی و انطباق با قوانین حریم خصوصی GDPR.'
+      : 'Granular role-based access control, traceable audit logs, and GDPR-aligned tenant isolation.',
   };
 }
 

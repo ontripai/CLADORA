@@ -47,10 +47,10 @@ export const AllocationSimulator: React.FC<AllocationSimulatorProps> = ({ lang }
       beneficiary: lang === 'ro' ? 'Vecin Afectat (Ap. 10)' : lang === 'fa' ? 'همسایه متضرر (واحد ۱۰)' : 'Affected Neighbor (Unit 10)',
       reimbursement: lang === 'ro' ? 'Reținut din Garanție / Facturat Chiriaș' : lang === 'fa' ? 'کسر از ودیعه / صورت‌حساب خسارت مستأجر' : 'Deducted from Security Deposit',
       explanation: lang === 'ro'
-        ? 'CLADORA generează un dosar probatoriu cu data incidentului, permițând decontarea automată din depozitul de garanție al chiriașului fără litigii.'
+        ? 'CLADORA generează un dosar probatoriu cu data incidentului, permițând decontarea din depozitul de garanție al chiriașului pe baze clare.'
         : lang === 'fa'
-        ? 'کلادورا گزارش مستند و تغییرناپذیر حادثه را با زمان‌بندی دقیق ثبت می‌کند و امکان تسویه خودکار از محل ودیعه را بدون اختلاف حقوقی فراهم می‌سازد.'
-        : 'CLADORA creates an immutable evidence log with timestamps, enabling automatic settlement against the security deposit.',
+        ? 'کلادورا گزارش مستند حادثه را با زمان‌بندی دقیق ثبت می‌کند و امکان تسویه شفاف از محل ودیعه را فراهم می‌سازد.'
+        : 'CLADORA creates a traceable evidence log with timestamps, enabling clear settlement against the security deposit.',
       split: { owner: 0, tenant: amount },
     },
     capitalUpgrade: {

@@ -285,3 +285,92 @@ export function getLocalizedWorkOrder(woId: string, locale: Language = 'ro'): Lo
   }
   return item[locale] || item.ro;
 }
+
+/**
+ * Format statutory allocation method codes into localized user-facing labels
+ */
+export function formatAllocationMethod(methodCode: string, locale: Language = 'ro'): string {
+  const normalized = (methodCode || '').toUpperCase().trim();
+  const map: Record<string, Record<Language, string>> = {
+    METER_CONSUMPTION: {
+      ro: 'Consum măsurat prin contor',
+      en: 'Metered consumption',
+      fa: 'مصرف ثبت‌شده با کنتور'
+    },
+    CPI: {
+      ro: 'Cotă-parte indiviză (CPI)',
+      en: 'Indivisible ownership share (CPI)',
+      fa: 'سهم مشاع (CPI)'
+    },
+    PER_PERSON: {
+      ro: 'Repartizare per persoană',
+      en: 'Per-person allocation',
+      fa: 'تخصیص بر اساس تعداد نفرات'
+    },
+    SURFACE_M2: {
+      ro: 'Repartizare după suprafață',
+      en: 'Floor-area allocation',
+      fa: 'تخصیص بر اساس مساحت'
+    },
+    SURFACE_AREA: {
+      ro: 'Repartizare بعد از مساحت',
+      en: 'Floor-area allocation',
+      fa: 'تخصیص بر اساس مساحت'
+    },
+    DIRECT: {
+      ro: 'Sumă fixă',
+      en: 'Fixed amount',
+      fa: 'مبلغ ثابت'
+    },
+    FIXED: {
+      ro: 'Sumă fixă',
+      en: 'Fixed amount',
+      fa: 'مبلغ ثابت'
+    }
+  };
+
+  const entry = map[normalized];
+  if (entry && entry[locale]) {
+    return entry[locale];
+  }
+  return methodCode;
+}
+
+/**
+ * Format expense category name
+ */
+export function formatExpenseCategory(lineId: string, fallbackName: string, locale: Language = 'ro'): string {
+  const map: Record<string, Record<Language, string>> = {
+    'CH-01': {
+      ro: 'Apă Rece (Consum Individual)',
+      en: 'Cold Water (Submetered Use)',
+      fa: 'آب سرد (مصرف کنتور فرعی)'
+    },
+    'CH-02': {
+      ro: 'Energie Electrică Părți Comune',
+      en: 'Common Area Electricity',
+      fa: 'برق مشاعات و روشنایی'
+    },
+    'CH-03': {
+      ro: 'Salubrizare & Menajer',
+      en: 'Waste Management & Sanitation',
+      fa: 'هزینه پسماند و نظافت'
+    },
+    'CH-04': {
+      ro: 'Fond de Reparații (Înlocuire Coloană)',
+      en: 'Reserve Fund (Riser Replacement)',
+      fa: 'صندوق ذخیره تعمیرات اساسی'
+    },
+    'CH-05': {
+      ro: 'Mentenanță Lift & Revizie Tehnică',
+      en: 'Elevator Maintenance & Inspection',
+      fa: 'سرویس و نگهداری آسانسور'
+    }
+  };
+
+  const entry = map[lineId];
+  if (entry && entry[locale]) {
+    return entry[locale];
+  }
+  return fallbackName;
+}

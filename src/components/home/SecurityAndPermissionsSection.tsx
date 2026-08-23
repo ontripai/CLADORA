@@ -10,12 +10,12 @@ export const SecurityAndPermissionsSection: React.FC<SecuritySectionProps> = ({ 
   const pillars = [
     {
       icon: Server,
-      title: lang === 'ro' ? 'Izolare Multi-Tenant Strictă' : lang === 'fa' ? 'جداسازی چندمستأجره داده‌ها (Multi-Tenant)' : 'Multi-Tenant Isolation',
+      title: lang === 'ro' ? 'Izolarea Datelor între Organizații' : lang === 'fa' ? 'جداسازی امن داده‌های چندسازمانی' : 'Tenant-Aware Data Isolation',
       desc: lang === 'ro' 
         ? 'Fiecare asociație și portofoliu are spațiu de date separat și Row Level Security (RLS) la nivel de bază de date.' 
         : lang === 'fa'
         ? 'تفکیک قطعی داده‌های هر مجتمع در سطح پایگاه داده با معماری امنیتی Row Level Security (RLS).'
-        : 'Strict PostgreSQL Row Level Security guarantees zero cross-association data bleed.'
+        : 'PostgreSQL Row Level Security isolates data strictly across property organizations.'
     },
     {
       icon: UserCheck,
@@ -24,7 +24,7 @@ export const SecurityAndPermissionsSection: React.FC<SecuritySectionProps> = ({ 
         ? 'Un utilizator poate avea mai multe roluri (ex. proprietar în blocul A, cenzor în blocul B) fără a amesteca permisiunile.' 
         : lang === 'fa'
         ? 'یک کاربر می‌تواند در یک مجتمع مالک و در مجتمع دیگر بازرس باشد، بدون کوچک‌ترین تداخل در سطوح دسترسی.'
-        : 'Granular attribute-based conditions cleanly decouple landlord, tenant, and censor privileges.'
+        : 'Granular attribute-based conditions cleanly decouple landlord, tenant, and auditor privileges.'
     },
     {
       icon: EyeOff,
@@ -33,25 +33,25 @@ export const SecurityAndPermissionsSection: React.FC<SecuritySectionProps> = ({ 
         ? 'Chiriașii văd exclusiv cotele de consum operațional; veniturile și tranzacțiile de capital ale proprietarului sunt mascate.' 
         : lang === 'fa'
         ? 'مستأجران صرفاً مصارف جاری خود را مشاهده می‌کنند؛ اطلاعات بازده سرمایه‌گذاری، اقساط یا املاک دیگر مالک کاملاً محافظت شده است.'
-        : 'Tenants never see owner capital yields, mortgage details, or other apartments in the portfolio.'
+        : 'Tenants only view their operational utility charges; landlord portfolio yields and capital transactions remain private.'
     },
     {
       icon: Lock,
-      title: lang === 'ro' ? 'Jurnal de Audit Imutabil' : lang === 'fa' ? 'ردپای حسابرسی تغییرناپذیر' : 'Immutable Audit Trail',
+      title: lang === 'ro' ? 'Jurnal de Audit cu Trasabilitate' : lang === 'fa' ? 'تاریخچه حسابرسی قابل‌ردیابی' : 'Traceable Audit History',
       desc: lang === 'ro' 
-        ? 'Fiecare autentificare, modificare de cotă, stornare și descărcare de document este înregistrată cu timestamp și semnătură.' 
+        ? 'Fiecare autentificare, modificare de cotă, stornare și descărcare de document este înregistrată cu timestamp și trasabilitate.' 
         : lang === 'fa'
-        ? 'تمامی ورودها، صدور اسناد اصلاحی، تغییرات مبالغ و دانلود فایل‌ها با برچسب زمانی و هش تغییرناپذیر ثبت می‌شوند.'
-        : 'Every login, allocation edit, and document export is stamped into an immutable audit event log.'
+        ? 'تمامی ورودها، صدور اسناد اصلاحی، تغییرات مبالغ و دانلود فایل‌ها با برچسب زمانی و قابلیت رهگیری ثبت می‌شوند.'
+        : 'Every login, allocation edit, and document export is stamped into an auditable event history.'
     },
     {
       icon: FileText,
-      title: lang === 'ro' ? 'Conformitate GDPR Nativă' : lang === 'fa' ? 'انطباق ساختاری با استاندارد GDPR' : 'GDPR Compliance by Design',
+      title: lang === 'ro' ? 'Arhitectură Orientată către Cerințele GDPR' : lang === 'fa' ? 'معماری طراحی‌شده با توجه به الزامات GDPR' : 'Architecture Designed to Support GDPR Requirements',
       desc: lang === 'ro' 
         ? 'Dreptul de a fi uitat, export de date portabil și politici de retenție conform standardelor europene de protecție a datelor.' 
         : lang === 'fa'
         ? 'رعایت حق فراموشی، امکان خروجی‌گیری استاندارد از سوابق و خط‌مشی‌های صیانت از داده‌های فردی بر اساس قوانین اتحادیه اروپا.'
-        : 'Data portability, retention policies, and privacy controls aligned with European GDPR requirements.'
+        : 'Data portability, retention policies, and privacy controls aligned with European data protection regulations.'
     },
     {
       icon: ShieldCheck,
@@ -70,21 +70,21 @@ export const SecurityAndPermissionsSection: React.FC<SecuritySectionProps> = ({ 
         
         <div className="text-center max-w-3xl mx-auto space-y-3">
           <span className="text-xs font-bold text-[#0E9F8E] uppercase tracking-wider bg-[#EAF8F5] px-3 py-1 rounded-full border border-[#B2E5DF]">
-            {lang === 'ro' ? 'Nucleul C17 — Trust & Security' : lang === 'fa' ? 'هسته نرم‌افزاری C17 — اعتماد و امنیت داده‌ها' : 'C17 Core — Trust & Security'}
+            {lang === 'ro' ? 'Nucleul C17 — Securitate & Încredere' : lang === 'fa' ? 'هسته نرم‌افزاری C17 — اعتماد و امنیت داده‌ها' : 'C17 Core — Trust & Security'}
           </span>
           <h2 className="text-3xl sm:text-5xl font-display font-extrabold text-[#102A43] tracking-tight">
             {lang === 'ro' 
-              ? 'Securitate și Izolare la Standarde Bancare' 
+              ? 'Securitate și Izolare a Datelor' 
               : lang === 'fa'
-              ? 'امنیت، تفکیک داده‌ها و اعتماد در سطح استانداردهای بانکی'
-              : 'Bank-Grade Security & Data Isolation'}
+              ? 'امنیت و جداسازی داده‌ها'
+              : 'Security and Tenant-Aware Data Isolation'}
           </h2>
           <p className="text-base sm:text-lg text-[#52667A]">
             {lang === 'ro'
               ? 'Administrarea locuințelor implică date personale, contracte de închiriere și sume financiare semnificative. Securitatea este încorporată în arhitectura fundamentală CLADORA.'
               : lang === 'fa'
               ? 'مدیریت دارایی‌های مسکونی شامل داده‌های حساس، قراردادهای مالی و مبالغ تراکنشی بالاست. امنیت داده‌ها در تار و پود معماری کلادورا نهادینه شده است.'
-              : 'Residential asset management involves sensitive personal contracts, leases, and substantial sums. Security is built into the ground architecture.'}
+              : 'Residential asset operations involve sensitive records, leases, and financial allocations. Robust isolation is built directly into the system foundation.'}
           </p>
         </div>
 

@@ -3,6 +3,7 @@ import type { Metadata } from 'next';
 import { Inter, Manrope, Vazirmatn } from 'next/font/google';
 import { Language, SUPPORTED_LOCALES, getLocaleConfig, getIntlLocale } from '@/types';
 import { AppOrMarketingLayout } from '@/components/layout/AppOrMarketingLayout';
+import { getSiteUrl } from '@/config/site';
 
 const inter = Inter({
   subsets: ['latin', 'latin-ext'],
@@ -73,6 +74,7 @@ export async function generateMetadata({
   }
 
   const intlLocale = getIntlLocale(params.lang).replace('-', '_');
+  const baseUrl = getSiteUrl();
 
   return {
     title: {
@@ -81,19 +83,20 @@ export async function generateMetadata({
     },
     description,
     keywords,
-    metadataBase: new URL('https://cladora.ro'),
+    metadataBase: new URL(baseUrl),
     alternates: {
       canonical: `/${params.lang}`,
       languages: {
         ro: '/ro',
         en: '/en',
         fa: '/fa',
+        'x-default': '/ro',
       },
     },
     openGraph: {
       title,
       description,
-      url: `https://cladora.ro/${params.lang}`,
+      url: `${baseUrl}/${params.lang}`,
       siteName: 'CLADORA Asset OS',
       locale: intlLocale,
       type: 'website',
@@ -118,6 +121,7 @@ export default function LangLayout({
   params: { lang: Language };
 }) {
   const locale = getLocaleConfig(params.lang);
+  const baseUrl = getSiteUrl();
 
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -135,7 +139,7 @@ export default function LangLayout({
     creator: {
       '@type': 'Organization',
       name: 'CLADORA',
-      url: 'https://cladora.ro',
+      url: baseUrl,
     },
   };
 
