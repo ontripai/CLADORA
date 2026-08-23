@@ -5,7 +5,7 @@ import { FaqSection } from '@/components/home/FaqSection';
 import { HelpCircle, ArrowRight } from 'lucide-react';
 
 export async function generateStaticParams() {
-  return [{ lang: 'en' }, { lang: 'ro' }];
+  return [{ lang: 'en' }, { lang: 'ro' }, { lang: 'fa' }];
 }
 
 export default function FaqPage({ params }: { params: { lang: Language } }) {

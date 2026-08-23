@@ -4,7 +4,7 @@ import { Language } from '@/types';
 import { Building2, ShieldCheck, HeartHandshake, ArrowRight } from 'lucide-react';
 
 export async function generateStaticParams() {
-  return [{ lang: 'en' }, { lang: 'ro' }];
+  return [{ lang: 'en' }, { lang: 'ro' }, { lang: 'fa' }];
 }
 
 export default function AboutPage({ params }: { params: { lang: Language } }) {

@@ -12,89 +12,97 @@ import {
 export const DEMO_ROLES: RoleDefinition[] = [
   {
     key: 'association_admin',
-    title: { ro: 'Administrator de Bloc', en: 'Association Administrator' },
+    title: { ro: 'Administrator de Bloc', en: 'Association Administrator', fa: 'مدیر ساختمان' },
     description: { 
       ro: 'Închidere de lună, reconciliere bancară, alocare cote cheltuieli, mentenanță și furnizori.',
-      en: 'Monthly close, bank reconciliation, quota allocation, maintenance and suppliers.'
+      en: 'Monthly close, bank reconciliation, quota allocation, maintenance and suppliers.',
+      fa: 'بستن دوره ماهانه، تطبیق بانکی، تسهیم هزینه‌های شارژ، مدیریت تعمیرات و تأمین‌کنندگان.'
     },
-    badge: { ro: 'Operațional & Financiar', en: 'Operational & Financial' },
+    badge: { ro: 'Operațional & Financiar', en: 'Operational & Financial', fa: 'عملیاتی و مالی' },
     icon: 'Building2',
     defaultRoute: '/app/dashboard'
   },
   {
     key: 'president',
-    title: { ro: 'Președinte de Asociație', en: 'Association President' },
+    title: { ro: 'Președinte de Asociație', en: 'Association President', fa: 'رئیس هیئت‌مدیره انجمن' },
     description: { 
       ro: 'Avizare plăți, reprezentare juridică, convocare AG, monitorizare contracte majore.',
-      en: 'Payment approvals, legal representation, AGM scheduling, contract governance.'
+      en: 'Payment approvals, legal representation, AGM scheduling, contract governance.',
+      fa: 'تأیید پرداخت‌ها، نمایندگی حقوقی، برگزاری مجامع عمومی و نظارت بر قراردادهای عمده.'
     },
-    badge: { ro: 'Guvernanță & Decizie', en: 'Governance & Sign-off' },
+    badge: { ro: 'Guvernanță & Decizie', en: 'Governance & Sign-off', fa: 'حکمرانی و تصمیم‌گیری' },
     icon: 'ShieldCheck',
     defaultRoute: '/app/dashboard'
   },
   {
     key: 'censor',
-    title: { ro: 'Cenzor / Auditor Financiar', en: 'Censor / Financial Auditor' },
+    title: { ro: 'Cenzor / Auditor Financiar', en: 'Censor / Financial Auditor', fa: 'بازرس / حسابرس انجمن' },
     description: { 
       ro: 'Verificare balanță, jurnal operațiuni, reconciliere conturi, conformitate Legea 196/2018.',
-      en: 'Trial balance audits, journal review, fund reconciliations, statutory compliance.'
+      en: 'Trial balance audits, journal review, fund reconciliations, statutory compliance.',
+      fa: 'بررسی تراز آزمایشی، کنترل اسناد دفتر روزنامه، ممیزی صندوق‌ها و انطباق با قوانین.'
     },
-    badge: { ro: 'Audit & Conformitate', en: 'Audit & Compliance' },
+    badge: { ro: 'Audit & Conformitate', en: 'Audit & Compliance', fa: 'حسابرسی و انطباق' },
     icon: 'FileCheck',
     defaultRoute: '/app/dashboard'
   },
   {
     key: 'owner',
-    title: { ro: 'Proprietar (Rezident)', en: 'Homeowner (Resident)' },
+    title: { ro: 'Proprietar (Rezident)', en: 'Homeowner (Resident)', fa: 'مالک واحد (ساکن)' },
     description: { 
       ro: 'Listă de plată transparentă, transmitere index contoare, vot adunare generală, tichete.',
-      en: 'Transparent monthly statement, meter readings submission, AGM voting, tickets.'
+      en: 'Transparent monthly statement, meter readings submission, AGM voting, tickets.',
+      fa: 'صورت‌حساب شفاف ماهانه، ارسال عکس و شاخص کنتور، شرکت در رأی‌گیری مجمع و ثبت تیکت.'
     },
-    badge: { ro: 'Proprietate & Drepturi', en: 'Ownership & Rights' },
+    badge: { ro: 'Proprietate & Drepturi', en: 'Ownership & Rights', fa: 'مالکیت و حقوق' },
     icon: 'Home',
     defaultRoute: '/app/dashboard'
   },
   {
     key: 'tenant_resident',
-    title: { ro: 'Chiriaș / Rezident', en: 'Tenant / Resident' },
+    title: { ro: 'Chiriaș / Rezident', en: 'Tenant / Resident', fa: 'مستأجر / ساکن' },
     description: { 
       ro: 'Plată cheltuieli operaționale de consum, citire contoare, sesizări mentenanță (fără acces la datele financiare ale proprietarului).',
-      en: 'Pay consumption charges, submit meters, report maintenance issues (strictly isolated from owner financial ledger).'
+      en: 'Pay consumption charges, submit meters, report maintenance issues (strictly isolated from owner financial ledger).',
+      fa: 'پرداخت هزینه‌های مصرفی، ثبت کنتور، درخواست تعمیرات (با جداسازی کامل از اطلاعات مالی مالک).'
     },
-    badge: { ro: 'Consum & Servicii', en: 'Consumption & Living' },
+    badge: { ro: 'Consum & Servicii', en: 'Consumption & Living', fa: 'مصارف و خدمات' },
     icon: 'KeyRound',
     defaultRoute: '/app/dashboard'
   },
   {
     key: 'portfolio_owner',
-    title: { ro: 'Proprietar Portofoliu (Multi-Property)', en: 'Portfolio Landlord' },
+    title: { ro: 'Proprietar Portofoliu (Multi-Property)', en: 'Portfolio Landlord', fa: 'مالک سبد املاک (سرمایه‌گذار)' },
     description: { 
       ro: 'Consolidare 4+ apartamente, monitorizare chirii încasate, yield net, alocare costuri proprietar vs chiriaș.',
-      en: 'Consolidate multiple apartments, track rental cashflow, net yield, owner vs tenant expense separation.'
+      en: 'Consolidate multiple apartments, track rental cashflow, net yield, owner vs tenant expense separation.',
+      fa: 'تجمیع مدیریت چندین ملک، پایش دریافت اجاره‌بها، محاسبه بازده خالص و تفکیک مخارج مالک و مستأجر.'
     },
-    badge: { ro: 'Randament & Portofoliu', en: 'Yield & Portfolio' },
+    badge: { ro: 'Randament & Portofoliu', en: 'Yield & Portfolio', fa: 'بازده و سبد املاک' },
     icon: 'TrendingUp',
     defaultRoute: '/app/dashboard'
   },
   {
     key: 'property_manager',
-    title: { ro: 'Companie de Administrare (Pro)', en: 'Professional Property Manager' },
+    title: { ro: 'Companie de Administrare (Pro)', en: 'Professional Property Manager', fa: 'شرکت مدیریت املاک (حرفه‌ای)' },
     description: { 
       ro: 'Gestionare 8+ asociații simultan, închidere centralizată de lună, SLA echipe de mentenanță, analiză multi-bloc.',
-      en: 'Manage 8+ associations concurrently, batch month-end close, staff SLA metrics, portfolio analytics.'
+      en: 'Manage 8+ associations concurrently, batch month-end close, staff SLA metrics, portfolio analytics.',
+      fa: 'مدیریت هم‌زمان چندین مجتمع، بستن دسته‌ای دوره‌ها، پایش SLA تکنسین‌ها و تحلیل تجمیعی پروژه‌ها.'
     },
-    badge: { ro: 'Multi-Asociație Pro', en: 'Multi-Association Pro' },
+    badge: { ro: 'Multi-Asociație Pro', en: 'Multi-Association Pro', fa: 'مدیریت چندمجتمعی' },
     icon: 'Layers',
     defaultRoute: '/app/dashboard'
   },
   {
     key: 'platform_admin',
-    title: { ro: 'Administrator Platformă CLADORA', en: 'Platform Administrator' },
+    title: { ro: 'Administrator Platformă CLADORA', en: 'Platform Administrator', fa: 'مدیر ارشد سامانه کلادورا' },
     description: { 
       ro: 'Izolare multi-tenant, audit de securitate, feature flags, telemetrie sistem.',
-      en: 'Multi-tenant isolation, security audit logs, feature flags, system telemetry.'
+      en: 'Multi-tenant isolation, security audit logs, feature flags, system telemetry.',
+      fa: 'جداسازی چندمستأجره داده‌ها، پایش لاگ‌های امنیتی، مدیریت مجوزها و تله‌متری سامانه.'
     },
-    badge: { ro: 'Sistem & Securitate', en: 'System & Security' },
+    badge: { ro: 'Sistem & Securitate', en: 'System & Security', fa: 'سیستم و امنیت' },
     icon: 'Server',
     defaultRoute: '/app/dashboard'
   }

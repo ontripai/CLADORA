@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { Language } from '@/types';
 import { getDictionary } from '@/dictionaries';
-import { Sparkles, CheckCircle2, Send, Building, ShieldCheck, X } from 'lucide-react';
+import { Sparkles, CheckCircle2, Send, ShieldCheck, X } from 'lucide-react';
 
 interface PilotApplicationModalProps {
   lang: Language;
@@ -44,8 +44,8 @@ export const PilotApplicationModal: React.FC<PilotApplicationModalProps> = ({
         <button
           type="button"
           onClick={onClose}
-          aria-label="Close modal"
-          className="absolute top-4 right-4 p-2 rounded-xl text-[#7B8A9A] hover:bg-[#F0F4F8] transition-colors"
+          aria-label={lang === 'ro' ? 'Închide fereastra' : lang === 'fa' ? 'بستن پنجره' : 'Close modal'}
+          className="absolute top-4 end-4 p-2 rounded-xl text-[#7B8A9A] hover:bg-[#F0F4F8] transition-colors"
         >
           <X className="w-5 h-5" />
         </button>
@@ -57,7 +57,7 @@ export const PilotApplicationModal: React.FC<PilotApplicationModalProps> = ({
             <CheckCircle2 className="w-8 h-8" />
           </div>
           <h3 className="text-2xl font-display font-bold text-[#102A43]">
-            {lang === 'ro' ? 'Cererea a fost înregistrată cu succes!' : 'Application Successfully Received!'}
+            {lang === 'ro' ? 'Cererea a fost înregistrată cu succes!' : lang === 'fa' ? 'درخواست شما با موفقیت ثبت گردید!' : 'Application Successfully Received!'}
           </h3>
           <p className="text-xs sm:text-sm text-[#52667A] max-w-md mx-auto">
             {fields.successMsg}
@@ -68,7 +68,7 @@ export const PilotApplicationModal: React.FC<PilotApplicationModalProps> = ({
               onClick={onClose}
               className="px-6 py-2.5 rounded-xl bg-[#0E9F8E] text-white text-xs font-bold"
             >
-              Închide
+              {lang === 'ro' ? 'Închide' : lang === 'fa' ? 'بستن' : 'Close'}
             </button>
           )}
         </div>
@@ -77,7 +77,7 @@ export const PilotApplicationModal: React.FC<PilotApplicationModalProps> = ({
           <div className="space-y-1">
             <div className="inline-flex items-center gap-2 text-xs font-bold text-[#0E9F8E] uppercase tracking-wider">
               <Sparkles className="w-4 h-4 text-[#0E9F8E]" />
-              <span>{lang === 'ro' ? 'Cohortă Pilot 2026' : 'Pilot Cohort 2026'}</span>
+              <span>{lang === 'ro' ? 'Cohortă Pilot 2026' : lang === 'fa' ? 'دوره پایلوت ۲۰۲۶' : 'Pilot Cohort 2026'}</span>
             </div>
             <h3 className="text-xl sm:text-2xl font-display font-extrabold text-[#102A43]">
               {formTitle}
@@ -95,7 +95,7 @@ export const PilotApplicationModal: React.FC<PilotApplicationModalProps> = ({
                 name="fullName"
                 autoComplete="name"
                 required
-                placeholder="Ex. Ing. Mihai Popescu"
+                placeholder={lang === 'ro' ? 'Ex. Ing. Mihai Popescu' : lang === 'fa' ? 'مثال: مهندس احسان کریمی' : 'e.g. John Doe'}
                 value={formData.fullName}
                 onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
                 className="w-full px-3.5 py-2.5 rounded-xl border border-[#D3DCE6] text-xs text-[#102A43] focus:outline-none focus:ring-2 focus:ring-[#0E9F8E]"
@@ -112,7 +112,7 @@ export const PilotApplicationModal: React.FC<PilotApplicationModalProps> = ({
                 name="email"
                 autoComplete="email"
                 required
-                placeholder="mihai.popescu@gmail.com"
+                placeholder="contact@example.com"
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                 className="w-full px-3.5 py-2.5 rounded-xl border border-[#D3DCE6] text-xs text-[#102A43] focus:outline-none focus:ring-2 focus:ring-[#0E9F8E]"
@@ -131,7 +131,7 @@ export const PilotApplicationModal: React.FC<PilotApplicationModalProps> = ({
                 name="phone"
                 autoComplete="tel"
                 required
-                placeholder="07xxxxxxxx"
+                placeholder={lang === 'ro' ? '07xxxxxxxx' : lang === 'fa' ? '۰۹۱۲xxxxxxx' : '+40 700 000 000'}
                 value={formData.phone}
                 onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                 className="w-full px-3.5 py-2.5 rounded-xl border border-[#D3DCE6] text-xs text-[#102A43] focus:outline-none focus:ring-2 focus:ring-[#0E9F8E]"
@@ -159,7 +159,13 @@ export const PilotApplicationModal: React.FC<PilotApplicationModalProps> = ({
 
           <div className="p-3.5 rounded-xl bg-[#F6F9FC] border border-[#E2E8F0] flex items-center gap-3 text-xs text-[#52667A]">
             <ShieldCheck className="w-4 h-4 text-[#0E9F8E] shrink-0" />
-            <span>{lang === 'ro' ? 'Datele transmise sunt strict confidențiale conform GDPR și sunt utilizate exclusiv pentru configurarea instanței pilot.' : 'Data is protected under GDPR and strictly used for onboarding your pilot instance.'}</span>
+            <span>
+              {lang === 'ro' 
+                ? 'Datele transmise sunt strict confidențiale conform GDPR și sunt utilizate exclusiv pentru configurarea instanței pilot.' 
+                : lang === 'fa'
+                ? 'اطلاعات ارسالی مطابق استانداردهای GDPR کاملاً محرمانه بوده و صرفاً جهت هماهنگی و راه‌اندازی نسخه پایلوت استفاده خواهد شد.'
+                : 'Data is protected under GDPR and strictly used for onboarding your pilot instance.'}
+            </span>
           </div>
 
           <button

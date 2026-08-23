@@ -1,22 +1,11 @@
 'use client';
 
-import React, { useState } from 'react';
-import Link from 'next/link';
+import React from 'react';
 import { useRouter } from 'next/navigation';
 import { Language, UserRole } from '@/types';
 import { 
-  Building2, 
-  ShieldCheck, 
-  FileCheck, 
-  Home, 
-  KeyRound, 
-  TrendingUp, 
-  Layers, 
-  Wrench, 
-  Server,
   ArrowRight,
   Sparkles,
-  Info,
   RotateCcw
 } from 'lucide-react';
 import { DEMO_ROLES } from '@/data/mockData';
@@ -44,11 +33,13 @@ export default function DemoEntryPage({ params }: { params: { lang: Language } }
             </div>
             <div>
               <div className="text-xs font-bold text-[#0A6E62]">
-                {lang === 'ro' ? 'Mediu Demo Interactiv (Sandbox)' : 'Interactive Demo Environment (Sandbox)'}
+                {lang === 'ro' ? 'Mediu Demo Interactiv (Sandbox)' : lang === 'fa' ? 'محیط دموی تعاملی (سندباکس زنده)' : 'Interactive Demo Environment (Sandbox)'}
               </div>
               <div className="text-[11px] text-[#52667A]">
                 {lang === 'ro' 
                   ? 'Date de test fictive din București (Aviației 12B). Zero autentificare necesară. Poți comuta rolul oricând.'
+                  : lang === 'fa'
+                  ? 'داده‌های فرضی و آزمایشی مجتمع مسکونی. بدون نیاز به ثبت‌نام یا لاگین. امکان تغییر نقش در هر لحظه.'
                   : 'Fictional Bucharest demo data. Zero login required. Switch roles anytime inside the app shell.'}
               </div>
             </div>
@@ -60,21 +51,27 @@ export default function DemoEntryPage({ params }: { params: { lang: Language } }
             className="px-3 py-1.5 rounded-lg bg-white border border-[#B2E5DF] text-xs font-bold text-[#0A6E62] hover:bg-[#D5F2ED] transition-colors flex items-center gap-1.5 shrink-0"
           >
             <RotateCcw className="w-3.5 h-3.5" />
-            <span>{lang === 'ro' ? 'Resetează datele demo' : 'Reset demo data'}</span>
+            <span>{lang === 'ro' ? 'Resetează datele demo' : lang === 'fa' ? 'بازنشانی داده‌های دمو' : 'Reset demo data'}</span>
           </button>
         </div>
 
         {/* Header */}
         <div className="text-center max-w-3xl mx-auto space-y-3 mb-12">
           <span className="text-xs font-bold text-[#0E9F8E] uppercase tracking-wider bg-[#EAF8F5] px-3 py-1 rounded-full border border-[#B2E5DF]">
-            {lang === 'ro' ? 'Alege rolul de testare' : 'Choose Your Demo Persona'}
+            {lang === 'ro' ? 'Alege rolul de testare' : lang === 'fa' ? 'انتخاب نقش در محیط دمو' : 'Choose Your Demo Persona'}
           </span>
           <h1 className="text-3xl sm:text-4xl font-display font-extrabold text-[#102A43]">
-            {lang === 'ro' ? 'Cum dorești să experimentezi CLADORA?' : 'How do you want to explore CLADORA?'}
+            {lang === 'ro' 
+              ? 'Cum dorești să experimentezi CLADORA?' 
+              : lang === 'fa'
+              ? 'مایلید با چه نقشی کلادورا را بیازمایید؟'
+              : 'How do you want to explore CLADORA?'}
           </h1>
           <p className="text-sm text-[#52667A]">
             {lang === 'ro'
               ? 'Fiecare rol beneficiază de o vizualizare optimizată cu permisiuni conforme Legii 196/2018.'
+              : lang === 'fa'
+              ? 'هر نقش سازمانی دارای داشبورد، دسترسی‌های اختصاصی و گردش‌کارهای تفکیک‌شده است.'
               : 'Each role configures the application layout, charts, and permitted data boundaries.'}
           </p>
         </div>
@@ -107,8 +104,14 @@ export default function DemoEntryPage({ params }: { params: { lang: Language } }
                 onClick={() => handleSelectRole(role.key)}
                 className="mt-6 w-full py-2.5 px-4 rounded-xl bg-[#102A43] hover:bg-[#0E9F8E] text-white text-xs font-bold transition-colors flex items-center justify-center gap-2 shadow-sm"
               >
-                <span>{lang === 'ro' ? 'Intră ca ' + role.title[lang] : 'Explore as ' + role.title[lang]}</span>
-                <ArrowRight className="w-3.5 h-3.5" />
+                <span>
+                  {lang === 'ro' 
+                    ? 'Intră ca ' + role.title[lang] 
+                    : lang === 'fa'
+                    ? 'ورود با نقش ' + role.title[lang]
+                    : 'Explore as ' + role.title[lang]}
+                </span>
+                <ArrowRight className="w-3.5 h-3.5 rtl:rotate-180" />
               </button>
             </div>
           ))}

@@ -4,7 +4,7 @@ import { Language } from '@/types';
 import { FileText, ShieldAlert } from 'lucide-react';
 
 export async function generateStaticParams() {
-  return [{ lang: 'en' }, { lang: 'ro' }];
+  return [{ lang: 'en' }, { lang: 'ro' }, { lang: 'fa' }];
 }
 
 export default function TermsPage({ params }: { params: { lang: Language } }) {

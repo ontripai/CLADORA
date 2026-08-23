@@ -1,8 +1,7 @@
 import React from 'react';
 import type { Metadata } from 'next';
-import { Inter, Manrope } from 'next/font/google';
+import { Inter, Manrope, Vazirmatn } from 'next/font/google';
 import { Language } from '@/types';
-import { getDictionary } from '@/dictionaries';
 import { AppOrMarketingLayout } from '@/components/layout/AppOrMarketingLayout';
 
 const inter = Inter({
@@ -17,8 +16,14 @@ const manrope = Manrope({
   display: 'swap',
 });
 
+const vazirmatn = Vazirmatn({
+  subsets: ['arabic', 'latin'],
+  variable: '--font-vazirmatn',
+  display: 'swap',
+});
+
 export async function generateStaticParams() {
-  return [{ lang: 'en' }, { lang: 'ro' }];
+  return [{ lang: 'en' }, { lang: 'ro' }, { lang: 'fa' }];
 }
 
 export async function generateMetadata({
@@ -27,14 +32,45 @@ export async function generateMetadata({
   params: { lang: Language };
 }): Promise<Metadata> {
   const isRo = params.lang === 'ro';
+  const isFa = params.lang === 'fa';
 
-  const title = isRo
-    ? 'CLADORA | Sistemul de Operare pentru Active Rezidențiale & Contabilitate'
-    : 'CLADORA | Residential Asset Operating System & Double-Entry Accounting';
+  let title = 'CLADORA | Residential Asset Operating System & Double-Entry Accounting';
+  let description = 'CLADORA unifies double-entry accounting truth, 5D owner-tenant rights, meter OCR, and residential portfolios on an auditable ledger.';
+  let keywords = [
+    'homeowner association software',
+    'condo management operating system',
+    'double entry condo accounting',
+    'tenant meter readings ocr',
+    'residential portfolio software',
+    'cladora',
+  ];
 
-  const description = isRo
-    ? 'CLADORA unește contabilitatea în partidă dublă, Legea 196/2018, drepturile proprietar-chiriaș, citirea automată a contoarelor și migrarea prin Shadow Ledger într-un singur sistem de operare.'
-    : 'CLADORA unifies double-entry accounting truth, 5D owner-tenant rights, meter OCR, and residential portfolios on an auditable ledger.';
+  if (isRo) {
+    title = 'CLADORA | Sistemul de Operare pentru Active Rezidențiale & Contabilitate';
+    description = 'CLADORA unește contabilitatea în partidă dublă, Legea 196/2018, drepturile proprietar-chiriaș, citirea automată a contoarelor și migrarea prin Shadow Ledger într-un singur sistem de operare.';
+    keywords = [
+      'soft asociatie de proprietari',
+      'program administrare bloc',
+      'contabilitate asociatii proprietari legea 196 2018',
+      'avizier digital',
+      'citire contoare ocr',
+      'software gestiune chirii portofoliu proprietar',
+      'migrare xisoft bloc manager',
+      'cladora',
+    ];
+  } else if (isFa) {
+    title = 'کلادورا | سیستم‌عامل مدیریت دارایی‌های مسکونی و حسابداری دوطرفه';
+    description = 'کلادورا حسابداری دوطرفه تغییرناپذیر، تفکیک ۵ بعدی حقوق مالک و مستأجر، قرائت تصویری کنتورها با هوش مصنوعی و مهاجرت امن سوابق را در یک سیستم‌عامل یکپارچه ارائه می‌دهد.';
+    keywords = [
+      'نرم افزار مدیریت ساختمان',
+      'حسابداری انجمن مالکان',
+      'سامانه جامع مدیریت املاک',
+      'تابلو اعلانات دیجیتال ساختمان',
+      'قرائت هوشمند کنتور آب با عکس',
+      'مدیریت سبد املاک استیجاری',
+      'کلادورا',
+    ];
+  }
 
   return {
     title: {
@@ -42,31 +78,14 @@ export async function generateMetadata({
       template: '%s | CLADORA',
     },
     description,
-    keywords: isRo
-      ? [
-          'soft asociatie de proprietari',
-          'program administrare bloc',
-          'contabilitate asociatii proprietari legea 196 2018',
-          'avizier digital',
-          'citire contoare ocr',
-          'software gestiune chirii portofoliu proprietar',
-          'migrare xisoft bloc manager',
-          'cladora',
-        ]
-      : [
-          'homeowner association software',
-          'condo management operating system',
-          'double entry condo accounting',
-          'tenant meter readings ocr',
-          'residential portfolio software',
-          'cladora',
-        ],
+    keywords,
     metadataBase: new URL('https://cladora.ro'),
     alternates: {
       canonical: `/${params.lang}`,
       languages: {
         ro: '/ro',
         en: '/en',
+        fa: '/fa',
       },
     },
     openGraph: {
@@ -74,7 +93,7 @@ export async function generateMetadata({
       description,
       url: `https://cladora.ro/${params.lang}`,
       siteName: 'CLADORA Asset OS',
-      locale: params.lang === 'ro' ? 'ro_RO' : 'en_US',
+      locale: isRo ? 'ro_RO' : isFa ? 'fa_IR' : 'en_US',
       type: 'website',
     },
     twitter: {
@@ -96,6 +115,9 @@ export default function LangLayout({
   children: React.ReactNode;
   params: { lang: Language };
 }) {
+  const isFa = params.lang === 'fa';
+  const dir = isFa ? 'rtl' : 'ltr';
+
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'SoftwareApplication',
@@ -117,14 +139,18 @@ export default function LangLayout({
   };
 
   return (
-    <html lang={params.lang} className={`${inter.variable} ${manrope.variable} scroll-smooth`}>
+    <html 
+      lang={params.lang} 
+      dir={dir}
+      className={`${inter.variable} ${manrope.variable} ${vazirmatn.variable} scroll-smooth`}
+    >
       <head>
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
       </head>
-      <body className="font-sans min-h-screen bg-[#F6F9FC] text-[#102A43] antialiased">
+      <body className={`font-sans min-h-screen bg-[#F6F9FC] text-[#102A43] antialiased ${isFa ? 'font-vazirmatn' : ''}`}>
         <AppOrMarketingLayout lang={params.lang}>
           {children}
         </AppOrMarketingLayout>

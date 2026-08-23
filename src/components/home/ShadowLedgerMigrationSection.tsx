@@ -1,18 +1,7 @@
 'use client';
 
 import React from 'react';
-import Link from 'next/link';
 import { Language } from '@/types';
-import { 
-  Database, 
-  ShieldCheck, 
-  ArrowRight, 
-  RefreshCw, 
-  CheckCircle2, 
-  FileSpreadsheet,
-  AlertTriangle,
-  ArrowRightLeft
-} from 'lucide-react';
 import { ShadowLedgerDemo } from '@/components/interactive/ShadowLedgerDemo';
 
 interface MigrationSectionProps {
@@ -23,23 +12,39 @@ export const ShadowLedgerMigrationSection: React.FC<MigrationSectionProps> = ({ 
   const steps = [
     {
       num: '01',
-      title: lang === 'ro' ? 'Import Date Vechi' : 'Legacy Data Import',
-      desc: lang === 'ro' ? 'Preluare baze de date din BlocManager, Xisoft, Aviziero, Platformis sau fișiere Excel.' : 'Ingest raw data exports from legacy software (BlocManager, Xisoft, Excel tables).'
+      title: lang === 'ro' ? 'Import Date Vechi' : lang === 'fa' ? 'فراخوانی داده‌های قدیمی' : 'Legacy Data Import',
+      desc: lang === 'ro' 
+        ? 'Preluare baze de date din BlocManager, Xisoft, Aviziero, Platformis sau fișiere Excel.' 
+        : lang === 'fa'
+        ? 'دریافت پایگاه‌های داده قبلی از نرم‌افزارهای سنتی یا فایل‌های اکسل و حسابداری.'
+        : 'Ingest raw data exports from legacy software (BlocManager, Xisoft, Excel tables).'
     },
     {
       num: '02',
-      title: lang === 'ro' ? 'Reconciliere Automată' : 'Variance Detection',
-      desc: lang === 'ro' ? 'Motorul Shadow Ledger identifică restanțe calculate eronat, fonduri amestecate și erori de penalitate.' : 'Shadow Ledger algorithms audit historical balances, penalty caps, and fund splits.'
+      title: lang === 'ro' ? 'Reconciliere Automată' : lang === 'fa' ? 'کشف خودکار مغایرت‌ها' : 'Variance Detection',
+      desc: lang === 'ro' 
+        ? 'Motorul Shadow Ledger identifică restanțe calculate eronat, fonduri amestecate și erori de penalitate.' 
+        : lang === 'fa'
+        ? 'موتور Shadow Ledger مغایرت‌های محاسباتی مانده‌ها، جرایم غیرقانونی و تداخل صندوق‌ها را کشف می‌کند.'
+        : 'Shadow Ledger algorithms audit historical balances, penalty caps, and fund splits.'
     },
     {
       num: '03',
-      title: lang === 'ro' ? 'Rulare în Paralel' : 'Parallel Dual Run',
-      desc: lang === 'ro' ? 'Rulăm 1–3 luni în paralel cu softul existent până când comitetul și cenzorul au încredere 100%.' : 'Operate 1–3 billing cycles concurrently until committee and auditors verify 100% accuracy.'
+      title: lang === 'ro' ? 'Rulare în Paralel' : lang === 'fa' ? 'اجرای موازی و بدون ریسک' : 'Parallel Dual Run',
+      desc: lang === 'ro' 
+        ? 'Rulăm 1–3 luni în paralel cu softul existent până când comitetul și cenzorul au încredere 100%.' 
+        : lang === 'fa'
+        ? 'فعالیت موازی ۱ تا ۳ دوره با سامانه قبلی تا اطمینان ۱۰۰ درصدی هیئت‌مدیره و بازرسان مجتمع.'
+        : 'Operate 1–3 billing cycles concurrently until committee and auditors verify 100% accuracy.'
     },
     {
       num: '04',
-      title: lang === 'ro' ? 'Comutare Controlată' : 'Controlled Cutover',
-      desc: lang === 'ro' ? 'Trecerea definitivă pe CLADORA fără oprirea activității și fără pierderi de istoric contabil.' : 'Clean transition to production ledger with complete zero-data-loss audit history.'
+      title: lang === 'ro' ? 'Comutare Controlată' : lang === 'fa' ? 'استقرار نهایی و پایدار' : 'Controlled Cutover',
+      desc: lang === 'ro' 
+        ? 'Trecerea definitivă pe CLADORA fără oprirea activității și fără pierderi de istoric contabil.' 
+        : lang === 'fa'
+        ? 'انتقال قطعی و بی‌وقفه به کلادورا با حفظ کامل سوابق مالی و ترازهای پاکسازی‌شده.'
+        : 'Clean transition to production ledger with complete zero-data-loss audit history.'
     }
   ];
 
@@ -49,14 +54,20 @@ export const ShadowLedgerMigrationSection: React.FC<MigrationSectionProps> = ({ 
         
         <div className="text-center max-w-3xl mx-auto space-y-3">
           <span className="text-xs font-bold text-[#0E9F8E] uppercase tracking-wider bg-[#EAF8F5] px-3 py-1 rounded-full border border-[#B2E5DF]">
-            {lang === 'ro' ? 'Nucleul C16 — Shadow Ledger' : 'C16 Core — Shadow Ledger'}
+            {lang === 'ro' ? 'Nucleul C16 — Shadow Ledger' : lang === 'fa' ? 'هسته نرم‌افزاری C16 — پروتکل Shadow Ledger' : 'C16 Core — Shadow Ledger'}
           </span>
           <h2 className="text-3xl sm:text-5xl font-display font-extrabold text-[#102A43] tracking-tight">
-            {lang === 'ro' ? 'Migrare Fără Risc pentru Asociație' : 'Safe Parallel Migration for Associations'}
+            {lang === 'ro' 
+              ? 'Migrare Fără Risc pentru Asociație' 
+              : lang === 'fa'
+              ? 'مهاجرت امن سوابق مالی بدون ریسک عملیاتی'
+              : 'Safe Parallel Migration for Associations'}
           </h2>
           <p className="text-base sm:text-lg text-[#52667A]">
             {lang === 'ro'
               ? 'Schimbarea programului de administrare este adesea blocată de frica de a strica soldurile. Protocolul Shadow Ledger a fost proiectat special pentru a elimina orice risc operațional.'
+              : lang === 'fa'
+              ? 'تغییر نرم‌افزار حسابداری معمولاً به دلیل نگرانی از به‌هم‌ریختن مانده‌حساب‌ها به تعویق می‌افتد. پروتکل دفتر کل موازی کلادورا این دغدغه را به‌طور کامل مرتفع کرده است.'
               : 'Switching property software usually stalls over fear of corrupting accounting balances. Shadow Ledger protocol runs side-by-side to discover errors before cutover.'}
           </p>
         </div>

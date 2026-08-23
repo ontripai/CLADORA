@@ -1,7 +1,8 @@
 import React from 'react';
 import Link from 'next/link';
 import { Language } from '@/types';
-import { ShieldCheck, HeartHandshake, CheckCircle2, Lock, ArrowUpRight } from 'lucide-react';
+import { ShieldCheck, ArrowUpRight } from 'lucide-react';
+import { LanguageSwitcher } from '@/components/ui/LanguageSwitcher';
 
 interface FooterProps {
   lang: Language;
@@ -31,44 +32,57 @@ export const Footer: React.FC<FooterProps> = ({ lang }) => {
             <p className="text-sm text-[#BCCCDC] leading-relaxed max-w-sm">
               {lang === 'ro'
                 ? 'Sistemul de operare pentru active rezidențiale. Unifică contabilitatea în partidă dublă, Legea 196/2018, drepturile proprietar-chiriaș, citirea contoarelor și portofoliile imobiliare într-un singur adevăr financiar.'
+                : lang === 'fa'
+                ? 'سیستم‌عامل یکپارچه مدیریت دارایی‌های مسکونی. اتصال حسابداری دوطرفه، تفکیک حقوق مالک و مستأجر، قرائت تصویری کنتورها و سبد املاک در یک هسته مالی تغییرناپذیر.'
                 : 'The residential asset operating system. Unifying double-entry accounting truth, Law 196/2018 statutory compliance, 5D owner-tenant rights, meter readings, and property portfolios.'}
             </p>
 
             <div className="pt-2 flex items-center gap-2 text-xs text-[#0E9F8E] font-semibold">
               <ShieldCheck className="w-4 h-4 text-[#10B981]" />
-              <span>{lang === 'ro' ? 'Creat pentru piața rezidențială din România' : 'Engineered for European & Romanian Residential Real Estate'}</span>
+              <span>
+                {lang === 'ro' 
+                  ? 'Creat pentru piața rezidențială din România' 
+                  : lang === 'fa'
+                  ? 'طراحی‌شده بر اساس استانداردهای املاک مسکونی اروپا'
+                  : 'Engineered for European & Romanian Residential Real Estate'}
+              </span>
+            </div>
+
+            {/* Language Switcher in Footer */}
+            <div className="pt-3">
+              <LanguageSwitcher currentLang={lang} variant="footer" />
             </div>
           </div>
 
           {/* Solutions Column */}
           <div className="space-y-3">
             <div className="text-xs font-bold text-[#75CFC3] uppercase tracking-wider">
-              {lang === 'ro' ? 'Soluții pe Roluri' : 'Solutions by Role'}
+              {lang === 'ro' ? 'Soluții pe Roluri' : lang === 'fa' ? 'راهکارها بر اساس نقش' : 'Solutions by Role'}
             </div>
             <ul className="space-y-2 text-sm text-[#BCCCDC]">
               <li>
                 <Link href={`/${lang}/solutions/associations`} className="hover:text-white transition-colors">
-                  {lang === 'ro' ? 'Asociații de Proprietari' : 'Homeowner Associations'}
+                  {lang === 'ro' ? 'Asociații de Proprietari' : lang === 'fa' ? 'انجمن‌های مالکان' : 'Homeowner Associations'}
                 </Link>
               </li>
               <li>
                 <Link href={`/${lang}/solutions/property-owners`} className="hover:text-white transition-colors">
-                  {lang === 'ro' ? 'Proprietari (Multi-Property)' : 'Portfolio Landlords'}
+                  {lang === 'ro' ? 'Proprietari (Multi-Property)' : lang === 'fa' ? 'مالکان سبد املاک' : 'Portfolio Landlords'}
                 </Link>
               </li>
               <li>
                 <Link href={`/${lang}/solutions/property-managers`} className="hover:text-white transition-colors">
-                  {lang === 'ro' ? 'Companii de Administrare' : 'Property Managers'}
+                  {lang === 'ro' ? 'Companii de Administrare' : lang === 'fa' ? 'شرکت‌های مدیریت املاک' : 'Property Managers'}
                 </Link>
               </li>
               <li>
                 <Link href={`/${lang}/solutions/residents`} className="hover:text-white transition-colors">
-                  {lang === 'ro' ? 'Proprietari & Rezidenți' : 'Owners & Residents'}
+                  {lang === 'ro' ? 'Proprietari & Rezidenți' : lang === 'fa' ? 'مالکان و ساکنان' : 'Owners & Residents'}
                 </Link>
               </li>
               <li>
                 <Link href={`/${lang}/solutions/tenants`} className="hover:text-white transition-colors">
-                  {lang === 'ro' ? 'Chiriași (Consum & Tichete)' : 'Tenants Portal'}
+                  {lang === 'ro' ? 'Chiriași (Consum & Tichete)' : lang === 'fa' ? 'پرتال مستأجران' : 'Tenants Portal'}
                 </Link>
               </li>
             </ul>
@@ -77,32 +91,32 @@ export const Footer: React.FC<FooterProps> = ({ lang }) => {
           {/* Platform & Modules Column */}
           <div className="space-y-3">
             <div className="text-xs font-bold text-[#75CFC3] uppercase tracking-wider">
-              {lang === 'ro' ? 'Platformă & Module' : 'Platform & Modules'}
+              {lang === 'ro' ? 'Platformă & Module' : lang === 'fa' ? 'پلتفرم و ماژول‌ها' : 'Platform & Modules'}
             </div>
             <ul className="space-y-2 text-sm text-[#BCCCDC]">
               <li>
                 <Link href={`/${lang}/platform`} className="hover:text-white transition-colors">
-                  {lang === 'ro' ? 'Arhitectura Platformei' : 'Platform Architecture'}
+                  {lang === 'ro' ? 'Arhitectura Platformei' : lang === 'fa' ? 'معماری پلتفرم' : 'Platform Architecture'}
                 </Link>
               </li>
               <li>
                 <Link href={`/${lang}/modules`} className="hover:text-white transition-colors">
-                  {lang === 'ro' ? 'Cele 17 Module Logice' : 'The 17 Logical Cores'}
+                  {lang === 'ro' ? 'Cele 17 Module Logice' : lang === 'fa' ? '۱۷ هسته نرم‌افزاری' : 'The 17 Logical Cores'}
                 </Link>
               </li>
               <li>
                 <Link href={`/${lang}/migration`} className="hover:text-white transition-colors">
-                  {lang === 'ro' ? 'Protocolul Shadow Ledger' : 'Shadow Ledger Migration'}
+                  {lang === 'ro' ? 'Protocolul Shadow Ledger' : lang === 'fa' ? 'مهاجرت امن Shadow Ledger' : 'Shadow Ledger Migration'}
                 </Link>
               </li>
               <li>
                 <Link href={`/${lang}/pricing`} className="hover:text-white transition-colors">
-                  {lang === 'ro' ? 'Prețuri Pilot & Calculator' : 'Pilot Pricing Calculator'}
+                  {lang === 'ro' ? 'Prețuri Pilot & Calculator' : lang === 'fa' ? 'تعرفه‌ها و محاسبه‌گر' : 'Pilot Pricing Calculator'}
                 </Link>
               </li>
               <li>
                 <Link href={`/${lang}/demo`} className="hover:text-white transition-colors flex items-center gap-1">
-                  <span>{lang === 'ro' ? 'Demo Sandbox Public' : 'Public Demo Sandbox'}</span>
+                  <span>{lang === 'ro' ? 'Demo Sandbox Public' : lang === 'fa' ? 'دموی تعاملی سندباکس' : 'Public Demo Sandbox'}</span>
                   <ArrowUpRight className="w-3.5 h-3.5 text-[#0E9F8E]" />
                 </Link>
               </li>
@@ -112,37 +126,32 @@ export const Footer: React.FC<FooterProps> = ({ lang }) => {
           {/* Resources & Legal Column */}
           <div className="space-y-3">
             <div className="text-xs font-bold text-[#75CFC3] uppercase tracking-wider">
-              {lang === 'ro' ? 'Resurse & Conformitate' : 'Resources & Trust'}
+              {lang === 'ro' ? 'Resurse & Conformitate' : lang === 'fa' ? 'منابع و امنیت' : 'Resources & Trust'}
             </div>
             <ul className="space-y-2 text-sm text-[#BCCCDC]">
               <li>
                 <Link href={`/${lang}/resources/faq`} className="hover:text-white transition-colors">
-                  {lang === 'ro' ? 'Întrebări Frecvente (FAQ)' : 'Frequently Asked Questions'}
-                </Link>
-              </li>
-              <li>
-                <Link href={`/${lang}/resources/guides`} className="hover:text-white transition-colors">
-                  {lang === 'ro' ? 'Ghiduri Legea 196/2018' : 'Law 196/2018 Guides'}
+                  {lang === 'ro' ? 'Întrebări Frecvente (FAQ)' : lang === 'fa' ? 'پرسش‌های متداول (FAQ)' : 'Frequently Asked Questions'}
                 </Link>
               </li>
               <li>
                 <Link href={`/${lang}/security`} className="hover:text-white transition-colors">
-                  {lang === 'ro' ? 'Securitate & Izolare Date' : 'Security & Data Isolation'}
+                  {lang === 'ro' ? 'Securitate & Izolare Date' : lang === 'fa' ? 'امنیت و جداسازی داده‌ها' : 'Security & Data Isolation'}
                 </Link>
               </li>
               <li>
                 <Link href={`/${lang}/privacy`} className="hover:text-white transition-colors">
-                  {lang === 'ro' ? 'Politica de Confidențialitate (GDPR)' : 'Privacy Policy (GDPR)'}
+                  {lang === 'ro' ? 'Politica de Confidențialitate (GDPR)' : lang === 'fa' ? 'حفظ حریم خصوصی (GDPR)' : 'Privacy Policy (GDPR)'}
                 </Link>
               </li>
               <li>
                 <Link href={`/${lang}/terms`} className="hover:text-white transition-colors">
-                  {lang === 'ro' ? 'Termeni și Condiții' : 'Terms of Service'}
+                  {lang === 'ro' ? 'Termeni și Condiții' : lang === 'fa' ? 'شرایط و قوانین استفاده' : 'Terms of Service'}
                 </Link>
               </li>
               <li>
                 <Link href={`/${lang}/accessibility`} className="hover:text-white transition-colors">
-                  {lang === 'ro' ? 'Declarație Accesibilitate (WCAG)' : 'Accessibility Statement'}
+                  {lang === 'ro' ? 'Declarație Accesibilitate (WCAG)' : lang === 'fa' ? 'بیانیه دسترس‌پذیری (WCAG)' : 'Accessibility Statement'}
                 </Link>
               </li>
             </ul>
@@ -155,6 +164,8 @@ export const Footer: React.FC<FooterProps> = ({ lang }) => {
           <p>
             {lang === 'ro'
               ? 'Notă legală și metodologică: Estimările de economii și calculele de randament sunt orientative și depind de specificul clădirii, starea instalațiilor, istoricul de consum și calitatea datelor importate. Algoritmii de repartizare a cheltuielilor sunt proiectați în conformitate cu prevederile Legii nr. 196/2018 privind înființarea, organizarea și funcționarea asociațiilor de proprietari și administrarea condominiilor din România. Funcționalitatea de migrare Shadow Ledger este concepută pentru a identifica discrepanțele înainte de trecerea operațională efectivă.'
+              : lang === 'fa'
+              ? 'یادداشت حقوقی و روش‌شناسی: نسخه فارسی برای سهولت مطالعه ارائه شده است. در صورت بروز اختلاف تفسیری، متن حقوقی مصوب برای بازار رومانی و نسخه قراردادی مورد تأیید ملاک خواهد بود. برآوردهای مالی و صرفه‌جویی جنبه ارشادی دارند و به شرایط ساختمان، قراردادها و داده‌های ورودی وابسته هستند. الگوریتم‌های تسهیم شارژ بر مبنای استانداردهای قانون ۱۹۶/۲۰۱۸ رومانی طراحی شده‌اند و دفتر کل موازی (Shadow Ledger) جهت شناسایی و رفع مغایرت‌های پیشین پیش از استقرار قطعی عمل می‌کند.'
               : 'Legal & methodological disclaimer: Savings estimates and yield projections are indicative and subject to building conditions, contract terms, consumption patterns, and data fidelity. Allocation algorithms are designed to support Romanian Law 196/2018 for condominium management. Shadow Ledger migration is designed to identify historical accounting discrepancies prior to cutover.'}
           </p>
         </div>
@@ -162,20 +173,20 @@ export const Footer: React.FC<FooterProps> = ({ lang }) => {
         {/* Bottom Strip */}
         <div className="pt-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[#7B8A9A]">
           <div>
-            © {currentYear} CLADORA Technologies. {lang === 'ro' ? 'Toate drepturile rezervate.' : 'All rights reserved.'}
+            © {currentYear} CLADORA Technologies. {lang === 'ro' ? 'Toate drepturile rezervate.' : lang === 'fa' ? 'تمامی حقوق برای کلادورا محفوظ است.' : 'All rights reserved.'}
           </div>
           <div className="flex items-center gap-6">
             <Link href={`/${lang}/privacy`} className="hover:text-white transition-colors">
-              {lang === 'ro' ? 'Confidențialitate' : 'Privacy'}
+              {lang === 'ro' ? 'Confidențialitate' : lang === 'fa' ? 'حریم خصوصی' : 'Privacy'}
             </Link>
             <Link href={`/${lang}/terms`} className="hover:text-white transition-colors">
-              {lang === 'ro' ? 'Termeni' : 'Terms'}
+              {lang === 'ro' ? 'Termeni' : lang === 'fa' ? 'قوانین' : 'Terms'}
             </Link>
             <Link href={`/${lang}/cookies`} className="hover:text-white transition-colors">
-              Cookies
+              {lang === 'ro' ? 'Cookies' : lang === 'fa' ? 'کوکی‌ها' : 'Cookies'}
             </Link>
             <Link href={`/${lang}/accessibility`} className="hover:text-white transition-colors">
-              {lang === 'ro' ? 'Accesibilitate' : 'Accessibility'}
+              {lang === 'ro' ? 'Accesibilitate' : lang === 'fa' ? 'دسترس‌پذیری' : 'Accessibility'}
             </Link>
           </div>
         </div>

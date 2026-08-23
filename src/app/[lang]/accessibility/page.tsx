@@ -4,7 +4,7 @@ import { Language } from '@/types';
 import { ShieldCheck, CheckCircle2 } from 'lucide-react';
 
 export async function generateStaticParams() {
-  return [{ lang: 'en' }, { lang: 'ro' }];
+  return [{ lang: 'en' }, { lang: 'ro' }, { lang: 'fa' }];
 }
 
 export default function AccessibilityPage({ params }: { params: { lang: Language } }) {

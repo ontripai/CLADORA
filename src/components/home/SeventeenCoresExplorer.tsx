@@ -5,12 +5,6 @@ import { Language } from '@/types';
 import { getDictionary } from '@/dictionaries';
 import { 
   Cpu, 
-  Filter, 
-  Sparkles, 
-  ShieldCheck, 
-  Layers, 
-  ArrowRight,
-  Database,
   Search
 } from 'lucide-react';
 
@@ -69,7 +63,7 @@ export const SeventeenCoresExplorer: React.FC<SeventeenCoresExplorerProps> = ({ 
                   : 'text-slate-200 hover:text-white'
               }`}
             >
-              {lang === 'ro' ? 'Toate (17)' : 'All Cores (17)'}
+              {lang === 'ro' ? 'Toate (17)' : lang === 'fa' ? 'همه (۱۷ هسته)' : 'All Cores (17)'}
             </button>
             <button
               onClick={() => setSelectedPriority('P1')}
@@ -79,7 +73,7 @@ export const SeventeenCoresExplorer: React.FC<SeventeenCoresExplorerProps> = ({ 
                   : 'text-slate-200 hover:text-white'
               }`}
             >
-              {lang === 'ro' ? 'P1: Nucleu MVP (6)' : 'P1: Core MVP (6)'}
+              {lang === 'ro' ? 'P1: Nucleu MVP (6)' : lang === 'fa' ? 'فاز ۱: هسته MVP (۶)' : 'P1: Core MVP (6)'}
             </button>
             <button
               onClick={() => setSelectedPriority('P2')}
@@ -89,7 +83,7 @@ export const SeventeenCoresExplorer: React.FC<SeventeenCoresExplorerProps> = ({ 
                   : 'text-slate-200 hover:text-white'
               }`}
             >
-              {lang === 'ro' ? 'P2: Operațiuni & Betă (7)' : 'P2: Ops & Beta (7)'}
+              {lang === 'ro' ? 'P2: Operațiuni & Betă (7)' : lang === 'fa' ? 'فاز ۲: عملیات و بتا (۷)' : 'P2: Ops & Beta (7)'}
             </button>
             <button
               onClick={() => setSelectedPriority('P3')}
@@ -99,25 +93,25 @@ export const SeventeenCoresExplorer: React.FC<SeventeenCoresExplorerProps> = ({ 
                   : 'text-slate-200 hover:text-white'
               }`}
             >
-              {lang === 'ro' ? 'P3: AI & Valoare (4)' : 'P3: AI & Value (4)'}
+              {lang === 'ro' ? 'P3: AI & Valoare (4)' : lang === 'fa' ? 'فاز ۳: هوش مصنوعی و ارزش (۴)' : 'P3: AI & Value (4)'}
             </button>
           </div>
 
           {/* Quick Search */}
           <div className="relative w-full sm:w-72">
             <label htmlFor="coreSearchInput" className="sr-only">
-              {lang === 'ro' ? 'Caută nucleu' : 'Search core'}
+              {lang === 'ro' ? 'Caută nucleu' : lang === 'fa' ? 'جستجوی ماژول' : 'Search core'}
             </label>
-            <Search className="w-4 h-4 text-slate-300 absolute left-3 top-1/2 -translate-y-1/2" />
+            <Search className="w-4 h-4 text-slate-300 absolute start-3 top-1/2 -translate-y-1/2 pointer-events-none" />
             <input
               id="coreSearchInput"
               name="coreSearchInput"
               type="text"
-              aria-label={lang === 'ro' ? 'Caută nucleu sau domeniu' : 'Search core or domain'}
+              aria-label={lang === 'ro' ? 'Caută nucleu sau domeniu' : lang === 'fa' ? 'جستجوی نام یا کد هسته' : 'Search core or domain'}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder={lang === 'ro' ? 'Caută nucleu sau domeniu...' : 'Search core or domain...'}
-              className="w-full pl-9 pr-4 py-2 text-xs bg-surface-100/90 border border-white/15 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:border-brand-400 transition-colors"
+              placeholder={lang === 'ro' ? 'Caută nucleu sau domeniu...' : lang === 'fa' ? 'جستجوی نام، کد یا کارکرد هسته...' : 'Search core or domain...'}
+              className="w-full ps-9 pe-4 py-2 text-xs bg-surface-100/90 border border-white/15 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:border-brand-400 transition-colors"
             />
           </div>
 
@@ -137,7 +131,7 @@ export const SeventeenCoresExplorer: React.FC<SeventeenCoresExplorerProps> = ({ 
                 {/* Top Row: Code + Priority badge */}
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <span className="font-mono text-xs font-bold px-2.5 py-1 rounded-md bg-white/15 text-white border border-white/10">
+                    <span className="font-mono text-xs font-bold px-2.5 py-1 rounded-md bg-white/15 text-white border border-white/10 ltr-isolate">
                       {core.code}
                     </span>
                     <span className="text-[11px] font-semibold text-slate-300 uppercase tracking-wider">
@@ -170,7 +164,9 @@ export const SeventeenCoresExplorer: React.FC<SeventeenCoresExplorerProps> = ({ 
 
                 {/* Bottom Highlight Tag */}
                 <div className="pt-2 border-t border-white/10 flex items-center justify-between text-xs">
-                  <span className="text-slate-300 font-medium">Standard:</span>
+                  <span className="text-slate-300 font-medium">
+                    {lang === 'ro' ? 'Standard:' : lang === 'fa' ? 'استاندارد:' : 'Standard:'}
+                  </span>
                   <span className="font-semibold text-white text-[11px] bg-surface-200/80 px-2 py-0.5 rounded border border-white/5">
                     {core.highlight}
                   </span>

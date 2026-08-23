@@ -130,7 +130,7 @@ export const ThreeModesSection: React.FC<ThreeModesSectionProps> = ({ lang }) =>
                   className="inline-flex items-center gap-2 text-sm font-bold text-brand-300 hover:text-brand-200 group"
                 >
                   <span>{current.linkText}</span>
-                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform text-brand-300" />
+                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 rtl:group-hover:-translate-x-1 rtl:rotate-180 transition-transform text-brand-300" />
                 </Link>
               </div>
             </div>
@@ -139,26 +139,26 @@ export const ThreeModesSection: React.FC<ThreeModesSectionProps> = ({ lang }) =>
             <div className="lg:col-span-5">
               <div className="rounded-2xl bg-surface-100/95 border border-white/15 p-6 space-y-6">
                 <div className="text-xs font-bold text-slate-200 uppercase tracking-wider">
-                  {lang === 'ro' ? 'Impactul Măsurabil al Modulului' : 'Measurable Module Impact'}
+                  {lang === 'ro' ? 'Impactul Măsurabil al Modulului' : lang === 'fa' ? 'نتایج ملموس و قابل سنجش' : 'Measurable Module Impact'}
                 </div>
 
                 <div className="grid grid-cols-1 gap-4">
                   <div className="p-4 rounded-xl glass-panel border border-white/10 flex items-center justify-between">
-                    <span className="text-sm text-slate-100 font-semibold">{lang === 'ro' ? 'Timp închidere lună' : 'Month-End Close Time'}</span>
+                    <span className="text-sm text-slate-100 font-semibold">{lang === 'ro' ? 'Timp închidere lună' : lang === 'fa' ? 'زمان بستن ماهانه دفاتر' : 'Month-End Close Time'}</span>
                     <span className="text-xl font-display font-extrabold text-emerald-400">-45%</span>
                   </div>
                   <div className="p-4 rounded-xl glass-panel border border-white/10 flex items-center justify-between">
-                    <span className="text-sm text-slate-100 font-semibold">{lang === 'ro' ? 'Erori de calcul' : 'Variance & Calculation Errors'}</span>
+                    <span className="text-sm text-slate-100 font-semibold">{lang === 'ro' ? 'Erori de calcul' : lang === 'fa' ? 'خطای محاسباتی و مغایرت' : 'Variance & Calculation Errors'}</span>
                     <span className="text-xl font-display font-extrabold text-emerald-400">0%</span>
                   </div>
                   <div className="p-4 rounded-xl glass-panel border border-white/10 flex items-center justify-between">
-                    <span className="text-sm text-slate-100 font-semibold">{lang === 'ro' ? 'Prezență la adunări' : 'Quorum & AGM Turnout'}</span>
+                    <span className="text-sm text-slate-100 font-semibold">{lang === 'ro' ? 'Prezență la adunări' : lang === 'fa' ? 'مشارکت در رأی‌گیری مجمع' : 'Quorum & AGM Turnout'}</span>
                     <span className="text-xl font-display font-extrabold text-emerald-400">85%+</span>
                   </div>
                 </div>
 
                 <div className="p-4 rounded-xl bg-brand-500/20 border border-brand-500/40 text-xs text-slate-100 leading-relaxed font-medium">
-                  <span>⚖️ <strong>{lang === 'ro' ? 'Conformitate 100% Legea 196/2018:' : '100% Law 196/2018 Compliance:'}</strong> {lang === 'ro' ? 'Algoritmi aprobați pentru împărțirea pe cote-părți indivize (CPI), persoane și suprafață utilă.' : 'Certified statutory allocation engine for CPI shares, person counts, and heated surface area.'}</span>
+                  <span>⚖️ <strong>{lang === 'ro' ? 'Conformitate 100% Legea 196/2018:' : lang === 'fa' ? 'انطباق ۱۰۰٪ با قانون ۱۹۶/۲۰۱۸:' : '100% Law 196/2018 Compliance:'}</strong> {lang === 'ro' ? 'Algoritmi aprobați pentru împărțirea pe cote-părți indivize (CPI), persoane și suprafață utilă.' : lang === 'fa' ? 'الگوریتم‌های تأییدشده برای تسهیم بر مبنای سهام مشاع، تعداد نفرات و متراژ مفید.' : 'Certified statutory allocation engine for CPI shares, person counts, and heated surface area.'}</span>
                 </div>
               </div>
             </div>

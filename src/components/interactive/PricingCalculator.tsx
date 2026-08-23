@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { Language } from '@/types';
 import { getDictionary } from '@/dictionaries';
-import { Check, Sparkles, ArrowRight, ShieldCheck, Zap } from 'lucide-react';
+import { Check, ArrowRight } from 'lucide-react';
 
 interface PricingCalculatorProps {
   lang: Language;
@@ -23,43 +23,43 @@ export const PricingCalculator: React.FC<PricingCalculatorProps> = ({ lang }) =>
   return (
     <div className="space-y-12">
       {/* Top Toggle Row & Units Slider */}
-      <div className="p-6 rounded-3xl glass-panel border border-white/15 max-w-3xl mx-auto space-y-6">
+      <div className="p-6 rounded-3xl bg-white border border-[#D3DCE6] shadow-card max-w-3xl mx-auto space-y-6">
         
         {/* Monthly vs Yearly Toggle */}
         <div className="flex items-center justify-center gap-4">
-          <span className={`text-sm font-semibold ${!isYearly ? 'text-white' : 'text-slate-300'}`}>
+          <span className={`text-sm font-bold ${!isYearly ? 'text-[#102A43]' : 'text-[#7B8A9A]'}`}>
             {dict.pricing.monthly}
           </span>
           <button
             type="button"
             onClick={() => setIsYearly(!isYearly)}
-            className="relative w-14 h-7 rounded-full bg-surface-200 border border-white/20 p-1 transition-colors focus:outline-none focus:ring-2 focus:ring-brand-400"
-            aria-label={lang === 'ro' ? 'Comută între facturare lunară și anuală' : 'Toggle between monthly and annual billing'}
+            className="relative w-14 h-7 rounded-full bg-[#E2E8F0] border border-[#D3DCE6] p-1 transition-colors focus:outline-none focus:ring-2 focus:ring-[#0E9F8E]"
+            aria-label={lang === 'ro' ? 'Comută între facturare lunară și anuală' : lang === 'fa' ? 'تغییر وضعیت پرداخت ماهانه یا سالانه' : 'Toggle between monthly and annual billing'}
           >
             <div
-              className={`w-5 h-5 rounded-full bg-gradient-to-r from-brand-400 to-emerald-400 shadow-md transform transition-transform ${
-                isYearly ? 'translate-x-7' : 'translate-x-0'
+              className={`w-5 h-5 rounded-full bg-[#0E9F8E] shadow-md transform transition-transform ${
+                isYearly ? (lang === 'fa' ? '-translate-x-7' : 'translate-x-7') : 'translate-x-0'
               }`}
             />
           </button>
           <div className="flex items-center gap-2">
-            <span className={`text-sm font-semibold ${isYearly ? 'text-white' : 'text-slate-300'}`}>
+            <span className={`text-sm font-bold ${isYearly ? 'text-[#102A43]' : 'text-[#7B8A9A]'}`}>
               {dict.pricing.yearly}
             </span>
-            <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">
+            <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#ECFDF5] text-[#059669] border border-[#A7F3D0]">
               -20%
             </span>
           </div>
         </div>
 
         {/* Units Slider */}
-        <div className="space-y-2 pt-2 border-t border-white/10">
+        <div className="space-y-2 pt-2 border-t border-[#F0F4F8]">
           <div className="flex justify-between items-center">
-            <label htmlFor="pricingUnitsRangeInput" className="text-xs font-semibold text-slate-200">
+            <label htmlFor="pricingUnitsRangeInput" className="text-xs font-bold text-[#102A43]">
               {dict.pricing.unitsLabel}
             </label>
-            <span className="text-base font-mono font-bold text-brand-300">
-              {units} {isRo ? 'apartamente / proprietăți' : 'units / properties'}
+            <span className="text-base font-mono font-bold text-[#0E9F8E]">
+              {units} {lang === 'ro' ? 'apartamente / proprietăți' : lang === 'fa' ? 'واحد مسکونی / ملک' : 'units / properties'}
             </span>
           </div>
           <input
@@ -72,7 +72,7 @@ export const PricingCalculator: React.FC<PricingCalculatorProps> = ({ lang }) =>
             step="5"
             value={units}
             onChange={(e) => setUnits(Number(e.target.value))}
-            className="w-full accent-brand-400 cursor-pointer"
+            className="w-full accent-[#0E9F8E] cursor-pointer"
           />
         </div>
 
@@ -85,10 +85,14 @@ export const PricingCalculator: React.FC<PricingCalculatorProps> = ({ lang }) =>
             aria-label={isRo ? 'Include modulul Cladora Intelligence' : 'Include Cladora Intelligence module'}
             checked={includeIntelligence}
             onChange={(e) => setIncludeIntelligence(e.target.checked)}
-            className="w-4 h-4 rounded bg-surface-200 border-white/20 text-brand-500 focus:ring-0 cursor-pointer"
+            className="w-4 h-4 rounded bg-white border-[#D3DCE6] text-[#0E9F8E] focus:ring-0 cursor-pointer"
           />
-          <label htmlFor="intelAddon" className="text-xs text-slate-200 font-medium cursor-pointer">
-            ✨ {isRo ? 'Include modulul Cladora Intelligence & Economii Verificate (+0.50 RON/unitate)' : 'Include Cladora Intelligence & Verified Savings (+0.10 EUR/unit)'}
+          <label htmlFor="intelAddon" className="text-xs text-[#52667A] font-medium cursor-pointer">
+            ✨ {lang === 'ro' 
+              ? 'Include modulul Cladora Intelligence & Economii Verificate (+0.50 RON/unitate)' 
+              : lang === 'fa'
+              ? 'افزودن هوش مصنوعی کلادورا و پایش خودکار صرفه‌جویی (+۰.۱۰ یورو/واحد)'
+              : 'Include Cladora Intelligence & Verified Savings (+0.10 EUR/unit)'}
           </label>
         </div>
 
@@ -108,51 +112,53 @@ export const PricingCalculator: React.FC<PricingCalculatorProps> = ({ lang }) =>
               key={plan.id}
               className={`rounded-3xl p-8 flex flex-col justify-between relative transition-all duration-300 ${
                 isFeatured
-                  ? 'glass-panel border-brand-500/50 shadow-2xl glow-box-cyan lg:-translate-y-2'
-                  : 'glass-panel border-white/10 hover:border-white/20'
+                  ? 'bg-white border-2 border-[#0E9F8E] shadow-elevated lg:-translate-y-2'
+                  : 'bg-white border border-[#E2E8F0] shadow-card hover:border-[#B2E5DF]'
               }`}
             >
               {isFeatured && (
-                <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-gradient-to-r from-brand-500 to-emerald-500 text-white text-[11px] font-bold tracking-wider uppercase shadow-lg">
+                <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-[#0E9F8E] text-white text-[11px] font-bold tracking-wider uppercase shadow-md">
                   {plan.badge}
                 </div>
               )}
 
               <div className="space-y-6">
                 <div>
-                  <h3 className="text-2xl font-display font-bold text-white">
+                  <h3 className="text-2xl font-display font-extrabold text-[#102A43]">
                     {plan.name}
                   </h3>
-                  <p className="text-xs text-slate-300 mt-1">
+                  <p className="text-xs text-[#52667A] mt-1">
                     {plan.tagline}
                   </p>
                 </div>
 
                 {/* Price Display */}
-                <div className="p-4 rounded-2xl bg-surface-100/70 border border-white/5 space-y-1">
+                <div className="p-4 rounded-2xl bg-[#F6F9FC] border border-[#E2E8F0] space-y-1">
                   <div className="flex items-baseline gap-2">
-                    <span className="text-3xl sm:text-4xl font-display font-extrabold text-white">
+                    <span className="text-3xl sm:text-4xl font-display font-extrabold text-[#102A43] tabular-nums">
                       {Math.round(totalMonthly)}
                     </span>
-                    <span className="text-xs font-mono text-slate-300">
-                      {currency} / {isRo ? 'lună' : 'month'}
+                    <span className="text-xs font-mono text-[#52667A] font-bold">
+                      {currency} / {lang === 'ro' ? 'lună' : lang === 'fa' ? 'ماه' : 'month'}
                     </span>
                   </div>
-                  <div className="text-[11px] text-emerald-400 font-semibold">
-                    {isRo 
+                  <div className="text-[11px] text-[#059669] font-bold font-mono">
+                    {lang === 'ro' 
                       ? `Echivalent ~${(totalMonthly / units).toFixed(2)} RON / apartament`
+                      : lang === 'fa'
+                      ? `معادل ~${(totalMonthly / units).toFixed(2)} یورو به ازای هر واحد`
                       : `~${(totalMonthly / units).toFixed(2)} EUR / unit`}
                   </div>
                 </div>
 
                 {/* Features List */}
                 <div className="space-y-2.5">
-                  <span className="text-xs font-semibold text-slate-200 uppercase tracking-wider block">
-                    {isRo ? 'Ce include pachetul:' : 'Included capabilities:'}
+                  <span className="text-xs font-bold text-[#7B8A9A] uppercase tracking-wider block">
+                    {lang === 'ro' ? 'Ce include pachetul:' : lang === 'fa' ? 'امکانات این بسته:' : 'Included capabilities:'}
                   </span>
                   {plan.features.map((feat, fIdx) => (
-                    <div key={fIdx} className="flex items-start gap-2.5 text-xs text-slate-200">
-                      <Check className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+                    <div key={fIdx} className="flex items-start gap-2.5 text-xs text-[#52667A]">
+                      <Check className="w-4 h-4 text-[#10B981] shrink-0 mt-0.5" />
                       <span>{feat}</span>
                     </div>
                   ))}
@@ -160,17 +166,17 @@ export const PricingCalculator: React.FC<PricingCalculatorProps> = ({ lang }) =>
               </div>
 
               {/* CTA Button */}
-              <div className="pt-8 mt-4 border-t border-white/5">
+              <div className="pt-8 mt-4 border-t border-[#F0F4F8]">
                 <Link
                   href={`/${lang}/pilot`}
                   className={`w-full flex items-center justify-center gap-2 py-3.5 px-4 rounded-xl text-xs font-bold transition-all ${
                     isFeatured
-                      ? 'bg-gradient-to-r from-brand-500 to-emerald-500 hover:from-brand-600 hover:to-emerald-600 text-white shadow-glow-cyan'
-                      : 'bg-white/10 hover:bg-white/15 text-white'
+                      ? 'bg-[#0E9F8E] hover:bg-[#0C8778] text-white shadow-sm'
+                      : 'bg-[#102A43] hover:bg-[#173F5F] text-white shadow-sm'
                   }`}
                 >
                   <span>{plan.ctaLabel}</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
+                  <ArrowRight className="w-3.5 h-3.5 rtl:rotate-180" />
                 </Link>
               </div>
 

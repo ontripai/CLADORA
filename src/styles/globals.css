@@ -6,6 +6,7 @@
   :root {
     --font-inter: 'Inter', system-ui, -apple-system, sans-serif;
     --font-manrope: 'Manrope', 'Inter', system-ui, -apple-system, sans-serif;
+    --font-vazirmatn: 'Vazirmatn', var(--font-inter), system-ui, -apple-system, sans-serif;
   }
 
   body {
@@ -16,6 +17,43 @@
   /* Support tabular numerals for all financial tables and balances */
   .tabular-nums {
     font-variant-numeric: tabular-nums;
+  }
+
+  /* RTL and Persian Typography Rules */
+  html[dir="rtl"] {
+    text-align: start;
+  }
+
+  html[lang="fa"] body {
+    font-family: var(--font-vazirmatn), var(--font-inter), system-ui, -apple-system, sans-serif;
+    line-height: 1.75;
+  }
+
+  html[lang="fa"] h1,
+  html[lang="fa"] h2,
+  html[lang="fa"] h3,
+  html[lang="fa"] h4,
+  html[lang="fa"] h5,
+  html[lang="fa"] h6,
+  html[lang="fa"] .font-display {
+    font-family: var(--font-vazirmatn), system-ui, -apple-system, sans-serif;
+    line-height: 1.45;
+    letter-spacing: normal;
+    text-transform: none !important;
+  }
+
+  html[lang="fa"] .tabular-nums {
+    font-family: var(--font-inter), var(--font-vazirmatn), system-ui, sans-serif;
+    font-variant-numeric: tabular-nums;
+    unicode-bidi: isolate;
+  }
+
+  /* Isolation for technical hashes, serials, IBAN and codes */
+  .ltr-isolate {
+    direction: ltr !important;
+    unicode-bidi: isolate;
+    text-align: start;
+    display: inline-block;
   }
 }
 
@@ -59,5 +97,5 @@
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(16, 42, 67, 0.3);
+  background: rgba(16, 42, 67, 0.25);
 }

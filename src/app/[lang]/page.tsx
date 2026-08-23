@@ -19,7 +19,7 @@ import { FaqSection } from '@/components/home/FaqSection';
 import { FinalCtaSection } from '@/components/home/FinalCtaSection';
 
 export async function generateStaticParams() {
-  return [{ lang: 'en' }, { lang: 'ro' }];
+  return [{ lang: 'en' }, { lang: 'ro' }, { lang: 'fa' }];
 }
 
 interface PageProps {

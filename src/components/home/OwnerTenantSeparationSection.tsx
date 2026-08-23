@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { Language } from '@/types';
-import { ShieldCheck, UserCheck, Key, ArrowRightLeft, CheckCircle2 } from 'lucide-react';
+import { ShieldCheck, UserCheck, Key, ArrowRightLeft } from 'lucide-react';
 import { AllocationSimulator } from '@/components/interactive/AllocationSimulator';
 
 interface OwnerTenantSectionProps {
@@ -12,30 +12,46 @@ interface OwnerTenantSectionProps {
 export const OwnerTenantSeparationSection: React.FC<OwnerTenantSectionProps> = ({ lang }) => {
   const dimensions = [
     {
-      title: lang === 'ro' ? '1. Debitor Legal' : '1. Legal Debtor',
-      role: lang === 'ro' ? 'Proprietarul' : 'Unit Owner',
-      desc: lang === 'ro' ? 'Răspunde legal în fața Asociației de Proprietari conform Legii 196/2018 pentru toate cotele.' : 'Legally liable to the Condominium Association under Romanian Law 196/2018.',
+      title: lang === 'ro' ? '1. Debitor Legal' : lang === 'fa' ? '۱. مدیون قانونی' : '1. Legal Debtor',
+      role: lang === 'ro' ? 'Proprietarul' : lang === 'fa' ? 'مالک واحد' : 'Unit Owner',
+      desc: lang === 'ro' 
+        ? 'Răspunde legal în fața Asociației de Proprietari conform Legii 196/2018 pentru toate cotele.' 
+        : lang === 'fa'
+        ? 'پاسخگوی رسمی در برابر انجمن مالکان و قانون برای تمامی بدهی‌های ملک.'
+        : 'Legally liable to the Condominium Association under Romanian Law 196/2018.',
       icon: ShieldCheck,
       color: 'text-[#102A43] bg-[#F0F4F8]'
     },
     {
-      title: lang === 'ro' ? '2. Plătitor Operațional' : '2. Operational Payer',
-      role: lang === 'ro' ? 'Chiriașul' : 'Tenant',
-      desc: lang === 'ro' ? 'Plătește direct consumul de utilități (apă, gaze, salubrizare, energie părți comune).' : 'Directly remits consumption charges (water, heating, shared elevator power, waste).',
+      title: lang === 'ro' ? '2. Plătitor Operațional' : lang === 'fa' ? '۲. پرداخت‌کننده مصرفی' : '2. Operational Payer',
+      role: lang === 'ro' ? 'Chiriașul' : lang === 'fa' ? 'مستأجر ساکن' : 'Tenant',
+      desc: lang === 'ro' 
+        ? 'Plătește direct consumul de utilități (apă, gaze, salubrizare, energie părți comune).' 
+        : lang === 'fa'
+        ? 'پرداخت مستقیم مصارف روزمره (آب، گرمایش، نظافت، برق آسانسور و مشاعات).'
+        : 'Directly remits consumption charges (water, heating, shared elevator power, waste).',
       icon: Key,
       color: 'text-[#0E9F8E] bg-[#EAF8F5]'
     },
     {
-      title: lang === 'ro' ? '3. Beneficiar Economic' : '3. Capital Beneficiary',
-      role: lang === 'ro' ? 'Proprietarul' : 'Unit Owner',
-      desc: lang === 'ro' ? 'Suportă fondul de reparații și investițiile de capital care cresc valoarea activului.' : 'Bears long-term reserve funds, major structural overhauls and asset upgrades.',
+      title: lang === 'ro' ? '3. Beneficiar Economic' : lang === 'fa' ? '۳. ذینفع سرمایه‌ای' : '3. Capital Beneficiary',
+      role: lang === 'ro' ? 'Proprietarul' : lang === 'fa' ? 'مالک واحد' : 'Unit Owner',
+      desc: lang === 'ro' 
+        ? 'Suportă fondul de reparații și investițiile de capital care cresc valoarea activului.' 
+        : lang === 'fa'
+        ? 'تأمین صندوق تعمیرات اساسی و سرمایه‌گذاری‌های زیربنایی که ارزش ملک را ارتقا می‌دهد.'
+        : 'Bears long-term reserve funds, major structural overhauls and asset upgrades.',
       icon: UserCheck,
       color: 'text-[#2F80ED] bg-[#EDF5FF]'
     },
     {
-      title: lang === 'ro' ? '4. Flux Decontare' : '4. Reimbursement Flow',
-      role: lang === 'ro' ? 'Automatizat CLADORA' : 'Automated in CLADORA',
-      desc: lang === 'ro' ? 'Calcul transparent fără certuri la predarea apartamentului sau la final de lună.' : 'Clean friction-free statements without spreadsheet reconciliation disputes.',
+      title: lang === 'ro' ? '4. Flux Decontare' : lang === 'fa' ? '۴. تسویه خودکار' : '4. Reimbursement Flow',
+      role: lang === 'ro' ? 'Automatizat CLADORA' : lang === 'fa' ? 'خودکار در کلادورا' : 'Automated in CLADORA',
+      desc: lang === 'ro' 
+        ? 'Calcul transparent fără certuri la predarea apartamentului sau la final de lună.' 
+        : lang === 'fa'
+        ? 'محاسبه شفاف و تفکیک‌شده بدون نیاز به محاسبات دستی و اختلاف‌نظر میان طرفین.'
+        : 'Clean friction-free statements without spreadsheet reconciliation disputes.',
       icon: ArrowRightLeft,
       color: 'text-[#FF7A59] bg-[#FFF0EB]'
     }
@@ -47,14 +63,20 @@ export const OwnerTenantSeparationSection: React.FC<OwnerTenantSectionProps> = (
         
         <div className="text-center max-w-3xl mx-auto space-y-3">
           <span className="text-xs font-bold text-[#0E9F8E] uppercase tracking-wider bg-[#EAF8F5] px-3 py-1 rounded-full border border-[#B2E5DF]">
-            {lang === 'ro' ? 'Separarea Drepturilor 5D' : '5D Rights Isolation'}
+            {lang === 'ro' ? 'Separarea Drepturilor 5D' : lang === 'fa' ? 'تفکیک ۵ بعدی حقوق و تعهدات' : '5D Rights Isolation'}
           </span>
           <h2 className="text-3xl sm:text-5xl font-display font-extrabold text-[#102A43] tracking-tight">
-            {lang === 'ro' ? 'Proprietar vs Chiriaș: Transparență Fără Dispute' : 'Owner vs. Tenant Separation: Zero Friction'}
+            {lang === 'ro' 
+              ? 'Proprietar vs Chiriaș: Transparență Fără Dispute' 
+              : lang === 'fa'
+              ? 'مالک در برابر مستأجر: شفافیت کامل بدون تنش'
+              : 'Owner vs. Tenant Separation: Zero Friction'}
           </h2>
           <p className="text-base sm:text-lg text-[#52667A]">
             {lang === 'ro'
               ? 'Unul dintre cele mai mari puncte de tensiune în blocurile din România este împărțirea costurilor între proprietar și chiriaș. CLADORA rezolvă acest lucru nativ.'
+              : lang === 'fa'
+              ? 'یکی از رایج‌ترین چالش‌ها در مجتمع‌های مسکونی، تسهیم هزینه‌های ماهانه میان مالک و مستأجر است. کلادورا این موضوع را به‌صورت خودکار و سیستمی حل می‌کند.'
               : 'CLADORA natively splits legal debtor responsibilities from day-to-day operational consumption charges.'}
           </p>
         </div>

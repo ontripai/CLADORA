@@ -3,7 +3,11 @@ import type { Metadata } from 'next';
 import { Language } from '@/types';
 import { getDictionary } from '@/dictionaries';
 import { PricingCalculator } from '@/components/interactive/PricingCalculator';
-import { HelpCircle, CheckCircle2, ShieldCheck } from 'lucide-react';
+import { HelpCircle } from 'lucide-react';
+
+export async function generateStaticParams() {
+  return [{ lang: 'en' }, { lang: 'ro' }, { lang: 'fa' }];
+}
 
 export async function generateMetadata({
   params,
@@ -11,10 +15,17 @@ export async function generateMetadata({
   params: { lang: Language };
 }): Promise<Metadata> {
   const isRo = params.lang === 'ro';
+  const isFa = params.lang === 'fa';
   return {
-    title: isRo ? 'Tarife & Pachete Transparente | CLADORA' : 'Transparent Pricing & Calculator | CLADORA',
+    title: isRo 
+      ? 'Tarife & Pachete Transparente | CLADORA' 
+      : isFa
+      ? 'تعرفه‌ها و محاسبه‌گر شفاف هزینه‌ها | کلادورا'
+      : 'Transparent Pricing & Calculator | CLADORA',
     description: isRo
       ? 'Află costul exact pentru asociația sau portofoliul tău. Planuri scalabile fără costuri ascunse și reduceri anuale de 20%.'
+      : isFa
+      ? 'هزینه دقیق اشتراک مجتمع یا سبد املاک خود را محاسبه کنید. پلن‌های مقیاس‌پذیر بدون هزینه پنهان و تخفیف ۲۰ درصدی سالانه.'
       : 'Calculate precise pricing for your HOA community or multi-property portfolio. Transparent tier architecture with 20% yearly discount.',
   };
 }
@@ -27,24 +38,43 @@ export default function PricingPage({
   const dict = getDictionary(params.lang);
   const lang = params.lang;
   const isRo = lang === 'ro';
+  const isFa = lang === 'fa';
 
   const faqs = [
     {
-      q: isRo ? 'Există taxe de instalare sau de configurare?' : 'Are there any setup or onboarding fees?',
+      q: isRo 
+        ? 'Există taxe de instalare sau de configurare?' 
+        : isFa
+        ? 'آیا راه‌اندازی اولیه یا مهاجرت داده‌ها هزینه جداگانه‌ای دارد؟'
+        : 'Are there any setup or onboarding fees?',
       a: isRo
         ? 'Nu. Configurarea inițială și migrarea datelor prin motorul Shadow Ledger sunt 100% gratuite în perioada de lansare și pentru cohorta pilot.'
+        : isFa
+        ? 'خیر. راه‌اندازی اولیه، ورود داده‌ها و اجرای موازی از طریق موتور Shadow Ledger در دوره راه‌اندازی و برای اعضای پایلوت کاملاً رایگان است.'
         : 'No. Initial setup and Shadow Ledger data migration are 100% free during the launch period and pilot cohort.',
     },
     {
-      q: isRo ? 'Ce se întâmplă dacă avem luni cu apartamente neocupate?' : 'How are vacant units billed in associations?',
+      q: isRo 
+        ? 'Ce se întâmplă dacă avem luni cu apartamente neocupate?' 
+        : isFa
+        ? 'محاسبه هزینه برای واحدهای خالی از سکنه چگونه است؟'
+        : 'How are vacant units billed in associations?',
       a: isRo
         ? 'Pentru asociațiile de proprietari, licența se calculează per apartament activ în evidență, conform Legii 196/2018 (care impune plata cotelor comune chiar și pentru unitățile neocupate).'
+        : isFa
+        ? 'در مجتمع‌های مسکونی، اشتراک بر اساس کل واحدهای ثبت‌شده محاسبه می‌شود؛ چراکه طبق قانون، هزینه‌ها و سهم مشاعات حتی به واحدهای خالی نیز تعلق می‌گیرد.'
         : 'For HOAs, billing is based on registered units according to statutory compliance requirements.',
     },
     {
-      q: isRo ? 'Putem trece de la plata lunară la cea anuală?' : 'Can we switch between monthly and annual billing?',
+      q: isRo 
+        ? 'Putem trece de la plata lunară la cea anuală?' 
+        : isFa
+        ? 'آیا امکان تغییر وضعیت پرداخت از ماهانه به سالانه وجود دارد؟'
+        : 'Can we switch between monthly and annual billing?',
       a: isRo
         ? 'Da, oricând. Trecerea la facturarea anuală activează automat reducerea de 20% pentru toate lunile rămase.'
+        : isFa
+        ? 'بله، در هر زمان. با انتخاب پرداخت سالانه، تخفیف ۲۰ درصدی به‌صورت خودکار بر روی فاکتور دوره‌های آتی شما اعمال می‌گردد.'
         : 'Yes, anytime. Switching to annual billing automatically activates the 20% discount across remaining periods.',
     },
   ];
@@ -72,10 +102,14 @@ export default function PricingPage({
       <div className="max-w-4xl mx-auto space-y-6 pt-12 border-t border-white/10">
         <div className="text-center space-y-2">
           <h2 className="text-2xl sm:text-3xl font-display font-bold text-white">
-            {isRo ? 'Întrebări Frecvente Despre Prețuri' : 'Frequently Asked Questions'}
+            {isRo ? 'Întrebări Frecvente Despre Prețuri' : isFa ? 'پرسش‌های متداول درباره تعرفه‌ها' : 'Frequently Asked Questions'}
           </h2>
           <p className="text-xs sm:text-sm text-slate-400">
-            {isRo ? 'Răspunsuri clare și transparente pentru administrator și comitet' : 'Clear and transparent answers for boards and managers'}
+            {isRo 
+              ? 'Răspunsuri clare și transparente pentru administrator și comitet' 
+              : isFa
+              ? 'پاسخ‌های شفاف و مشخص برای هیئت‌مدیره و مدیران ساختمان'
+              : 'Clear and transparent answers for boards and managers'}
           </p>
         </div>
 
@@ -86,7 +120,7 @@ export default function PricingPage({
                 <HelpCircle className="w-4 h-4 text-brand-400 shrink-0" />
                 <span>{faq.q}</span>
               </h3>
-              <p className="text-xs sm:text-sm text-slate-300 leading-relaxed pl-6">
+              <p className="text-xs sm:text-sm text-slate-300 leading-relaxed ps-6">
                 {faq.a}
               </p>
             </div>

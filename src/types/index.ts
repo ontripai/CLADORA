@@ -1,4 +1,4 @@
-export type Language = 'en' | 'ro';
+export type Language = 'en' | 'ro' | 'fa';
 
 export type UserRole = 
   | 'association_admin'

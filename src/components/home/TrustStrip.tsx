@@ -10,28 +10,28 @@ export const TrustStrip: React.FC<TrustStripProps> = ({ lang }) => {
   const items = [
     {
       icon: Scale,
-      title: lang === 'ro' ? 'Alocare Explicabilă' : 'Explainable Allocations',
-      desc: lang === 'ro' ? 'Formule CPI și consum verificabile la nivel de cent' : 'Auditable CPI and meter math down to the cent'
+      title: lang === 'ro' ? 'Alocare Explicabilă' : lang === 'fa' ? 'تخصیص شفاف هزینه‌ها' : 'Explainable Allocations',
+      desc: lang === 'ro' ? 'Formule CPI și consum verificabile la nivel de cent' : lang === 'fa' ? 'محاسبه دقیق سهام مشاع و انشعابات با قابلیت ممیزی' : 'Auditable CPI and meter math down to the cent'
     },
     {
       icon: FileCheck,
-      title: lang === 'ro' ? 'Contabilitate Imutabilă' : 'Auditable Double-Entry',
-      desc: lang === 'ro' ? 'Fără ștergeri de înregistrări — doar stornări auditate' : 'Reversals instead of silent deletions'
+      title: lang === 'ro' ? 'Contabilitate Imutabilă' : lang === 'fa' ? 'دفتر کل تغییرناپذیر' : 'Auditable Double-Entry',
+      desc: lang === 'ro' ? 'Fără ștergeri de înregistrări — doar stornări auditate' : lang === 'fa' ? 'ثبت اسناد اصلاحی بدون حذف داده‌های تاریخی' : 'Reversals instead of silent deletions'
     },
     {
       icon: ShieldCheck,
-      title: lang === 'ro' ? 'Permisiuni pe Roluri' : 'Role-Based Access',
-      desc: lang === 'ro' ? 'Date izolate strict între proprietari, chiriași și cenzori' : 'Strict isolation between owner ledger and tenants'
+      title: lang === 'ro' ? 'Permisiuni pe Roluri' : lang === 'fa' ? 'تفکیک دسترسی و حریم خصوصی' : 'Role-Based Access',
+      desc: lang === 'ro' ? 'Date izolate strict între proprietari, chiriași și cenzori' : lang === 'fa' ? 'جداسازی داده‌های مالی مالک از دسترسی مستأجر' : 'Strict isolation between owner ledger and tenants'
     },
     {
       icon: Layers,
-      title: lang === 'ro' ? 'Migrare Fără Risc' : 'Safe Parallel Migration',
-      desc: lang === 'ro' ? 'Shadow Ledger identifică erorile din softurile vechi' : 'Identify historical variances prior to cutover'
+      title: lang === 'ro' ? 'Migrare Fără Risc' : lang === 'fa' ? 'مهاجرت امن سوابق' : 'Safe Parallel Migration',
+      desc: lang === 'ro' ? 'Shadow Ledger identifică erorile din softurile vechi' : lang === 'fa' ? 'کشف و رفع مغایرت‌ها پیش از استقرار قطعی' : 'Identify historical variances prior to cutover'
     },
     {
       icon: TrendingUp,
-      title: lang === 'ro' ? 'Control Portofoliu' : 'Consolidated Portfolios',
-      desc: lang === 'ro' ? 'Un singur cont pentru locuință personală și proprietăți închiriate' : 'One unified account for personal residency and rentals'
+      title: lang === 'ro' ? 'Control Portofoliu' : lang === 'fa' ? 'مدیریت یکپارچه سبد املاک' : 'Consolidated Portfolios',
+      desc: lang === 'ro' ? 'Un singur cont pentru locuință personală și proprietăți închiriate' : lang === 'fa' ? 'یک حساب کاربری برای سکونت شخصی و واحدهای اجاره‌ای' : 'One unified account for personal residency and rentals'
     }
   ];
 

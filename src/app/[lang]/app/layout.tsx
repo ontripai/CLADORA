@@ -18,9 +18,6 @@ import {
   Database, 
   ShieldCheck, 
   Settings, 
-  Search, 
-  Bell, 
-  Globe, 
   ChevronDown, 
   Menu, 
   X, 
@@ -31,11 +28,11 @@ import {
   Receipt,
   User,
   Sliders,
-  DollarSign,
   FileCheck2
 } from 'lucide-react';
 import { useDemoStore } from '@/data/demoStore';
 import { DEMO_ROLES } from '@/data/mockData';
+import { LanguageSwitcher } from '@/components/ui/LanguageSwitcher';
 
 export default function AppLayout({
   children,
@@ -52,37 +49,29 @@ export default function AppLayout({
     activeRole, 
     setActiveRole, 
     context, 
-    setContext, 
     resetDemoData 
   } = useDemoStore();
 
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
   const [roleDropdownOpen, setRoleDropdownOpen] = useState(false);
-  const [notificationsOpen, setNotificationsOpen] = useState(false);
 
-  // Compute alternative language URL preserving current route
-  const getAltLangPath = () => {
-    if (!pathname) return lang === 'ro' ? '/en' : '/ro';
-    if (pathname.startsWith('/ro')) return `/en${pathname.slice(3) || ''}`;
-    if (pathname.startsWith('/en')) return `/ro${pathname.slice(3) || ''}`;
-    return lang === 'ro' ? '/en' : '/ro';
-  };
+  const isFa = lang === 'fa';
 
   const navItems = [
-    { label: lang === 'ro' ? 'Tablou Principal' : 'Dashboard', href: `/${lang}/app/dashboard`, icon: Home },
-    { label: lang === 'ro' ? 'Contabilitate & Partidă Dublă' : 'Accounting & Ledger', href: `/${lang}/app/accounting`, icon: FileSpreadsheet },
-    { label: lang === 'ro' ? 'Închidere Lunară' : 'Month-End Close', href: `/${lang}/app/accounting/month-close`, icon: CheckCircle2 },
-    { label: lang === 'ro' ? 'Cote & Alocare (CPI)' : 'Allocations & Rights', href: `/${lang}/app/accounting/allocations`, icon: Receipt },
-    { label: lang === 'ro' ? 'Contoare & Consum' : 'Utilities & Meters', href: `/${lang}/app/meters`, icon: Gauge },
-    { label: lang === 'ro' ? 'Mentenanță & Tichete' : 'Maintenance & Tickets', href: `/${lang}/app/maintenance`, icon: Wrench },
-    { label: lang === 'ro' ? 'Adunare Generală & Vot' : 'Governance & Voting', href: `/${lang}/app/governance`, icon: Vote },
-    { label: lang === 'ro' ? 'Avizier & Comunicare' : 'Noticeboard & Comms', href: `/${lang}/app/communications`, icon: Megaphone },
-    { label: lang === 'ro' ? 'Documente & Registru' : 'Documents & Registry', href: `/${lang}/app/documents`, icon: FolderArchive },
-    { label: lang === 'ro' ? 'Portofoliu Proprietar' : 'Portfolio OS', href: `/${lang}/app/portfolio`, icon: TrendingUp },
-    { label: lang === 'ro' ? 'Migrare Shadow Ledger' : 'Shadow Ledger Migration', href: `/${lang}/app/migration/shadow-ledger`, icon: Database },
-    { label: lang === 'ro' ? 'Jurnal de Audit' : 'Audit Trail', href: `/${lang}/app/audit`, icon: FileCheck2 },
-    { label: lang === 'ro' ? 'Setări & Permisiuni' : 'Settings & Roles', href: `/${lang}/app/settings`, icon: Settings },
+    { label: lang === 'ro' ? 'Tablou Principal' : lang === 'fa' ? 'داشبورد اصلی' : 'Dashboard', href: `/${lang}/app/dashboard`, icon: Home },
+    { label: lang === 'ro' ? 'Contabilitate & Partidă Dublă' : lang === 'fa' ? 'حسابداری و دفتر کل' : 'Accounting & Ledger', href: `/${lang}/app/accounting`, icon: FileSpreadsheet },
+    { label: lang === 'ro' ? 'Închidere Lunară' : lang === 'fa' ? 'بستن دوره ماهانه' : 'Month-End Close', href: `/${lang}/app/accounting/month-close`, icon: CheckCircle2 },
+    { label: lang === 'ro' ? 'Cote & Alocare (CPI)' : lang === 'fa' ? 'تخصیص سهم مشاع (CPI)' : 'Allocations & Rights', href: `/${lang}/app/accounting/allocations`, icon: Receipt },
+    { label: lang === 'ro' ? 'Contoare & Consum' : lang === 'fa' ? 'کنتورها و مصارف' : 'Utilities & Meters', href: `/${lang}/app/meters`, icon: Gauge },
+    { label: lang === 'ro' ? 'Mentenanță & Tichete' : lang === 'fa' ? 'تعمیرات و تیکت‌ها' : 'Maintenance & Tickets', href: `/${lang}/app/maintenance`, icon: Wrench },
+    { label: lang === 'ro' ? 'Adunare Generală & Vot' : lang === 'fa' ? 'مجمع عمومی و رأی‌گیری' : 'Governance & Voting', href: `/${lang}/app/governance`, icon: Vote },
+    { label: lang === 'ro' ? 'Avizier & Comunicare' : lang === 'fa' ? 'تابلو اعلانات و پیام‌ها' : 'Noticeboard & Comms', href: `/${lang}/app/communications`, icon: Megaphone },
+    { label: lang === 'ro' ? 'Documente & Registru' : lang === 'fa' ? 'اسناد و مدارک' : 'Documents & Registry', href: `/${lang}/app/documents`, icon: FolderArchive },
+    { label: lang === 'ro' ? 'Portofoliu Proprietar' : lang === 'fa' ? 'سبد املاک سرمایه‌گذار' : 'Portfolio OS', href: `/${lang}/app/portfolio`, icon: TrendingUp },
+    { label: lang === 'ro' ? 'Migrare Shadow Ledger' : lang === 'fa' ? 'مهاجرت Shadow Ledger' : 'Shadow Ledger Migration', href: `/${lang}/app/migration/shadow-ledger`, icon: Database },
+    { label: lang === 'ro' ? 'Jurnal de Audit' : lang === 'fa' ? 'ردپای حسابرسی' : 'Audit Trail', href: `/${lang}/app/audit`, icon: FileCheck2 },
+    { label: lang === 'ro' ? 'Setări & Permisiuni' : lang === 'fa' ? 'تنظیمات و دسترسی‌ها' : 'Settings & Roles', href: `/${lang}/app/settings`, icon: Settings },
   ];
 
   const currentRoleDef = DEMO_ROLES.find(r => r.key === activeRole) || DEMO_ROLES[0];
@@ -93,8 +82,8 @@ export default function AppLayout({
       {/* Top Application Context Bar */}
       <header className="h-16 bg-white border-b border-[#E2E8F0] px-4 sm:px-6 flex items-center justify-between sticky top-0 z-40 shadow-sm">
         
-        {/* Left: Brand + Context Switcher */}
-        <div className="flex items-center gap-4">
+        {/* Left / Start: Brand + Context Switcher */}
+        <div className="flex items-center gap-3 sm:gap-4">
           <Link href={`/${lang}`} className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-lg bg-[#102A43] flex items-center justify-center text-white font-display font-extrabold text-sm shadow-sm">
               C
@@ -110,18 +99,18 @@ export default function AppLayout({
           <div className="flex items-center gap-2 bg-[#F6F9FC] px-3 py-1.5 rounded-xl border border-[#E2E8F0] text-xs">
             <Building2 className="w-4 h-4 text-[#0E9F8E] shrink-0" />
             <div className="flex flex-col">
-              <span className="font-bold text-[#102A43] truncate max-w-[140px] sm:max-w-[220px]">
+              <span className="font-bold text-[#102A43] truncate max-w-[130px] sm:max-w-[220px]">
                 {context.associationName}
               </span>
               <span className="text-[10px] text-[#7B8A9A] -mt-0.5">
-                {context.unitNumber} · Perioadă: <strong className="text-[#0E9F8E]">{context.accountingPeriod}</strong>
+                {context.unitNumber} · {lang === 'ro' ? 'Perioadă:' : lang === 'fa' ? 'دوره:' : 'Period:'} <strong className="text-[#0E9F8E] font-mono">{context.accountingPeriod}</strong>
               </span>
             </div>
           </div>
         </div>
 
-        {/* Right: Role Switcher + Actions */}
-        <div className="flex items-center gap-3">
+        {/* Right / End: Role Switcher + Language Switcher + Actions */}
+        <div className="flex items-center gap-2 sm:gap-3">
           
           {/* Active Role Switcher Dropdown */}
           <div className="relative">
@@ -137,9 +126,9 @@ export default function AppLayout({
             </button>
 
             {roleDropdownOpen && (
-              <div className="absolute right-0 mt-2 w-64 bg-white rounded-2xl border border-[#E2E8F0] shadow-elevated p-2 z-50 animate-in fade-in duration-150">
+              <div className="absolute end-0 mt-2 w-64 bg-white rounded-2xl border border-[#E2E8F0] shadow-elevated p-2 z-50 animate-in fade-in duration-150">
                 <div className="text-[10px] font-bold text-[#7B8A9A] uppercase tracking-wider px-3 py-1 border-b border-[#F0F4F8]">
-                  {lang === 'ro' ? 'Comută Rolul Activ în Demo' : 'Switch Demo Role Persona'}
+                  {lang === 'ro' ? 'Comută Rolul Activ în Demo' : lang === 'fa' ? 'انتخاب نقش در محیط دموی تعاملی' : 'Switch Demo Role Persona'}
                 </div>
                 <div className="space-y-1 mt-1">
                   {DEMO_ROLES.map((r) => (
@@ -150,7 +139,7 @@ export default function AppLayout({
                         setActiveRole(r.key);
                         setRoleDropdownOpen(false);
                       }}
-                      className={`w-full text-left p-2 rounded-xl text-xs flex items-center justify-between transition-colors ${
+                      className={`w-full text-start p-2 rounded-xl text-xs flex items-center justify-between transition-colors ${
                         activeRole === r.key
                           ? 'bg-[#102A43] text-white font-bold'
                           : 'hover:bg-[#F6F9FC] text-[#52667A] font-medium'
@@ -169,24 +158,19 @@ export default function AppLayout({
           <button
             type="button"
             onClick={resetDemoData}
-            title={lang === 'ro' ? 'Resetează datele demo' : 'Reset demo sandbox'}
+            title={lang === 'ro' ? 'Resetează datele demo' : lang === 'fa' ? 'بازنشانی داده‌های دمو' : 'Reset demo sandbox'}
             className="p-2 rounded-xl bg-[#F6F9FC] border border-[#E2E8F0] text-[#52667A] hover:text-[#102A43] transition-colors"
           >
             <RotateCcw className="w-4 h-4" />
           </button>
 
-          {/* Language Switcher */}
-          <Link
-            href={getAltLangPath()}
-            className="px-2.5 py-1.5 rounded-lg border border-[#E2E8F0] text-xs font-bold text-[#52667A] hover:text-[#102A43]"
-          >
-            <span className="uppercase">{lang === 'ro' ? 'EN' : 'RO'}</span>
-          </Link>
+          {/* Accessible Flag Language Switcher */}
+          <LanguageSwitcher currentLang={lang} variant="header" />
 
           {/* Exit to Public Site */}
           <Link
             href={`/${lang}`}
-            title={lang === 'ro' ? 'Ieșire pe site-ul public' : 'Exit to marketing website'}
+            title={lang === 'ro' ? 'Ieșire pe site-ul public' : lang === 'fa' ? 'بازگشت به سایت اصلی' : 'Exit to marketing website'}
             className="p-2 rounded-xl bg-[#F6F9FC] border border-[#E2E8F0] text-[#7B8A9A] hover:text-[#E5484D] transition-colors"
           >
             <LogOut className="w-4 h-4" />
@@ -201,13 +185,13 @@ export default function AppLayout({
         
         {/* Desktop Collapsible Sidebar */}
         <aside
-          className={`hidden md:flex flex-col bg-white border-r border-[#E2E8F0] transition-all duration-200 ${
+          className={`hidden md:flex flex-col bg-white border-e border-[#E2E8F0] transition-all duration-200 ${
             sidebarOpen ? 'w-64' : 'w-20'
           }`}
         >
           <div className="p-4 border-b border-[#F0F4F8] flex items-center justify-between">
             <span className={`text-xs font-bold text-[#7B8A9A] uppercase tracking-wider ${!sidebarOpen && 'hidden'}`}>
-              {lang === 'ro' ? 'Module Operaționale' : 'Core Modules'}
+              {lang === 'ro' ? 'Module Operaționale' : lang === 'fa' ? 'ماژول‌های فعال' : 'Core Modules'}
             </span>
             <button
               type="button"
@@ -244,8 +228,12 @@ export default function AppLayout({
             <div className="p-3 rounded-xl bg-[#EAF8F5] border border-[#B2E5DF] text-[11px] text-[#0A6E62]">
               {sidebarOpen ? (
                 <>
-                  <div className="font-bold">✓ Mediu Demo Sandbox</div>
-                  <div className="text-[10px] text-[#52667A] mt-0.5">Modificările sunt salvate local</div>
+                  <div className="font-bold">
+                    {lang === 'ro' ? '✓ Mediu Demo Sandbox' : lang === 'fa' ? '✓ محیط نمایشی سندباکس' : '✓ Demo Sandbox Mode'}
+                  </div>
+                  <div className="text-[10px] text-[#52667A] mt-0.5">
+                    {lang === 'ro' ? 'Modificările sunt salvate local' : lang === 'fa' ? 'تغییرات در حافظه مرورگر ذخیره می‌شوند' : 'Changes saved locally'}
+                  </div>
                 </>
               ) : (
                 <div className="text-center font-bold">DEMO</div>
@@ -272,7 +260,7 @@ export default function AppLayout({
           }`}
         >
           <Home className="w-5 h-5" />
-          <span>{lang === 'ro' ? 'Acasă' : 'Home'}</span>
+          <span>{lang === 'ro' ? 'Acasă' : lang === 'fa' ? 'داشبورد' : 'Home'}</span>
         </Link>
 
         <Link
@@ -282,7 +270,7 @@ export default function AppLayout({
           }`}
         >
           <Receipt className="w-5 h-5" />
-          <span>{lang === 'ro' ? 'Plată' : 'Due'}</span>
+          <span>{lang === 'ro' ? 'Plată' : lang === 'fa' ? 'شارژ' : 'Due'}</span>
         </Link>
 
         <Link
@@ -292,7 +280,7 @@ export default function AppLayout({
           }`}
         >
           <Gauge className="w-5 h-5" />
-          <span>{lang === 'ro' ? 'Contoare' : 'Meters'}</span>
+          <span>{lang === 'ro' ? 'Contoare' : lang === 'fa' ? 'کنتورها' : 'Meters'}</span>
         </Link>
 
         <Link
@@ -302,7 +290,7 @@ export default function AppLayout({
           }`}
         >
           <Wrench className="w-5 h-5" />
-          <span>{lang === 'ro' ? 'Tichete' : 'Tickets'}</span>
+          <span>{lang === 'ro' ? 'Tichete' : lang === 'fa' ? 'تیکت‌ها' : 'Tickets'}</span>
         </Link>
 
         <button
@@ -311,7 +299,7 @@ export default function AppLayout({
           className="flex flex-col items-center gap-1 text-[10px] font-bold text-[#7B8A9A]"
         >
           <Menu className="w-5 h-5" />
-          <span>{lang === 'ro' ? 'Module' : 'More'}</span>
+          <span>{lang === 'ro' ? 'Module' : lang === 'fa' ? 'ماژول‌ها' : 'More'}</span>
         </button>
       </div>
 
@@ -322,7 +310,7 @@ export default function AppLayout({
             <div className="space-y-4">
               <div className="flex items-center justify-between pb-4 border-b border-[#E2E8F0]">
                 <span className="font-bold text-sm text-[#102A43]">
-                  {lang === 'ro' ? 'Toate Modulele' : 'All Application Cores'}
+                  {lang === 'ro' ? 'Toate Modulele' : lang === 'fa' ? 'تمامی ماژول‌های سامانه' : 'All Application Cores'}
                 </span>
                 <button
                   type="button"
@@ -351,7 +339,9 @@ export default function AppLayout({
               </div>
             </div>
 
-            <div className="pt-4 border-t border-[#E2E8F0]">
+            <div className="pt-4 border-t border-[#E2E8F0] space-y-3">
+              <LanguageSwitcher currentLang={lang} variant="mobile-drawer" />
+              
               <button
                 type="button"
                 onClick={() => {
@@ -361,7 +351,7 @@ export default function AppLayout({
                 className="w-full py-2.5 px-4 rounded-xl bg-[#EAF8F5] text-[#0A6E62] text-xs font-bold flex items-center justify-center gap-2"
               >
                 <RotateCcw className="w-4 h-4" />
-                <span>{lang === 'ro' ? 'Resetează datele demo' : 'Reset demo data'}</span>
+                <span>{lang === 'ro' ? 'Resetează datele demo' : lang === 'fa' ? 'بازنشانی داده‌های دمو' : 'Reset demo data'}</span>
               </button>
             </div>
           </div>

@@ -4,7 +4,7 @@ import { Language } from '@/types';
 import { SecurityAndPermissionsSection } from '@/components/home/SecurityAndPermissionsSection';
 
 export async function generateStaticParams() {
-  return [{ lang: 'en' }, { lang: 'ro' }];
+  return [{ lang: 'en' }, { lang: 'ro' }, { lang: 'fa' }];
 }
 
 export default function SecurityPage({ params }: { params: { lang: Language } }) {

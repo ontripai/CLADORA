@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { Language } from '@/types';
-import { Database, ShieldCheck, AlertCircle, ArrowRight, CheckCircle2, RefreshCw, FileSpreadsheet } from 'lucide-react';
+import { Database, ShieldCheck, RefreshCw } from 'lucide-react';
 
 interface ShadowLedgerDemoProps {
   lang: Language;
@@ -14,46 +14,68 @@ export const ShadowLedgerDemo: React.FC<ShadowLedgerDemoProps> = ({ lang }) => {
   const discrepancies = [
     {
       id: 'DISC-01',
-      unit: 'Ap. 12',
+      unit: lang === 'ro' ? 'Ap. 12' : lang === 'fa' ? 'واحد ۱۲' : 'Apt. 12',
       legacySum: '1,420.00 RON',
-      legacyNote: lang === 'ro' ? 'Sold restanță Excel nespecificat' : 'Unspecified Excel balance',
+      legacyNote: lang === 'ro' ? 'Sold restanță Excel nespecificat' : lang === 'fa' ? 'مانده بدهی ثبت‌شده بدون مستند در فایل اکسل' : 'Unspecified Excel balance',
       shadowSum: '1,385.40 RON',
-      shadowFinding: lang === 'ro' ? 'Penalitate 0.2%/zi calculată eronat după scadență' : 'Penalty cap 0.2%/day miscalculated',
+      shadowFinding: lang === 'ro' 
+        ? 'Penalitate 0.2%/zi calculată eronat după scadență' 
+        : lang === 'fa'
+        ? 'محاسبه اشتباه جریمه روزانه پس از تاریخ سررسید'
+        : 'Penalty cap 0.2%/day miscalculated',
       difference: '-34.60 RON',
       status: resolved ? 'RESOLVED' : 'DISCREPANCY',
     },
     {
       id: 'DISC-02',
-      unit: 'Ap. 45',
+      unit: lang === 'ro' ? 'Ap. 45' : lang === 'fa' ? 'واحد ۴۵' : 'Apt. 45',
       legacySum: '210.00 RON',
-      legacyNote: lang === 'ro' ? 'Index contor apă estimat din oficiu' : 'Estimated water meter index',
+      legacyNote: lang === 'ro' ? 'Index contor apă estimat din oficiu' : lang === 'fa' ? 'رقم تخمینی دستی برای کنتور آب' : 'Estimated water meter index',
       shadowSum: '165.00 RON',
-      shadowFinding: lang === 'ro' ? 'OCR foto contor a corectat citirea cu 3 m³' : 'AI Photo OCR corrected 3 m³ over-estimate',
+      shadowFinding: lang === 'ro' 
+        ? 'OCR foto contor a corectat citirea cu 3 m³' 
+        : lang === 'fa'
+        ? 'تصویر کنتور و هوش مصنوعی ۳ متر مکعب اضافه مصرف را اصلاح کرد'
+        : 'AI Photo OCR corrected 3 m³ over-estimate',
       difference: '-45.00 RON',
       status: resolved ? 'RESOLVED' : 'DISCREPANCY',
     },
     {
       id: 'DISC-03',
-      unit: 'Ap. 88',
+      unit: lang === 'ro' ? 'Ap. 88' : lang === 'fa' ? 'واحد ۸۸' : 'Apt. 88',
       legacySum: '850.00 RON',
-      legacyNote: lang === 'ro' ? 'Fond reparații inclus la chiriaș' : 'Reserve fund billed to tenant',
+      legacyNote: lang === 'ro' ? 'Fond reparații inclus la chiriaș' : lang === 'fa' ? 'درج هزینه صندوق تعمیرات اساسی در فیش مستأجر' : 'Reserve fund billed to tenant',
       shadowSum: '850.00 RON',
-      shadowFinding: lang === 'ro' ? 'Re-alocat: 400 RON proprietar, 450 RON chiriaș' : 'Split: 400 RON owner, 450 RON tenant',
+      shadowFinding: lang === 'ro' 
+        ? 'Re-alocat: 400 RON proprietar, 450 RON chiriaș' 
+        : lang === 'fa'
+        ? 'تسهیم اصلاحی: ۴۰۰ لئو بر عهده مالک، ۴۵۰ لئو سهم مستأجر'
+        : 'Split: 400 RON owner, 450 RON tenant',
       difference: '0.00 RON (Split)',
       status: resolved ? 'RESOLVED' : 'DISCREPANCY',
     },
   ];
 
   return (
-    <div className="p-6 sm:p-8 rounded-3xl glass-panel border border-brand-500/20 shadow-2xl relative overflow-hidden">
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-6 border-b border-white/10">
+    <div className="p-6 sm:p-8 rounded-3xl bg-white border border-[#D3DCE6] shadow-elevated relative overflow-hidden">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-6 border-b border-[#E2E8F0]">
         <div>
-          <div className="flex items-center gap-2 text-xs font-semibold text-brand-300 uppercase tracking-wider">
-            <Database className="w-4 h-4 text-brand-400" />
-            <span>{lang === 'ro' ? 'Simulare Protocol Shadow Ledger (Core C16)' : 'Shadow Ledger Migration Simulator (Core C16)'}</span>
+          <div className="flex items-center gap-2 text-xs font-semibold text-[#0E9F8E] uppercase tracking-wider">
+            <Database className="w-4 h-4 text-[#0E9F8E]" />
+            <span>
+              {lang === 'ro' 
+                ? 'Simulare Protocol Shadow Ledger (Core C16)' 
+                : lang === 'fa'
+                ? 'شبیه‌ساز پروتکل دفتر کل موازی (هسته C16)'
+                : 'Shadow Ledger Migration Simulator (Core C16)'}
+            </span>
           </div>
-          <h3 className="text-xl sm:text-2xl font-display font-bold text-white mt-1">
-            {lang === 'ro' ? 'Reconcilierea Discrepanțelor din Softurile Vechi' : 'Auto-Reconciliation of Legacy System Discrepancies'}
+          <h3 className="text-xl sm:text-2xl font-display font-extrabold text-[#102A43] mt-1">
+            {lang === 'ro' 
+              ? 'Reconcilierea Discrepanțelor din Softurile Vechi' 
+              : lang === 'fa'
+              ? 'کشف و تطبیق خودکار مغایرت‌های سامانه‌های قدیمی'
+              : 'Auto-Reconciliation of Legacy System Discrepancies'}
           </h3>
         </div>
 
@@ -61,14 +83,18 @@ export const ShadowLedgerDemo: React.FC<ShadowLedgerDemoProps> = ({ lang }) => {
           type="button"
           aria-label={resolved ? 'Status: Reconciled' : 'Run Auto Reconciliation'}
           onClick={() => setResolved(!resolved)}
-          className={`px-4 py-2.5 rounded-xl text-xs font-extrabold transition-all flex items-center gap-2 ${
+          className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
             resolved
-              ? 'bg-emerald-400 hover:bg-emerald-300 text-slate-950 shadow-glow-emerald'
-              : 'bg-cyan-400 hover:bg-cyan-300 text-slate-950 shadow-glow-cyan'
+              ? 'bg-[#ECFDF5] text-[#059669] border border-[#A7F3D0]'
+              : 'bg-[#102A43] hover:bg-[#173F5F] text-white shadow-sm'
           }`}
         >
           <RefreshCw className={`w-3.5 h-3.5 ${resolved ? '' : 'animate-spin'}`} />
-          <span>{resolved ? (lang === 'ro' ? 'Reconciliat (Zero Erori)' : 'Reconciled (Zero Errors)') : (lang === 'ro' ? 'Rezolvă Discrepanțele' : 'Auto-Reconcile')}</span>
+          <span>
+            {resolved 
+              ? (lang === 'ro' ? '✓ Reconciliat (Zero Erori)' : lang === 'fa' ? '✓ تطبیق کامل شد (صفر مغایرت)' : 'Reconciled (Zero Errors)') 
+              : (lang === 'ro' ? 'Rezolvă Discrepanțele' : lang === 'fa' ? 'رفع هوشمند مغایرت‌ها' : 'Auto-Reconcile')}
+          </span>
         </button>
       </div>
 
@@ -79,48 +105,50 @@ export const ShadowLedgerDemo: React.FC<ShadowLedgerDemoProps> = ({ lang }) => {
             key={item.id}
             className={`p-4 rounded-2xl border transition-all duration-300 ${
               resolved
-                ? 'bg-emerald-500/15 border-emerald-500/40'
-                : 'bg-surface-100/90 border-amber-500/40'
+                ? 'bg-[#F0FDF4] border-[#BBF7D0]'
+                : 'bg-[#F6F9FC] border-[#FDE68A]'
             }`}
           >
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
               <div className="space-y-1">
                 <div className="flex items-center gap-2">
-                  <span className="font-mono text-xs font-bold text-white px-2 py-0.5 rounded bg-white/10">
+                  <span className="font-mono text-xs font-bold text-[#102A43] px-2 py-0.5 rounded bg-white border border-[#E2E8F0]">
                     {item.unit}
                   </span>
-                  <span className="text-xs text-slate-300 font-medium">
+                  <span className="text-xs text-[#7B8A9A] font-medium font-mono">
                     {item.id}
                   </span>
                   <span
                     className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
                       resolved
-                        ? 'bg-emerald-500/30 text-emerald-200 border border-emerald-400'
-                        : 'bg-amber-500/30 text-amber-200 border border-amber-400'
+                        ? 'bg-[#ECFDF5] text-[#059669] border border-[#A7F3D0]'
+                        : 'bg-[#FFF7E6] text-[#B45309] border border-[#FDE68A]'
                     }`}
                   >
-                    {resolved ? (lang === 'ro' ? 'CORECTAT ÎN GL' : 'AUDITED & BALANCED') : (lang === 'ro' ? 'DISCREPANȚĂ DETECTATĂ' : 'DISCREPANCY')}
+                    {resolved 
+                      ? (lang === 'ro' ? 'CORECTAT ÎN GL' : lang === 'fa' ? 'اصلاح در دفتر کل' : 'AUDITED & BALANCED') 
+                      : (lang === 'ro' ? 'DISCREPANȚĂ DETECTATĂ' : lang === 'fa' ? 'مغایرت کشف شد' : 'DISCREPANCY')}
                   </span>
                 </div>
 
-                <div className="text-xs text-slate-200 pt-1">
-                  <span className="text-slate-300">{lang === 'ro' ? 'Stare veche: ' : 'Legacy state: '}</span>
-                  <span className="text-slate-100 font-medium">{item.legacyNote} ({item.legacySum})</span>
+                <div className="text-xs text-[#52667A] pt-1">
+                  <span className="text-[#7B8A9A]">{lang === 'ro' ? 'Stare veche: ' : lang === 'fa' ? 'سوابق پیشین: ' : 'Legacy state: '}</span>
+                  <span className="text-[#102A43] font-medium">{item.legacyNote} ({item.legacySum})</span>
                 </div>
 
-                <div className="text-xs text-emerald-300 font-medium">
-                  <span>{lang === 'ro' ? 'Descoperire CLADORA: ' : 'CLADORA Finding: '}</span>
-                  <span className="text-white font-medium">{item.shadowFinding}</span>
+                <div className="text-xs text-[#0E9F8E] font-medium">
+                  <span>{lang === 'ro' ? 'Descoperire CLADORA: ' : lang === 'fa' ? 'نتیجه حسابرسی کلادورا: ' : 'CLADORA Finding: '}</span>
+                  <span className="text-[#102A43] font-semibold">{item.shadowFinding}</span>
                 </div>
               </div>
 
               {/* Numbers */}
-              <div className="text-right shrink-0">
-                <div className="text-sm font-mono font-bold text-white">
+              <div className="text-end shrink-0">
+                <div className="text-sm font-mono font-bold text-[#102A43] tabular-nums">
                   {resolved ? item.shadowSum : item.legacySum}
                 </div>
-                <div className={`text-xs font-mono font-bold ${resolved ? 'text-emerald-300' : 'text-amber-300'}`}>
-                  {resolved ? (lang === 'ro' ? 'Reconciliat' : 'Zero Variance') : `Diferență: ${item.difference}`}
+                <div className={`text-xs font-mono font-bold ${resolved ? 'text-[#059669]' : 'text-[#B45309]'}`}>
+                  {resolved ? (lang === 'ro' ? 'Reconciliat' : lang === 'fa' ? 'تراز شد' : 'Zero Variance') : `${lang === 'ro' ? 'Diferență:' : lang === 'fa' ? 'مغایرت:' : 'Variance:'} ${item.difference}`}
                 </div>
               </div>
             </div>
@@ -128,12 +156,20 @@ export const ShadowLedgerDemo: React.FC<ShadowLedgerDemoProps> = ({ lang }) => {
         ))}
       </div>
 
-      <div className="mt-6 p-4 rounded-xl bg-surface-200/80 border border-white/15 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-100">
+      <div className="mt-6 p-4 rounded-xl bg-[#F6F9FC] border border-[#E2E8F0] flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-[#52667A]">
         <div className="flex items-center gap-2">
-          <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0" />
-          <span>{lang === 'ro' ? 'Rulăm în paralel 1-3 luni fără risc pentru asociație.' : 'Parallel run for 1-3 billing cycles with zero association risk.'}</span>
+          <ShieldCheck className="w-4 h-4 text-[#0E9F8E] shrink-0" />
+          <span>
+            {lang === 'ro' 
+              ? 'Rulăm în paralel 1-3 luni fără risc pentru asociație.' 
+              : lang === 'fa'
+              ? 'فعالیت موازی ۱ تا ۳ دوره مالی بدون هیچ‌گونه ریسک یا اختلال در مجتمع.'
+              : 'Parallel run for 1-3 billing cycles with zero association risk.'}
+          </span>
         </div>
-        <span className="font-mono text-emerald-300 font-bold">{lang === 'ro' ? 'Risc de migrare: 0%' : 'Migration Risk: 0%'}</span>
+        <span className="font-mono text-[#059669] font-bold">
+          {lang === 'ro' ? 'Risc de migrare: 0%' : lang === 'fa' ? 'ریسک مهاجرت: ۰٪' : 'Migration Risk: 0%'}
+        </span>
       </div>
     </div>
   );

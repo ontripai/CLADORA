@@ -3,7 +3,11 @@ import type { Metadata } from 'next';
 import { Language } from '@/types';
 import { getDictionary } from '@/dictionaries';
 import { PilotApplicationModal } from '@/components/interactive/PilotApplicationModal';
-import { Sparkles, CheckCircle2, ShieldCheck, MapPin, Building, Users } from 'lucide-react';
+import { Sparkles, CheckCircle2, MapPin } from 'lucide-react';
+
+export async function generateStaticParams() {
+  return [{ lang: 'en' }, { lang: 'ro' }, { lang: 'fa' }];
+}
 
 export async function generateMetadata({
   params,
@@ -11,10 +15,17 @@ export async function generateMetadata({
   params: { lang: Language };
 }): Promise<Metadata> {
   const isRo = params.lang === 'ro';
+  const isFa = params.lang === 'fa';
   return {
-    title: isRo ? 'Înscriere Program Pilot București & Ilfov | CLADORA' : 'Bucharest & Ilfov Pilot Cohort Application | CLADORA',
+    title: isRo 
+      ? 'Înscriere Program Pilot București & Ilfov | CLADORA' 
+      : isFa
+      ? 'ثبت‌نام در برنامه پایلوت بخارست و ایلفوف | کلادورا'
+      : 'Bucharest & Ilfov Pilot Cohort Application | CLADORA',
     description: isRo
       ? 'Aplică pentru cohorta de lansare: 5 asociații și 20 de proprietari de portofolii. Migrare gratuită Shadow Ledger și 6 luni de utilizare gratuită.'
+      : isFa
+      ? 'ثبت‌نام در دوره اعتبارسنجی پایلوت: ۵ مجتمع مسکونی و ۲۰ سرمایه‌گذار چندملکی. مهاجرت رایگان داده‌ها با پروتکل Shadow Ledger و اشتراک آزمایشی رایگان.'
       : 'Apply for the exclusive launch cohort: 5 residential communities and 20 multi-property landlords. 100% complimentary migration and 6 months free access.',
   };
 }
@@ -27,6 +38,7 @@ export default function PilotPage({
   const dict = getDictionary(params.lang);
   const lang = params.lang;
   const isRo = lang === 'ro';
+  const isFa = lang === 'fa';
 
   return (
     <div className="pt-32 pb-24 space-y-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -53,21 +65,39 @@ export default function PilotPage({
           <div className="p-6 rounded-3xl glass-panel border border-white/10 space-y-4">
             <h3 className="text-lg font-bold text-white flex items-center gap-2">
               <MapPin className="w-5 h-5 text-brand-400" />
-              <span>{isRo ? 'Structura Cohortei de Validare' : 'Cohort Composition'}</span>
+              <span>{isRo ? 'Structura Cohortei de Validare' : isFa ? 'ظرفیت و ترکیب دوره پایلوت' : 'Cohort Composition'}</span>
             </h3>
             
             <div className="space-y-3 text-xs sm:text-sm text-slate-300">
               <div className="flex items-center gap-2.5">
                 <span className="w-2 h-2 rounded-full bg-emerald-400 shrink-0" />
-                <span><strong>5 Asociații de Proprietari</strong> (40 - 150 unități în București / Ilfov)</span>
+                <span>
+                  {isRo 
+                    ? <><strong>5 Asociații de Proprietari</strong> (40 - 150 unități în București / Ilfov)</>
+                    : isFa
+                    ? <><strong>۵ مجتمع مسکونی</strong> (۴۰ تا ۱۵۰ واحد در بخارست و ایلفوف)</>
+                    : <><strong>5 Condominium Associations</strong> (40 - 150 units in Bucharest / Ilfov)</>}
+                </span>
               </div>
               <div className="flex items-center gap-2.5">
                 <span className="w-2 h-2 rounded-full bg-brand-400 shrink-0" />
-                <span><strong>20 Proprietari de Portofolii</strong> (Min. 2 proprietăți)</span>
+                <span>
+                  {isRo
+                    ? <><strong>20 Proprietari de Portofolii</strong> (Min. 2 proprietăți)</>
+                    : isFa
+                    ? <><strong>۲۰ سرمایه‌گذار املاک</strong> (حداقل ۲ واحد استیجاری)</>
+                    : <><strong>20 Portfolio Landlords</strong> (Min. 2 properties)</>}
+                </span>
               </div>
               <div className="flex items-center gap-2.5">
                 <span className="w-2 h-2 rounded-full bg-violet-400 shrink-0" />
-                <span><strong>2 Firme de Administrare</strong> (Testare flux multi-bloc)</span>
+                <span>
+                  {isRo
+                    ? <><strong>2 Firme de Administrare</strong> (Testare flux multi-bloc)</>
+                    : isFa
+                    ? <><strong>۲ شرکت مدیریت املاک</strong> (آزمون مدیریت هم‌زمان چند مجتمع)</>
+                    : <><strong>2 Property Management Firms</strong> (Multi-association testing)</>}
+                </span>
               </div>
             </div>
           </div>
@@ -76,7 +106,7 @@ export default function PilotPage({
           <div className="p-6 rounded-3xl glass-panel border border-emerald-500/20 space-y-4">
             <h3 className="text-lg font-bold text-white flex items-center gap-2">
               <CheckCircle2 className="w-5 h-5 text-emerald-400" />
-              <span>{isRo ? 'Beneficii Exclusive pentru Participanți' : 'Cohort Exclusive Perks'}</span>
+              <span>{isRo ? 'Beneficii Exclusive pentru Participanți' : isFa ? 'مزایای ویژه اعضای دوره آزمایشی' : 'Cohort Exclusive Perks'}</span>
             </h3>
 
             <div className="space-y-3 text-xs sm:text-sm text-slate-300">

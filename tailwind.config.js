@@ -89,6 +89,7 @@ module.exports = {
       fontFamily: {
         sans: ['var(--font-inter)', 'system-ui', '-apple-system', 'sans-serif'],
         display: ['var(--font-manrope)', 'var(--font-inter)', 'system-ui', 'sans-serif'],
+        vazirmatn: ['var(--font-vazirmatn)', 'var(--font-inter)', 'system-ui', 'sans-serif'],
         mono: ['JetBrains Mono', 'Menlo', 'monospace'],
       },
       boxShadow: {

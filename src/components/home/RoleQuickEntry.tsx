@@ -18,43 +18,43 @@ interface RoleQuickEntryProps {
 export const RoleQuickEntry: React.FC<RoleQuickEntryProps> = ({ lang }) => {
   const options = [
     {
-      title: lang === 'ro' ? 'O asociație / bloc de locuințe' : 'One association or residential block',
-      desc: lang === 'ro' ? 'Sunt administrator, președinte sau cenzor pentru blocul meu' : 'I am an administrator, president, or auditor for my building',
+      title: lang === 'ro' ? 'O asociație / bloc de locuințe' : lang === 'fa' ? 'یک مجتمع مسکونی / بلوک آپارتمانی' : 'One association or residential block',
+      desc: lang === 'ro' ? 'Sunt administrator, președinte sau cenzor pentru blocul meu' : lang === 'fa' ? 'من مدیر ساختمان، رئیس هیئت‌مدیره یا بازرس مجتمع هستم' : 'I am an administrator, president, or auditor for my building',
       icon: Building2,
       href: `/${lang}/solutions/associations`,
       tag: 'Association OS'
     },
     {
-      title: lang === 'ro' ? 'Mai multe proprietăți închiriate' : 'Several owned properties (Portfolios)',
-      desc: lang === 'ro' ? 'Dețin 2+ apartamente și vreau să urmăresc chirii, cheltuieli și randament' : 'I own 2+ properties and need consolidated yields, rent and cost tracking',
+      title: lang === 'ro' ? 'Mai multe proprietăți închiriate' : lang === 'fa' ? 'چندین واحد مسکونی استیجاری (سبد املاک)' : 'Several owned properties (Portfolios)',
+      desc: lang === 'ro' ? 'Dețin 2+ apartamente și vreau să urmăresc chirii, cheltuieli și randament' : lang === 'fa' ? 'مالک ۲ یا چند واحد استیجاری هستم و خواهان پایش اجاره و بازده خالصم' : 'I own 2+ properties and need consolidated yields, rent and cost tracking',
       icon: TrendingUp,
       href: `/${lang}/solutions/property-owners`,
       tag: 'Portfolio OS'
     },
     {
-      title: lang === 'ro' ? 'Portofoliu clienți pentru compania mea' : 'Multiple associations for clients',
-      desc: lang === 'ro' ? 'Conduc o firmă de administrare imobile cu multiple clădiri în portofoliu' : 'I run a professional property management firm with multiple buildings',
+      title: lang === 'ro' ? 'Portofoliu clienți pentru compania mea' : lang === 'fa' ? 'مدیریت مجتمع‌های متعدد برای مشتریان' : 'Multiple associations for clients',
+      desc: lang === 'ro' ? 'Conduc o firmă de administrare imobile cu multiple clădiri în portofoliu' : lang === 'fa' ? 'مدیرعامل شرکت ارائه‌دهنده خدمات تخصصی مدیریت و نگهداری ساختمان هستم' : 'I run a professional property management firm with multiple buildings',
       icon: Layers,
       href: `/${lang}/solutions/property-managers`,
       tag: 'Manager OS'
     },
     {
-      title: lang === 'ro' ? 'Locuința mea și lista de plată' : 'My home and monthly statements',
-      desc: lang === 'ro' ? 'Sunt proprietar rezident și vreau transparență totală la cote și contoare' : 'I am a resident owner looking for transparent charges and meter submission',
+      title: lang === 'ro' ? 'Locuința mea și lista de plată' : lang === 'fa' ? 'واحد مسکونی و فیش شارژ ماهانه من' : 'My home and monthly statements',
+      desc: lang === 'ro' ? 'Sunt proprietar rezident și vreau transparență totală la cote și contoare' : lang === 'fa' ? 'مالک ساکن در مجتمع هستم و شفافیت کامل در فیش و کنتورها می‌خواهم' : 'I am a resident owner looking for transparent charges and meter submission',
       icon: Home,
       href: `/${lang}/solutions/residents`,
       tag: 'Resident App'
     },
     {
-      title: lang === 'ro' ? 'Un apartament în care locuiesc cu chirie' : 'A rented home where I live',
-      desc: lang === 'ro' ? 'Sunt chiriaș și am nevoie de calculul corect al consumului și plăți directe' : 'I am a tenant needing accurate consumption bills and direct maintenance',
+      title: lang === 'ro' ? 'Un apartament în care locuiesc cu chirie' : lang === 'fa' ? 'واحدی که در آن مستأجر هستم' : 'A rented home where I live',
+      desc: lang === 'ro' ? 'Sunt chiriaș și am nevoie de calculul corect al consumului și plăți directe' : lang === 'fa' ? 'مستأجر هستم و محاسبه دقیق مصارف انشعابات و پرداخت آسان شارژ می‌خواهم' : 'I am a tenant needing accurate consumption bills and direct maintenance',
       icon: KeyRound,
       href: `/${lang}/solutions/tenants`,
       tag: 'Tenant Portal'
     },
     {
-      title: lang === 'ro' ? 'Operațiuni tehnice și mentenanță' : 'Building operations and maintenance',
-      desc: lang === 'ro' ? 'Sunt prestator tehnic, instalator sau responsabil revizii ISCIR' : 'I handle technical repairs, HVAC, elevator maintenance, and work orders',
+      title: lang === 'ro' ? 'Operațiuni tehnice și mentenanță' : lang === 'fa' ? 'عملیات فنی و نگهداری تأسیسات' : 'Building operations and maintenance',
+      desc: lang === 'ro' ? 'Sunt prestator tehnic, instalator sau responsabil revizii ISCIR' : lang === 'fa' ? 'تکنسین فنی، مجری نگهداری آسانسور یا تأسیسات ساختمان هستم' : 'I handle technical repairs, HVAC, elevator maintenance, and work orders',
       icon: Wrench,
       href: `/${lang}/demo`,
       tag: 'Operations'
@@ -67,14 +67,16 @@ export const RoleQuickEntry: React.FC<RoleQuickEntryProps> = ({ lang }) => {
         
         <div className="text-center max-w-3xl mx-auto space-y-3">
           <span className="text-xs font-bold text-[#0E9F8E] uppercase tracking-wider bg-[#EAF8F5] px-3 py-1 rounded-full border border-[#B2E5DF]">
-            {lang === 'ro' ? 'Ghidare pe Măsura Nevoilor Tale' : 'Tailored Role Entry'}
+            {lang === 'ro' ? 'Ghidare pe Măsura Nevoilor Tale' : lang === 'fa' ? 'انتخاب مسیر متناسب با نیاز شما' : 'Tailored Role Entry'}
           </span>
           <h2 className="text-3xl sm:text-4xl font-display font-extrabold text-[#102A43]">
-            {lang === 'ro' ? 'Ce dorești să administrezi?' : 'What do you want to manage?'}
+            {lang === 'ro' ? 'Ce dorești să administrezi?' : lang === 'fa' ? 'قصد مدیریت چه دارایی‌هایی را دارید؟' : 'What do you want to manage?'}
           </h2>
           <p className="text-base text-[#52667A]">
             {lang === 'ro' 
               ? 'Alege situația ta pentru a vedea experiența de produs optimizată pentru cerințele tale operaționale.'
+              : lang === 'fa'
+              ? 'حوزه فعالیت خود را انتخاب کنید تا راهکار متناسب با نیازهای عملیاتی خود را مشاهده فرمایید.'
               : 'Select your operational context to explore the dedicated solution flow.'}
           </p>
         </div>
@@ -107,9 +109,9 @@ export const RoleQuickEntry: React.FC<RoleQuickEntryProps> = ({ lang }) => {
                   </p>
                 </div>
 
-                <div className="mt-6 pt-4 border-t border-[#F0F4F8] flex items-center justify-between text-xs font-bold text-[#0E9F8E]">
-                  <span>{lang === 'ro' ? 'Explorează fluxul dedicat' : 'Explore solution'}</span>
-                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                <div className="pt-6 flex items-center gap-1.5 text-xs font-bold text-[#0E9F8E]">
+                  <span>{lang === 'ro' ? 'Explorează fluxul' : lang === 'fa' ? 'مشاهده جزئیات راهکار' : 'Explore solution'}</span>
+                  <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 rtl:group-hover:-translate-x-1 rtl:rotate-180 transition-transform" />
                 </div>
               </Link>
             );

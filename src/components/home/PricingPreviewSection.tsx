@@ -4,7 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import { Language } from '@/types';
 import { PricingCalculator } from '@/components/interactive/PricingCalculator';
-import { ShieldCheck, ArrowRight, Info } from 'lucide-react';
+import { Info } from 'lucide-react';
 
 interface PricingPreviewProps {
   lang: Language;
@@ -17,14 +17,20 @@ export const PricingPreviewSection: React.FC<PricingPreviewProps> = ({ lang }) =
         
         <div className="text-center max-w-3xl mx-auto space-y-3">
           <span className="text-xs font-bold text-[#0E9F8E] uppercase tracking-wider bg-[#EAF8F5] px-3 py-1 rounded-full border border-[#B2E5DF]">
-            {lang === 'ro' ? 'Prețuri Orientative de Lansare' : 'Indicative Pilot Pricing'}
+            {lang === 'ro' ? 'Prețuri Orientative de Lansare' : lang === 'fa' ? 'تعرفه‌های دوره راه‌اندازی و پایلوت' : 'Indicative Pilot Pricing'}
           </span>
           <h2 className="text-3xl sm:text-5xl font-display font-extrabold text-[#102A43] tracking-tight">
-            {lang === 'ro' ? 'Tarife Simple, Fără Costuri Ascunse' : 'Transparent Pricing per Unit or Property'}
+            {lang === 'ro' 
+              ? 'Tarife Simple, Fără Costuri Ascunse' 
+              : lang === 'fa'
+              ? 'تعرفه‌های شفاف بر مبنای تعداد واحد، بدون هزینه پنهان'
+              : 'Transparent Pricing per Unit or Property'}
           </h2>
           <p className="text-base sm:text-lg text-[#52667A]">
             {lang === 'ro'
               ? 'Toate pachetele includ migrarea gratuită asistată și rularea în paralel prin protocolul Shadow Ledger în perioada pilot.'
+              : lang === 'fa'
+              ? 'تمامی پلن‌ها شامل مهاجرت رایگان سوابق و اجرای آزمایشی موازی با پروتکل Shadow Ledger در طول دوره پایلوت هستند.'
               : 'All plans include assisted parallel onboarding and full Shadow Ledger reconciliation during the pilot cohort.'}
           </p>
         </div>
@@ -40,6 +46,8 @@ export const PricingPreviewSection: React.FC<PricingPreviewProps> = ({ lang }) =
           <p className="leading-relaxed">
             {lang === 'ro'
               ? 'Notă: Tarifele afișate sunt orientative pentru cohorta pilot din București și Ilfov și nu conțin TVA. Unitățile facturabile reprezintă numărul de apartamente sau spații comerciale gestionate activ. Pentru portofolii de peste 500 unități, se aplică acorduri de nivel de serviciu (SLA) personalizate.'
+              : lang === 'fa'
+              ? 'یادداشت: تعرفه‌های نمایش‌داده‌شده ارشادی و ویژه دوره پایلوت بخارست و ایلفوف بوده و فاقد مالیات بر ارزش افزوده است. برای مجتمع‌ها یا شرکت‌های دارای بیش از ۵۰۰ واحد مسکونی، قراردادهای اختصاصی سطح خدمات (SLA) و تعرفه سازمانی اعمال می‌گردد.'
               : 'Indicative note: Rates shown are indicative for the Bucharest and Ilfov pilot validation cohort and exclude VAT. Billable units represent actively managed apartments or commercial units. Custom SLAs apply for portfolios over 500 units.'}
           </p>
         </div>

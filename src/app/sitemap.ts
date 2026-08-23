@@ -2,7 +2,7 @@ import { MetadataRoute } from 'next';
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = 'https://cladora.ro';
-  const languages = ['ro', 'en'];
+  const languages = ['ro', 'en', 'fa'];
   const routes = [
     '',
     '/platform',
