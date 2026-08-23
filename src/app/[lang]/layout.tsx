@@ -1,10 +1,9 @@
 import React from 'react';
 import type { Metadata } from 'next';
-import { Inter, Outfit } from 'next/font/google';
+import { Inter, Manrope } from 'next/font/google';
 import { Language } from '@/types';
 import { getDictionary } from '@/dictionaries';
-import { Header } from '@/components/layout/Header';
-import { Footer } from '@/components/layout/Footer';
+import { AppOrMarketingLayout } from '@/components/layout/AppOrMarketingLayout';
 
 const inter = Inter({
   subsets: ['latin', 'latin-ext'],
@@ -12,9 +11,9 @@ const inter = Inter({
   display: 'swap',
 });
 
-const outfit = Outfit({
+const manrope = Manrope({
   subsets: ['latin', 'latin-ext'],
-  variable: '--font-outfit',
+  variable: '--font-manrope',
   display: 'swap',
 });
 
@@ -27,16 +26,15 @@ export async function generateMetadata({
 }: {
   params: { lang: Language };
 }): Promise<Metadata> {
-  const dict = getDictionary(params.lang);
   const isRo = params.lang === 'ro';
 
   const title = isRo
-    ? 'CLADORA | Sistemul de Operare pentru Asociații de Proprietari & Portofolii Imobiliare'
+    ? 'CLADORA | Sistemul de Operare pentru Active Rezidențiale & Contabilitate'
     : 'CLADORA | Residential Asset Operating System & Double-Entry Accounting';
 
   const description = isRo
-    ? 'CLADORA unește contabilitatea în partidă dublă, Legea 196/2018, drepturile proprietar-chiriaș, citirea automată a contoarelor și migrarea fără erori prin Shadow Ledger.'
-    : 'CLADORA unifies double-entry accounting truth, 5D owner-tenant rights, multi-method meter OCR, engineering building DNA, and verified savings into an immutable ledger.';
+    ? 'CLADORA unește contabilitatea în partidă dublă, Legea 196/2018, drepturile proprietar-chiriaș, citirea automată a contoarelor și migrarea prin Shadow Ledger într-un singur sistem de operare.'
+    : 'CLADORA unifies double-entry accounting truth, 5D owner-tenant rights, meter OCR, and residential portfolios on an auditable ledger.';
 
   return {
     title: {
@@ -58,55 +56,35 @@ export async function generateMetadata({
       : [
           'homeowner association software',
           'condo management operating system',
-          'romanian law 196 2018 compliance',
-          'multi-property landlord portfolio management',
-          'double entry building accounting',
-          'smart meter ocr reading',
-          'cladora asset os',
+          'double entry condo accounting',
+          'tenant meter readings ocr',
+          'residential portfolio software',
+          'cladora',
         ],
-    authors: [{ name: 'CLADORA Platform' }],
-    creator: 'CLADORA',
-    publisher: 'CLADORA',
     metadataBase: new URL('https://cladora.ro'),
     alternates: {
       canonical: `/${params.lang}`,
       languages: {
-        'ro-RO': '/ro',
-        'en-US': '/en',
+        ro: '/ro',
+        en: '/en',
       },
     },
     openGraph: {
-      type: 'website',
-      locale: isRo ? 'ro_RO' : 'en_US',
-      url: `https://cladora.ro/${params.lang}`,
       title,
       description,
+      url: `https://cladora.ro/${params.lang}`,
       siteName: 'CLADORA Asset OS',
-      images: [
-        {
-          url: '/assets/og-image.png',
-          width: 1200,
-          height: 630,
-          alt: 'CLADORA - Residential Asset Operating System',
-        },
-      ],
+      locale: params.lang === 'ro' ? 'ro_RO' : 'en_US',
+      type: 'website',
     },
     twitter: {
       card: 'summary_large_image',
       title,
       description,
-      creator: '@cladora_os',
     },
     robots: {
       index: true,
       follow: true,
-      googleBot: {
-        index: true,
-        follow: true,
-        'max-video-preview': -1,
-        'max-image-preview': 'large',
-        'max-snippet': -1,
-      },
     },
   };
 }
@@ -139,17 +117,17 @@ export default function LangLayout({
   };
 
   return (
-    <html lang={params.lang} className={`${inter.variable} ${outfit.variable} dark scroll-smooth`}>
+    <html lang={params.lang} className={`${inter.variable} ${manrope.variable} scroll-smooth`}>
       <head>
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
       </head>
-      <body className="font-sans min-h-screen flex flex-col bg-[#070B12] text-slate-100 selection:bg-brand-500/30 selection:text-brand-200">
-        <Header lang={params.lang} />
-        <main className="flex-grow">{children}</main>
-        <Footer lang={params.lang} />
+      <body className="font-sans min-h-screen bg-[#F6F9FC] text-[#102A43] antialiased">
+        <AppOrMarketingLayout lang={params.lang}>
+          {children}
+        </AppOrMarketingLayout>
       </body>
     </html>
   );

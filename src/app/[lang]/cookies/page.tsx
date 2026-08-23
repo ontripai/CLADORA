@@ -1,0 +1,50 @@
+import React from 'react';
+import Link from 'next/link';
+import { Language } from '@/types';
+import { Cookie } from 'lucide-react';
+
+export async function generateStaticParams() {
+  return [{ lang: 'en' }, { lang: 'ro' }];
+}
+
+export default function CookiesPage({ params }: { params: { lang: Language } }) {
+  const { lang } = params;
+
+  return (
+    <main className="min-h-screen pt-32 pb-24 bg-[#F6F9FC]">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <div className="flex items-center gap-2 text-xs text-[#52667A] mb-8 font-medium">
+          <Link href={`/${lang}`} className="hover:text-[#102A43]">
+            {lang === 'ro' ? 'Acasă' : 'Home'}
+          </Link>
+          <span>/</span>
+          <span className="text-[#102A43] font-bold">Cookies</span>
+        </div>
+
+        <div className="card-proptech p-8 sm:p-12 bg-white space-y-6">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-[#EAF8F5] text-[#0E9F8E] flex items-center justify-center">
+              <Cookie className="w-5 h-5" />
+            </div>
+            <div>
+              <h1 className="text-2xl sm:text-3xl font-display font-extrabold text-[#102A43]">
+                {lang === 'ro' ? 'Politica privind Modulele Cookie' : 'Cookie Policy'}
+              </h1>
+              <p className="text-xs text-[#7B8A9A]">Actualizat: Octombrie 2026</p>
+            </div>
+          </div>
+
+          <div className="prose prose-sm max-w-none text-[#52667A] space-y-4 text-xs sm:text-sm leading-relaxed border-t border-[#F0F4F8] pt-6">
+            <p>
+              {lang === 'ro'
+                ? 'CLADORA utilizează module cookie esențiale strict necesare pentru funcționarea platformei, autentificarea utilizatorilor și memorarea preferințelor de limbă (RO/EN). Nu utilizăm cookie-uri de urmărire terță fără consimțământul tău expres.'
+                : 'CLADORA uses essential cookies strictly necessary for application authentication and language preferences (RO/EN). We do not deploy third-party trackers without consent.'}
+            </p>
+          </div>
+        </div>
+
+      </div>
+    </main>
+  );
+}

@@ -5,16 +5,24 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const languages = ['ro', 'en'];
   const routes = [
     '',
-    '/association',
-    '/portfolio',
-    '/manager',
-    '/financial-truth',
-    '/building-dna',
-    '/meters',
+    '/platform',
+    '/solutions/associations',
+    '/solutions/property-owners',
+    '/solutions/property-managers',
+    '/solutions/residents',
+    '/solutions/tenants',
+    '/modules',
     '/migration',
     '/pricing',
+    '/security',
+    '/resources/faq',
     '/pilot',
-    '/trust',
+    '/about',
+    '/contact',
+    '/privacy',
+    '/terms',
+    '/cookies',
+    '/accessibility',
   ];
 
   const entries: MetadataRoute.Sitemap = [];

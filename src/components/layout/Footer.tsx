@@ -1,181 +1,181 @@
-'use client';
-
 import React from 'react';
 import Link from 'next/link';
 import { Language } from '@/types';
-import { getDictionary } from '@/dictionaries';
-import { Building2, Shield, Lock, FileCheck, Globe, Sparkles } from 'lucide-react';
+import { ShieldCheck, HeartHandshake, CheckCircle2, Lock, ArrowUpRight } from 'lucide-react';
 
 interface FooterProps {
   lang: Language;
 }
 
 export const Footer: React.FC<FooterProps> = ({ lang }) => {
-  const dict = getDictionary(lang);
-  const footer = dict.footer;
+  const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="relative bg-[#05080E] border-t border-white/10 pt-16 pb-12 overflow-hidden">
-      {/* Subtle bottom glow */}
-      <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-3/4 h-48 bg-brand-500/5 blur-[120px] pointer-events-none" />
-
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 space-y-12">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 lg:gap-12">
+    <footer className="bg-[#102A43] text-white pt-16 pb-12 border-t border-[#173F5F]">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        {/* Main Footer Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 pb-12 border-b border-[#173F5F]">
           
-          {/* Brand & About */}
+          {/* Brand Column */}
           <div className="lg:col-span-2 space-y-4">
-            <Link href={`/${lang}`} className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-brand-600 via-brand-400 to-emerald-400 p-[1px]">
-                <div className="w-full h-full bg-[#070B12] rounded-[11px] flex items-center justify-center">
-                  <Building2 className="w-4 h-4 text-brand-400" />
-                </div>
+            <div className="flex items-center gap-2.5">
+              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#0E9F8E] to-[#10B981] flex items-center justify-center text-white font-display font-extrabold text-lg shadow-md">
+                C
               </div>
-              <div className="flex flex-col">
-                <span className="text-lg font-display font-extrabold tracking-wider text-white">
-                  CLADORA
-                </span>
-                <span className="text-[9px] font-medium tracking-widest text-emerald-400 uppercase -mt-1">
-                  Residential Asset OS
-                </span>
-              </div>
-            </Link>
-
-            <p className="text-xs text-slate-300 leading-relaxed max-w-sm">
-              {footer.about}
+              <span className="text-2xl font-display font-extrabold tracking-tight text-white">
+                CLADORA
+              </span>
+            </div>
+            
+            <p className="text-sm text-[#BCCCDC] leading-relaxed max-w-sm">
+              {lang === 'ro'
+                ? 'Sistemul de operare pentru active rezidențiale. Unifică contabilitatea în partidă dublă, Legea 196/2018, drepturile proprietar-chiriaș, citirea contoarelor și portofoliile imobiliare într-un singur adevăr financiar.'
+                : 'The residential asset operating system. Unifying double-entry accounting truth, Law 196/2018 statutory compliance, 5D owner-tenant rights, meter readings, and property portfolios.'}
             </p>
 
-            {/* Badges / Trust stamps */}
-            <div className="flex flex-wrap items-center gap-2 pt-2 text-[11px] text-slate-200">
-              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-white/10 border border-white/15">
-                <Shield className="w-3 h-3 text-emerald-400" />
-                <span>Legea 196/2018</span>
-              </span>
-              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-white/10 border border-white/15">
-                <Lock className="w-3 h-3 text-brand-400" />
-                <span>GDPR & E2EE</span>
-              </span>
-              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-white/10 border border-white/15">
-                <FileCheck className="w-3 h-3 text-gold-400" />
-                <span>Double-Entry GL</span>
-              </span>
+            <div className="pt-2 flex items-center gap-2 text-xs text-[#0E9F8E] font-semibold">
+              <ShieldCheck className="w-4 h-4 text-[#10B981]" />
+              <span>{lang === 'ro' ? 'Creat pentru piața rezidențială din România' : 'Engineered for European & Romanian Residential Real Estate'}</span>
             </div>
           </div>
 
-          {/* Links Column 1: Operating Modes */}
+          {/* Solutions Column */}
           <div className="space-y-3">
-            <div className="text-xs font-bold text-white uppercase tracking-wider">
-              {footer.solutionsTitle}
+            <div className="text-xs font-bold text-[#75CFC3] uppercase tracking-wider">
+              {lang === 'ro' ? 'Soluții pe Roluri' : 'Solutions by Role'}
             </div>
-            <ul className="space-y-2 text-xs">
+            <ul className="space-y-2 text-sm text-[#BCCCDC]">
               <li>
-                <Link href={`/${lang}/association`} className="text-slate-300 hover:text-white transition-colors">
-                  {footer.links.association}
+                <Link href={`/${lang}/solutions/associations`} className="hover:text-white transition-colors">
+                  {lang === 'ro' ? 'Asociații de Proprietari' : 'Homeowner Associations'}
                 </Link>
               </li>
               <li>
-                <Link href={`/${lang}/portfolio`} className="text-slate-300 hover:text-white transition-colors">
-                  {footer.links.portfolio}
+                <Link href={`/${lang}/solutions/property-owners`} className="hover:text-white transition-colors">
+                  {lang === 'ro' ? 'Proprietari (Multi-Property)' : 'Portfolio Landlords'}
                 </Link>
               </li>
               <li>
-                <Link href={`/${lang}/manager`} className="text-slate-300 hover:text-white transition-colors">
-                  {footer.links.manager}
+                <Link href={`/${lang}/solutions/property-managers`} className="hover:text-white transition-colors">
+                  {lang === 'ro' ? 'Companii de Administrare' : 'Property Managers'}
                 </Link>
               </li>
               <li>
-                <Link href={`/${lang}/pricing`} className="text-slate-300 hover:text-white transition-colors">
-                  {footer.links.pricing}
+                <Link href={`/${lang}/solutions/residents`} className="hover:text-white transition-colors">
+                  {lang === 'ro' ? 'Proprietari & Rezidenți' : 'Owners & Residents'}
+                </Link>
+              </li>
+              <li>
+                <Link href={`/${lang}/solutions/tenants`} className="hover:text-white transition-colors">
+                  {lang === 'ro' ? 'Chiriași (Consum & Tichete)' : 'Tenants Portal'}
                 </Link>
               </li>
             </ul>
           </div>
 
-          {/* Links Column 2: Platform Cores */}
+          {/* Platform & Modules Column */}
           <div className="space-y-3">
-            <div className="text-xs font-bold text-white uppercase tracking-wider">
-              {lang === 'ro' ? 'Platformă & Tehnologie' : 'Platform & Technology'}
+            <div className="text-xs font-bold text-[#75CFC3] uppercase tracking-wider">
+              {lang === 'ro' ? 'Platformă & Module' : 'Platform & Modules'}
             </div>
-            <ul className="space-y-2 text-xs">
+            <ul className="space-y-2 text-sm text-[#BCCCDC]">
               <li>
-                <Link href={`/${lang}/financial-truth`} className="text-slate-300 hover:text-white transition-colors">
-                  {footer.links.financialTruth}
+                <Link href={`/${lang}/platform`} className="hover:text-white transition-colors">
+                  {lang === 'ro' ? 'Arhitectura Platformei' : 'Platform Architecture'}
                 </Link>
               </li>
               <li>
-                <Link href={`/${lang}/building-dna`} className="text-slate-300 hover:text-white transition-colors">
-                  {footer.links.buildingDna}
+                <Link href={`/${lang}/modules`} className="hover:text-white transition-colors">
+                  {lang === 'ro' ? 'Cele 17 Module Logice' : 'The 17 Logical Cores'}
                 </Link>
               </li>
               <li>
-                <Link href={`/${lang}/meters`} className="text-slate-300 hover:text-white transition-colors">
-                  {footer.links.meters}
+                <Link href={`/${lang}/migration`} className="hover:text-white transition-colors">
+                  {lang === 'ro' ? 'Protocolul Shadow Ledger' : 'Shadow Ledger Migration'}
                 </Link>
               </li>
               <li>
-                <Link href={`/${lang}/migration`} className="text-slate-300 hover:text-white transition-colors">
-                  {footer.links.migration}
+                <Link href={`/${lang}/pricing`} className="hover:text-white transition-colors">
+                  {lang === 'ro' ? 'Prețuri Pilot & Calculator' : 'Pilot Pricing Calculator'}
+                </Link>
+              </li>
+              <li>
+                <Link href={`/${lang}/demo`} className="hover:text-white transition-colors flex items-center gap-1">
+                  <span>{lang === 'ro' ? 'Demo Sandbox Public' : 'Public Demo Sandbox'}</span>
+                  <ArrowUpRight className="w-3.5 h-3.5 text-[#0E9F8E]" />
                 </Link>
               </li>
             </ul>
           </div>
 
-          {/* Links Column 3: Trust & Company */}
+          {/* Resources & Legal Column */}
           <div className="space-y-3">
-            <div className="text-xs font-bold text-white uppercase tracking-wider">
-              {footer.complianceTitle}
+            <div className="text-xs font-bold text-[#75CFC3] uppercase tracking-wider">
+              {lang === 'ro' ? 'Resurse & Conformitate' : 'Resources & Trust'}
             </div>
-            <ul className="space-y-2 text-xs">
+            <ul className="space-y-2 text-sm text-[#BCCCDC]">
               <li>
-                <Link href={`/${lang}/trust`} className="text-slate-300 hover:text-white transition-colors">
-                  {footer.links.security}
+                <Link href={`/${lang}/resources/faq`} className="hover:text-white transition-colors">
+                  {lang === 'ro' ? 'Întrebări Frecvente (FAQ)' : 'Frequently Asked Questions'}
                 </Link>
               </li>
               <li>
-                <Link href={`/${lang}/pilot`} className="text-slate-300 hover:text-white transition-colors">
-                  {footer.links.pilot}
+                <Link href={`/${lang}/resources/guides`} className="hover:text-white transition-colors">
+                  {lang === 'ro' ? 'Ghiduri Legea 196/2018' : 'Law 196/2018 Guides'}
                 </Link>
               </li>
               <li>
-                <Link href={`/${lang}/trust#privacy`} className="text-slate-300 hover:text-white transition-colors">
-                  {footer.links.privacy}
+                <Link href={`/${lang}/security`} className="hover:text-white transition-colors">
+                  {lang === 'ro' ? 'Securitate & Izolare Date' : 'Security & Data Isolation'}
                 </Link>
               </li>
               <li>
-                <Link href={`/${lang}/trust#terms`} className="text-slate-300 hover:text-white transition-colors">
-                  {footer.links.terms}
+                <Link href={`/${lang}/privacy`} className="hover:text-white transition-colors">
+                  {lang === 'ro' ? 'Politica de Confidențialitate (GDPR)' : 'Privacy Policy (GDPR)'}
+                </Link>
+              </li>
+              <li>
+                <Link href={`/${lang}/terms`} className="hover:text-white transition-colors">
+                  {lang === 'ro' ? 'Termeni și Condiții' : 'Terms of Service'}
+                </Link>
+              </li>
+              <li>
+                <Link href={`/${lang}/accessibility`} className="hover:text-white transition-colors">
+                  {lang === 'ro' ? 'Declarație Accesibilitate (WCAG)' : 'Accessibility Statement'}
                 </Link>
               </li>
             </ul>
-
-            <div className="pt-2">
-              <Link
-                href={`/${lang}/pilot`}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-brand-500/20 text-brand-300 border border-brand-500/40 hover:bg-brand-500/30 transition-colors"
-              >
-                <Sparkles className="w-3 h-3 text-brand-400" />
-                <span>{lang === 'ro' ? 'Înscrie-te în Pilot' : 'Apply for Pilot'}</span>
-              </Link>
-            </div>
           </div>
 
         </div>
 
-        {/* Bottom Bar: Copyright & Legal */}
-        <div className="pt-8 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-300">
-          <div>
-            © {new Date().getFullYear()} CLADORA. {lang === 'ro' ? 'Toate drepturile rezervate.' : 'All rights reserved.'}
-          </div>
+        {/* Legal Disclaimer & Regulatory Note */}
+        <div className="py-6 text-xs text-[#7B8A9A] leading-relaxed border-b border-[#173F5F]">
+          <p>
+            {lang === 'ro'
+              ? 'Notă legală și metodologică: Estimările de economii și calculele de randament sunt orientative și depind de specificul clădirii, starea instalațiilor, istoricul de consum și calitatea datelor importate. Algoritmii de repartizare a cheltuielilor sunt proiectați în conformitate cu prevederile Legii nr. 196/2018 privind înființarea, organizarea și funcționarea asociațiilor de proprietari și administrarea condominiilor din România. Funcționalitatea de migrare Shadow Ledger este concepută pentru a identifica discrepanțele înainte de trecerea operațională efectivă.'
+              : 'Legal & methodological disclaimer: Savings estimates and yield projections are indicative and subject to building conditions, contract terms, consumption patterns, and data fidelity. Allocation algorithms are designed to support Romanian Law 196/2018 for condominium management. Shadow Ledger migration is designed to identify historical accounting discrepancies prior to cutover.'}
+          </p>
+        </div>
 
+        {/* Bottom Strip */}
+        <div className="pt-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[#7B8A9A]">
+          <div>
+            © {currentYear} CLADORA Technologies. {lang === 'ro' ? 'Toate drepturile rezervate.' : 'All rights reserved.'}
+          </div>
           <div className="flex items-center gap-6">
-            <Link href={`/${lang}/trust#privacy`} className="text-slate-300 hover:text-white transition-colors">
-              {footer.links.privacy}
+            <Link href={`/${lang}/privacy`} className="hover:text-white transition-colors">
+              {lang === 'ro' ? 'Confidențialitate' : 'Privacy'}
             </Link>
-            <Link href={`/${lang}/trust#terms`} className="text-slate-300 hover:text-white transition-colors">
-              {footer.links.terms}
+            <Link href={`/${lang}/terms`} className="hover:text-white transition-colors">
+              {lang === 'ro' ? 'Termeni' : 'Terms'}
             </Link>
-            <Link href={lang === 'ro' ? '/en' : '/ro'} className="inline-flex items-center gap-1 text-brand-300 hover:text-brand-200 transition-colors">
-              <Globe className="w-3 h-3" />
-              <span>{lang === 'ro' ? 'English Version' : 'Versiunea Română'}</span>
+            <Link href={`/${lang}/cookies`} className="hover:text-white transition-colors">
+              Cookies
+            </Link>
+            <Link href={`/${lang}/accessibility`} className="hover:text-white transition-colors">
+              {lang === 'ro' ? 'Accesibilitate' : 'Accessibility'}
             </Link>
           </div>
         </div>

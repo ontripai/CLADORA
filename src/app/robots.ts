@@ -5,7 +5,7 @@ export default function robots(): MetadataRoute.Robots {
     rules: {
       userAgent: '*',
       allow: '/',
-      disallow: ['/api/private/', '/admin/'],
+      disallow: ['/api/private/', '/*/app/', '/*/demo'],
     },
     sitemap: 'https://cladora.ro/sitemap.xml',
   };

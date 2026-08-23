@@ -1,24 +1,29 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Language } from '@/types';
-import { getDictionary } from '@/dictionaries';
 import { 
   Building2, 
   Layers, 
   ShieldCheck, 
   Cpu, 
-  Sparkles, 
   ChevronDown, 
   Menu, 
   X, 
   Globe, 
   ArrowRight,
   TrendingUp,
-  Gauge,
-  Scale
+  KeyRound,
+  Home,
+  FileSpreadsheet,
+  Zap,
+  PlayCircle,
+  Sparkles,
+  Users,
+  BookOpen,
+  HelpCircle
 } from 'lucide-react';
 
 interface HeaderProps {
@@ -26,21 +31,33 @@ interface HeaderProps {
 }
 
 export const Header: React.FC<HeaderProps> = ({ lang }) => {
-  const dict = getDictionary(lang);
   const pathname = usePathname();
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [solutionsDropdown, setSolutionsDropdown] = useState(false);
+  const [activeDropdown, setActiveDropdown] = useState<'solutions' | 'modules' | 'resources' | null>(null);
+
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
+      setIsScrolled(window.scrollY > 15);
     };
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Compute alternative language URL preserving the current route
+  // Close dropdown on click outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setActiveDropdown(null);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  // Compute alternative language URL preserving current sub-route
   const getAltLangPath = () => {
     if (!pathname) return lang === 'ro' ? '/en' : '/ro';
     if (pathname.startsWith('/ro')) {
@@ -54,290 +71,385 @@ export const Header: React.FC<HeaderProps> = ({ lang }) => {
     return lang === 'ro' ? '/en' : '/ro';
   };
 
-  const navLinks = [
-    { label: dict.nav.modes, href: `#modes`, isDropdown: true },
-    { label: dict.nav.financialTruth, href: `/${lang}/financial-truth` },
-    { label: dict.nav.buildingDna, href: `/${lang}/building-dna` },
-    { label: dict.nav.meters, href: `/${lang}/meters` },
-    { label: dict.nav.migration, href: `/${lang}/migration` },
-    { label: dict.nav.pricing, href: `/${lang}/pricing` },
-    { label: dict.nav.pilot, href: `/${lang}/pilot`, isSpecial: true },
+  const solutions = [
+    {
+      title: lang === 'ro' ? 'Asociații de Proprietari' : 'Homeowner Associations',
+      desc: lang === 'ro' ? 'Gestiune Legea 196/2018, liste de plată, cenzori și adunări generale' : 'Statutory compliance, payment lists, censors, and AGM governance',
+      href: `/${lang}/solutions/associations`,
+      icon: Building2,
+      tag: 'Association OS'
+    },
+    {
+      title: lang === 'ro' ? 'Proprietari Portofoliu (Multi-Property)' : 'Multi-Property Owners',
+      desc: lang === 'ro' ? 'Consolidare apartamente, monitorizare chirii, yield net și contracte' : 'Consolidated rental income, net yields, tenant costs, and contracts',
+      href: `/${lang}/solutions/property-owners`,
+      icon: TrendingUp,
+      tag: 'Portfolio OS'
+    },
+    {
+      title: lang === 'ro' ? 'Companii de Administrare' : 'Property Management Firms',
+      desc: lang === 'ro' ? 'Închidere centralizată multi-bloc, SLA mentenanță și furnizori' : 'Multi-association batch close, maintenance SLAs, and operations',
+      href: `/${lang}/solutions/property-managers`,
+      icon: Layers,
+      tag: 'Manager OS'
+    },
+    {
+      title: lang === 'ro' ? 'Proprietari & Rezidenți' : 'Owners & Residents',
+      desc: lang === 'ro' ? 'Transparență totală la calculul cotelor, index contoare și plăți' : 'Explainable charges, online meter submission, and notices',
+      href: `/${lang}/solutions/residents`,
+      icon: Home,
+      tag: 'Resident App'
+    },
+    {
+      title: lang === 'ro' ? 'Chiriași' : 'Tenants',
+      desc: lang === 'ro' ? 'Acces strict la cheltuielile operaționale de consum și tichete' : 'Direct access to consumption costs without owner ledger access',
+      href: `/${lang}/solutions/tenants`,
+      icon: KeyRound,
+      tag: 'Tenant Portal'
+    }
+  ];
+
+  const modulesPreview = [
+    {
+      title: lang === 'ro' ? 'C01 — Financial Truth & Contabilitate' : 'C01 — Financial Truth & Accounting',
+      desc: lang === 'ro' ? 'Partidă dublă, jurnal operațiuni, fără ștergeri (stornare)' : 'Double-entry ledger, immutable journals, no silent deletions',
+      href: `/${lang}/modules#c01`
+    },
+    {
+      title: lang === 'ro' ? 'C02 — Alocare & Drepturi 5D' : 'C02 — Allocation & Rights Engine',
+      desc: lang === 'ro' ? 'Algoritmi CPI, persoane, suprafață și separare debitor/plătitor' : 'Statutory CPI shares, person count, and debtor/payer isolation',
+      href: `/${lang}/modules#c02`
+    },
+    {
+      title: lang === 'ro' ? 'C08 — Contoare & Consum' : 'C08 — Utilities & Meter Readings',
+      desc: lang === 'ro' ? 'Citire index foto OCR, detecție anomalii și validare' : 'Photo OCR validation, anomaly detection, and radio meters',
+      href: `/${lang}/modules#c08`
+    },
+    {
+      title: lang === 'ro' ? 'C16 — Migrare & Shadow Ledger' : 'C16 — Shadow Ledger Migration',
+      desc: lang === 'ro' ? 'Reconciliere automată cu softurile vechi în paralel' : 'Zero-risk parallel reconciliation against legacy exports',
+      href: `/${lang}/migration`
+    }
   ];
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-200 ${
         isScrolled
-          ? 'bg-[#070B12]/85 backdrop-blur-xl border-b border-white/10 shadow-2xl py-3'
-          : 'bg-transparent py-5'
+          ? 'bg-white/95 backdrop-blur-md border-b border-[#E2E8F0] shadow-sm py-3'
+          : 'bg-[#F6F9FC]/90 backdrop-blur-sm border-b border-transparent py-4'
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between">
-          {/* Brand Logo */}
-          <Link href={`/${lang}`} className="flex items-center gap-3 group">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 via-brand-400 to-emerald-400 p-[1px] shadow-glow-cyan transition-transform group-hover:scale-105">
-              <div className="w-full h-full bg-[#070B12] rounded-[11px] flex items-center justify-center">
-                <Building2 className="w-5 h-5 text-brand-400" />
-              </div>
+          
+          {/* Logo */}
+          <Link href={`/${lang}`} className="flex items-center gap-2.5 group focus:outline-none focus:ring-2 focus:ring-[#0E9F8E] rounded-lg">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#102A43] to-[#0E9F8E] flex items-center justify-center text-white font-display font-extrabold text-xl shadow-md group-hover:scale-105 transition-transform">
+              C
             </div>
-            <div className="flex flex-col">
-              <span className="text-xl font-display font-extrabold tracking-wider text-white group-hover:text-brand-300 transition-colors">
+            <div>
+              <span className="text-2xl font-display font-extrabold tracking-tight text-[#102A43]">
                 CLADORA
               </span>
-              <span className="text-[10px] font-medium tracking-widest text-emerald-400 uppercase -mt-1">
+              <span className="block text-[10px] font-semibold text-[#0E9F8E] uppercase tracking-wider -mt-1">
                 Asset OS
               </span>
             </div>
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden lg:flex items-center gap-1 xl:gap-2">
-            {/* Solutions Dropdown */}
-            <div 
-              className="relative"
-              onMouseEnter={() => setSolutionsDropdown(true)}
-              onMouseLeave={() => setSolutionsDropdown(false)}
+          <nav className="hidden lg:flex items-center gap-1 xl:gap-2" ref={dropdownRef}>
+            <Link
+              href={`/${lang}/platform`}
+              className="px-3.5 py-2 rounded-lg text-sm font-semibold text-[#52667A] hover:text-[#102A43] hover:bg-[#F0F4F8] transition-colors"
             >
+              {lang === 'ro' ? 'Platformă' : 'Platform'}
+            </Link>
+
+            {/* Solutions Dropdown */}
+            <div className="relative">
               <button
-                className="flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-slate-300 hover:text-white rounded-lg hover:bg-white/5 transition-all"
-                aria-expanded={solutionsDropdown}
+                type="button"
+                onClick={() => setActiveDropdown(activeDropdown === 'solutions' ? null : 'solutions')}
+                className={`flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-sm font-semibold transition-colors ${
+                  activeDropdown === 'solutions'
+                    ? 'text-[#0E9F8E] bg-[#EAF8F5]'
+                    : 'text-[#52667A] hover:text-[#102A43] hover:bg-[#F0F4F8]'
+                }`}
               >
-                <span>{dict.nav.modes}</span>
-                <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${solutionsDropdown ? 'rotate-180 text-brand-400' : ''}`} />
+                <span>{lang === 'ro' ? 'Soluții' : 'Solutions'}</span>
+                <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${activeDropdown === 'solutions' ? 'rotate-180 text-[#0E9F8E]' : ''}`} />
               </button>
 
-              {solutionsDropdown && (
-                <div className="absolute top-full left-0 w-80 pt-2 animate-fade-in">
-                  <div className="p-3 rounded-2xl glass-panel shadow-2xl border border-white/10 space-y-1">
-                    <Link
-                      href={`/${lang}/association`}
-                      className="flex items-start gap-3 p-2.5 rounded-xl hover:bg-white/5 transition-colors group"
-                    >
-                      <div className="p-2 rounded-lg bg-brand-500/10 text-brand-400 group-hover:bg-brand-500/20">
-                        <Building2 className="w-4 h-4" />
-                      </div>
-                      <div>
-                        <div className="text-sm font-semibold text-white group-hover:text-brand-300">
-                          {dict.nav.association}
-                        </div>
-                        <div className="text-xs text-slate-400">
-                          {lang === 'ro' ? 'Legea 196/2018, liste de plată, adunări' : 'HOA compliance, double-entry, AGMs'}
-                        </div>
-                      </div>
-                    </Link>
+              {activeDropdown === 'solutions' && (
+                <div className="absolute top-full left-0 mt-2 w-[480px] bg-white rounded-2xl border border-[#E2E8F0] shadow-elevated p-4 z-50 animate-in fade-in slide-in-from-top-2 duration-150">
+                  <div className="text-xs font-bold text-[#7B8A9A] uppercase tracking-wider px-3 pb-2 border-b border-[#F0F4F8]">
+                    {lang === 'ro' ? 'Soluții pe Tipuri de Utilizatori' : 'Solutions by Customer Type'}
+                  </div>
+                  <div className="mt-2 space-y-1">
+                    {solutions.map((item) => {
+                      const Icon = item.icon;
+                      return (
+                        <Link
+                          key={item.href}
+                          href={item.href}
+                          onClick={() => setActiveDropdown(null)}
+                          className="flex items-start gap-3 p-3 rounded-xl hover:bg-[#F6F9FC] transition-colors group"
+                        >
+                          <div className="w-9 h-9 rounded-lg bg-[#EAF8F5] text-[#0E9F8E] flex items-center justify-center shrink-0 group-hover:bg-[#0E9F8E] group-hover:text-white transition-colors">
+                            <Icon className="w-5 h-5" />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center justify-between">
+                              <span className="text-sm font-bold text-[#102A43] group-hover:text-[#0E9F8E] transition-colors">
+                                {item.title}
+                              </span>
+                              <span className="text-[10px] font-semibold px-2 py-0.5 rounded bg-[#F0F4F8] text-[#52667A]">
+                                {item.tag}
+                              </span>
+                            </div>
+                            <p className="text-xs text-[#52667A] mt-0.5 line-clamp-1">
+                              {item.desc}
+                            </p>
+                          </div>
+                        </Link>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+            </div>
 
-                    <Link
-                      href={`/${lang}/portfolio`}
-                      className="flex items-start gap-3 p-2.5 rounded-xl hover:bg-white/5 transition-colors group"
-                    >
-                      <div className="p-2 rounded-lg bg-emerald-500/10 text-emerald-400 group-hover:bg-emerald-500/20">
-                        <TrendingUp className="w-4 h-4" />
-                      </div>
-                      <div>
-                        <div className="text-sm font-semibold text-white group-hover:text-emerald-300">
-                          {dict.nav.portfolio}
-                        </div>
-                        <div className="text-xs text-slate-400">
-                          {lang === 'ro' ? 'Portofolii proprietari & drepturi chiriași' : 'Multi-property landlord & tenant rights'}
-                        </div>
-                      </div>
-                    </Link>
+            {/* Modules Mega Menu */}
+            <div className="relative">
+              <button
+                type="button"
+                onClick={() => setActiveDropdown(activeDropdown === 'modules' ? null : 'modules')}
+                className={`flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-sm font-semibold transition-colors ${
+                  activeDropdown === 'modules'
+                    ? 'text-[#0E9F8E] bg-[#EAF8F5]'
+                    : 'text-[#52667A] hover:text-[#102A43] hover:bg-[#F0F4F8]'
+                }`}
+              >
+                <span>{lang === 'ro' ? 'Module (17 Nuclee)' : 'Modules (17 Cores)'}</span>
+                <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${activeDropdown === 'modules' ? 'rotate-180 text-[#0E9F8E]' : ''}`} />
+              </button>
 
+              {activeDropdown === 'modules' && (
+                <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-[540px] bg-white rounded-2xl border border-[#E2E8F0] shadow-elevated p-5 z-50">
+                  <div className="flex items-center justify-between pb-3 border-b border-[#F0F4F8]">
+                    <span className="text-xs font-bold text-[#7B8A9A] uppercase tracking-wider">
+                      {lang === 'ro' ? 'Arhitectura Modulară CLADORA' : 'CLADORA Modular Architecture'}
+                    </span>
                     <Link
-                      href={`/${lang}/manager`}
-                      className="flex items-start gap-3 p-2.5 rounded-xl hover:bg-white/5 transition-colors group"
+                      href={`/${lang}/modules`}
+                      onClick={() => setActiveDropdown(null)}
+                      className="text-xs font-bold text-[#0E9F8E] hover:underline flex items-center gap-1"
                     >
-                      <div className="p-2 rounded-lg bg-violet-500/10 text-violet-400 group-hover:bg-violet-500/20">
-                        <Layers className="w-4 h-4" />
-                      </div>
-                      <div>
-                        <div className="text-sm font-semibold text-white group-hover:text-violet-300">
-                          {dict.nav.manager}
-                        </div>
-                        <div className="text-xs text-slate-400">
-                          {lang === 'ro' ? 'Companii de administrare multi-bloc' : 'Multi-building management company OS'}
-                        </div>
-                      </div>
+                      <span>{lang === 'ro' ? 'Vezi toate cele 17 module' : 'View all 17 cores'}</span>
+                      <ArrowRight className="w-3 h-3" />
                     </Link>
+                  </div>
+                  <div className="grid grid-cols-2 gap-2 mt-3">
+                    {modulesPreview.map((mod, idx) => (
+                      <Link
+                        key={idx}
+                        href={mod.href}
+                        onClick={() => setActiveDropdown(null)}
+                        className="p-2.5 rounded-xl hover:bg-[#F6F9FC] border border-transparent hover:border-[#E2E8F0] transition-all"
+                      >
+                        <div className="text-xs font-bold text-[#102A43] line-clamp-1">{mod.title}</div>
+                        <div className="text-[11px] text-[#7B8A9A] mt-1 line-clamp-2">{mod.desc}</div>
+                      </Link>
+                    ))}
                   </div>
                 </div>
               )}
             </div>
 
             <Link
-              href={`/${lang}/financial-truth`}
-              className="px-3 py-2 text-sm font-medium text-slate-300 hover:text-white rounded-lg hover:bg-white/5 transition-all"
-            >
-              {dict.nav.financialTruth}
-            </Link>
-
-            <Link
-              href={`/${lang}/building-dna`}
-              className="px-3 py-2 text-sm font-medium text-slate-300 hover:text-white rounded-lg hover:bg-white/5 transition-all"
-            >
-              {dict.nav.buildingDna}
-            </Link>
-
-            <Link
-              href={`/${lang}/meters`}
-              className="px-3 py-2 text-sm font-medium text-slate-300 hover:text-white rounded-lg hover:bg-white/5 transition-all"
-            >
-              {dict.nav.meters}
-            </Link>
-
-            <Link
               href={`/${lang}/migration`}
-              className="px-3 py-2 text-sm font-medium text-slate-300 hover:text-white rounded-lg hover:bg-white/5 transition-all"
+              className="px-3.5 py-2 rounded-lg text-sm font-semibold text-[#52667A] hover:text-[#102A43] hover:bg-[#F0F4F8] transition-colors"
             >
-              {dict.nav.migration}
+              {lang === 'ro' ? 'Migrare Fără Risc' : 'Safe Migration'}
             </Link>
 
             <Link
               href={`/${lang}/pricing`}
-              className="px-3 py-2 text-sm font-medium text-slate-300 hover:text-white rounded-lg hover:bg-white/5 transition-all"
+              className="px-3.5 py-2 rounded-lg text-sm font-semibold text-[#52667A] hover:text-[#102A43] hover:bg-[#F0F4F8] transition-colors"
             >
-              {dict.nav.pricing}
+              {lang === 'ro' ? 'Prețuri Pilot' : 'Pilot Pricing'}
             </Link>
 
             <Link
-              href={`/${lang}/pilot`}
-              className="ml-1 px-3 py-1.5 text-xs font-semibold text-amber-300 bg-amber-500/10 border border-amber-500/30 rounded-full hover:bg-amber-500/20 transition-all flex items-center gap-1.5 animate-pulse-subtle"
+              href={`/${lang}/resources/faq`}
+              className="px-3.5 py-2 rounded-lg text-sm font-semibold text-[#52667A] hover:text-[#102A43] hover:bg-[#F0F4F8] transition-colors"
             >
-              <Sparkles className="w-3 h-3 text-amber-400" />
-              <span>{dict.nav.pilot}</span>
+              FAQ
             </Link>
           </nav>
 
-          {/* Right Action Section */}
+          {/* Right Action Buttons */}
           <div className="hidden lg:flex items-center gap-3">
+            
+            {/* Interactive Demo Shortcut */}
+            <Link
+              href={`/${lang}/demo`}
+              className="flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold text-[#0E9F8E] bg-[#EAF8F5] border border-[#B2E5DF] hover:bg-[#0E9F8E] hover:text-white transition-all shadow-sm"
+            >
+              <PlayCircle className="w-4 h-4" />
+              <span>{lang === 'ro' ? 'Demo Interactiv' : 'Interactive Demo'}</span>
+            </Link>
+
             {/* Language Switcher */}
             <Link
               href={getAltLangPath()}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-slate-300 hover:text-white rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 transition-all"
-              title={lang === 'ro' ? 'Switch to English' : 'Comută în Română'}
+              className="flex items-center gap-1.5 px-2.5 py-2 rounded-lg text-xs font-bold text-[#52667A] hover:text-[#102A43] hover:bg-[#F0F4F8] transition-colors border border-[#E2E8F0]"
+              aria-label={`Switch to ${lang === 'ro' ? 'English' : 'Română'}`}
             >
-              <Globe className="w-3.5 h-3.5 text-brand-400" />
-              <span>{dict.common.switchLang}</span>
+              <Globe className="w-3.5 h-3.5 text-[#0E9F8E]" />
+              <span className="uppercase">{lang === 'ro' ? 'EN' : 'RO'}</span>
             </Link>
 
+            {/* Sign In to App */}
+            <Link
+              href={`/${lang}/login`}
+              className="text-xs font-bold text-[#102A43] hover:text-[#0E9F8E] px-3 py-2 transition-colors"
+            >
+              {lang === 'ro' ? 'Autentificare' : 'Sign in'}
+            </Link>
+
+            {/* Primary Pilot CTA */}
             <Link
               href={`/${lang}/pilot`}
-              className="relative inline-flex items-center justify-center p-0.5 overflow-hidden text-xs font-semibold rounded-xl group bg-gradient-to-br from-brand-400 via-emerald-400 to-teal-500 group-hover:from-brand-500 group-hover:to-teal-600 text-white shadow-glow-cyan"
+              className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-extrabold text-white bg-gradient-to-r from-[#102A43] to-[#0E9F8E] hover:from-[#173F5F] hover:to-[#0C8778] shadow-md hover:shadow-lg transition-all"
             >
-              <span className="relative px-4 py-2 transition-all ease-in duration-75 bg-[#070B12] rounded-[10px] group-hover:bg-opacity-0 flex items-center gap-1.5">
-                <span>{dict.common.startPilot}</span>
-                <ArrowRight className="w-3.5 h-3.5 text-brand-300 group-hover:translate-x-0.5 transition-transform" />
-              </span>
+              <span>{lang === 'ro' ? 'Aplică în Pilot' : 'Apply for Pilot'}</span>
+              <ArrowRight className="w-3.5 h-3.5" />
             </Link>
           </div>
 
           {/* Mobile Menu Button */}
-          <div className="flex items-center gap-2 lg:hidden">
+          <div className="flex lg:hidden items-center gap-2">
             <Link
               href={getAltLangPath()}
-              className="flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium text-slate-300 rounded-lg bg-white/5 border border-white/10"
+              className="p-2 rounded-lg text-xs font-bold text-[#52667A] border border-[#E2E8F0]"
             >
-              <Globe className="w-3.5 h-3.5 text-brand-400" />
-              <span>{lang === 'ro' ? 'EN' : 'RO'}</span>
+              <span className="uppercase">{lang === 'ro' ? 'EN' : 'RO'}</span>
             </Link>
 
             <button
+              type="button"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2 text-slate-400 hover:text-white rounded-lg bg-white/5 border border-white/10"
-              aria-label="Open Menu"
+              className="p-2.5 rounded-xl bg-white border border-[#E2E8F0] text-[#102A43] hover:bg-[#F0F4F8] focus:outline-none focus:ring-2 focus:ring-[#0E9F8E]"
+              aria-label="Toggle menu"
             >
-              {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
           </div>
+
         </div>
       </div>
 
-      {/* Mobile Drawer */}
+      {/* Mobile Drawer Navigation */}
       {mobileMenuOpen && (
-        <div className="lg:hidden animate-fade-in bg-[#070B12]/95 backdrop-blur-2xl border-b border-white/10 px-4 pt-4 pb-6 space-y-3">
-          <div className="space-y-1">
-            <div className="text-xs font-semibold text-slate-400 px-3 py-1 uppercase tracking-wider">
-              {dict.nav.modes}
+        <div className="lg:hidden fixed inset-x-0 top-[65px] bottom-0 bg-white border-t border-[#E2E8F0] z-40 overflow-y-auto p-6 space-y-6 animate-in slide-in-from-top-4 duration-200">
+          
+          <div className="p-4 rounded-2xl bg-[#EAF8F5] border border-[#B2E5DF] flex items-center justify-between">
+            <div className="space-y-0.5">
+              <div className="text-xs font-bold text-[#0A6E62]">
+                {lang === 'ro' ? 'Explorează fără cont' : 'Explore with zero login'}
+              </div>
+              <div className="text-sm font-extrabold text-[#102A43]">
+                {lang === 'ro' ? 'Demo Sandbox Interactiv' : 'Interactive Demo Sandbox'}
+              </div>
             </div>
             <Link
-              href={`/${lang}/association`}
+              href={`/${lang}/demo`}
               onClick={() => setMobileMenuOpen(false)}
-              className="block px-3 py-2 rounded-lg text-sm font-medium text-slate-200 hover:bg-white/5"
+              className="px-4 py-2 rounded-xl bg-[#0E9F8E] text-white text-xs font-bold shadow-sm"
             >
-              {dict.nav.association}
-            </Link>
-            <Link
-              href={`/${lang}/portfolio`}
-              onClick={() => setMobileMenuOpen(false)}
-              className="block px-3 py-2 rounded-lg text-sm font-medium text-slate-200 hover:bg-white/5"
-            >
-              {dict.nav.portfolio}
-            </Link>
-            <Link
-              href={`/${lang}/manager`}
-              onClick={() => setMobileMenuOpen(false)}
-              className="block px-3 py-2 rounded-lg text-sm font-medium text-slate-200 hover:bg-white/5"
-            >
-              {dict.nav.manager}
+              {lang === 'ro' ? 'Deschide' : 'Launch'}
             </Link>
           </div>
 
-          <div className="pt-2 border-t border-white/10 space-y-1">
+          <div className="space-y-2">
+            <div className="text-xs font-bold text-[#7B8A9A] uppercase tracking-wider px-2">
+              {lang === 'ro' ? 'Soluții' : 'Solutions'}
+            </div>
+            {solutions.map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center justify-between p-3 rounded-xl hover:bg-[#F6F9FC] border border-[#E2E8F0]/60 text-sm font-bold text-[#102A43]"
+              >
+                <span>{item.title}</span>
+                <ArrowRight className="w-4 h-4 text-[#7B8A9A]" />
+              </Link>
+            ))}
+          </div>
+
+          <div className="space-y-2 pt-2 border-t border-[#E2E8F0]">
+            <div className="text-xs font-bold text-[#7B8A9A] uppercase tracking-wider px-2">
+              {lang === 'ro' ? 'Navigare' : 'Navigation'}
+            </div>
             <Link
-              href={`/${lang}/financial-truth`}
+              href={`/${lang}/platform`}
               onClick={() => setMobileMenuOpen(false)}
-              className="block px-3 py-2 rounded-lg text-sm font-medium text-slate-200 hover:bg-white/5"
+              className="block p-3 rounded-xl hover:bg-[#F6F9FC] text-sm font-bold text-[#102A43]"
             >
-              {dict.nav.financialTruth}
+              {lang === 'ro' ? 'Platformă' : 'Platform'}
             </Link>
             <Link
-              href={`/${lang}/building-dna`}
+              href={`/${lang}/modules`}
               onClick={() => setMobileMenuOpen(false)}
-              className="block px-3 py-2 rounded-lg text-sm font-medium text-slate-200 hover:bg-white/5"
+              className="block p-3 rounded-xl hover:bg-[#F6F9FC] text-sm font-bold text-[#102A43]"
             >
-              {dict.nav.buildingDna}
-            </Link>
-            <Link
-              href={`/${lang}/meters`}
-              onClick={() => setMobileMenuOpen(false)}
-              className="block px-3 py-2 rounded-lg text-sm font-medium text-slate-200 hover:bg-white/5"
-            >
-              {dict.nav.meters}
+              {lang === 'ro' ? 'Module (17 Nuclee)' : 'Modules (17 Cores)'}
             </Link>
             <Link
               href={`/${lang}/migration`}
               onClick={() => setMobileMenuOpen(false)}
-              className="block px-3 py-2 rounded-lg text-sm font-medium text-slate-200 hover:bg-white/5"
+              className="block p-3 rounded-xl hover:bg-[#F6F9FC] text-sm font-bold text-[#102A43]"
             >
-              {dict.nav.migration}
+              {lang === 'ro' ? 'Migrare Shadow Ledger' : 'Shadow Ledger Migration'}
             </Link>
             <Link
               href={`/${lang}/pricing`}
               onClick={() => setMobileMenuOpen(false)}
-              className="block px-3 py-2 rounded-lg text-sm font-medium text-slate-200 hover:bg-white/5"
+              className="block p-3 rounded-xl hover:bg-[#F6F9FC] text-sm font-bold text-[#102A43]"
             >
-              {dict.nav.pricing}
+              {lang === 'ro' ? 'Prețuri Pilot' : 'Pilot Pricing'}
             </Link>
             <Link
-              href={`/${lang}/trust`}
+              href={`/${lang}/resources/faq`}
               onClick={() => setMobileMenuOpen(false)}
-              className="block px-3 py-2 rounded-lg text-sm font-medium text-slate-200 hover:bg-white/5"
+              className="block p-3 rounded-xl hover:bg-[#F6F9FC] text-sm font-bold text-[#102A43]"
             >
-              {dict.nav.trust}
+              FAQ
             </Link>
           </div>
 
-          <div className="pt-3">
+          <div className="pt-4 border-t border-[#E2E8F0] space-y-3">
             <Link
               href={`/${lang}/pilot`}
               onClick={() => setMobileMenuOpen(false)}
-              className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-gradient-to-r from-brand-500 to-emerald-500 text-white font-semibold text-sm shadow-glow-cyan"
+              className="w-full flex items-center justify-center gap-2 py-3.5 px-4 rounded-xl bg-[#0E9F8E] text-white text-sm font-extrabold shadow-md"
             >
-              <Sparkles className="w-4 h-4" />
-              <span>{dict.common.startPilot}</span>
+              <span>{lang === 'ro' ? 'Aplică în Programul Pilot' : 'Apply for Pilot Cohort'}</span>
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+            <Link
+              href={`/${lang}/login`}
+              onClick={() => setMobileMenuOpen(false)}
+              className="w-full flex items-center justify-center py-3 px-4 rounded-xl border border-[#E2E8F0] text-[#102A43] text-sm font-bold bg-white"
+            >
+              {lang === 'ro' ? 'Autentificare în Aplicație' : 'Sign in to App'}
             </Link>
           </div>
+
         </div>
       )}
     </header>
