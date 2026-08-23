@@ -7,9 +7,10 @@ import { getSiteUrl } from '@/config/site';
 
 const inter = Inter({
   subsets: ['latin', 'latin-ext'],
-  weight: ['400', '600', '700', '800'],
+  weight: ['400', '600', '700'],
   variable: '--font-inter',
   display: 'swap',
+  adjustFontFallback: true,
 });
 
 const manrope = Manrope({
@@ -17,13 +18,15 @@ const manrope = Manrope({
   weight: ['700', '800'],
   variable: '--font-manrope',
   display: 'swap',
+  adjustFontFallback: true,
 });
 
 const vazirmatn = Vazirmatn({
-  subsets: ['arabic', 'latin'],
-  weight: ['400', '600', '700', '800'],
+  subsets: ['arabic'],
+  weight: ['400', '700'],
   variable: '--font-vazirmatn',
   display: 'swap',
+  adjustFontFallback: true,
 });
 
 export async function generateStaticParams() {

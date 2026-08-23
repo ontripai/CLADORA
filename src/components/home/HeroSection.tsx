@@ -15,14 +15,14 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ lang }) => {
   return (
     <section className="relative pt-32 pb-20 overflow-hidden bg-gradient-to-b from-[#F0F4F8] via-[#F6F9FC] to-[#F6F9FC] mesh-subtle">
       {/* Background ambient lighting */}
-      <div className="absolute top-10 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-gradient-to-tr from-[#0E9F8E]/10 via-[#2F80ED]/10 to-[#FF7A59]/5 rounded-full blur-[100px] pointer-events-none" />
+      <div className="absolute top-10 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-gradient-to-tr from-[#0E9F8E]/10 via-[#2F80ED]/10 to-[#FF7A59]/5 rounded-full blur-[60px] pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         
         {/* Top Pilot Badge */}
         <div className="flex justify-center">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white border border-[#B2E5DF] shadow-sm text-xs font-bold text-[#0A6E62]">
-            <span className="flex h-2 w-2 rounded-full bg-[#10B981] animate-pulse" />
+            <span className="flex h-2 w-2 rounded-full bg-[#10B981]" />
             <span>
               {dict.hero.badge}
             </span>
