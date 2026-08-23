@@ -98,7 +98,7 @@ export default function AppLayout({
             <Building2 className="w-4 h-4 text-[#0E9F8E] shrink-0" />
             <div className="flex flex-col">
               <span className="font-bold text-[#102A43] truncate max-w-[130px] sm:max-w-[220px]">
-                {context.associationName}
+                {lang === 'fa' ? 'مجتمع مسکونی آویاتسی ۱۲B' : context.associationName}
               </span>
               <span className="text-[10px] text-[#7B8A9A] -mt-0.5">
                 {context.unitNumber} · {lang === 'ro' ? 'Perioadă:' : lang === 'fa' ? 'دوره:' : 'Period:'} <strong className="text-[#0E9F8E] font-mono">{context.accountingPeriod}</strong>

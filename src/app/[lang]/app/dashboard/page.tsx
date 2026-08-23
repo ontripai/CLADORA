@@ -44,7 +44,7 @@ export default function DashboardPage({ params }: { params: { lang: Language } }
       <div className="card-proptech p-6 bg-white border-[#D3DCE6] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2 text-xs font-bold text-[#0E9F8E] uppercase tracking-wider">
-            <span>{context.associationName}</span>
+            <span>{lang === 'fa' ? 'مجتمع مسکونی آویاتسی ۱۲B' : context.associationName}</span>
             <span>·</span>
             <span>
               {lang === 'ro' ? 'Perioadă Contabilă:' : lang === 'fa' ? 'دوره حسابداری:' : 'Accounting Period:'} {context.accountingPeriod}

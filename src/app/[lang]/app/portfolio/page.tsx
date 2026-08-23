@@ -53,7 +53,11 @@ export default function PortfolioPage({ params }: { params: { lang: Language } }
                   {prop.unit}
                 </span>
                 <h3 className="text-base font-bold text-[#102A43] mt-1.5">{prop.address}</h3>
-                <p className="text-xs text-[#7B8A9A]">{prop.associationName}</p>
+                <p className="text-xs text-[#7B8A9A]">
+                  {lang === 'fa' 
+                    ? (prop.associationName.includes('Titan') ? 'مجتمع مسکونی تیتان پارک' : 'مجتمع مسکونی آویاتسی') 
+                    : prop.associationName}
+                </p>
               </div>
               <div className="text-end">
                 <div className="text-lg font-display font-extrabold text-[#0E9F8E]">

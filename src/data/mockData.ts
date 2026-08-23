@@ -48,7 +48,7 @@ export const DEMO_ROLES: RoleDefinition[] = [
   },
   {
     key: 'owner',
-    title: { ro: 'Proprietar (Rezident)', en: 'Homeowner (Resident)', fa: 'مالک واحد (ساکن)' },
+    title: { ro: 'Proprietar (Rezident)', en: 'Homeowner (Resident)', fa: 'مالک ساکن' },
     description: { 
       ro: 'Listă de plată transparentă, transmitere index contoare, vot adunare generală, tichete.',
       en: 'Transparent monthly statement, meter readings submission, AGM voting, tickets.',
@@ -60,7 +60,7 @@ export const DEMO_ROLES: RoleDefinition[] = [
   },
   {
     key: 'tenant_resident',
-    title: { ro: 'Chiriaș / Rezident', en: 'Tenant / Resident', fa: 'مستأجر / ساکن' },
+    title: { ro: 'Chiriaș / Rezident', en: 'Tenant / Resident', fa: 'مستأجر' },
     description: { 
       ro: 'Plată cheltuieli operaționale de consum, citire contoare, sesizări mentenanță (fără acces la datele financiare ale proprietarului).',
       en: 'Pay consumption charges, submit meters, report maintenance issues (strictly isolated from owner financial ledger).',
@@ -72,7 +72,7 @@ export const DEMO_ROLES: RoleDefinition[] = [
   },
   {
     key: 'portfolio_owner',
-    title: { ro: 'Proprietar Portofoliu (Multi-Property)', en: 'Portfolio Landlord', fa: 'مالک سبد املاک (سرمایه‌گذار)' },
+    title: { ro: 'Proprietar Portofoliu (Multi-Property)', en: 'Portfolio Landlord', fa: 'مالک سبد املاک' },
     description: { 
       ro: 'Consolidare 4+ apartamente, monitorizare chirii încasate, yield net, alocare costuri proprietar vs chiriaș.',
       en: 'Consolidate multiple apartments, track rental cashflow, net yield, owner vs tenant expense separation.',
@@ -84,7 +84,7 @@ export const DEMO_ROLES: RoleDefinition[] = [
   },
   {
     key: 'property_manager',
-    title: { ro: 'Companie de Administrare (Pro)', en: 'Professional Property Manager', fa: 'شرکت مدیریت املاک (حرفه‌ای)' },
+    title: { ro: 'Companie de Administrare (Pro)', en: 'Professional Property Manager', fa: 'شرکت مدیریت املاک' },
     description: { 
       ro: 'Gestionare 8+ asociații simultan, închidere centralizată de lună, SLA echipe de mentenanță, analiză multi-bloc.',
       en: 'Manage 8+ associations concurrently, batch month-end close, staff SLA metrics, portfolio analytics.',

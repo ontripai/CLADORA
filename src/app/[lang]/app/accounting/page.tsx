@@ -103,6 +103,31 @@ export default function AccountingPage({ params }: { params: { lang: Language } 
           <tbody className="divide-y divide-[#F0F4F8]">
             {filteredEntries.map((entry) => {
               const statusKey: EntityStatus = entry.status === 'POSTED' ? 'completed' : 'pending';
+              
+              let desc = entry.description;
+              let debit = entry.debitAccount;
+              let credit = entry.creditAccount;
+
+              if (lang === 'fa') {
+                if (entry.id === 'JE-2026-1001') {
+                  desc = 'ثبت فاکتور گاز طبیعی موتورخانه - شرکت انژی';
+                  debit = '401.01 (بستانکاران / شرکت‌های خدماتی)';
+                  credit = '605.02 (هزینه‌های گاز و گرمایش)';
+                } else if (entry.id === 'JE-2026-1002') {
+                  desc = 'ثبت فاکتور شرکت آب و فاضلاب منطقه ۵';
+                  debit = '401.01 (بستانکاران / شرکت‌های خدماتی)';
+                  credit = '605.01 (هزینه‌های آب مصرفی)';
+                } else if (entry.id === 'JE-2026-1003') {
+                  desc = 'وصول شارژ ماهانه از طریق واریز بانکی - واحدهای ۱۴، ۲۲، ۳۸';
+                  debit = '5121.01 (حساب جاری بانکی انجمن)';
+                  credit = '411.01 (مطالبات شارژ ماهانه مالکان)';
+                } else if (entry.id === 'JE-2026-1004') {
+                  desc = 'قرارداد سرویس و نگهداری ماهانه آسانسورها - بلوک A و B';
+                  debit = '401.02 (پیمانکاران خدمات فنی)';
+                  credit = '611.01 (هزینه‌های سرویس آسانسور - سهم مشاع)';
+                }
+              }
+
               return (
                 <tr key={entry.id} className="hover:bg-[#F6F9FC]/60 transition-colors">
                   <td className="p-3.5 text-start">
@@ -110,9 +135,9 @@ export default function AccountingPage({ params }: { params: { lang: Language } 
                     <div className="text-[10px] text-[#7B8A9A] font-mono ltr-isolate">{entry.date}</div>
                   </td>
                   <td className="p-3.5 font-mono text-[#52667A] font-bold text-start ltr-isolate">{entry.documentRef}</td>
-                  <td className="p-3.5 text-[#102A43] font-medium max-w-xs text-start">{entry.description}</td>
-                  <td className="p-3.5 font-mono text-xs text-[#0A6E62] text-start ltr-isolate">{entry.debitAccount}</td>
-                  <td className="p-3.5 font-mono text-xs text-[#173F5F] text-start ltr-isolate">{entry.creditAccount}</td>
+                  <td className="p-3.5 text-[#102A43] font-medium max-w-xs text-start">{desc}</td>
+                  <td className="p-3.5 font-mono text-xs text-[#0A6E62] text-start ltr-isolate">{debit}</td>
+                  <td className="p-3.5 font-mono text-xs text-[#173F5F] text-start ltr-isolate">{credit}</td>
                   <td className="p-3.5 text-end font-display font-extrabold text-[#102A43]">
                     <Money amount={entry.amount} currency={entry.currency || 'RON'} locale={lang} />
                   </td>

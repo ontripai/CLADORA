@@ -138,7 +138,7 @@ export const DISALLOWED_ENGLISH_PHRASES = [
   /\bPrivacy Protection\b/i
 ];
 
-// Disallowed Romanian phrases on Persian views
+// Disallowed Romanian phrases and keywords on Persian views
 export const DISALLOWED_ROMANIAN_PHRASES = [
   /\bAcasă\b/i,
   /\bSoluții\b/i,
@@ -169,7 +169,23 @@ export const DISALLOWED_ROMANIAN_PHRASES = [
   /\bAvizier Digital\b/i,
   /\bDoar Cheltuieli de Consum\b/i,
   /\bTichete Directe\b/i,
-  /\bConfidențialitate & Respect\b/i
+  /\bConfidențialitate & Respect\b/i,
+  /\brezident\b/i,
+  /\breziden[țt]i\b/i,
+  /\blocatar\b/i,
+  /\blocatari\b/i,
+  /\bproprietar\b/i,
+  /\bproprietari\b/i,
+  /\badministrator\b/i,
+  /\badministratori\b/i,
+  /\basocia[țt]ie\b/i,
+  /\basocia[țt]ii\b/i,
+  /\bapartament\b/i,
+  /\bapartamente\b/i,
+  /\blun[ăa]\b/i,
+  /\bluni\b/i,
+  /\bcheltuieli\b/i,
+  /\bpentru\b/i
 ];
 
 function fetchPage(path, port = 3000) {

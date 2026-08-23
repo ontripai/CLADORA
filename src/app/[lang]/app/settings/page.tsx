@@ -57,7 +57,7 @@ export default function SettingsPage({ params }: { params: { lang: Language } })
             </div>
             <div className="flex justify-between p-2.5 rounded-lg bg-[#F6F9FC]">
               <span className="text-[#52667A]">{lang === 'ro' ? 'Asociație principală:' : lang === 'fa' ? 'مجتمع متصل اصلی:' : 'Primary Association:'}</span>
-              <span className="font-bold text-[#102A43]">{context.associationName}</span>
+              <span className="font-bold text-[#102A43]">{lang === 'fa' ? 'مجتمع مسکونی آویاتسی ۱۲B' : context.associationName}</span>
             </div>
             <div className="flex justify-between p-2.5 rounded-lg bg-[#F6F9FC]">
               <span className="text-[#52667A]">{lang === 'ro' ? 'Unitate rezidențială:' : lang === 'fa' ? 'واحد مسکونی:' : 'Residential Unit:'}</span>
