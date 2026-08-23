@@ -73,18 +73,18 @@ export default function PropertyManagersSolutionPage({ params }: { params: { lan
 
           <h1 className="text-3xl sm:text-5xl font-display font-extrabold text-[#102A43] tracking-tight max-w-3xl">
             {lang === 'ro'
-              ? 'Scalează-ți compania de administrare fără a crește proporțional costurile de personal'
+              ? 'Dezvoltă-ți compania de administrare fără blocaje operaționale'
               : lang === 'fa'
-              ? 'توسعه و مقیاس‌پذیری شرکت مدیریت املاک با سرعت و بازده عملیاتی سازمانی'
-              : 'Scale Your Property Management Firm with Enterprise Operational Speed'}
+              ? 'توسعه و رشد شرکت مدیریت املاک با هماهنگی و انضباط کامل عملیاتی'
+              : 'Grow Your Property Management Operations Without Operational Bottlenecks'}
           </h1>
 
           <p className="text-base sm:text-lg text-[#52667A] max-w-3xl leading-relaxed">
             {lang === 'ro'
-              ? 'Închidere centralizată de lună pentru zeci de asociații simultan, dispecerat tichete mentenanță cu SLA orar și monitorizarea performanței furnizorilor.'
+              ? 'Închidere organizată de lună pentru zeci de asociații simultan, dispecerat tichete mentenanță cu timpi de reacție clari și monitorizarea performanței furnizorilor.'
               : lang === 'fa'
-              ? 'بستن هم‌زمان دوره‌های ماهانه برای ده‌ها مجتمع، سامانه دیسپچینگ تیکت‌های تعمیرات با تایمر شمارش معکوس SLA و ارزیابی عملکرد پیمانکاران.'
-              : 'Batch month-end close across multi-association portfolios, dispatch ticket SLAs, and real-time vendor performance analytics.'}
+              ? 'بستن منظم دوره‌های ماهانه برای ده‌ها مجتمع، ثبت و ارجاع دقیق تیکت‌های فنی به تکنسین‌ها و ارزیابی کیفیت کار پیمانکاران.'
+              : 'Organized month-end close across multi-association portfolios, dispatch ticket SLAs, and vendor service oversight.'}
           </p>
 
           <div className="pt-2 flex flex-wrap gap-4">
@@ -92,14 +92,14 @@ export default function PropertyManagersSolutionPage({ params }: { params: { lan
               href={`/${lang}/demo`}
               className="px-6 py-3.5 rounded-xl bg-[#0E9F8E] hover:bg-[#0C8778] text-white text-xs font-bold shadow-sm transition-all flex items-center gap-2"
             >
-              <span>{lang === 'ro' ? 'Vezi demo Manager Pro' : lang === 'fa' ? 'مشاهده نسخه نمایشی شرکت مدیریت' : 'Launch Manager Pro demo'}</span>
+              <span>{lang === 'ro' ? 'Vezi demonstrația Manager Pro' : lang === 'fa' ? 'ورود به نسخه نمایشی شرکت مدیریت' : 'View Manager Pro demo'}</span>
               <ArrowRight className="w-4 h-4 rtl:rotate-180" />
             </Link>
             <Link
               href={`/${lang}/pilot`}
               className="px-6 py-3.5 rounded-xl bg-[#F0F4F8] hover:bg-[#E2E8F0] text-[#102A43] text-xs font-bold transition-all"
             >
-              {lang === 'ro' ? 'Parteneriat companii în pilot' : lang === 'fa' ? 'درخواست همکاری شرکتی در پایلوت' : 'Partner with pilot program'}
+              {lang === 'ro' ? 'Solicită acces în pilot' : lang === 'fa' ? 'درخواست حضور در پایلوت' : 'Apply for pilot access'}
             </Link>
           </div>
         </div>

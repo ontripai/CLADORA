@@ -65,8 +65,8 @@ export const Header: React.FC<HeaderProps> = ({ lang }) => {
       tag: lang === 'ro' ? 'Association OS' : lang === 'fa' ? 'Association OS • سیستم مدیریت انجمن مالکان' : 'Association OS'
     },
     {
-      title: lang === 'ro' ? 'Proprietari Portofoliu' : lang === 'fa' ? 'مالکان سبد املاک' : 'Portfolio Landlords',
-      desc: lang === 'ro' ? 'Consolidare apartamente, monitorizare chirii, yield net și contracte' : lang === 'fa' ? 'پایش تجمیعی املاک، بازده خالص، وصول اجاره و تفکیک هزینه‌ها' : 'Consolidated rental income, net yields, tenant costs, and contracts',
+      title: lang === 'ro' ? 'Proprietari cu Portofoliu' : lang === 'fa' ? 'مالکان دارای چند ملک' : 'Multi-Property Owners',
+      desc: lang === 'ro' ? 'Consolidare apartamente, monitorizare chirii, randament net și contracte' : lang === 'fa' ? 'پایش تجمیعی املاک، بازده خالص، وصول اجاره و تفکیک هزینه‌ها' : 'Consolidated rental income, net yields, tenant costs, and contracts',
       href: `/${lang}/solutions/property-owners`,
       icon: TrendingUp,
       tag: lang === 'fa' ? 'Portfolio OS • سیستم مدیریت سبد املاک' : 'Portfolio OS'

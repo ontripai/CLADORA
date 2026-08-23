@@ -36,6 +36,7 @@ export const actionLabels = {
   reject: { ro: 'Respinge', en: 'Reject', fa: 'رد' },
   payNow: { ro: 'Plătește acum', en: 'Pay Now', fa: 'پرداخت' },
   markAsRead: { ro: 'Marchează ca citit', en: 'Mark as Read', fa: 'علامت‌گذاری به‌عنوان خوانده‌شده' },
+  closePeriod: { ro: 'Închide perioada', en: 'Close accounting period', fa: 'بستن دوره حسابداری' },
 } as const;
 
 export type ActionKey = keyof typeof actionLabels;

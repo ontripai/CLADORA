@@ -73,17 +73,17 @@ export default function ResidentsSolutionPage({ params }: { params: { lang: Lang
 
           <h1 className="text-3xl sm:text-5xl font-display font-extrabold text-[#102A43] tracking-tight max-w-3xl">
             {lang === 'ro'
-              ? 'Listă de plată clară, transmitere index foto și liniște în propriul cămin'
+              ? 'Listă de plată clară, transmitere index prin poză și transparență completă'
               : lang === 'fa'
-              ? 'فیش شفاف شارژ، ثبت تصویری کنتورها و آرامش خاطر در خانه شما'
-              : 'Clear Monthly Statements, Photo Meter Reads & Complete Living Peace of Mind'}
+              ? 'فیش شفاف شارژ، ثبت آسان کنتورها و آرامش خاطر در خانه شما'
+              : 'Clear Monthly Statements, Easy Meter Reads & Resident Peace of Mind'}
           </h1>
 
           <p className="text-base sm:text-lg text-[#52667A] max-w-3xl leading-relaxed">
             {lang === 'ro'
-              ? 'Vezi exact de unde vine fiecare leu de pe nota de plată, transmiți indexul contoarelor prin poză, primești notificări instant de la administrație și participi la deciziile blocului tău.'
+              ? 'Vezi exact de unde vine fiecare sumă de pe nota de plată, transmiți indexul contoarelor prin poză, primești notificări instant de la administrație și participi la deciziile blocului tău.'
               : lang === 'fa'
-              ? 'منشأ دقیق هر ریال و لئو در فیش شارژ را به شفافیت مشاهده کنید، ارقام کنتورهای آب و گاز را با ارسال یک عکس ثبت کنید، اطلاعیه‌های هیئت‌مدیره را فوری دریافت نمایید و در تصمیم‌گیری‌های ساختمان سهم داشته باشید.'
+              ? 'منشأ دقیق هر ردیف در فیش شارژ را به‌روشنی مشاهده کنید، ارقام کنتورها را با ارسال یک عکس ثبت کنید، اطلاعیه‌های مهم را فوری دریافت نمایید و در تصمیم‌گیری‌های ساختمان سهم داشته باشید.'
               : 'Understand every line on your monthly maintenance bill, snap photos of water meters, receive urgent building notices, and vote on community improvements.'}
           </p>
 
@@ -92,14 +92,14 @@ export default function ResidentsSolutionPage({ params }: { params: { lang: Lang
               href={`/${lang}/demo`}
               className="px-6 py-3.5 rounded-xl bg-[#0E9F8E] hover:bg-[#0C8778] text-white text-xs font-bold shadow-sm transition-all flex items-center gap-2"
             >
-              <span>{lang === 'ro' ? 'Vezi interfața de rezident' : lang === 'fa' ? 'مشاهده نسخه نمایشی ساکنان' : 'Explore resident view'}</span>
+              <span>{lang === 'ro' ? 'Vezi demonstrația ca rezident' : lang === 'fa' ? 'ورود به نسخه نمایشی ساکنان' : 'View resident demo'}</span>
               <ArrowRight className="w-4 h-4 rtl:rotate-180" />
             </Link>
             <Link
               href={`/${lang}/pilot`}
               className="px-6 py-3.5 rounded-xl bg-[#F0F4F8] hover:bg-[#E2E8F0] text-[#102A43] text-xs font-bold transition-all"
             >
-              {lang === 'ro' ? 'Propune CLADORA blocului tău' : lang === 'fa' ? 'پیشنهاد کلادورا به هیئت‌مدیره مجتمع' : 'Suggest CLADORA to your board'}
+              {lang === 'ro' ? 'Solicită acces în pilot' : lang === 'fa' ? 'درخواست حضور در پایلوت' : 'Apply for pilot access'}
             </Link>
           </div>
         </div>

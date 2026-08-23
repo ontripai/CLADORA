@@ -92,7 +92,7 @@ export default function TenantsSolutionPage({ params }: { params: { lang: Langua
               href={`/${lang}/demo`}
               className="px-6 py-3.5 rounded-xl bg-[#0E9F8E] hover:bg-[#0C8778] text-white text-xs font-bold shadow-sm transition-all flex items-center gap-2"
             >
-              <span>{lang === 'ro' ? 'Vezi portalul chiriașului' : lang === 'fa' ? 'مشاهده نسخه نمایشی پرتال مستأجران' : 'Launch tenant demo'}</span>
+              <span>{lang === 'ro' ? 'Vezi demonstrația portalului' : lang === 'fa' ? 'ورود به نسخه نمایشی مستأجران' : 'View tenant demo'}</span>
               <ArrowRight className="w-4 h-4 rtl:rotate-180" />
             </Link>
           </div>

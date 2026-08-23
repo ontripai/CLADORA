@@ -121,18 +121,18 @@ export default function AssociationsSolutionPage({ params }: { params: { lang: L
 
           <h1 className="text-3xl sm:text-5xl font-display font-extrabold text-[#102A43] tracking-tight max-w-3xl">
             {lang === 'ro'
-              ? 'Administrare transparentă, contabilitate impecabilă și armonie în bloc'
+              ? 'Administrare clară, contabilitate fără reproș și încredere în comunitate'
               : lang === 'fa'
-              ? 'مدیریت شفاف، حسابداری دقیق و هماهنگی یکپارچه برای انجمن‌های مالکان'
-              : 'Transparent Administration, Flawless Accounting & Condo Harmony'}
+              ? 'مدیریت شفاف، حسابداری دقیق و آرامش خاطر ساکنان مجتمع'
+              : 'Clear Administration, Accountable Bookkeeping & Resident Trust'}
           </h1>
 
           <p className="text-base sm:text-lg text-[#52667A] max-w-3xl leading-relaxed">
             {lang === 'ro'
               ? 'Conceput special pentru asociațiile de proprietari din România, conform Legii 196/2018. Oferă președintelui, administratorului, cenzorului și proprietarilor o singură sursă de adevăr financiar.'
               : lang === 'fa'
-              ? 'راهکاری یکپارچه برای انجمن‌های مالکان در رومانی که مدیران ساختمان، رؤسای انجمن، بازرسان، اعضای هیئت‌مدیره، مالکان و ساکنان را بر پایه یک منبع قابل‌اعتماد از اطلاعات مالی و عملیاتی به یکدیگر متصل می‌کند.'
-              : 'Engineered specifically for Romanian homeowner associations under Law 196/2018. Connects administrators, board presidents, auditors, and residents on one single source of truth.'}
+              ? 'طراحی‌شده ویژه مجتمع‌های مسکونی بر پایه قانون ۱۹۶/۲۰۱۸؛ ایجاد هماهنگی میان مدیر ساختمان، هیئت‌مدیره، بازرسان و مالکان بر پایه اطلاعات شفاف و مستند.'
+              : 'Designed specifically for residential associations under Romanian Law 196/2018. Connects administrators, board presidents, auditors, and residents on one single source of truth.'}
           </p>
 
           <div className="pt-2 flex flex-wrap gap-4">
@@ -140,14 +140,14 @@ export default function AssociationsSolutionPage({ params }: { params: { lang: L
               href={`/${lang}/demo`}
               className="px-6 py-3.5 rounded-xl bg-[#0E9F8E] hover:bg-[#0C8778] text-white text-xs font-bold shadow-sm transition-all flex items-center gap-2"
             >
-              <span>{lang === 'ro' ? 'Vezi demo ca administrator' : lang === 'fa' ? 'مشاهده نسخه نمایشی مدیر ساختمان' : 'Launch demo as administrator'}</span>
+              <span>{lang === 'ro' ? 'Vezi demonstrația ca administrator' : lang === 'fa' ? 'ورود به نسخه نمایشی مدیر ساختمان' : 'View demo as administrator'}</span>
               <ArrowRight className="w-4 h-4 rtl:rotate-180" />
             </Link>
             <Link
               href={`/${lang}/pilot`}
               className="px-6 py-3.5 rounded-xl bg-[#F0F4F8] hover:bg-[#E2E8F0] text-[#102A43] text-xs font-bold transition-all"
             >
-              {lang === 'ro' ? 'Înscrie asociația în pilot' : lang === 'fa' ? 'درخواست شرکت انجمن در پایلوت' : 'Apply for association pilot'}
+              {lang === 'ro' ? 'Solicită acces în pilot' : lang === 'fa' ? 'درخواست حضور در پایلوت' : 'Apply for pilot access'}
             </Link>
           </div>
         </div>

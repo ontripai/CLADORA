@@ -56,7 +56,7 @@ export default function PropertyOwnersSolutionPage({ params }: { params: { lang:
           </span>
           <span>/</span>
           <span className="text-[#102A43] font-bold">
-            {lang === 'ro' ? 'Proprietari Portofoliu (Multi-Property)' : lang === 'fa' ? 'مالکان سبد املاک' : 'Portfolio Landlords'}
+            {lang === 'ro' ? 'Proprietari cu Portofoliu' : lang === 'fa' ? 'مالکان دارای چند ملک' : 'Multi-Property Owners'}
           </span>
         </div>
 
@@ -92,14 +92,14 @@ export default function PropertyOwnersSolutionPage({ params }: { params: { lang:
               href={`/${lang}/demo`}
               className="px-6 py-3.5 rounded-xl bg-[#0E9F8E] hover:bg-[#0C8778] text-white text-xs font-bold shadow-sm transition-all flex items-center gap-2"
             >
-              <span>{lang === 'ro' ? 'Vezi demo portofoliu' : lang === 'fa' ? 'مشاهده نسخه نمایشی سبد املاک' : 'Launch portfolio demo'}</span>
+              <span>{lang === 'ro' ? 'Vezi demonstrația portofoliu' : lang === 'fa' ? 'ورود به نسخه نمایشی سبد املاک' : 'View portfolio demo'}</span>
               <ArrowRight className="w-4 h-4 rtl:rotate-180" />
             </Link>
             <Link
               href={`/${lang}/pilot`}
               className="px-6 py-3.5 rounded-xl bg-[#F0F4F8] hover:bg-[#E2E8F0] text-[#102A43] text-xs font-bold transition-all"
             >
-              {lang === 'ro' ? 'Înscrie proprietățile în pilot' : lang === 'fa' ? 'درخواست اتصال املاک به پایلوت' : 'Apply for portfolio pilot'}
+              {lang === 'ro' ? 'Solicită acces în pilot' : lang === 'fa' ? 'درخواست حضور در پایلوت' : 'Apply for pilot access'}
             </Link>
           </div>
         </div>

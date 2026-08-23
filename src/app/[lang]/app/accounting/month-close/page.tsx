@@ -76,7 +76,7 @@ export default function MonthClosePage({ params }: { params: { lang: Language } 
             }`}
           >
             <Lock className="w-4 h-4" />
-            <span>{lang === 'ro' ? 'Sigilează Luna Contabilă' : lang === 'fa' ? 'قفل و نهایی‌سازی قطعی دوره' : 'Seal Accounting Month'}</span>
+            <span>{lang === 'ro' ? 'Închide perioada' : lang === 'fa' ? 'بستن دوره حسابداری' : 'Close accounting period'}</span>
           </button>
         )}
       </div>
@@ -268,7 +268,7 @@ export default function MonthClosePage({ params }: { params: { lang: Language } 
                   }}
                   className="px-5 py-2 rounded-xl bg-[#E5484D] text-white text-xs font-bold shadow-sm hover:bg-[#DC2626]"
                 >
-                  {lang === 'ro' ? 'Confirmă & Sigilează' : lang === 'fa' ? 'تأیید و قفل نهایی' : 'Confirm & Seal'}
+                  {lang === 'ro' ? 'Închide perioada' : lang === 'fa' ? 'بستن دوره حسابداری' : 'Close accounting period'}
                 </button>
               </div>
             </div>
