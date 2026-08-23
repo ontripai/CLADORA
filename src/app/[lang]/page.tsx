@@ -22,6 +22,7 @@ export async function generateStaticParams() {
   return [{ lang: 'en' }, { lang: 'ro' }, { lang: 'fa' }];
 }
 
+
 interface PageProps {
   params: {
     lang: Language;

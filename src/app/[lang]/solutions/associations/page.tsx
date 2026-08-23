@@ -1,6 +1,7 @@
+import type { Metadata } from 'next';
+import { getRouteMetadata } from '@/config/routes-metadata';
 import React from 'react';
 import Link from 'next/link';
-import type { Metadata } from 'next';
 import { Language } from '@/types';
 import { 
   Building2, 
@@ -15,6 +16,10 @@ import {
   FileCheck2
 } from 'lucide-react';
 
+
+
+
+
 export async function generateStaticParams() {
   return [{ lang: 'en' }, { lang: 'ro' }, { lang: 'fa' }];
 }
@@ -24,20 +29,7 @@ export async function generateMetadata({
 }: {
   params: { lang: Language };
 }): Promise<Metadata> {
-  const isRo = params.lang === 'ro';
-  const isFa = params.lang === 'fa';
-  return {
-    title: isRo 
-      ? 'Soluții pentru Asociații de Proprietari | CLADORA Association OS' 
-      : isFa
-      ? 'راهکارهای انجمن‌های مالکان و مجتمع‌های مسکونی | کلادورا'
-      : 'Homeowner Association Solutions | CLADORA Association OS',
-    description: isRo
-      ? 'Administrare transparentă, contabilitate conform Legii 196/2018, liste de plată explicabile și audit facil pentru cenzor.'
-      : isFa
-      ? 'مدیریت شفاف، حسابداری دقیق قانونی، فیش‌های شفاف شارژ و پنل ممیزی برای انجمن‌های مالکان و هیئت‌مدیره مجتمع‌ها.'
-      : 'Transparent administration, double-entry statutory accounting, explainable resident statements, and auditor workflows.',
-  };
+  return getRouteMetadata('/solutions/associations', params.lang);
 }
 
 export default function AssociationsSolutionPage({ params }: { params: { lang: Language } }) {

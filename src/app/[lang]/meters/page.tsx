@@ -1,9 +1,14 @@
-import React from 'react';
 import type { Metadata } from 'next';
+import { getRouteMetadata } from '@/config/routes-metadata';
+import React from 'react';
 import { Language } from '@/types';
 import { getDictionary } from '@/dictionaries';
 import { Zap, Camera, QrCode, Radio, CheckCircle2, ShieldAlert, Cpu } from 'lucide-react';
 import Link from 'next/link';
+
+
+
+
 
 export async function generateStaticParams() {
   return [{ lang: 'en' }, { lang: 'ro' }, { lang: 'fa' }];
@@ -14,20 +19,7 @@ export async function generateMetadata({
 }: {
   params: { lang: Language };
 }): Promise<Metadata> {
-  const isRo = params.lang === 'ro';
-  const isFa = params.lang === 'fa';
-  return {
-    title: isRo 
-      ? 'Citire Contoare & Validare AI OCR | CLADORA' 
-      : isFa
-      ? 'قرائت هوشمند کنتورها و اعتبارسنجی با هوش مصنوعی OCR | کلادورا'
-      : 'Smart Meter Reading & AI OCR Validation | CLADORA',
-    description: isRo
-      ? 'Colectare indexuri apă, gaz, electricitate și căldură prin poză AI OCR, etichete QR/NFC sau senzori radio LoRaWAN/M-Bus.'
-      : isFa
-      ? 'دریافت ارقام کنتورهای آب، گاز، برق و حرارت از طریق عکس با هوش مصنوعی OCR، برچسب‌های QR/NFC یا حسگرهای رادیویی LoRaWAN/M-Bus.'
-      : 'Automated utility index ingestion for water, gas, power, and heating via AI photo OCR, physical QR tags, and LoRaWAN/M-Bus sensors.',
-  };
+  return getRouteMetadata('/meters', params.lang);
 }
 
 export default function MetersPage({

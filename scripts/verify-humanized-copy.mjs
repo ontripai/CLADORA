@@ -89,6 +89,28 @@ async function verify() {
   console.log(`\n[FA Polish] Contains "تراز تطبیق‌یافته": ${faBalance}, No "کاملاً همتراز": ${faNoKamelan}`);
   if (!faBalance || !faNoKamelan) allPassed = false;
 
+  // 7. Task 008 Production Hardening Assertions
+  // Canonical & Reciprocal hreflang on /ro/migration
+  const roMigration = await fetchPage('/ro/migration');
+  console.log(`\n[RO Migration] Status: ${roMigration.statusCode}`);
+  const hasSelfCanonical = roMigration.body.includes('rel="canonical" href="https://cladora-wzow.vercel.app/ro/migration"');
+  const hasHreflangRo = /hreflang="ro"/i.test(roMigration.body);
+  const hasHreflangEn = /hreflang="en"/i.test(roMigration.body);
+  const hasHreflangFa = /hreflang="fa"/i.test(roMigration.body);
+  const hasHreflangDef = /hreflang="x-default"/i.test(roMigration.body);
+  const noDupBrand = !roMigration.body.includes('CLADORA | CLADORA');
+
+  console.log(`  - Has self-referencing canonical: ${hasSelfCanonical}`);
+  console.log(`  - Has hreflang="ro": ${hasHreflangRo}, "en": ${hasHreflangEn}, "fa": ${hasHreflangFa}, "x-default": ${hasHreflangDef}`);
+  console.log(`  - No duplicate brand suffix: ${noDupBrand}`);
+  if (!hasSelfCanonical || !hasHreflangRo || !hasHreflangEn || !hasHreflangFa || !hasHreflangDef || !noDupBrand) allPassed = false;
+
+  // No absolute claims on home /ro
+  const noAbsPercent = !ro.body.includes('-45%') && !ro.body.includes('85%+');
+  const noAbs100 = !ro.body.includes('Conformitate 100%') && !ro.body.includes('Algoritmi aprobați');
+  console.log(`  - No prohibited marketing claims (-45%, 85%+, Conformitate 100%, Algoritmi aprobați): ${noAbsPercent && noAbs100}`);
+  if (!noAbsPercent || !noAbs100) allPassed = false;
+
   if (!allPassed) {
     console.error('\n❌ ERROR: Some copy verification checks failed.');
     process.exit(1);

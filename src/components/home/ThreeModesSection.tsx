@@ -144,21 +144,21 @@ export const ThreeModesSection: React.FC<ThreeModesSectionProps> = ({ lang }) =>
 
                 <div className="grid grid-cols-1 gap-4">
                   <div className="p-4 rounded-xl glass-panel border border-white/10 flex items-center justify-between">
-                    <span className="text-sm text-slate-100 font-semibold">{lang === 'ro' ? 'Timp închidere lună' : lang === 'fa' ? 'زمان بستن ماهانه دفاتر' : 'Month-End Close Time'}</span>
-                    <span className="text-xl font-display font-extrabold text-emerald-400">-45%</span>
+                    <span className="text-sm text-slate-100 font-semibold">{lang === 'ro' ? 'Închidere perioadă' : lang === 'fa' ? 'بستن دوره مالی' : 'Period Close'}</span>
+                    <span className="text-sm font-semibold text-emerald-400">{lang === 'ro' ? 'Flux ghidat' : lang === 'fa' ? 'گردش‌کار مرحله‌ای' : 'Guided workflow'}</span>
                   </div>
                   <div className="p-4 rounded-xl glass-panel border border-white/10 flex items-center justify-between">
-                    <span className="text-sm text-slate-100 font-semibold">{lang === 'ro' ? 'Erori de calcul' : lang === 'fa' ? 'خطای محاسباتی و مغایرت' : 'Variance & Calculation Errors'}</span>
-                    <span className="text-xl font-display font-extrabold text-emerald-400">0%</span>
+                    <span className="text-sm text-slate-100 font-semibold">{lang === 'ro' ? 'Control discrepanțe' : lang === 'fa' ? 'شناسایی مغایرت‌ها' : 'Discrepancy Checks'}</span>
+                    <span className="text-sm font-semibold text-emerald-400">{lang === 'ro' ? 'Validări automate' : lang === 'fa' ? 'اعتبارسنجی خودکار' : 'Automated validations'}</span>
                   </div>
                   <div className="p-4 rounded-xl glass-panel border border-white/10 flex items-center justify-between">
-                    <span className="text-sm text-slate-100 font-semibold">{lang === 'ro' ? 'Prezență la adunări' : lang === 'fa' ? 'مشارکت در رأی‌گیری مجمع' : 'Quorum & AGM Turnout'}</span>
-                    <span className="text-xl font-display font-extrabold text-emerald-400">85%+</span>
+                    <span className="text-sm text-slate-100 font-semibold">{lang === 'ro' ? 'Adunări & Cvorum' : lang === 'fa' ? 'حدنصاب و مجمع' : 'Quorum & Turnout'}</span>
+                    <span className="text-sm font-semibold text-emerald-400">{lang === 'ro' ? 'Urmărire participare' : lang === 'fa' ? 'پایش حضور و آرا' : 'Participation tracking'}</span>
                   </div>
                 </div>
 
                 <div className="p-4 rounded-xl bg-brand-500/20 border border-brand-500/40 text-xs text-slate-100 leading-relaxed font-medium">
-                  <span>⚖️ <strong>{lang === 'ro' ? 'Conformitate 100% Legea 196/2018:' : lang === 'fa' ? 'انطباق ۱۰۰٪ با قانون ۱۹۶/۲۰۱۸:' : '100% Law 196/2018 Compliance:'}</strong> {lang === 'ro' ? 'Algoritmi aprobați pentru împărțirea pe cote-părți indivize (CPI), persoane și suprafață utilă.' : lang === 'fa' ? 'الگوریتم‌های تأییدشده برای تسهیم بر مبنای سهام مشاع، تعداد نفرات و متراژ مفید.' : 'Certified statutory allocation engine for CPI shares, person counts, and heated surface area.'}</span>
+                  <span>⚖️ <strong>{lang === 'ro' ? 'Cadru structurat Legea 196/2018:' : lang === 'fa' ? 'پشتیبانی از الزامات قانونی:' : 'Structured Statutory Support:'}</strong> {lang === 'ro' ? 'Reguli de repartizare configurabile și documentate pentru împărțirea pe cote-părți indivize (CPI), persoane și suprafață utilă.' : lang === 'fa' ? 'قواعد تسهیم شفاف و مستند بر مبنای سهام مشاع، تعداد نفرات و متراژ مفید.' : 'Documented and configurable allocation rules for CPI shares, person counts, and heated surface area.'}</span>
                 </div>
               </div>
             </div>

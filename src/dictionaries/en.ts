@@ -165,7 +165,7 @@ export const en = {
   },
   migrationSection: {
     badge: "Step-by-Step Validation (Shadow Ledger)",
-    title: "Switch to CLADORA with Verified Balance Continuity",
+    title: "Switch to CLADORA with Staged Balance Review and Reconciliation",
     description: "Switching management software shouldn't feel uncertain. Our Shadow Ledger runs parallel to your existing setup for 1-2 billing cycles until every opening balance is confirmed.",
     steps: [
       { step: "01", title: "Import Existing Records", desc: "Extract historical data from legacy software, Excel spreadsheets, or scanned balance sheets." },

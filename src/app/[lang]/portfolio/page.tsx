@@ -1,6 +1,7 @@
+import type { Metadata } from 'next';
+import { getRouteMetadata } from '@/config/routes-metadata';
 import React from 'react';
 import Link from 'next/link';
-import type { Metadata } from 'next';
 import { Language } from '@/types';
 import { getDictionary } from '@/dictionaries';
 import { 
@@ -14,6 +15,10 @@ import {
   DollarSign
 } from 'lucide-react';
 
+
+
+
+
 export async function generateStaticParams() {
   return [{ lang: 'en' }, { lang: 'ro' }, { lang: 'fa' }];
 }
@@ -23,20 +28,7 @@ export async function generateMetadata({
 }: {
   params: { lang: Language };
 }): Promise<Metadata> {
-  const isRo = params.lang === 'ro';
-  const isFa = params.lang === 'fa';
-  return {
-    title: isRo 
-      ? 'Cladora Portfolio | Management Portofoliu Imobiliar & Gestiune Chiriași' 
-      : isFa
-      ? 'سیستم‌عامل مدیریت سبد املاک و چرخه اجاره | کلادورا'
-      : 'Cladora Portfolio | Multi-Property Landlord & Rental Lifecycle Management',
-    description: isRo
-      ? 'Panou unificat pentru proprietarii cu mai multe apartamente: separare cheltuieli proprietar vs. chiriaș, istoric chirii și randament net.'
-      : isFa
-      ? 'داشبورد تجمیعی برای سرمایه‌گذاران چندملکی: تفکیک خودکار هزینه‌های مالک و مستأجر، پایش اجاره‌های دریافتی و تحلیل بازده خالص.'
-      : 'Consolidated cockpit for multi-property landlords: automated owner vs tenant expense splits, rent tracking, and net yield analytics.',
-  };
+  return getRouteMetadata('/portfolio', params.lang);
 }
 
 export default function PortfolioPage({

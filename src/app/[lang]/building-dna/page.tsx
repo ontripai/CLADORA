@@ -1,29 +1,25 @@
-import React from 'react';
 import type { Metadata } from 'next';
+import { getRouteMetadata } from '@/config/routes-metadata';
+
+
+import React from 'react';
 import { Language } from '@/types';
 import { getDictionary } from '@/dictionaries';
 import { SavingsCalculator } from '@/components/interactive/SavingsCalculator';
 import { Building, Sparkles, CheckCircle2, ShieldAlert, Cpu } from 'lucide-react';
+
+
+
+export async function generateStaticParams() {
+  return [{ lang: 'en' }, { lang: 'ro' }, { lang: 'fa' }];
+}
 
 export async function generateMetadata({
   params,
 }: {
   params: { lang: Language };
 }): Promise<Metadata> {
-  const isRo = params.lang === 'ro';
-  const isFa = params.lang === 'fa';
-  return {
-    title: isRo 
-      ? 'ADN Clădire & Arhetipuri Inginerești (A1-A8) | CLADORA' 
-      : isFa
-      ? 'شناسنامه فنی ساختمان و ۸ کهن‌الگوی مهندسی (A1-A8) | کلادورا'
-      : 'Building DNA & 8 Engineering Archetypes | CLADORA',
-    description: isRo
-      ? 'Modele inginerești adaptate clădirilor din România: blocuri vechi pre-1990, reabilitate, complexe noi, ansambluri de vile și imobile mixte.'
-      : isFa
-      ? 'بسته‌های قوانین مهندسی منطبق با ساختار واقعی ساختمان‌ها: بلوک‌های قبل از ۱۹۹۰، ساختمان‌های نوسازی‌شده، مجتمع‌های ویلایی و بناهای چندمنظوره.'
-      : 'Engineering rule packs tailored to real building structures: pre-1990 communist blocks, renovated envelopes, gated villas, and mixed-use complexes.',
-  };
+  return getRouteMetadata('/building-dna', params.lang);
 }
 
 export default function BuildingDnaPage({

@@ -1,6 +1,7 @@
+import type { Metadata } from 'next';
+import { getRouteMetadata } from '@/config/routes-metadata';
 import React from 'react';
 import Link from 'next/link';
-import type { Metadata } from 'next';
 import { Language } from '@/types';
 import { getDictionary } from '@/dictionaries';
 import { 
@@ -15,6 +16,10 @@ import {
   Layers
 } from 'lucide-react';
 
+
+
+
+
 export async function generateStaticParams() {
   return [{ lang: 'en' }, { lang: 'ro' }, { lang: 'fa' }];
 }
@@ -24,20 +29,7 @@ export async function generateMetadata({
 }: {
   params: { lang: Language };
 }): Promise<Metadata> {
-  const isRo = params.lang === 'ro';
-  const isFa = params.lang === 'fa';
-  return {
-    title: isRo 
-      ? 'Cladora Association | Soft Asociații de Proprietari Conform Legii 196/2018' 
-      : isFa
-      ? 'سیستم‌عامل انجمن‌های مالکان و مدیریت مجتمع‌های مسکونی | کلادورا'
-      : 'Cladora Association | HOA Management & Statutory Double-Entry Accounting',
-    description: isRo
-      ? 'Platformă completă pentru asociații de proprietari: liste de plată, adunări generale online, registrul cenzorului și reconciliere bancară automată.'
-      : isFa
-      ? 'پلتفرم جامع مدیریت انجمن‌های مالکان: فیش‌های شفاف شارژ، مجامع عمومی آنلاین، میز کار بازرسان مالی و تطبیق خودکار بانکی.'
-      : 'Comprehensive HOA Operating System: statutory fee allocations, digital notice boards, online General Assemblies, and Cenzor audit trails.',
-  };
+  return getRouteMetadata('/association', params.lang);
 }
 
 export default function AssociationPage({

@@ -92,7 +92,7 @@ export const ro = {
     manager: {
       title: "Cladora Manager (Management Company OS)",
       target: "Pentru Companii Profesionale de Administrare Imobile",
-      tagline: "Coordonează echipele, furnizorii și zeci de asociații fără blocaje operaționale.",
+      tagline: "Coordonează echipele, furnizorii și zeci de asociații cu fluxuri operaționale mai bine organizate.",
       features: [
         "Administrare centralizată a mai multor asociații dintr-o singură consolă",
         "Dispecerat pentru tichetele tehnice și comenzi de lucru pentru meșteri",
@@ -165,7 +165,7 @@ export const ro = {
   },
   migrationSection: {
     badge: "Validare Pas cu Pas (Shadow Ledger)",
-    title: "Treci la CLADORA cu siguranța soldurilor verificate",
+    title: "Treci la CLADORA cu verificarea și reconcilierea etapizată a soldurilor",
     description: "Schimbarea programului de administrare se face fără grabă. Rulăm în paralel 1-2 luni cu vechiul sistem până când toate soldurile și listele de plată sunt confruntate la virgulă.",
     steps: [
       { step: "01", title: "Preluarea Datelor Vechi", desc: "Importăm fișierele din softurile anterioare, tabele Excel sau liste scanate." },

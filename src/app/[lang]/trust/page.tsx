@@ -1,8 +1,13 @@
-import React from 'react';
 import type { Metadata } from 'next';
+import { getRouteMetadata } from '@/config/routes-metadata';
+import React from 'react';
 import { Language } from '@/types';
 import { getDictionary } from '@/dictionaries';
 import { ShieldCheck, Lock, FileText, Server, Scale, CheckCircle2 } from 'lucide-react';
+
+
+
+
 
 export async function generateStaticParams() {
   return [{ lang: 'en' }, { lang: 'ro' }, { lang: 'fa' }];
@@ -13,20 +18,7 @@ export async function generateMetadata({
 }: {
   params: { lang: Language };
 }): Promise<Metadata> {
-  const isRo = params.lang === 'ro';
-  const isFa = params.lang === 'fa';
-  return {
-    title: isRo 
-      ? 'Securitate, Confidențialitate (GDPR) & Conformitate | CLADORA' 
-      : isFa
-      ? 'امنیت، حریم خصوصی (GDPR) و معماری اعتماد | کلادورا'
-      : 'Security, GDPR Privacy & Compliance Architecture | CLADORA',
-    description: isRo
-      ? 'Află cum protejăm datele asociației tale: criptare end-to-end, conformitate GDPR, jurnale de audit imuabile și disponibilitate 99.9% SLO.'
-      : isFa
-      ? 'آشنایی با لایه‌های امنیتی کلادورا: رمزنگاری سرتاسری، انطباق کامل با GDPR، لاگ‌های ممیزی تغییرناپذیر و پایداری ۹۹.۹٪.'
-      : 'Learn how CLADORA safeguards residential assets: end-to-end encryption, GDPR compliance, immutable audit logs, and 99.9% uptime SLOs.',
-  };
+  return getRouteMetadata('/trust', params.lang);
 }
 
 export default function TrustPage({

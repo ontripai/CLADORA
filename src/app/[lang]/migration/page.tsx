@@ -1,9 +1,16 @@
-import React from 'react';
 import type { Metadata } from 'next';
+import { getRouteMetadata } from '@/config/routes-metadata';
+import React from 'react';
 import { Language } from '@/types';
 import { getDictionary } from '@/dictionaries';
 import { ShadowLedgerDemo } from '@/components/interactive/ShadowLedgerDemo';
 import { Layers } from 'lucide-react';
+
+import { buildPageMetadata } from '@/config/seo';
+
+
+
+
 
 export async function generateStaticParams() {
   return [{ lang: 'en' }, { lang: 'ro' }, { lang: 'fa' }];
@@ -14,20 +21,7 @@ export async function generateMetadata({
 }: {
   params: { lang: Language };
 }): Promise<Metadata> {
-  const isRo = params.lang === 'ro';
-  const isFa = params.lang === 'fa';
-  return {
-    title: isRo 
-      ? 'Migrare Controlată din Xisoft, Aviziero, Excel (Shadow Ledger) | CLADORA' 
-      : isFa
-      ? 'مهاجرت امن سوابق مالی با پروتکل Shadow Ledger | کلادورا'
-      : 'Safe Legacy Migration with Shadow Ledger Protocol | CLADORA',
-    description: isRo
-      ? 'Tranziție garantată fără pierderi de date din vechiul program de administrare. Rulare paralelă timp de 2 luni până la reconcilierea completă a soldurilor.'
-      : isFa
-      ? 'انتقال تضمینی و بدون نقص داده‌ها از نرم‌افزارهای قبلی و فایل‌های اکسل. اجرای موازی تا تطبیق ۱۰۰ درصدی مانده‌حساب‌ها.'
-      : 'Guaranteed zero-loss data transition from legacy software. Run parallel Shadow Ledger billing for 2 months until every balance is mathematically matched.',
-  };
+  return getRouteMetadata('/migration', params.lang);
 }
 
 export default function MigrationPage({

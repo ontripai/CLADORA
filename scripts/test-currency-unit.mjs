@@ -343,6 +343,34 @@ it('Post-merge copy polish exact phrase assertions (Task 007)', () => {
   assert.ok(!heroSection.includes('Asociația Aviației 12B'), 'HeroSection has no Asociația Aviației 12B in English');
 });
 
+it('Task 008 Production Hardening: SEO, Claims, and Security Headers', async () => {
+  // 1. Route metadata registry covers all 25 public pages
+  const routesDefContent = fs.readFileSync('src/config/routes-metadata.ts', 'utf8');
+  assert.ok(routesDefContent.includes('/pricing'), 'Registry contains /pricing');
+  assert.ok(routesDefContent.includes('/migration'), 'Registry contains /migration');
+  assert.ok(routesDefContent.includes('/solutions/property-managers'), 'Registry contains /solutions/property-managers');
+
+  // 2. Prohibited claims eliminated from components
+  const threeModes = fs.readFileSync('src/components/home/ThreeModesSection.tsx', 'utf8');
+  assert.ok(!threeModes.includes('-45%'), 'ThreeModesSection has no -45%');
+  assert.ok(!threeModes.includes('85%+'), 'ThreeModesSection has no 85%+');
+  assert.ok(!threeModes.includes('Conformitate 100%'), 'ThreeModesSection has no Conformitate 100%');
+  assert.ok(!threeModes.includes('Algoritmi aprobați'), 'ThreeModesSection has no Algoritmi aprobați');
+
+  const meterSection = fs.readFileSync('src/components/home/MeteringAndOperationsSection.tsx', 'utf8');
+  assert.ok(!meterSection.includes('Fără anomalii detectate'), 'Metering has no Fără anomalii detectate');
+  assert.ok(meterSection.includes('id="meter-ocr-reading-input"'), 'Meter OCR input has explicit accessible ID');
+  assert.ok(meterSection.includes('htmlFor="meter-ocr-reading-input"'), 'Meter OCR label has matching htmlFor');
+
+  // 3. Security headers in next.config.mjs
+  const nextConfigContent = fs.readFileSync('next.config.mjs', 'utf8');
+  assert.ok(nextConfigContent.includes('Content-Security-Policy'), 'next.config contains CSP');
+  assert.ok(nextConfigContent.includes('Cross-Origin-Opener-Policy'), 'next.config contains COOP');
+  assert.ok(nextConfigContent.includes('X-Frame-Options'), 'next.config contains X-Frame-Options');
+  assert.ok(nextConfigContent.includes('X-Content-Type-Options'), 'next.config contains X-Content-Type-Options');
+  assert.ok(nextConfigContent.includes('Strict-Transport-Security'), 'next.config contains HSTS');
+});
+
 console.log('\n=======================================');
 console.log(`UNIT TEST SUMMARY: ${passed} passed, ${failed} failed.`);
 if (failed > 0) {

@@ -1,30 +1,26 @@
-import React from 'react';
 import type { Metadata } from 'next';
+import { getRouteMetadata } from '@/config/routes-metadata';
+
+
+import React from 'react';
 import { Language } from '@/types';
 import { getDictionary } from '@/dictionaries';
 import { AllocationSimulator } from '@/components/interactive/AllocationSimulator';
 import { Scale, Lock, FileSpreadsheet, CheckCircle2, ShieldCheck, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 
+
+
+export async function generateStaticParams() {
+  return [{ lang: 'en' }, { lang: 'ro' }, { lang: 'fa' }];
+}
+
 export async function generateMetadata({
   params,
 }: {
   params: { lang: Language };
 }): Promise<Metadata> {
-  const isRo = params.lang === 'ro';
-  const isFa = params.lang === 'fa';
-  return {
-    title: isRo 
-      ? 'Adevăr Financiar & Contabilitate în Partidă Dublă | CLADORA' 
-      : isFa
-      ? 'حقیقت مالی و حسابداری دوطرفه | کلادورا'
-      : 'Financial Truth Core & Double-Entry Accounting | CLADORA',
-    description: isRo
-      ? 'Contabilitate în partidă dublă, reconciliere bancară asistată, închidere securizată de lună și jurnal de audit cu trasabilitate.'
-      : isFa
-      ? 'دفتر کل دوطرفه، تطبیق با صورت‌حساب بانکی، بستن ایمن دوره ماهانه و ردپای ممیزی با قابلیت رهگیری.'
-      : 'Double-entry accounting, assisted bank reconciliation, secure month-end closing, and auditable event trails.',
-  };
+  return getRouteMetadata('/financial-truth', params.lang);
 }
 
 export default function FinancialTruthPage({

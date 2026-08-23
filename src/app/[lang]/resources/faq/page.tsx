@@ -1,9 +1,14 @@
+import type { Metadata } from 'next';
+import { getRouteMetadata } from '@/config/routes-metadata';
 import React from 'react';
 import Link from 'next/link';
-import type { Metadata } from 'next';
 import { Language } from '@/types';
 import { FaqSection } from '@/components/home/FaqSection';
 import { HelpCircle, ArrowRight } from 'lucide-react';
+
+
+
+
 
 export async function generateStaticParams() {
   return [{ lang: 'en' }, { lang: 'ro' }, { lang: 'fa' }];
@@ -14,20 +19,7 @@ export async function generateMetadata({
 }: {
   params: { lang: Language };
 }): Promise<Metadata> {
-  const isRo = params.lang === 'ro';
-  const isFa = params.lang === 'fa';
-  return {
-    title: isRo 
-      ? 'Întrebări Frecvente (FAQ) | CLADORA' 
-      : isFa
-      ? 'پرسش‌های متداول (FAQ) | کلادورا'
-      : 'Frequently Asked Questions (FAQ) | CLADORA',
-    description: isRo
-      ? 'Răspunsuri la cele mai comune întrebări despre migrare, Legea 196/2018, securitate, plăți și calculul cotelor.'
-      : isFa
-      ? 'پاسخ به متداول‌ترین پرسش‌ها درباره فرایند مهاجرت سوابق، انطباق با قوانین، امنیت اطلاعات، ثبت کنتورها و تسهیم هزینه‌ها.'
-      : 'Answers to frequently asked questions regarding migrations, condo law compliance, security, and payments.',
-  };
+  return getRouteMetadata('/resources/faq', params.lang);
 }
 
 export default function FaqPage({ params }: { params: { lang: Language } }) {

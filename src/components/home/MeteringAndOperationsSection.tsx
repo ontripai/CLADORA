@@ -107,33 +107,36 @@ export const MeteringAndOperationsSection: React.FC<MeteringProps> = ({ lang }) 
               {/* Index Input & Consumption calculation */}
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-bold text-[#102A43] mb-1">
+                  <label htmlFor="meter-ocr-reading-input" className="block text-xs font-bold text-[#102A43] mb-1">
                     {lang === 'ro' ? 'Index Nou Citit (m³)' : lang === 'fa' ? 'رقم جدید قرائت‌شده (متر مکعب)' : 'New Reading (m³)'}
                   </label>
                   <input
+                    id="meter-ocr-reading-input"
+                    name="meter-ocr-reading-input"
+                    aria-label={lang === 'ro' ? 'Index Nou Citit în metri cubi' : lang === 'fa' ? 'رقم جدید قرائت‌شده به متر مکعب' : 'New Reading in cubic meters'}
                     type="text"
                     value={readingInput}
                     onChange={(e) => setReadingInput(e.target.value)}
-                    className="w-full px-3 py-2 rounded-xl border border-[#D3DCE6] text-sm font-mono font-bold text-[#102A43] focus:outline-none focus:ring-2 focus:ring-[#0E9F8E]"
+                    className="w-full px-3 py-2 rounded-xl border border-[#D3DCE6] text-sm font-mono font-bold text-[#102A43] focus:outline-none focus:ring-2 focus:ring-[#087A6E]"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-[#102A43] mb-1">
+                  <div className="block text-xs font-bold text-[#102A43] mb-1">
                     {lang === 'ro' ? 'Consum Rezultat' : lang === 'fa' ? 'میزان مصرف دوره' : 'Calculated Usage'}
-                  </label>
-                  <div className="px-3 py-2 rounded-xl bg-[#ECFDF5] border border-[#A7F3D0] text-sm font-mono font-extrabold text-[#059669]">
+                  </div>
+                  <div className="px-3 py-2 rounded-xl bg-[#ECFDF5] border border-[#A7F3D0] text-sm font-mono font-extrabold text-[#047857]">
                     +{formatNumber(parseFloat(readingInput || '0') - 142.50, lang, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} m³
                   </div>
                 </div>
               </div>
 
-              <div className="flex items-center gap-2 text-xs text-[#059669] font-bold">
+              <div className="flex items-center gap-2 text-xs text-[#047857] font-bold">
                 <CheckCircle2 className="w-4 h-4 shrink-0" />
                 <span>
                   {lang === 'ro' 
-                    ? 'Consum în marja normală de toleranță (Fără anomalii detectate).' 
+                    ? 'Consum în marja normală de toleranță (Verificare completă fără abateri semnalate).' 
                     : lang === 'fa'
-                    ? 'میزان مصرف در محدوده مجاز و طبیعی (فاقد هرگونه ناهنجاری).'
+                    ? 'میزان مصرف در محدوده مجاز و طبیعی (بررسی کامل بدون مغایرت).'
                     : 'Consumption within expected variance range.'}
                 </span>
               </div>

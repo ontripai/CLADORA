@@ -42,25 +42,25 @@ export const PortfolioIntelligenceSection: React.FC<PortfolioSectionProps> = ({ 
         {/* Portfolio KPI Bar */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-12">
           <div className="card-proptech p-5 bg-white">
-            <div className="text-xs font-bold text-[#7B8A9A] uppercase tracking-wide">
+            <div className="text-xs font-bold text-[#486581] uppercase tracking-wide">
               {lang === 'ro' ? 'Proprietăți Active' : lang === 'fa' ? 'املاک فعال تحت مدیریت' : 'Active Units'}
             </div>
             <div className="text-2xl font-display font-extrabold text-[#102A43] mt-2">
               {lang === 'ro' ? '4 Unități' : lang === 'fa' ? '۴ واحد مسکونی' : '4 Units'}
             </div>
-            <div className="text-xs text-[#059669] font-bold mt-1">
-              {lang === 'ro' ? '✓ 100% Grad Ocupare' : lang === 'fa' ? '✓ نرخ اشغال ۱۰۰٪' : '✓ 100% Occupancy'}
+            <div className="text-xs text-[#047857] font-bold mt-1">
+              {lang === 'ro' ? '✓ Portofoliu demonstrativ (4/4)' : lang === 'fa' ? '✓ نمونه فعال سبد املاک (۴ از ۴)' : '✓ Demo portfolio (4/4 units)'}
             </div>
           </div>
 
           <div className="card-proptech p-5 bg-white">
-            <div className="text-xs font-bold text-[#7B8A9A] uppercase tracking-wide">
+            <div className="text-xs font-bold text-[#486581] uppercase tracking-wide">
               {lang === 'ro' ? 'Venit Lunar Brut Chirii' : lang === 'fa' ? 'درآمد ماهانه ناخالص اجاره' : 'Gross Monthly Rent'}
             </div>
-            <div className="text-2xl font-display font-extrabold text-[#0E9F8E] mt-2">
+            <div className="text-2xl font-display font-extrabold text-[#087A6E] mt-2">
               <Money amount={3180} currency="EUR" locale={lang} minimumFractionDigits={0} maximumFractionDigits={0} />
             </div>
-            <div className="text-xs text-[#52667A] mt-1 font-mono">
+            <div className="text-xs text-[#334E68] mt-1 font-mono">
               ~<Money amount={15900} currency="RON" locale={lang} minimumFractionDigits={0} maximumFractionDigits={0} /> / {lang === 'ro' ? 'lună' : lang === 'fa' ? 'ماه' : 'month'}
             </div>
           </div>

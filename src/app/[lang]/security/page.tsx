@@ -1,8 +1,13 @@
+import type { Metadata } from 'next';
+import { getRouteMetadata } from '@/config/routes-metadata';
 import React from 'react';
 import Link from 'next/link';
-import type { Metadata } from 'next';
 import { Language } from '@/types';
 import { SecurityAndPermissionsSection } from '@/components/home/SecurityAndPermissionsSection';
+
+
+
+
 
 export async function generateStaticParams() {
   return [{ lang: 'en' }, { lang: 'ro' }, { lang: 'fa' }];
@@ -13,20 +18,7 @@ export async function generateMetadata({
 }: {
   params: { lang: Language };
 }): Promise<Metadata> {
-  const isRo = params.lang === 'ro';
-  const isFa = params.lang === 'fa';
-  return {
-    title: isRo 
-      ? 'Securitate & Permisiuni | CLADORA' 
-      : isFa
-      ? 'امنیت، سطوح دسترسی و انطباق با حریم خصوصی | کلادورا'
-      : 'Security & Access Control Architecture | CLADORA',
-    description: isRo
-      ? 'Află cum protejăm datele asociației tale: control granular al accesului, jurnale de audit cu trasabilitate și arhitectură conformă GDPR.'
-      : isFa
-      ? 'کنترل دقیق سطوح دسترسی بر اساس نقش (RBAC/ABAC)، ثبت قابل‌ردیابی لاگ‌های ممیزی و انطباق با قوانین حریم خصوصی GDPR.'
-      : 'Granular role-based access control, traceable audit logs, and GDPR-aligned tenant isolation.',
-  };
+  return getRouteMetadata('/security', params.lang);
 }
 
 export default function SecurityPage({ params }: { params: { lang: Language } }) {

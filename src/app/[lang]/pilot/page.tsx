@@ -1,9 +1,14 @@
-import React from 'react';
 import type { Metadata } from 'next';
+import { getRouteMetadata } from '@/config/routes-metadata';
+import React from 'react';
 import { Language } from '@/types';
 import { getDictionary } from '@/dictionaries';
 import { PilotApplicationModal } from '@/components/interactive/PilotApplicationModal';
 import { Sparkles, CheckCircle2, MapPin } from 'lucide-react';
+
+
+
+
 
 export async function generateStaticParams() {
   return [{ lang: 'en' }, { lang: 'ro' }, { lang: 'fa' }];
@@ -14,20 +19,7 @@ export async function generateMetadata({
 }: {
   params: { lang: Language };
 }): Promise<Metadata> {
-  const isRo = params.lang === 'ro';
-  const isFa = params.lang === 'fa';
-  return {
-    title: isRo 
-      ? 'Înscriere Program Pilot București & Ilfov | CLADORA' 
-      : isFa
-      ? 'ثبت‌نام در برنامه پایلوت بخارست و ایلفوف | کلادورا'
-      : 'Bucharest & Ilfov Pilot Cohort Application | CLADORA',
-    description: isRo
-      ? 'Aplică pentru cohorta de lansare: 5 asociații și 20 de proprietari de portofolii. Migrare gratuită Shadow Ledger și 6 luni de utilizare gratuită.'
-      : isFa
-      ? 'ثبت‌نام در دوره اعتبارسنجی پایلوت: ۵ مجتمع مسکونی و ۲۰ سرمایه‌گذار چندملکی. مهاجرت رایگان داده‌ها با پروتکل Shadow Ledger و اشتراک آزمایشی رایگان.'
-      : 'Apply for the exclusive launch cohort: 5 residential communities and 20 multi-property landlords. 100% complimentary migration and 6 months free access.',
-  };
+  return getRouteMetadata('/pilot', params.lang);
 }
 
 export default function PilotPage({

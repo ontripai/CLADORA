@@ -1,6 +1,7 @@
+import type { Metadata } from 'next';
+import { getRouteMetadata } from '@/config/routes-metadata';
 import React from 'react';
 import Link from 'next/link';
-import type { Metadata } from 'next';
 import { Language } from '@/types';
 import { 
   KeyRound, 
@@ -13,6 +14,10 @@ import {
   EyeOff
 } from 'lucide-react';
 
+
+
+
+
 export async function generateStaticParams() {
   return [{ lang: 'en' }, { lang: 'ro' }, { lang: 'fa' }];
 }
@@ -22,20 +27,7 @@ export async function generateMetadata({
 }: {
   params: { lang: Language };
 }): Promise<Metadata> {
-  const isRo = params.lang === 'ro';
-  const isFa = params.lang === 'fa';
-  return {
-    title: isRo 
-      ? 'Soluții pentru Chiriași | CLADORA Tenant Portal' 
-      : isFa
-      ? 'راهکارهای مستأجران | پرتال مستأجران کلادورا'
-      : 'Tenant Solutions | CLADORA Tenant Portal',
-    description: isRo
-      ? 'Plătești doar consumul real, trimiți indexul contoarelor și raportezi direct tichete de reparații.'
-      : isFa
-      ? 'پرداخت صرفاً بر اساس مصرف واقعی انشعابات، ثبت آسان ارقام کنتورها و ثبت مستقیم درخواست‌های تعمیرات به مدیریت.'
-      : 'Pay strictly for consumption, submit utility readings, and log maintenance tickets directly.',
-  };
+  return getRouteMetadata('/solutions/tenants', params.lang);
 }
 
 export default function TenantsSolutionPage({ params }: { params: { lang: Language } }) {

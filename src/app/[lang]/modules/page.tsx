@@ -1,9 +1,25 @@
-'use client';
-
+import type { Metadata } from 'next';
+import { getRouteMetadata } from '@/config/routes-metadata';
 import React from 'react';
 import Link from 'next/link';
 import { Language } from '@/types';
 import { SeventeenCoresExplorer } from '@/components/home/SeventeenCoresExplorer';
+
+
+
+
+export async function generateStaticParams() {
+  return [{ lang: 'en' }, { lang: 'ro' }, { lang: 'fa' }];
+}
+
+
+export async function generateMetadata({
+  params,
+}: {
+  params: { lang: Language };
+}): Promise<Metadata> {
+  return getRouteMetadata('/modules', params.lang);
+}
 
 export default function ModulesPage({ params }: { params: { lang: Language } }) {
   const { lang } = params;
@@ -13,7 +29,7 @@ export default function ModulesPage({ params }: { params: { lang: Language } }) 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Breadcrumbs */}
-        <div className="flex items-center gap-2 text-xs text-[#52667A] mb-8 font-medium">
+        <div className="flex items-center gap-2 text-xs text-[#334E68] mb-8 font-medium">
           <Link href={`/${lang}`} className="hover:text-[#102A43]">
             {lang === 'ro' ? 'Acasă' : lang === 'fa' ? 'صفحه اصلی' : 'Home'}
           </Link>
@@ -25,7 +41,7 @@ export default function ModulesPage({ params }: { params: { lang: Language } }) 
 
         {/* Hero */}
         <div className="max-w-3xl space-y-4">
-          <span className="text-xs font-bold text-[#0E9F8E] uppercase tracking-wider bg-[#EAF8F5] px-3 py-1 rounded-full border border-[#B2E5DF]">
+          <span className="text-xs font-bold text-[#087A6E] uppercase tracking-wider bg-[#EAF8F5] px-3 py-1 rounded-full border border-[#B2E5DF]">
             {lang === 'ro' ? 'Arhitectura celor 17 Nuclee' : lang === 'fa' ? 'معماری ۱۷ هسته نرم‌افزاری' : 'The 17 Logical Cores'}
           </span>
           <h1 className="text-3xl sm:text-5xl font-display font-extrabold text-[#102A43] tracking-tight">
@@ -35,7 +51,7 @@ export default function ModulesPage({ params }: { params: { lang: Language } }) 
               ? 'معماری ماژولار و یکپارچه کلادورا'
               : 'CLADORA Modular Architecture'}
           </h1>
-          <p className="text-base sm:text-lg text-[#52667A] leading-relaxed">
+          <p className="text-base sm:text-lg text-[#334E68] leading-relaxed">
             {lang === 'ro'
               ? 'Platforma este structurată în 17 nuclee logice organizate pe 3 faze evolutive: P1 (Fundația MVP & Adevăr Financiar), P2 (Operațiuni & Guvernanță) și P3 (Inteligență de Cost & Valoare Activ).'
               : lang === 'fa'
@@ -46,12 +62,12 @@ export default function ModulesPage({ params }: { params: { lang: Language } }) 
 
         {/* Phase Summary Legend */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12 mb-8">
-          <div className="card-proptech p-5 bg-white border-l-4 border-l-[#0E9F8E]">
-            <div className="text-xs font-bold text-[#0E9F8E] uppercase tracking-wider">
+          <div className="card-proptech p-5 bg-white border-l-4 border-l-[#087A6E]">
+            <div className="text-xs font-bold text-[#087A6E] uppercase tracking-wider">
               {lang === 'ro' ? 'Faza P1 — MVP Foundation' : lang === 'fa' ? 'فاز ۱ — فونداسیون هسته و حسابداری' : 'Phase P1 — MVP Foundation'}
             </div>
             <div className="text-sm font-bold text-[#102A43] mt-1 font-mono ltr-isolate">C01, C02, C06, C08, C11, C16, C17</div>
-            <p className="text-xs text-[#52667A] mt-1">
+            <p className="text-xs text-[#334E68] mt-1">
               {lang === 'ro' 
                 ? 'Contabilitate în partidă dublă, alocare CPI, contoare, avizier și migrare Shadow Ledger.' 
                 : lang === 'fa'
@@ -65,7 +81,7 @@ export default function ModulesPage({ params }: { params: { lang: Language } }) 
               {lang === 'ro' ? 'Faza P2 — Operațiuni & Guvernanță' : lang === 'fa' ? 'فاز ۲ — عملیات و حاکمیت مجامع' : 'Phase P2 — Ops & Governance'}
             </div>
             <div className="text-sm font-bold text-[#102A43] mt-1 font-mono ltr-isolate">C03, C04, C05, C07, C09, C10, C12</div>
-            <p className="text-xs text-[#52667A] mt-1">
+            <p className="text-xs text-[#334E68] mt-1">
               {lang === 'ro' 
                 ? 'Trezorerie, restanțe, calendar fiscal, mentenanță, contracte furnizori și vot Adunare Generală.' 
                 : lang === 'fa'
@@ -74,25 +90,23 @@ export default function ModulesPage({ params }: { params: { lang: Language } }) 
             </p>
           </div>
 
-          <div className="card-proptech p-5 bg-white border-l-4 border-l-[#10B981]">
-            <div className="text-xs font-bold text-[#10B981] uppercase tracking-wider">
+          <div className="card-proptech p-5 bg-white border-l-4 border-l-[#047857]">
+            <div className="text-xs font-bold text-[#047857] uppercase tracking-wider">
               {lang === 'ro' ? 'Faza P3 — Inteligență & Valoare' : lang === 'fa' ? 'فاز ۳ — هوش مصنوعی و ارزش دارایی' : 'Phase P3 — Intelligence & Value'}
             </div>
             <div className="text-sm font-bold text-[#102A43] mt-1 font-mono ltr-isolate">C13, C14, C15</div>
-            <p className="text-xs text-[#52667A] mt-1">
+            <p className="text-xs text-[#334E68] mt-1">
               {lang === 'ro' 
                 ? 'Parcări inteligente, benchmarking de cost între blocuri și economii verificate de energie.' 
                 : lang === 'fa'
                 ? 'پارکینگ هوشمند، مقایسه تطبیقی هزینه‌ها میان مجتمع‌ها و پایش بهینه‌سازی انرژی.'
-                : 'Smart parking, cost benchmarking, and verified energy savings.'}
+                : 'Smart parking, cross-building benchmarking, and verified energy savings.'}
             </p>
           </div>
         </div>
 
-        {/* Filterable 17 Cores Explorer Component */}
-        <div className="mt-8">
-          <SeventeenCoresExplorer lang={lang} />
-        </div>
+        {/* 17 Cores Explorer Component */}
+        <SeventeenCoresExplorer lang={lang} />
 
       </div>
     </main>

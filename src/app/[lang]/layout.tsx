@@ -7,18 +7,21 @@ import { getSiteUrl } from '@/config/site';
 
 const inter = Inter({
   subsets: ['latin', 'latin-ext'],
+  weight: ['400', '500', '600', '700', '800'],
   variable: '--font-inter',
   display: 'swap',
 });
 
 const manrope = Manrope({
   subsets: ['latin', 'latin-ext'],
+  weight: ['600', '700', '800'],
   variable: '--font-manrope',
   display: 'swap',
 });
 
 const vazirmatn = Vazirmatn({
   subsets: ['arabic', 'latin'],
+  weight: ['400', '600', '700', '800'],
   variable: '--font-vazirmatn',
   display: 'swap',
 });
@@ -61,7 +64,7 @@ export async function generateMetadata({
     ];
   } else if (isFa) {
     title = 'کلادورا | سیستم‌عامل مدیریت دارایی‌های مسکونی و حسابداری دوطرفه';
-    description = 'کلادورا حسابداری دوطرفه تغییرناپذیر، تفکیک ۵ بعدی حقوق مالک و مستأجر، قرائت تصویری کنتورها با هوش مصنوعی و مهاجرت امن سوابق را در یک سیستم‌عامل یکپارچه ارائه می‌دهد.';
+    description = 'کلادورا حسابداری دوطرفه ساختاریافته، تفکیک ۵ بعدی حقوق مالک و مستأجر، قرائت تصویری کنتورها و مهاجرت کنترل‌شده سوابق را در یک سیستم‌عامل یکپارچه ارائه می‌دهد.';
     keywords = [
       'نرم افزار مدیریت ساختمان',
       'حسابداری انجمن مالکان',
@@ -122,6 +125,8 @@ export default function LangLayout({
 }) {
   const locale = getLocaleConfig(params.lang);
   const baseUrl = getSiteUrl();
+  const isRo = params.lang === 'ro';
+  const isFa = params.lang === 'fa';
 
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -134,8 +139,11 @@ export default function LangLayout({
       price: '0.60',
       priceCurrency: 'EUR',
     },
-    description:
-      'Residential Asset Operating System uniting double-entry accounting, Law 196/2018 compliance, meter OCR, and multi-property portfolio management.',
+    description: isRo
+      ? 'Sistem de operare pentru active rezidențiale: contabilitate în partidă dublă, Legea 196/2018, citire contoare și administrare portofoliu.'
+      : isFa
+      ? 'سیستم‌عامل مدیریت دارایی‌های مسکونی: حسابداری دوطرفه، تفکیک حقوق مالک و مستأجر، قرائت کنتورها و مدیریت مجتمع‌ها.'
+      : 'Residential Asset Operating System uniting double-entry accounting, statutory compliance, meter OCR, and multi-property portfolio management.',
     creator: {
       '@type': 'Organization',
       name: 'CLADORA',

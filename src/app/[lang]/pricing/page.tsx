@@ -1,9 +1,14 @@
-import React from 'react';
 import type { Metadata } from 'next';
+import { getRouteMetadata } from '@/config/routes-metadata';
+import React from 'react';
 import { Language } from '@/types';
 import { getDictionary } from '@/dictionaries';
 import { PricingCalculator } from '@/components/interactive/PricingCalculator';
 import { HelpCircle } from 'lucide-react';
+
+
+
+
 
 export async function generateStaticParams() {
   return [{ lang: 'en' }, { lang: 'ro' }, { lang: 'fa' }];
@@ -14,20 +19,7 @@ export async function generateMetadata({
 }: {
   params: { lang: Language };
 }): Promise<Metadata> {
-  const isRo = params.lang === 'ro';
-  const isFa = params.lang === 'fa';
-  return {
-    title: isRo 
-      ? 'Tarife & Pachete Transparente | CLADORA' 
-      : isFa
-      ? 'تعرفه‌ها و محاسبه‌گر شفاف هزینه‌ها | کلادورا'
-      : 'Transparent Pricing & Calculator | CLADORA',
-    description: isRo
-      ? 'Află costul exact pentru asociația sau portofoliul tău. Planuri scalabile fără costuri ascunse și reduceri anuale de 20%.'
-      : isFa
-      ? 'هزینه دقیق اشتراک مجتمع یا سبد املاک خود را محاسبه کنید. پلن‌های مقیاس‌پذیر بدون هزینه پنهان و تخفیف ۲۰ درصدی سالانه.'
-      : 'Calculate precise pricing for your HOA community or multi-property portfolio. Transparent tier architecture with 20% yearly discount.',
-  };
+  return getRouteMetadata('/pricing', params.lang);
 }
 
 export default function PricingPage({

@@ -1,6 +1,7 @@
+import type { Metadata } from 'next';
+import { getRouteMetadata } from '@/config/routes-metadata';
 import React from 'react';
 import Link from 'next/link';
-import type { Metadata } from 'next';
 import { Language } from '@/types';
 import { 
   TrendingUp, 
@@ -13,6 +14,10 @@ import {
   FileSpreadsheet
 } from 'lucide-react';
 
+
+
+
+
 export async function generateStaticParams() {
   return [{ lang: 'en' }, { lang: 'ro' }, { lang: 'fa' }];
 }
@@ -22,20 +27,7 @@ export async function generateMetadata({
 }: {
   params: { lang: Language };
 }): Promise<Metadata> {
-  const isRo = params.lang === 'ro';
-  const isFa = params.lang === 'fa';
-  return {
-    title: isRo 
-      ? 'Soluții pentru Proprietari Portofoliu | CLADORA Portfolio OS' 
-      : isFa
-      ? 'راهکارهای مالکان سبد املاک و چندواحدی | کلادورا'
-      : 'Multi-Property Owner Solutions | CLADORA Portfolio OS',
-    description: isRo
-      ? 'Panou unificat pentru portofolii rezidențiale: randament net, alerte chirii, separare cheltuieli proprietar vs. chiriaș.'
-      : isFa
-      ? 'کنسول تجمیعی مالکان چند واحد مسکونی: محاسبه بازده خالص سرمایه‌گذاری، هشدارهای تمدید قرارداد و تفکیک هزینه‌های مالک و مستأجر.'
-      : 'Consolidated dashboard for multi-property landlords: net yield analytics, lease renewal alerts, and expense separation.',
-  };
+  return getRouteMetadata('/solutions/property-owners', params.lang);
 }
 
 export default function PropertyOwnersSolutionPage({ params }: { params: { lang: Language } }) {

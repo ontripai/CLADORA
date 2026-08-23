@@ -128,24 +128,24 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ lang }) => {
               <div className="space-y-6 animate-in fade-in duration-200">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-[#E2E8F0] gap-2">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-[#EAF8F5] text-[#0E9F8E] flex items-center justify-center shrink-0">
+                    <div className="w-10 h-10 rounded-xl bg-[#EAF8F5] text-[#087A6E] flex items-center justify-center shrink-0">
                       <Building2 className="w-5 h-5" />
                     </div>
                     <div>
-                      <h3 className="text-base font-bold text-[#102A43]">
+                      <h2 className="text-base font-bold text-[#102A43]">
                         {lang === 'ro' 
                           ? 'Asociația de Proprietari Aviației 12B — Închidere Octombrie 2026'
                           : lang === 'fa'
                           ? 'انجمن مالکان مجتمع آویاتسی ۱۲B — بستن دوره ماهانه'
                           : 'Aviației 12B Homeowners Association — October 2026 Month Close'}
-                      </h3>
-                      <p className="text-xs text-[#52667A]">
+                      </h2>
+                      <p className="text-xs text-[#334E68]">
                         {lang === 'ro' ? '120 unități · 4 scări · Balanță reconciliată BCR' : lang === 'fa' ? '۱۲۰ واحد مسکونی · ۴ ورودی · تراز تطبیق‌یافته با بانک BCR' : '120 units · 4 entrances · BCR bank reconciled'}
                       </p>
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className="px-2.5 py-1 rounded-full bg-[#ECFDF5] text-[#059669] text-xs font-bold border border-[#A7F3D0]">
+                    <span className="px-2.5 py-1 rounded-full bg-[#ECFDF5] text-[#047857] text-xs font-bold border border-[#A7F3D0]">
                       ● {lang === 'ro' ? 'Balanță Echilibrată' : lang === 'fa' ? 'تراز تطبیق‌یافته' : 'Balanced Ledger'}
                     </span>
                   </div>
@@ -153,26 +153,26 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ lang }) => {
 
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   <div className="p-4 rounded-xl bg-[#F6F9FC] border border-[#E2E8F0]">
-                    <div className="text-xs font-semibold text-[#7B8A9A]">
+                    <div className="text-xs font-semibold text-[#486581]">
                       {lang === 'ro' ? 'Total Cheltuieli Facturate' : lang === 'fa' ? 'مجموع فاکتورهای دوره' : 'Invoiced Expenses'}
                     </div>
                     <div className="text-xl font-display font-extrabold text-[#102A43] tabular-nums mt-1">
                       <Money amount={18420.50} currency="RON" locale={lang} />
                     </div>
-                    <div className="text-[11px] text-[#059669] mt-1">
-                      {lang === 'ro' ? '✓ 100% alocate pe cote' : lang === 'fa' ? '✓ ۱۰۰٪ تسهیم بر اساس سهم مشاع' : '✓ 100% statutory allocated'}
+                    <div className="text-[11px] text-[#047857] mt-1">
+                      {lang === 'ro' ? '✓ Alocare integrală pe cote' : lang === 'fa' ? '✓ تسهیم شفاف بر اساس سهم مشاع' : '✓ Full statutory allocation'}
                     </div>
                   </div>
 
                   <div className="p-4 rounded-xl bg-[#F6F9FC] border border-[#E2E8F0]">
-                    <div className="text-xs font-semibold text-[#7B8A9A]">
+                    <div className="text-xs font-semibold text-[#486581]">
                       {lang === 'ro' ? 'Sold Fond Rulment + Reparații' : lang === 'fa' ? 'مانده صندوق سرمایه و تعمیرات' : 'Reserve & Repair Funds'}
                     </div>
                     <div className="text-xl font-display font-extrabold text-[#102A43] tabular-nums mt-1">
                       <Money amount={45800.00} currency="RON" locale={lang} />
                     </div>
-                    <div className="text-[11px] text-[#52667A] mt-1">
-                      {lang === 'ro' ? 'Separare strictă conturi Legea 196' : lang === 'fa' ? 'تفکیک دقیق حساب‌ها بر اساس قانون' : 'Strict statutory account split'}
+                    <div className="text-[11px] text-[#334E68] mt-1">
+                      {lang === 'ro' ? 'Separare pe categorii de conturi' : lang === 'fa' ? 'تفکیک دقیق حساب‌ها بر اساس قانون' : 'Statutory account separation'}
                     </div>
                   </div>
 
@@ -199,10 +199,10 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ lang }) => {
                       <TrendingUp className="w-5 h-5" />
                     </div>
                     <div>
-                      <h3 className="text-base font-bold text-[#102A43]">
+                      <h2 className="text-base font-bold text-[#102A43]">
                         {lang === 'ro' ? 'Portofoliu Rezidențial — 4 Proprietăți în București' : lang === 'fa' ? 'سبد املاک سرمایه‌گذاری — ۴ واحد مسکونی' : 'Residential Portfolio — 4 Units'}
-                      </h3>
-                      <p className="text-xs text-[#52667A]">
+                      </h2>
+                      <p className="text-xs text-[#334E68]">
                         {lang === 'ro' ? 'Aviației, Pipera, Titan, Călărași · 100% Închiriate' : lang === 'fa' ? 'واحدهای استیجاری فعال · ۱۰۰٪ مسکونی' : '100% Occupancy Rate'}
                       </p>
                     </div>
@@ -216,37 +216,37 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ lang }) => {
 
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   <div className="p-4 rounded-xl bg-[#F6F9FC] border border-[#E2E8F0]">
-                    <div className="text-xs font-semibold text-[#7B8A9A]">
+                    <div className="text-xs font-semibold text-[#486581]">
                       {lang === 'ro' ? 'Venit Brut Chirii Lunar' : lang === 'fa' ? 'مجموع اجاره ماهانه ناخالص' : 'Gross Monthly Rent'}
                     </div>
                     <div className="text-xl font-display font-extrabold text-[#102A43] tabular-nums mt-1">
-                      <Money amount={3180.00} currency="EUR" locale={lang} />
+                      <Money amount={3400.00} currency="EUR" locale={lang} />
                     </div>
-                    <div className="text-[11px] text-[#059669] mt-1">
-                      {lang === 'ro' ? '✓ 4/4 chirii încasate la termen' : lang === 'fa' ? '✓ ۴ از ۴ اجاره به‌موقع وصول شد' : '✓ 4/4 collected on time'}
+                    <div className="text-[11px] text-[#047857] mt-1">
+                      {lang === 'ro' ? 'Încasat la zi: 100%' : lang === 'fa' ? 'وصول به‌موقع: ۱۰۰٪' : 'Collected on time: 100%'}
                     </div>
                   </div>
 
                   <div className="p-4 rounded-xl bg-[#F6F9FC] border border-[#E2E8F0]">
-                    <div className="text-xs font-semibold text-[#7B8A9A]">
-                      {lang === 'ro' ? 'Costuri Proprietar vs Chiriaș' : lang === 'fa' ? 'تفکیک هزینه مالک در برابر مستأجر' : 'Owner vs Tenant Costs'}
+                    <div className="text-xs font-semibold text-[#486581]">
+                      {lang === 'ro' ? 'Randament Net Estimativ' : lang === 'fa' ? 'بازده خالص برآوردشده' : 'Estimated Net Yield'}
                     </div>
                     <div className="text-xl font-display font-extrabold text-[#102A43] tabular-nums mt-1">
-                      <Money amount={307} currency="EUR" locale={lang} /> <span className="text-xs font-normal text-[#7B8A9A]">{lang === 'ro' ? 'proprietar' : lang === 'fa' ? 'سهم مالک' : 'owner'}</span>
+                      6.8% / {lang === 'ro' ? 'an' : lang === 'fa' ? 'سال' : 'yr'}
                     </div>
-                    <div className="text-[11px] text-[#52667A] mt-1">
-                      {lang === 'ro' ? `${formatMoney(767, 'EUR', lang)} cheltuieli operaționale chiriași` : lang === 'fa' ? `${formatMoney(767, 'EUR', lang)} شارژ مصرفی مستأجران` : `${formatMoney(767, 'EUR', lang)} tenant consumption`}
+                    <div className="text-[11px] text-[#334E68] mt-1">
+                      {lang === 'ro' ? 'După cheltuieli & taxe' : lang === 'fa' ? 'پس از کسر هزینه‌ها و مالیات' : 'After operational costs'}
                     </div>
                   </div>
 
                   <div className="p-4 rounded-xl bg-[#F6F9FC] border border-[#E2E8F0]">
-                    <div className="text-xs font-semibold text-[#7B8A9A]">
-                      {lang === 'ro' ? 'Garanții Reținute în Depozit' : lang === 'fa' ? 'مبالغ ودیعه نزد حساب امانی' : 'Deposits Held'}
+                    <div className="text-xs font-semibold text-[#486581]">
+                      {lang === 'ro' ? 'Garanții de Bună Execuție' : lang === 'fa' ? 'سپرده‌های تضمین مستأجران' : 'Tenant Security Deposits'}
                     </div>
                     <div className="text-xl font-display font-extrabold text-[#2F80ED] tabular-nums mt-1">
-                      <Money amount={5400.00} currency="EUR" locale={lang} />
+                      <Money amount={6800.00} currency="EUR" locale={lang} />
                     </div>
-                    <div className="text-[11px] text-[#52667A] mt-1">
+                    <div className="text-[11px] text-[#334E68] mt-1">
                       {lang === 'ro' ? 'Conturi escrow monitorizate' : lang === 'fa' ? 'پایش در حساب‌های سپرده امن' : 'Tracked in separate accounts'}
                     </div>
                   </div>
@@ -262,10 +262,10 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ lang }) => {
                       <Layers className="w-5 h-5" />
                     </div>
                     <div>
-                      <h3 className="text-base font-bold text-[#102A43]">
+                      <h2 className="text-base font-bold text-[#102A43]">
                         {lang === 'ro' ? 'ProActive Management SRL — 8 Asociații Condominiale' : lang === 'fa' ? 'شرکت مدیریت املاک — ۸ مجتمع ساختمانی' : 'Management Company — 8 Associations'}
-                      </h3>
-                      <p className="text-xs text-[#52667A]">
+                      </h2>
+                      <p className="text-xs text-[#334E68]">
                         {lang === 'ro' ? '680 unități totale · 6 tehnicieni · 14 furnizori activi' : lang === 'fa' ? '۶۸۰ واحد · ۶ تکنسین فعال · ۱۴ تأمین‌کننده طرف قرارداد' : '680 total units · 6 field technicians'}
                       </p>
                     </div>

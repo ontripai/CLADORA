@@ -1,6 +1,7 @@
+import type { Metadata } from 'next';
+import { getRouteMetadata } from '@/config/routes-metadata';
 import React from 'react';
 import Link from 'next/link';
-import type { Metadata } from 'next';
 import { Language } from '@/types';
 import { 
   Layers, 
@@ -13,6 +14,12 @@ import {
   TrendingUp
 } from 'lucide-react';
 
+import { buildPageMetadata } from '@/config/seo';
+
+
+
+
+
 export async function generateStaticParams() {
   return [{ lang: 'en' }, { lang: 'ro' }, { lang: 'fa' }];
 }
@@ -22,24 +29,15 @@ export async function generateMetadata({
 }: {
   params: { lang: Language };
 }): Promise<Metadata> {
-  const isRo = params.lang === 'ro';
-  const isFa = params.lang === 'fa';
-  return {
-    title: isRo 
-      ? 'Soluții pentru Firme de Administrare Imobile | CLADORA Manager OS' 
-      : isFa
-      ? 'راهکارهای شرکت‌های مدیریت املاک و مجتمع‌ها | کلادورا'
-      : 'Property Management Firm Solutions | CLADORA Manager OS',
-    description: isRo
-      ? 'Scalează compania de administrare: închidere de lună în masă (batch), dispecerat tichete mentenanță și SLA furnizori.'
-      : isFa
-      ? 'مقیاس‌پذیری شرکت‌های مدیریت املاک: بستن دسته‌ای دوره‌های ماهانه، مرکز تخصیص تیکت‌های فنی و کنترل SLA پیمانکاران.'
-      : 'Enterprise multi-association management: batch month-close, ticket SLAs, and workforce delegation.',
-  };
+  return getRouteMetadata('/solutions/property-managers', params.lang);
 }
 
-export default function PropertyManagersSolutionPage({ params }: { params: { lang: Language } }) {
-  const { lang } = params;
+export default function PropertyManagersSolutionPage({
+  params,
+}: {
+  params: { lang: Language };
+}) {
+  const lang = params.lang;
 
   return (
     <main className="min-h-screen pt-32 pb-24 bg-[#F6F9FC]">

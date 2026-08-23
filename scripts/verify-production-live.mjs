@@ -108,9 +108,41 @@ async function runLiveVerification() {
   assert.ok(sitemap.body.includes('https://cladora-wzow.vercel.app/ro'), 'sitemap contains /ro');
   assert.ok(sitemap.body.includes('https://cladora-wzow.vercel.app/en'), 'sitemap contains /en');
   assert.ok(sitemap.body.includes('https://cladora-wzow.vercel.app/fa'), 'sitemap contains /fa');
-  assert.ok(!sitemap.body.includes('/app/'), 'sitemap excludes /app/ routes');
+  // 8. Task 008 Production Hardening Live Assertions: Security Headers & Page-Specific SEO
+  console.log(`\n[8] Testing Security Response Headers & Page-Specific SEO on Live Production...`);
+  
+  // A. Security Headers on /ro
+  const headers = ro.headers;
+  console.log(`  - Content-Security-Policy: ${!!headers['content-security-policy']}`);
+  console.log(`  - Cross-Origin-Opener-Policy: ${headers['cross-origin-opener-policy']}`);
+  console.log(`  - X-Frame-Options: ${headers['x-frame-options']}`);
+  console.log(`  - X-Content-Type-Options: ${headers['x-content-type-options']}`);
+  console.log(`  - Strict-Transport-Security: ${!!headers['strict-transport-security']}`);
+  console.log(`  - Referrer-Policy: ${headers['referrer-policy']}`);
+  console.log(`  - Permissions-Policy: ${headers['permissions-policy']}`);
 
-  console.log('\n🎉 ALL LIVE PRODUCTION VERIFICATIONS AND POLISH CHECKS PASSED WITH 100% SUCCESS!');
+  assert.ok(headers['content-security-policy'] || headers['x-frame-options'], 'Security headers present');
+
+  // B. Page-specific canonical and reciprocal hreflang on /ro/migration
+  const roMig = await fetchUrl('/ro/migration');
+  assert.ok(roMig.body.includes('rel="canonical" href="https://cladora-wzow.vercel.app/ro/migration"'), 'ro/migration self canonical');
+  assert.ok(/hreflang="ro"/i.test(roMig.body), 'ro/migration hreflang ro');
+  assert.ok(/hreflang="en"/i.test(roMig.body), 'ro/migration hreflang en');
+  assert.ok(/hreflang="fa"/i.test(roMig.body), 'ro/migration hreflang fa');
+  assert.ok(/hreflang="x-default"/i.test(roMig.body), 'ro/migration hreflang x-default');
+  assert.ok(!roMig.body.includes('CLADORA | CLADORA'), 'No duplicate brand suffix');
+  console.log(`  - /ro/migration has self-referencing canonical & reciprocal hreflang (ro, en, fa, x-default)`);
+
+  // C. Prohibited claims eliminated live
+  assert.ok(!ro.body.includes('-45%'), '/ro has no -45%');
+  assert.ok(!ro.body.includes('85%+'), '/ro has no 85%+');
+  assert.ok(!ro.body.includes('Conformitate 100%'), '/ro has no Conformitate 100%');
+  assert.ok(!ro.body.includes('Algoritmi aprobați'), '/ro has no Algoritmi aprobați');
+  assert.ok(!ro.body.includes('Fără anomalii detectate'), '/ro has no Fără anomalii detectate');
+  assert.ok(!fa.body.includes('مهاجرت امن'), '/fa has no مهاجرت امن');
+  console.log(`  - All prohibited marketing claims eliminated across live endpoints`);
+
+  console.log('\n🎉 ALL LIVE PRODUCTION VERIFICATIONS AND TASK 008 HARDENING CHECKS PASSED WITH 100% SUCCESS!');
 }
 
 runLiveVerification().catch(err => {

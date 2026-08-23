@@ -48,10 +48,10 @@ export const OwnerTenantSeparationSection: React.FC<OwnerTenantSectionProps> = (
       title: lang === 'ro' ? '4. Flux Decontare' : lang === 'fa' ? '۴. تسویه خودکار' : '4. Reimbursement Flow',
       role: lang === 'ro' ? 'Automatizat CLADORA' : lang === 'fa' ? 'خودکار در کلادورا' : 'Automated in CLADORA',
       desc: lang === 'ro' 
-        ? 'Calcul transparent fără certuri la predarea apartamentului sau la final de lună.' 
+        ? 'Calcul transparent și clar la predarea apartamentului sau la final de lună.' 
         : lang === 'fa'
-        ? 'محاسبه شفاف و تفکیک‌شده بدون نیاز به محاسبات دستی و اختلاف‌نظر میان طرفین.'
-        : 'Clean friction-free statements without spreadsheet reconciliation disputes.',
+        ? 'محاسبه شفاف و تفکیک‌شده بدون نیاز به محاسبات دستی و ابهام میان طرفین.'
+        : 'Clean transparent statements without spreadsheet reconciliation confusion.',
       icon: ArrowRightLeft,
       color: 'text-[#FF7A59] bg-[#FFF0EB]'
     }

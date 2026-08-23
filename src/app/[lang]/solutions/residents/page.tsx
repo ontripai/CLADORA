@@ -1,6 +1,7 @@
+import type { Metadata } from 'next';
+import { getRouteMetadata } from '@/config/routes-metadata';
 import React from 'react';
 import Link from 'next/link';
-import type { Metadata } from 'next';
 import { Language } from '@/types';
 import { 
   Home, 
@@ -13,6 +14,10 @@ import {
   Megaphone
 } from 'lucide-react';
 
+
+
+
+
 export async function generateStaticParams() {
   return [{ lang: 'en' }, { lang: 'ro' }, { lang: 'fa' }];
 }
@@ -22,20 +27,7 @@ export async function generateMetadata({
 }: {
   params: { lang: Language };
 }): Promise<Metadata> {
-  const isRo = params.lang === 'ro';
-  const isFa = params.lang === 'fa';
-  return {
-    title: isRo 
-      ? 'Soluții pentru Proprietari & Rezidenți | CLADORA Resident App' 
-      : isFa
-      ? 'راهکارهای مالکان و ساکنان | اپلیکیشن ساکنان کلادورا'
-      : 'Owner & Resident Solutions | CLADORA Resident App',
-    description: isRo
-      ? 'Listă de plată clară, transmitere index foto OCR, avizier digital și participare la votul asociației.'
-      : isFa
-      ? 'فیش شفاف شارژ، ثبت تصویری کنتورها با هوش مصنوعی، تابلوی اعلانات دیجیتال و شرکت در رأی‌گیری‌های مجتمع.'
-      : 'Explainable maintenance bills, photo meter OCR, digital noticeboard, and statutory voting.',
-  };
+  return getRouteMetadata('/solutions/residents', params.lang);
 }
 
 export default function ResidentsSolutionPage({ params }: { params: { lang: Language } }) {

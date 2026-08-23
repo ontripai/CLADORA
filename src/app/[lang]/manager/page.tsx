@@ -1,6 +1,7 @@
+import type { Metadata } from 'next';
+import { getRouteMetadata } from '@/config/routes-metadata';
 import React from 'react';
 import Link from 'next/link';
-import type { Metadata } from 'next';
 import { Language } from '@/types';
 import { getDictionary } from '@/dictionaries';
 import { 
@@ -15,6 +16,10 @@ import {
   Clock
 } from 'lucide-react';
 
+
+
+
+
 export async function generateStaticParams() {
   return [{ lang: 'en' }, { lang: 'ro' }, { lang: 'fa' }];
 }
@@ -24,20 +29,7 @@ export async function generateMetadata({
 }: {
   params: { lang: Language };
 }): Promise<Metadata> {
-  const isRo = params.lang === 'ro';
-  const isFa = params.lang === 'fa';
-  return {
-    title: isRo 
-      ? 'Cladora Manager | Software pentru Firme de Administrare Imobile' 
-      : isFa
-      ? 'سیستم‌عامل شرکت‌های مدیریت املاک و مجتمع‌های پرتعداد | کلادورا'
-      : 'Cladora Manager | Enterprise Platform for Property Management Companies',
-    description: isRo
-      ? 'Infrastructură scalabilă pentru companii de administrare: închidere de lună în masă (Mass Billing), dispecerat tichete și monitorizare SLA.'
-      : isFa
-      ? 'زیرساخت مقیاس‌پذیر برای شرکت‌های مدیریت املاک: بستن دسته‌ای دوره‌های ماهانه، مرکز دیسپچینگ حوادث و پایش شاخص‌های SLA پیمانکاران.'
-      : 'Scalable multi-building management OS: mass batch billing, maintenance dispatch, contractor SLA monitoring, and consolidated treasury.',
-  };
+  return getRouteMetadata('/manager', params.lang);
 }
 
 export default function ManagerPage({

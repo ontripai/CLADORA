@@ -1,6 +1,7 @@
+import type { Metadata } from 'next';
+import { getRouteMetadata } from '@/config/routes-metadata';
 import React from 'react';
 import Link from 'next/link';
-import type { Metadata } from 'next';
 import { Language } from '@/types';
 import { 
   Cpu, 
@@ -15,6 +16,10 @@ import {
   Zap
 } from 'lucide-react';
 
+
+
+
+
 export async function generateStaticParams() {
   return [{ lang: 'en' }, { lang: 'ro' }, { lang: 'fa' }];
 }
@@ -24,20 +29,7 @@ export async function generateMetadata({
 }: {
   params: { lang: Language };
 }): Promise<Metadata> {
-  const isRo = params.lang === 'ro';
-  const isFa = params.lang === 'fa';
-  return {
-    title: isRo 
-      ? 'Arhitectura Platformei | CLADORA Asset OS' 
-      : isFa
-      ? 'معماری و لایه‌های پلتفرم کلادورا | CLADORA'
-      : 'Platform Architecture & Data Model | CLADORA Asset OS',
-    description: isRo
-      ? 'Află cum funcționează nucleul CLADORA: stratul adevărului financiar, motorul de drepturi 5D și interfețele multi-rol.'
-      : isFa
-      ? 'آشنایی با ساختار سه‌لایه پلتفرم کلادورا: لایه حقیقت مالی، موتور تسهیم حقوق و اینترفیس‌های عملیاتی متناسب با نقش کاربر.'
-      : 'Explore CLADORA three-tier architecture: financial truth layer, rights allocation engine, and role-based apps.',
-  };
+  return getRouteMetadata('/platform', params.lang);
 }
 
 export default function PlatformPage({ params }: { params: { lang: Language } }) {

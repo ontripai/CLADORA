@@ -1,10 +1,24 @@
+import type { Metadata } from 'next';
+import { getRouteMetadata } from '@/config/routes-metadata';
 import React from 'react';
 import Link from 'next/link';
 import { Language } from '@/types';
 import { FileText, ShieldAlert } from 'lucide-react';
 
+
+
+
 export async function generateStaticParams() {
   return [{ lang: 'en' }, { lang: 'ro' }, { lang: 'fa' }];
+}
+
+
+export async function generateMetadata({
+  params,
+}: {
+  params: { lang: Language };
+}): Promise<Metadata> {
+  return getRouteMetadata('/terms', params.lang);
 }
 
 export default function TermsPage({ params }: { params: { lang: Language } }) {
