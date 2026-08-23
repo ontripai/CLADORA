@@ -1,5 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
+import type { Metadata } from 'next';
 import { Language } from '@/types';
 import { 
   Home, 
@@ -16,6 +17,27 @@ export async function generateStaticParams() {
   return [{ lang: 'en' }, { lang: 'ro' }, { lang: 'fa' }];
 }
 
+export async function generateMetadata({
+  params,
+}: {
+  params: { lang: Language };
+}): Promise<Metadata> {
+  const isRo = params.lang === 'ro';
+  const isFa = params.lang === 'fa';
+  return {
+    title: isRo 
+      ? 'Soluții pentru Proprietari & Rezidenți | CLADORA Resident App' 
+      : isFa
+      ? 'راهکارهای مالکان و ساکنان | اپلیکیشن ساکنان کلادورا'
+      : 'Owner & Resident Solutions | CLADORA Resident App',
+    description: isRo
+      ? 'Listă de plată clară, transmitere index foto OCR, avizier digital și participare la votul asociației.'
+      : isFa
+      ? 'فیش شفاف شارژ، ثبت تصویری کنتورها با هوش مصنوعی، تابلوی اعلانات دیجیتال و شرکت در رأی‌گیری‌های مجتمع.'
+      : 'Explainable maintenance bills, photo meter OCR, digital noticeboard, and statutory voting.',
+  };
+}
+
 export default function ResidentsSolutionPage({ params }: { params: { lang: Language } }) {
   const { lang } = params;
 
@@ -26,13 +48,15 @@ export default function ResidentsSolutionPage({ params }: { params: { lang: Lang
         {/* Breadcrumbs */}
         <div className="flex items-center gap-2 text-xs text-[#52667A] mb-8 font-medium">
           <Link href={`/${lang}`} className="hover:text-[#102A43]">
-            {lang === 'ro' ? 'Acasă' : 'Home'}
+            {lang === 'ro' ? 'Acasă' : lang === 'fa' ? 'خانه' : 'Home'}
           </Link>
           <span>/</span>
-          <span className="text-[#52667A]">{lang === 'ro' ? 'Soluții' : 'Solutions'}</span>
+          <span className="text-[#52667A]">
+            {lang === 'ro' ? 'Soluții' : lang === 'fa' ? 'راهکارها' : 'Solutions'}
+          </span>
           <span>/</span>
           <span className="text-[#102A43] font-bold">
-            {lang === 'ro' ? 'Proprietari & Rezidenți' : 'Owners & Residents'}
+            {lang === 'ro' ? 'Proprietari & Rezidenți' : lang === 'fa' ? 'مالکان و ساکنان' : 'Owners & Residents'}
           </span>
         </div>
 
@@ -40,33 +64,42 @@ export default function ResidentsSolutionPage({ params }: { params: { lang: Lang
         <div className="card-proptech p-8 sm:p-12 bg-white border-[#D3DCE6] space-y-6">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#EAF8F5] text-xs font-bold text-[#0A6E62]">
             <Home className="w-4 h-4 text-[#0E9F8E]" />
-            <span>CLADORA Resident App</span>
+            <span>
+              {lang === 'fa' 
+                ? 'اپلیکیشن مالکان و ساکنان کلادورا' 
+                : 'CLADORA Resident App'}
+            </span>
           </div>
 
           <h1 className="text-3xl sm:text-5xl font-display font-extrabold text-[#102A43] tracking-tight max-w-3xl">
             {lang === 'ro'
               ? 'Listă de plată clară, transmitere index foto și liniște în propriul cămin'
+              : lang === 'fa'
+              ? 'فیش شفاف شارژ، ثبت تصویری کنتورها و آرامش خاطر در خانه شما'
               : 'Clear Monthly Statements, Photo Meter Reads & Complete Living Peace of Mind'}
           </h1>
 
           <p className="text-base sm:text-lg text-[#52667A] max-w-3xl leading-relaxed">
             {lang === 'ro'
               ? 'Vezi exact de unde vine fiecare leu de pe nota de plată, transmiți indexul contoarelor prin poză, primești notificări instant de la administrație și participi la deciziile blocului tău.'
+              : lang === 'fa'
+              ? 'منشأ دقیق هر ریال و لئو در فیش شارژ را به شفافیت مشاهده کنید، ارقام کنتورهای آب و گاز را با ارسال یک عکس ثبت کنید، اطلاعیه‌های هیئت‌مدیره را فوری دریافت نمایید و در تصمیم‌گیری‌های ساختمان سهم داشته باشید.'
               : 'Understand every line on your monthly maintenance bill, snap photos of water meters, receive urgent building notices, and vote on community improvements.'}
           </p>
 
           <div className="pt-2 flex flex-wrap gap-4">
             <Link
               href={`/${lang}/demo`}
-              className="px-6 py-3.5 rounded-xl bg-[#0E9F8E] hover:bg-[#0C8778] text-white text-xs font-bold shadow-sm transition-all"
+              className="px-6 py-3.5 rounded-xl bg-[#0E9F8E] hover:bg-[#0C8778] text-white text-xs font-bold shadow-sm transition-all flex items-center gap-2"
             >
-              {lang === 'ro' ? 'Vezi interfața de rezident' : 'Explore resident view'}
+              <span>{lang === 'ro' ? 'Vezi interfața de rezident' : lang === 'fa' ? 'مشاهده نسخه نمایشی ساکنان' : 'Explore resident view'}</span>
+              <ArrowRight className="w-4 h-4 rtl:rotate-180" />
             </Link>
             <Link
               href={`/${lang}/pilot`}
               className="px-6 py-3.5 rounded-xl bg-[#F0F4F8] hover:bg-[#E2E8F0] text-[#102A43] text-xs font-bold transition-all"
             >
-              {lang === 'ro' ? 'Propune CLADORA blocului tău' : 'Suggest CLADORA to your board'}
+              {lang === 'ro' ? 'Propune CLADORA blocului tău' : lang === 'fa' ? 'پیشنهاد کلادورا به هیئت‌مدیره مجتمع' : 'Suggest CLADORA to your board'}
             </Link>
           </div>
         </div>
@@ -78,10 +111,14 @@ export default function ResidentsSolutionPage({ params }: { params: { lang: Lang
               <Receipt className="w-5 h-5" />
             </div>
             <h2 className="text-base font-bold text-[#102A43]">
-              {lang === 'ro' ? 'Explicație Matematică Completă' : 'Explainable Math Proof'}
+              {lang === 'ro' ? 'Explicație Matematică Completă' : lang === 'fa' ? 'سند توجیهی و محاسبات شفاف اقلام' : 'Explainable Math Proof'}
             </h2>
             <p className="text-xs text-[#52667A] leading-relaxed">
-              {lang === 'ro' ? 'Apasă pe orice rând din întreținere pentru a vedea factura furnizorului și cota ta parte.' : 'Click on any line item to verify supplier invoices and statutory allocation algorithms.'}
+              {lang === 'ro' 
+                ? 'Apasă pe orice rând din întreținere pentru a vedea factura furnizorului și cota ta parte.' 
+                : lang === 'fa'
+                ? 'با لمس هر ردیف از هزینه‌ها، فرمول تسهیم، سهم واحد و تصویر فاکتور اصلی شرکت خدماتی را مشاهده فرمایید.'
+                : 'Click on any line item to verify supplier invoices and statutory allocation algorithms.'}
             </p>
           </div>
 
@@ -90,10 +127,14 @@ export default function ResidentsSolutionPage({ params }: { params: { lang: Lang
               <Camera className="w-5 h-5" />
             </div>
             <h2 className="text-base font-bold text-[#102A43]">
-              {lang === 'ro' ? 'Citire Contor prin Poză' : 'Photo Meter Submission'}
+              {lang === 'ro' ? 'Citire Contor prin Poză' : lang === 'fa' ? 'قرائت کنتور با ارسال عکس (AI OCR)' : 'Photo Meter Submission'}
             </h2>
             <p className="text-xs text-[#52667A] leading-relaxed">
-              {lang === 'ro' ? 'Faci o poză contorului, iar algoritmul completează cifrele automat, eliminând erorile umane.' : 'Snap a picture of your meter; OCR digitizes readings with anomaly verification.'}
+              {lang === 'ro' 
+                ? 'Faci o poză contorului, iar algoritmul completează cifrele automat, eliminând erorile umane.' 
+                : lang === 'fa'
+                ? 'کافی است از شماره‌انداز کنتور عکس بگیرید؛ الگوریتم هوش مصنوعی ارقام را تشخیص داده و ثبت می‌نماید.'
+                : 'Snap a picture of your meter; OCR digitizes readings with anomaly verification.'}
             </p>
           </div>
 
@@ -102,10 +143,14 @@ export default function ResidentsSolutionPage({ params }: { params: { lang: Lang
               <Megaphone className="w-5 h-5" />
             </div>
             <h2 className="text-base font-bold text-[#102A43]">
-              {lang === 'ro' ? 'Avizier Digital Direct pe Mobil' : 'Digital Noticeboard on Mobile'}
+              {lang === 'ro' ? 'Avizier Digital Direct pe Mobil' : lang === 'fa' ? 'تابلوی اعلانات دیجیتال در موبایل' : 'Digital Noticeboard on Mobile'}
             </h2>
             <p className="text-xs text-[#52667A] leading-relaxed">
-              {lang === 'ro' ? 'Află din timp despre opririle de apă caldă, reviziile de gaze sau ședințele de bloc.' : 'Stay informed about scheduled water shutoffs, gas checks, and board announcements.'}
+              {lang === 'ro' 
+                ? 'Află din timp despre opririle de apă caldă, reviziile de gaze sau ședințele de bloc.' 
+                : lang === 'fa'
+                ? 'اطلاع به‌موقع از قطعی‌های برنامه‌ریزی‌شده تأسیسات، سرویس آسانسورها یا زمان‌بندی جلسات ساختمان.'
+                : 'Stay informed about scheduled water shutoffs, gas checks, and board announcements.'}
             </p>
           </div>
         </div>

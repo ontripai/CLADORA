@@ -1,5 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
+import type { Metadata } from 'next';
 import { Language } from '@/types';
 import { 
   TrendingUp, 
@@ -16,6 +17,27 @@ export async function generateStaticParams() {
   return [{ lang: 'en' }, { lang: 'ro' }, { lang: 'fa' }];
 }
 
+export async function generateMetadata({
+  params,
+}: {
+  params: { lang: Language };
+}): Promise<Metadata> {
+  const isRo = params.lang === 'ro';
+  const isFa = params.lang === 'fa';
+  return {
+    title: isRo 
+      ? 'Soluții pentru Proprietari Portofoliu | CLADORA Portfolio OS' 
+      : isFa
+      ? 'راهکارهای مالکان سبد املاک و چندواحدی | کلادورا'
+      : 'Multi-Property Owner Solutions | CLADORA Portfolio OS',
+    description: isRo
+      ? 'Panou unificat pentru portofolii rezidențiale: randament net, alerte chirii, separare cheltuieli proprietar vs. chiriaș.'
+      : isFa
+      ? 'کنسول تجمیعی مالکان چند واحد مسکونی: محاسبه بازده خالص سرمایه‌گذاری، هشدارهای تمدید قرارداد و تفکیک هزینه‌های مالک و مستأجر.'
+      : 'Consolidated dashboard for multi-property landlords: net yield analytics, lease renewal alerts, and expense separation.',
+  };
+}
+
 export default function PropertyOwnersSolutionPage({ params }: { params: { lang: Language } }) {
   const { lang } = params;
 
@@ -26,13 +48,15 @@ export default function PropertyOwnersSolutionPage({ params }: { params: { lang:
         {/* Breadcrumbs */}
         <div className="flex items-center gap-2 text-xs text-[#52667A] mb-8 font-medium">
           <Link href={`/${lang}`} className="hover:text-[#102A43]">
-            {lang === 'ro' ? 'Acasă' : 'Home'}
+            {lang === 'ro' ? 'Acasă' : lang === 'fa' ? 'خانه' : 'Home'}
           </Link>
           <span>/</span>
-          <span className="text-[#52667A]">{lang === 'ro' ? 'Soluții' : 'Solutions'}</span>
+          <span className="text-[#52667A]">
+            {lang === 'ro' ? 'Soluții' : lang === 'fa' ? 'راهکارها' : 'Solutions'}
+          </span>
           <span>/</span>
           <span className="text-[#102A43] font-bold">
-            {lang === 'ro' ? 'Proprietari Portofoliu (Multi-Property)' : 'Portfolio Landlords'}
+            {lang === 'ro' ? 'Proprietari Portofoliu (Multi-Property)' : lang === 'fa' ? 'مالکان سبد املاک' : 'Portfolio Landlords'}
           </span>
         </div>
 
@@ -40,33 +64,42 @@ export default function PropertyOwnersSolutionPage({ params }: { params: { lang:
         <div className="card-proptech p-8 sm:p-12 bg-white border-[#D3DCE6] space-y-6">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#EAF8F5] text-xs font-bold text-[#0A6E62]">
             <TrendingUp className="w-4 h-4 text-[#0E9F8E]" />
-            <span>CLADORA Portfolio OS</span>
+            <span>
+              {lang === 'fa' 
+                ? 'Portfolio OS — سیستم مدیریت سبد املاک' 
+                : 'CLADORA Portfolio OS'}
+            </span>
           </div>
 
           <h1 className="text-3xl sm:text-5xl font-display font-extrabold text-[#102A43] tracking-tight max-w-3xl">
             {lang === 'ro'
               ? 'Un singur tablou de bord pentru toate proprietățile tale închiriate'
+              : lang === 'fa'
+              ? 'یک داشبورد متمرکز و یکپارچه برای مدیریت کلیه واحدهای استیجاری'
               : 'One Consolidated Dashboard for All Your Rental Properties'}
           </h1>
 
           <p className="text-base sm:text-lg text-[#52667A] max-w-3xl leading-relaxed">
             {lang === 'ro'
               ? 'Dacă deții mai multe apartamente în blocuri diferite din București, CLADORA îți consolidează automat chiriile încasate, cheltuielile de fond reparații suportate de tine și costurile de întreținere decontate de chiriași.'
+              : lang === 'fa'
+              ? 'اگر مالک چندین واحد در ساختمان‌های گوناگون هستید، کلادورا دریافتی اجاره‌ها، مخارج صندوق تعمیرات پرداختی توسط شما و هزینه‌های مصرفی شارژ مندرج در حساب مستأجران را به‌طور خودکار تجمیع و تفکیک می‌کند.'
               : 'Manage multiple apartments across different associations. Track rent payments, tenant cost recovery, net yields, and contract renewals from one screen.'}
           </p>
 
           <div className="pt-2 flex flex-wrap gap-4">
             <Link
               href={`/${lang}/demo`}
-              className="px-6 py-3.5 rounded-xl bg-[#0E9F8E] hover:bg-[#0C8778] text-white text-xs font-bold shadow-sm transition-all"
+              className="px-6 py-3.5 rounded-xl bg-[#0E9F8E] hover:bg-[#0C8778] text-white text-xs font-bold shadow-sm transition-all flex items-center gap-2"
             >
-              {lang === 'ro' ? 'Vezi demo portofoliu' : 'Launch portfolio demo'}
+              <span>{lang === 'ro' ? 'Vezi demo portofoliu' : lang === 'fa' ? 'مشاهده نسخه نمایشی سبد املاک' : 'Launch portfolio demo'}</span>
+              <ArrowRight className="w-4 h-4 rtl:rotate-180" />
             </Link>
             <Link
               href={`/${lang}/pilot`}
               className="px-6 py-3.5 rounded-xl bg-[#F0F4F8] hover:bg-[#E2E8F0] text-[#102A43] text-xs font-bold transition-all"
             >
-              {lang === 'ro' ? 'Înscrie proprietățile în pilot' : 'Apply for portfolio pilot'}
+              {lang === 'ro' ? 'Înscrie proprietățile în pilot' : lang === 'fa' ? 'درخواست اتصال املاک به پایلوت' : 'Apply for portfolio pilot'}
             </Link>
           </div>
         </div>
@@ -78,10 +111,14 @@ export default function PropertyOwnersSolutionPage({ params }: { params: { lang:
               <DollarSign className="w-5 h-5" />
             </div>
             <h2 className="text-base font-bold text-[#102A43]">
-              {lang === 'ro' ? 'Calcul Automat Yield Net' : 'Automated Net Yield Math'}
+              {lang === 'ro' ? 'Calcul Automat Yield Net' : lang === 'fa' ? 'محاسبه خودکار بازده خالص (Net Yield)' : 'Automated Net Yield Math'}
             </h2>
             <p className="text-xs text-[#52667A] leading-relaxed">
-              {lang === 'ro' ? 'Randament calculat corect după deducerea fondurilor de reparații, impozitelor și asigurărilor.' : 'Accurate real-time yield tracking after factoring in capital repair funds, insurance, and taxes.'}
+              {lang === 'ro' 
+                ? 'Randament calculat corect după deducerea fondurilor de reparații, impozitelor și asigurărilor.' 
+                : lang === 'fa'
+                ? 'محاسبه واقعی و بلادرنگ بازده خالص پس از کسر هزینه‌های استهلاک، بیمه، مالیات و روزهای خالی ماندن ملک.'
+                : 'Accurate real-time yield tracking after factoring in capital repair funds, insurance, and taxes.'}
             </p>
           </div>
 
@@ -90,10 +127,14 @@ export default function PropertyOwnersSolutionPage({ params }: { params: { lang:
               <Calendar className="w-5 h-5" />
             </div>
             <h2 className="text-base font-bold text-[#102A43]">
-              {lang === 'ro' ? 'Alerte Expirare Contracte' : 'Lease Renewal Alerts'}
+              {lang === 'ro' ? 'Alerte Expirare Contracte' : lang === 'fa' ? 'سامانه هشدار تمدید قراردادهای اجاره' : 'Lease Renewal Alerts'}
             </h2>
             <p className="text-xs text-[#52667A] leading-relaxed">
-              {lang === 'ro' ? 'Notificări automate cu 60 și 30 de zile înainte de expirarea contractelor de închiriere sau a garanțiilor.' : 'Automated reminders 60/30 days ahead of lease expirations or deposit release dates.'}
+              {lang === 'ro' 
+                ? 'Notificări automate cu 60 și 30 de zile înainte de expirarea contractelor de închiriere sau a garanțiilor.' 
+                : lang === 'fa'
+                ? 'اعلام هشدارهای هوشمند ۳۰ و ۶۰ روز قبل از سررسید قراردادهای اجاره یا تاریخ آزادسازی ودیعه مستأجران.'
+                : 'Automated reminders 60/30 days ahead of lease expirations or deposit release dates.'}
             </p>
           </div>
 
@@ -102,10 +143,14 @@ export default function PropertyOwnersSolutionPage({ params }: { params: { lang:
               <ShieldCheck className="w-5 h-5" />
             </div>
             <h2 className="text-base font-bold text-[#102A43]">
-              {lang === 'ro' ? 'Separare Costuri Proprietar/Chiriaș' : 'Clean Expense Allocation'}
+              {lang === 'ro' ? 'Separare Costuri Proprietar/Chiriaș' : lang === 'fa' ? 'تفکیک ساخت‌یافته هزینه‌های مالک و مستأجر' : 'Clean Expense Allocation'}
             </h2>
             <p className="text-xs text-[#52667A] leading-relaxed">
-              {lang === 'ro' ? 'Listele de întreținere sunt separate automat pe articole pentru a evita neînțelegerile la decontare.' : 'Monthly condo invoices are parsed into owner capital shares vs tenant consumption lines.'}
+              {lang === 'ro' 
+                ? 'Listele de întreținere sunt separate automat pe articole pentru a evita neînțelegerile la decontare.' 
+                : lang === 'fa'
+                ? 'فیش‌های شارژ ماهانه به‌طور خودکار به سهم‌های سرمایه‌ای مالک و مصارف انشعابات مستأجر تفکیک می‌شوند.'
+                : 'Monthly condo invoices are parsed into owner capital shares vs tenant consumption lines.'}
             </p>
           </div>
         </div>

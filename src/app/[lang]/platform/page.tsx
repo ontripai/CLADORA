@@ -1,5 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
+import type { Metadata } from 'next';
 import { Language } from '@/types';
 import { 
   Cpu, 
@@ -18,6 +19,27 @@ export async function generateStaticParams() {
   return [{ lang: 'en' }, { lang: 'ro' }, { lang: 'fa' }];
 }
 
+export async function generateMetadata({
+  params,
+}: {
+  params: { lang: Language };
+}): Promise<Metadata> {
+  const isRo = params.lang === 'ro';
+  const isFa = params.lang === 'fa';
+  return {
+    title: isRo 
+      ? 'Arhitectura Platformei | CLADORA Asset OS' 
+      : isFa
+      ? 'معماری و لایه‌های پلتفرم کلادورا | CLADORA'
+      : 'Platform Architecture & Data Model | CLADORA Asset OS',
+    description: isRo
+      ? 'Află cum funcționează nucleul CLADORA: stratul adevărului financiar, motorul de drepturi 5D și interfețele multi-rol.'
+      : isFa
+      ? 'آشنایی با ساختار سه‌لایه پلتفرم کلادورا: لایه حقیقت مالی، موتور تسهیم حقوق و اینترفیس‌های عملیاتی متناسب با نقش کاربر.'
+      : 'Explore CLADORA three-tier architecture: financial truth layer, rights allocation engine, and role-based apps.',
+  };
+}
+
 export default function PlatformPage({ params }: { params: { lang: Language } }) {
   const { lang } = params;
 
@@ -28,27 +50,31 @@ export default function PlatformPage({ params }: { params: { lang: Language } })
         {/* Breadcrumb Navigation */}
         <div className="flex items-center gap-2 text-xs text-[#52667A] mb-8 font-medium">
           <Link href={`/${lang}`} className="hover:text-[#102A43]">
-            {lang === 'ro' ? 'Acasă' : 'Home'}
+            {lang === 'ro' ? 'Acasă' : lang === 'fa' ? 'خانه' : 'Home'}
           </Link>
           <span>/</span>
           <span className="text-[#102A43] font-bold">
-            {lang === 'ro' ? 'Arhitectura Platformei' : 'Platform Architecture'}
+            {lang === 'ro' ? 'Arhitectura Platformei' : lang === 'fa' ? 'معماری پلتفرم' : 'Platform Architecture'}
           </span>
         </div>
 
         {/* Hero Section */}
         <div className="max-w-3xl space-y-4">
           <span className="text-xs font-bold text-[#0E9F8E] uppercase tracking-wider bg-[#EAF8F5] px-3 py-1 rounded-full border border-[#B2E5DF]">
-            {lang === 'ro' ? 'Arhitectura Sistemului de Operare' : 'Operating System Architecture'}
+            {lang === 'ro' ? 'Arhitectura Sistemului de Operare' : lang === 'fa' ? 'معماری سیستم‌عامل مدیریت دارایی' : 'Operating System Architecture'}
           </span>
           <h1 className="text-3xl sm:text-5xl font-display font-extrabold text-[#102A43] tracking-tight">
             {lang === 'ro' 
               ? 'Un singur model de date pentru întregul ciclu de viață rezidențial' 
+              : lang === 'fa'
+              ? 'یک مدل داده واحد و تغییرناپذیر برای کل چرخه عمر دارایی‌های مسکونی'
               : 'One Unified Data Model for the Entire Residential Lifecycle'}
           </h1>
           <p className="text-base sm:text-lg text-[#52667A] leading-relaxed">
             {lang === 'ro'
               ? 'CLADORA nu este o colecție de module disparate legate cu scripturi, ci o platformă integrată construită pe principiul adevărului financiar unic, izolării multi-tenant și trasabilității complete.'
+              : lang === 'fa'
+              ? 'کلادورا صرفاً مجموعه‌ای از نرم‌افزارهای پراکنده نیست؛ بلکه پلتفرمی مهندسی‌شده بر پایه اصل حقیقت مالی واحد، جداسازی پایگاه‌داده‌ها و ردیابی کامل اسناد است.'
               : 'CLADORA connects accounting, metering, occupancy, and asset governance on an immutable financial ledger.'}
           </p>
         </div>
@@ -61,16 +87,24 @@ export default function PlatformPage({ params }: { params: { lang: Language } })
               <Database className="w-5 h-5" />
             </div>
             <h2 className="text-xl font-bold text-[#102A43]">
-              {lang === 'ro' ? '1. Stratul Adevărului Financiar' : '1. Financial Truth Layer'}
+              {lang === 'ro' ? '1. Stratul Adevărului Financiar' : lang === 'fa' ? '۱. لایه حقیقت مالی و حسابداری' : '1. Financial Truth Layer'}
             </h2>
             <p className="text-xs text-[#52667A] leading-relaxed">
               {lang === 'ro'
                 ? 'Contabilitate în partidă dublă, jurnal general imutabil, reconciliere automată a extraselor de cont bancar și stornări auditate.'
+                : lang === 'fa'
+                ? 'دفتر کل دوطرفه، ثبت تراکنش‌ها بدون حذف خام، تطبیق خودکار با صورت‌حساب بانکی و اسناد اصلاحی کاملاً مستند.'
                 : 'General ledger, double-entry balance verification, bank statement reconciliation, and immutable audit logs.'}
             </p>
             <ul className="space-y-2 text-xs text-[#52667A] pt-2 border-t border-[#F0F4F8]">
-              <li className="flex items-center gap-2">✓ {lang === 'ro' ? 'Plan de conturi adaptat Legii 196' : 'Statutory condo chart of accounts'}</li>
-              <li className="flex items-center gap-2">✓ {lang === 'ro' ? 'Fără ștergeri neînregistrate' : 'Zero silent retroactive edits'}</li>
+              <li className="flex items-center gap-2">
+                <span className="text-[#0E9F8E] font-bold">✓</span>
+                <span>{lang === 'ro' ? 'Plan de conturi adaptat legislației' : lang === 'fa' ? 'کدینگ حسابداری منطبق با قوانین املاک' : 'Statutory condo chart of accounts'}</span>
+              </li>
+              <li className="flex items-center gap-2">
+                <span className="text-[#0E9F8E] font-bold">✓</span>
+                <span>{lang === 'ro' ? 'Fără ștergeri neînregistrate' : lang === 'fa' ? 'تغییرناپذیری اسناد بدون حذف مخفی' : 'Zero silent retroactive edits'}</span>
+              </li>
             </ul>
           </div>
 
@@ -79,16 +113,24 @@ export default function PlatformPage({ params }: { params: { lang: Language } })
               <Cpu className="w-5 h-5" />
             </div>
             <h2 className="text-xl font-bold text-[#102A43]">
-              {lang === 'ro' ? '2. Motorul de Drepturi & Alocare' : '2. Allocation & Rights Engine'}
+              {lang === 'ro' ? '2. Motorul de Drepturi & Alocare' : lang === 'fa' ? '۲. موتور تسهیم حقوق و هزینه‌ها' : '2. Allocation & Rights Engine'}
             </h2>
             <p className="text-xs text-[#52667A] leading-relaxed">
               {lang === 'ro'
                 ? 'Calcul matematic determinist pentru cote-părți indivize (CPI), persoane, contoare foto OCR și separare proprietar vs chiriaș.'
+                : lang === 'fa'
+                ? 'محاسبات ریاضی قطعی برای سهم مشاعات، تعداد نفرات، قرائت کنتورها با هوش مصنوعی و تفکیک هزینه‌های مالک و مستأجر.'
                 : 'Deterministic computation for CPI shares, resident counts, meter readings, and debtor vs payer roles.'}
             </p>
             <ul className="space-y-2 text-xs text-[#52667A] pt-2 border-t border-[#F0F4F8]">
-              <li className="flex items-center gap-2">✓ {lang === 'ro' ? 'Algoritmi CPI certificabili' : 'Auditable CPI formulas'}</li>
-              <li className="flex items-center gap-2">✓ {lang === 'ro' ? 'Separare 5D drepturi chiriaș' : '5D tenant privacy isolation'}</li>
+              <li className="flex items-center gap-2">
+                <span className="text-[#0E9F8E] font-bold">✓</span>
+                <span>{lang === 'ro' ? 'Algoritmi CPI certificabili' : lang === 'fa' ? 'فرمول‌های قابل‌اثبات تسهیم سهم مشاع' : 'Auditable CPI formulas'}</span>
+              </li>
+              <li className="flex items-center gap-2">
+                <span className="text-[#0E9F8E] font-bold">✓</span>
+                <span>{lang === 'ro' ? 'Separare 5D drepturi chiriaș' : lang === 'fa' ? 'جداسازی ۵ بعدی حساب مستأجر از مالک' : '5D tenant privacy isolation'}</span>
+              </li>
             </ul>
           </div>
 
@@ -97,16 +139,24 @@ export default function PlatformPage({ params }: { params: { lang: Language } })
               <Layers className="w-5 h-5" />
             </div>
             <h2 className="text-xl font-bold text-[#102A43]">
-              {lang === 'ro' ? '3. Interfața Operațională Multi-Rol' : '3. Multi-Role Operating Shell'}
+              {lang === 'ro' ? '3. Interfața Operațională Multi-Rol' : lang === 'fa' ? '۳. پوسته عملیاتی متناسب با نقش کاربر' : '3. Multi-Role Operating Shell'}
             </h2>
             <p className="text-xs text-[#52667A] leading-relaxed">
               {lang === 'ro'
                 ? 'Comutare instantanee între Association OS, Portfolio OS și Manager OS, adaptată rolului exact și dispozitivului folosit.'
+                : lang === 'fa'
+                ? 'سوئیچ بلادرنگ میان سیستم‌عامل‌های انجمن مالکان، سبد املاک و شرکت مدیریت، متناسب با اختیارات و دستگاه کاربر.'
                 : 'Seamless context switching between Association, Portfolio, and Manager OS modes.'}
             </p>
             <ul className="space-y-2 text-xs text-[#52667A] pt-2 border-t border-[#F0F4F8]">
-              <li className="flex items-center gap-2">✓ {lang === 'ro' ? 'PWA optimizat pentru mobil & tabletă' : 'PWA-ready mobile and tablet shell'}</li>
-              <li className="flex items-center gap-2">✓ {lang === 'ro' ? 'Avizier digital cu confirmare de citire' : 'Digital noticeboard with receipts'}</li>
+              <li className="flex items-center gap-2">
+                <span className="text-[#0E9F8E] font-bold">✓</span>
+                <span>{lang === 'ro' ? 'PWA optimizat pentru mobil & tabletă' : lang === 'fa' ? 'وب‌اپلیکیشن واکنش‌گرا (PWA) برای موبایل' : 'PWA-ready mobile and tablet shell'}</span>
+              </li>
+              <li className="flex items-center gap-2">
+                <span className="text-[#0E9F8E] font-bold">✓</span>
+                <span>{lang === 'ro' ? 'Avizier digital cu confirmare de citire' : lang === 'fa' ? 'تابلوی اعلانات همراه با ثبت دریافت' : 'Digital noticeboard with receipts'}</span>
+              </li>
             </ul>
           </div>
 
@@ -116,18 +166,26 @@ export default function PlatformPage({ params }: { params: { lang: Language } })
         <div className="mt-14 card-proptech p-8 bg-[#102A43] text-white flex flex-col sm:flex-row items-center justify-between gap-6">
           <div>
             <h3 className="text-xl font-bold text-white">
-              {lang === 'ro' ? 'Vrei să vezi cum funcționează în detaliu cele 17 module?' : 'Ready to explore all 17 logical cores?'}
+              {lang === 'ro' 
+                ? 'Vrei să vezi cum funcționează în detaliu cele 17 module?' 
+                : lang === 'fa'
+                ? 'مایلید با جزئیات عملکرد تمامی ۱۷ هسته نرم‌افزاری آشنا شوید؟'
+                : 'Ready to explore all 17 logical cores?'}
             </h3>
             <p className="text-xs text-[#BCCCDC] mt-1">
-              {lang === 'ro' ? 'Descoperă matricea completă de capabilități P1, P2 și P3.' : 'View the complete capabilities roadmap and functional specs.'}
+              {lang === 'ro' 
+                ? 'Descoperă matricea completă de capabilități P1, P2 și P3.' 
+                : lang === 'fa'
+                ? 'ماتریس کامل قابلیت‌ها و نقشه راه فازهای سه‌گانه کلادورا را مرور فرمایید.'
+                : 'View the complete capabilities roadmap and functional specs.'}
             </p>
           </div>
           <Link
             href={`/${lang}/modules`}
             className="px-6 py-3 rounded-xl bg-[#0E9F8E] hover:bg-[#0C8778] text-white text-xs font-bold shrink-0 transition-colors flex items-center gap-2"
           >
-            <span>{lang === 'ro' ? 'Explorează cele 17 Module' : 'Explore the 17 Modules'}</span>
-            <ArrowRight className="w-4 h-4" />
+            <span>{lang === 'ro' ? 'Explorează cele 17 Module' : lang === 'fa' ? 'مشاهده ۱۷ ماژول نرم‌افزاری' : 'Explore the 17 Modules'}</span>
+            <ArrowRight className="w-4 h-4 rtl:rotate-180" />
           </Link>
         </div>
 

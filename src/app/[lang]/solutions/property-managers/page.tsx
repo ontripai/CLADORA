@@ -1,5 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
+import type { Metadata } from 'next';
 import { Language } from '@/types';
 import { 
   Layers, 
@@ -16,6 +17,27 @@ export async function generateStaticParams() {
   return [{ lang: 'en' }, { lang: 'ro' }, { lang: 'fa' }];
 }
 
+export async function generateMetadata({
+  params,
+}: {
+  params: { lang: Language };
+}): Promise<Metadata> {
+  const isRo = params.lang === 'ro';
+  const isFa = params.lang === 'fa';
+  return {
+    title: isRo 
+      ? 'Soluții pentru Firme de Administrare Imobile | CLADORA Manager OS' 
+      : isFa
+      ? 'راهکارهای شرکت‌های مدیریت املاک و مجتمع‌ها | کلادورا'
+      : 'Property Management Firm Solutions | CLADORA Manager OS',
+    description: isRo
+      ? 'Scalează compania de administrare: închidere de lună în masă (batch), dispecerat tichete mentenanță și SLA furnizori.'
+      : isFa
+      ? 'مقیاس‌پذیری شرکت‌های مدیریت املاک: بستن دسته‌ای دوره‌های ماهانه، مرکز تخصیص تیکت‌های فنی و کنترل SLA پیمانکاران.'
+      : 'Enterprise multi-association management: batch month-close, ticket SLAs, and workforce delegation.',
+  };
+}
+
 export default function PropertyManagersSolutionPage({ params }: { params: { lang: Language } }) {
   const { lang } = params;
 
@@ -26,13 +48,15 @@ export default function PropertyManagersSolutionPage({ params }: { params: { lan
         {/* Breadcrumbs */}
         <div className="flex items-center gap-2 text-xs text-[#52667A] mb-8 font-medium">
           <Link href={`/${lang}`} className="hover:text-[#102A43]">
-            {lang === 'ro' ? 'Acasă' : 'Home'}
+            {lang === 'ro' ? 'Acasă' : lang === 'fa' ? 'خانه' : 'Home'}
           </Link>
           <span>/</span>
-          <span className="text-[#52667A]">{lang === 'ro' ? 'Soluții' : 'Solutions'}</span>
+          <span className="text-[#52667A]">
+            {lang === 'ro' ? 'Soluții' : lang === 'fa' ? 'راهکارها' : 'Solutions'}
+          </span>
           <span>/</span>
           <span className="text-[#102A43] font-bold">
-            {lang === 'ro' ? 'Companii de Administrare' : 'Property Management Firms'}
+            {lang === 'ro' ? 'Companii de Administrare' : lang === 'fa' ? 'شرکت‌های مدیریت املاک' : 'Property Management Firms'}
           </span>
         </div>
 
@@ -40,33 +64,42 @@ export default function PropertyManagersSolutionPage({ params }: { params: { lan
         <div className="card-proptech p-8 sm:p-12 bg-white border-[#D3DCE6] space-y-6">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#EAF8F5] text-xs font-bold text-[#0A6E62]">
             <Layers className="w-4 h-4 text-[#0E9F8E]" />
-            <span>CLADORA Manager OS</span>
+            <span>
+              {lang === 'fa' 
+                ? 'Manager OS — سیستم شرکت‌های مدیریت املاک' 
+                : 'CLADORA Manager OS'}
+            </span>
           </div>
 
           <h1 className="text-3xl sm:text-5xl font-display font-extrabold text-[#102A43] tracking-tight max-w-3xl">
             {lang === 'ro'
               ? 'Scalează-ți compania de administrare fără a crește proporțional costurile de personal'
+              : lang === 'fa'
+              ? 'توسعه و مقیاس‌پذیری شرکت مدیریت املاک با سرعت و بازده عملیاتی سازمانی'
               : 'Scale Your Property Management Firm with Enterprise Operational Speed'}
           </h1>
 
           <p className="text-base sm:text-lg text-[#52667A] max-w-3xl leading-relaxed">
             {lang === 'ro'
               ? 'Închidere centralizată de lună pentru zeci de asociații simultan, dispecerat tichete mentenanță cu SLA orar și monitorizarea performanței furnizorilor.'
+              : lang === 'fa'
+              ? 'بستن هم‌زمان دوره‌های ماهانه برای ده‌ها مجتمع، سامانه دیسپچینگ تیکت‌های تعمیرات با تایمر شمارش معکوس SLA و ارزیابی عملکرد پیمانکاران.'
               : 'Batch month-end close across multi-association portfolios, dispatch ticket SLAs, and real-time vendor performance analytics.'}
           </p>
 
           <div className="pt-2 flex flex-wrap gap-4">
             <Link
               href={`/${lang}/demo`}
-              className="px-6 py-3.5 rounded-xl bg-[#0E9F8E] hover:bg-[#0C8778] text-white text-xs font-bold shadow-sm transition-all"
+              className="px-6 py-3.5 rounded-xl bg-[#0E9F8E] hover:bg-[#0C8778] text-white text-xs font-bold shadow-sm transition-all flex items-center gap-2"
             >
-              {lang === 'ro' ? 'Vezi demo Manager Pro' : 'Launch Manager Pro demo'}
+              <span>{lang === 'ro' ? 'Vezi demo Manager Pro' : lang === 'fa' ? 'مشاهده نسخه نمایشی شرکت مدیریت' : 'Launch Manager Pro demo'}</span>
+              <ArrowRight className="w-4 h-4 rtl:rotate-180" />
             </Link>
             <Link
               href={`/${lang}/pilot`}
               className="px-6 py-3.5 rounded-xl bg-[#F0F4F8] hover:bg-[#E2E8F0] text-[#102A43] text-xs font-bold transition-all"
             >
-              {lang === 'ro' ? 'Parteneriat companii în pilot' : 'Partner with pilot program'}
+              {lang === 'ro' ? 'Parteneriat companii în pilot' : lang === 'fa' ? 'درخواست همکاری شرکتی در پایلوت' : 'Partner with pilot program'}
             </Link>
           </div>
         </div>
@@ -78,10 +111,14 @@ export default function PropertyManagersSolutionPage({ params }: { params: { lan
               <Building2 className="w-5 h-5" />
             </div>
             <h2 className="text-base font-bold text-[#102A43]">
-              {lang === 'ro' ? 'Închidere Multi-Asociație' : 'Batch Month-Close Engine'}
+              {lang === 'ro' ? 'Închidere Multi-Asociație' : lang === 'fa' ? 'موتور بستن دسته‌ای دوره‌ها (Batch Close)' : 'Batch Month-Close Engine'}
             </h2>
             <p className="text-xs text-[#52667A] leading-relaxed">
-              {lang === 'ro' ? 'Tablou unificat pentru progresul închiderii lunare pe toate clădirile din portofoliu.' : 'Unified dashboard tracking closing progression and missing data across all client buildings.'}
+              {lang === 'ro' 
+                ? 'Tablou unificat pentru progresul închiderii lunare pe toate clădirile din portofoliu.' 
+                : lang === 'fa'
+                ? 'داشبورد متمرکز جهت رصد پیشرفت بستن حساب‌ها و داده‌های ناقص در تمامی ساختمان‌های تحت قرارداد.'
+                : 'Unified dashboard tracking closing progression and missing data across all client buildings.'}
             </p>
           </div>
 
@@ -90,10 +127,14 @@ export default function PropertyManagersSolutionPage({ params }: { params: { lan
               <Wrench className="w-5 h-5" />
             </div>
             <h2 className="text-base font-bold text-[#102A43]">
-              {lang === 'ro' ? 'Dispecerat Mentenanță & SLA' : 'Maintenance Dispatch & SLA'}
+              {lang === 'ro' ? 'Dispecerat Mentenanță & SLA' : lang === 'fa' ? 'مرکز دیسپچینگ تعمیرات و پایش SLA' : 'Maintenance Dispatch & SLA'}
             </h2>
             <p className="text-xs text-[#52667A] leading-relaxed">
-              {lang === 'ro' ? 'Alocare automată tichete către tehnicieni cu urmărirea timpului de reacție și rezolvare.' : 'Assign tasks to internal technicians or 3rd-party vendors with SLA countdown timers.'}
+              {lang === 'ro' 
+                ? 'Alocare automată tichete către tehnicieni cu urmărirea timpului de reacție și rezolvare.' 
+                : lang === 'fa'
+                ? 'ارجاع هوشمند تیکت‌ها به تکنسین‌های داخلی یا پیمانکاران شخص ثالث با زمان‌سنج کنترل تعهدات SLA.'
+                : 'Assign tasks to internal technicians or 3rd-party vendors with SLA countdown timers.'}
             </p>
           </div>
 
@@ -102,10 +143,14 @@ export default function PropertyManagersSolutionPage({ params }: { params: { lan
               <Users className="w-5 h-5" />
             </div>
             <h2 className="text-base font-bold text-[#102A43]">
-              {lang === 'ro' ? 'Delegare de Roluri în Echipă' : 'Team Role Delegation'}
+              {lang === 'ro' ? 'Delegare de Roluri în Echipă' : lang === 'fa' ? 'تفکیک دسترسی‌ها و مدیریت تیم کارشناسان' : 'Team Role Delegation'}
             </h2>
             <p className="text-xs text-[#52667A] leading-relaxed">
-              {lang === 'ro' ? 'Permisiuni granulare pentru contabili, administratori de teren, casieri și tehnicieni.' : 'Granular staff permissions for accountants, field inspectors, and maintenance teams.'}
+              {lang === 'ro' 
+                ? 'Permisiuni granulare pentru contabili, administratori de teren, casieri și tehnicieni.' 
+                : lang === 'fa'
+                ? 'سطوح دسترسی دقیق و مجزا برای حسابداران، مدیران اجرایی میدانی، صندوق‌داران و کارشناسان فنی.'
+                : 'Granular staff permissions for accountants, field inspectors, and maintenance teams.'}
             </p>
           </div>
         </div>

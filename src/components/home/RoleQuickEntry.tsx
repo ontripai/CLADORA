@@ -22,42 +22,42 @@ export const RoleQuickEntry: React.FC<RoleQuickEntryProps> = ({ lang }) => {
       desc: lang === 'ro' ? 'Sunt administrator, președinte sau cenzor pentru blocul meu' : lang === 'fa' ? 'من مدیر ساختمان، رئیس هیئت‌مدیره یا بازرس مجتمع هستم' : 'I am an administrator, president, or auditor for my building',
       icon: Building2,
       href: `/${lang}/solutions/associations`,
-      tag: 'Association OS'
+      tag: lang === 'fa' ? 'Association OS • سیستم مدیریت انجمن مالکان' : 'Association OS'
     },
     {
       title: lang === 'ro' ? 'Mai multe proprietăți închiriate' : lang === 'fa' ? 'چندین واحد مسکونی استیجاری (سبد املاک)' : 'Several owned properties (Portfolios)',
       desc: lang === 'ro' ? 'Dețin 2+ apartamente și vreau să urmăresc chirii, cheltuieli și randament' : lang === 'fa' ? 'مالک ۲ یا چند واحد استیجاری هستم و خواهان پایش اجاره و بازده خالصم' : 'I own 2+ properties and need consolidated yields, rent and cost tracking',
       icon: TrendingUp,
       href: `/${lang}/solutions/property-owners`,
-      tag: 'Portfolio OS'
+      tag: lang === 'fa' ? 'Portfolio OS • سیستم مدیریت سبد املاک' : 'Portfolio OS'
     },
     {
       title: lang === 'ro' ? 'Portofoliu clienți pentru compania mea' : lang === 'fa' ? 'مدیریت مجتمع‌های متعدد برای مشتریان' : 'Multiple associations for clients',
       desc: lang === 'ro' ? 'Conduc o firmă de administrare imobile cu multiple clădiri în portofoliu' : lang === 'fa' ? 'مدیرعامل شرکت ارائه‌دهنده خدمات تخصصی مدیریت و نگهداری ساختمان هستم' : 'I run a professional property management firm with multiple buildings',
       icon: Layers,
       href: `/${lang}/solutions/property-managers`,
-      tag: 'Manager OS'
+      tag: lang === 'fa' ? 'Manager OS • سیستم شرکت‌های مدیریت املاک' : 'Manager OS'
     },
     {
       title: lang === 'ro' ? 'Locuința mea și lista de plată' : lang === 'fa' ? 'واحد مسکونی و فیش شارژ ماهانه من' : 'My home and monthly statements',
       desc: lang === 'ro' ? 'Sunt proprietar rezident și vreau transparență totală la cote și contoare' : lang === 'fa' ? 'مالک ساکن در مجتمع هستم و شفافیت کامل در فیش و کنتورها می‌خواهم' : 'I am a resident owner looking for transparent charges and meter submission',
       icon: Home,
       href: `/${lang}/solutions/residents`,
-      tag: 'Resident App'
+      tag: lang === 'fa' ? 'اپلیکیشن مالکان و ساکنان' : 'Resident App'
     },
     {
       title: lang === 'ro' ? 'Un apartament în care locuiesc cu chirie' : lang === 'fa' ? 'واحدی که در آن مستأجر هستم' : 'A rented home where I live',
       desc: lang === 'ro' ? 'Sunt chiriaș și am nevoie de calculul corect al consumului și plăți directe' : lang === 'fa' ? 'مستأجر هستم و محاسبه دقیق مصارف انشعابات و پرداخت آسان شارژ می‌خواهم' : 'I am a tenant needing accurate consumption bills and direct maintenance',
       icon: KeyRound,
       href: `/${lang}/solutions/tenants`,
-      tag: 'Tenant Portal'
+      tag: lang === 'fa' ? 'پرتال مستأجران' : 'Tenant Portal'
     },
     {
       title: lang === 'ro' ? 'Operațiuni tehnice și mentenanță' : lang === 'fa' ? 'عملیات فنی و نگهداری تأسیسات' : 'Building operations and maintenance',
       desc: lang === 'ro' ? 'Sunt prestator tehnic, instalator sau responsabil revizii ISCIR' : lang === 'fa' ? 'تکنسین فنی، مجری نگهداری آسانسور یا تأسیسات ساختمان هستم' : 'I handle technical repairs, HVAC, elevator maintenance, and work orders',
       icon: Wrench,
       href: `/${lang}/demo`,
-      tag: 'Operations'
+      tag: lang === 'fa' ? 'عملیات فنی و نگهداری' : 'Operations'
     }
   ];
 

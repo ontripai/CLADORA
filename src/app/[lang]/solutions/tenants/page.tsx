@@ -1,5 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
+import type { Metadata } from 'next';
 import { Language } from '@/types';
 import { 
   KeyRound, 
@@ -16,6 +17,27 @@ export async function generateStaticParams() {
   return [{ lang: 'en' }, { lang: 'ro' }, { lang: 'fa' }];
 }
 
+export async function generateMetadata({
+  params,
+}: {
+  params: { lang: Language };
+}): Promise<Metadata> {
+  const isRo = params.lang === 'ro';
+  const isFa = params.lang === 'fa';
+  return {
+    title: isRo 
+      ? 'Soluții pentru Chiriași | CLADORA Tenant Portal' 
+      : isFa
+      ? 'راهکارهای مستأجران | پرتال مستأجران کلادورا'
+      : 'Tenant Solutions | CLADORA Tenant Portal',
+    description: isRo
+      ? 'Plătești doar consumul real, trimiți indexul contoarelor și raportezi direct tichete de reparații.'
+      : isFa
+      ? 'پرداخت صرفاً بر اساس مصرف واقعی انشعابات، ثبت آسان ارقام کنتورها و ثبت مستقیم درخواست‌های تعمیرات به مدیریت.'
+      : 'Pay strictly for consumption, submit utility readings, and log maintenance tickets directly.',
+  };
+}
+
 export default function TenantsSolutionPage({ params }: { params: { lang: Language } }) {
   const { lang } = params;
 
@@ -26,13 +48,15 @@ export default function TenantsSolutionPage({ params }: { params: { lang: Langua
         {/* Breadcrumbs */}
         <div className="flex items-center gap-2 text-xs text-[#52667A] mb-8 font-medium">
           <Link href={`/${lang}`} className="hover:text-[#102A43]">
-            {lang === 'ro' ? 'Acasă' : 'Home'}
+            {lang === 'ro' ? 'Acasă' : lang === 'fa' ? 'خانه' : 'Home'}
           </Link>
           <span>/</span>
-          <span className="text-[#52667A]">{lang === 'ro' ? 'Soluții' : 'Solutions'}</span>
+          <span className="text-[#52667A]">
+            {lang === 'ro' ? 'Soluții' : lang === 'fa' ? 'راهکارها' : 'Solutions'}
+          </span>
           <span>/</span>
           <span className="text-[#102A43] font-bold">
-            {lang === 'ro' ? 'Chiriași' : 'Tenants'}
+            {lang === 'ro' ? 'Chiriași' : lang === 'fa' ? 'مستأجران' : 'Tenants'}
           </span>
         </div>
 
@@ -40,27 +64,36 @@ export default function TenantsSolutionPage({ params }: { params: { lang: Langua
         <div className="card-proptech p-8 sm:p-12 bg-white border-[#D3DCE6] space-y-6">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#EAF8F5] text-xs font-bold text-[#0A6E62]">
             <KeyRound className="w-4 h-4 text-[#0E9F8E]" />
-            <span>CLADORA Tenant Portal</span>
+            <span>
+              {lang === 'fa' 
+                ? 'پرتال مستأجران کلادورا' 
+                : 'CLADORA Tenant Portal'}
+            </span>
           </div>
 
           <h1 className="text-3xl sm:text-5xl font-display font-extrabold text-[#102A43] tracking-tight max-w-3xl">
             {lang === 'ro'
               ? 'Plătești doar ce consumi, transmiți indexul și raportezi reparațiile direct'
+              : lang === 'fa'
+              ? 'پرداخت منحصراً بر پایه مصرف واقعی، ثبت آسان ارقام کنتورها و اعلام بی‌واسطه خرابی‌ها'
               : 'Pay Only What You Consume, Submit Meters & Report Repairs Directly'}
           </h1>
 
           <p className="text-base sm:text-lg text-[#52667A] max-w-3xl leading-relaxed">
             {lang === 'ro'
               ? 'Fără calcule complicate pe șervețel la sfârșit de lună. CLADORA separă automat cheltuielile operaționale de consum de fondurile de capital ale proprietarului.'
+              : lang === 'fa'
+              ? 'پایان محاسبات دستی و ابهامات پایان ماه با مالک. کلادورا هزینه‌های جاری و مصرفی را از سهم سرمایه‌ای و صندوق‌های تعمیری مالک کاملاً تفکیک می‌نماید.'
               : 'Zero confusing napkin calculations with your landlord. CLADORA isolates day-to-day consumption costs from owner-specific capital funds.'}
           </p>
 
           <div className="pt-2 flex flex-wrap gap-4">
             <Link
               href={`/${lang}/demo`}
-              className="px-6 py-3.5 rounded-xl bg-[#0E9F8E] hover:bg-[#0C8778] text-white text-xs font-bold shadow-sm transition-all"
+              className="px-6 py-3.5 rounded-xl bg-[#0E9F8E] hover:bg-[#0C8778] text-white text-xs font-bold shadow-sm transition-all flex items-center gap-2"
             >
-              {lang === 'ro' ? 'Vezi portalul chiriașului' : 'Launch tenant demo'}
+              <span>{lang === 'ro' ? 'Vezi portalul chiriașului' : lang === 'fa' ? 'مشاهده نسخه نمایشی پرتال مستأجران' : 'Launch tenant demo'}</span>
+              <ArrowRight className="w-4 h-4 rtl:rotate-180" />
             </Link>
           </div>
         </div>
@@ -72,10 +105,14 @@ export default function TenantsSolutionPage({ params }: { params: { lang: Langua
               <Receipt className="w-5 h-5" />
             </div>
             <h2 className="text-base font-bold text-[#102A43]">
-              {lang === 'ro' ? 'Doar Cheltuieli de Consum' : 'Pure Consumption Costs'}
+              {lang === 'ro' ? 'Doar Cheltuieli de Consum' : lang === 'fa' ? 'فقط هزینه‌های مصرفی واقعی' : 'Pure Consumption Costs'}
             </h2>
             <p className="text-xs text-[#52667A] leading-relaxed">
-              {lang === 'ro' ? 'Vezi doar apa rece/caldă, încălzirea și salubrizarea pe care le utilizezi efectiv.' : 'Clear view of individual water, heating, and trash without owner capital contributions.'}
+              {lang === 'ro' 
+                ? 'Vezi doar apa rece/caldă, încălzirea și salubrizarea pe care le utilizezi efectiv.' 
+                : lang === 'fa'
+                ? 'مشاهده شفاف مبالغ آب، گاز، برق و شارژ مصرفی واحد بدون تحمیل هزینه‌های نوسازی یا صندوق‌های مالک.'
+                : 'Clear view of individual water, heating, and trash without owner capital contributions.'}
             </p>
           </div>
 
@@ -84,10 +121,14 @@ export default function TenantsSolutionPage({ params }: { params: { lang: Langua
               <Wrench className="w-5 h-5" />
             </div>
             <h2 className="text-base font-bold text-[#102A43]">
-              {lang === 'ro' ? 'Tichete Directe de Reparații' : 'Direct Repair Requests'}
+              {lang === 'ro' ? 'Tichete Directe de Reparații' : lang === 'fa' ? 'ثبت مستقیم درخواست‌های تعمیرات' : 'Direct Repair Requests'}
             </h2>
             <p className="text-xs text-[#52667A] leading-relaxed">
-              {lang === 'ro' ? 'Dacă o țeavă picură sau liftul e blocat, deschizi tichet direct către administrație și proprietar.' : 'Directly dispatch maintenance tickets with photos to building teams and your landlord.'}
+              {lang === 'ro' 
+                ? 'Dacă o țeavă picură sau liftul e blocat, deschizi tichet direct către administrație și proprietar.' 
+                : lang === 'fa'
+                ? 'در صورت بروز خرابی یا نقص فنی در تأسیسات، تیکت را همراه با تصویر مستقیماً برای مدیریت و مالک ارسال کنید.'
+                : 'Directly dispatch maintenance tickets with photos to building teams and your landlord.'}
             </p>
           </div>
 
@@ -96,10 +137,14 @@ export default function TenantsSolutionPage({ params }: { params: { lang: Langua
               <EyeOff className="w-5 h-5" />
             </div>
             <h2 className="text-base font-bold text-[#102A43]">
-              {lang === 'ro' ? 'Confidențialitate & Respect' : 'Privacy Protection'}
+              {lang === 'ro' ? 'Confidențialitate & Respect' : lang === 'fa' ? 'حفظ حریم خصوصی و امنیت داده‌ها' : 'Privacy Protection'}
             </h2>
             <p className="text-xs text-[#52667A] leading-relaxed">
-              {lang === 'ro' ? 'Datele tale de contact și plățile sunt protejate și accesibile doar entităților autorizate.' : 'Your personal data is isolated under strict GDPR protection boundaries.'}
+              {lang === 'ro' 
+                ? 'Datele tale de contact și plățile sunt protejate și accesibile doar entităților autorizate.' 
+                : lang === 'fa'
+                ? 'اطلاعات هویتی و پرداختی شما طبق بالاترین استانداردهای امنیتی و مقررات حریم خصوصی حفظ می‌گردند.'
+                : 'Your personal data is isolated under strict GDPR protection boundaries.'}
             </p>
           </div>
         </div>

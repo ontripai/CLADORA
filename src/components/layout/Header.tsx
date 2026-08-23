@@ -62,35 +62,35 @@ export const Header: React.FC<HeaderProps> = ({ lang }) => {
       desc: lang === 'ro' ? 'Gestiune Legea 196/2018, liste de plată, cenzori și adunări generale' : lang === 'fa' ? 'محاسبه شارژ قانونی، دسترسی بازرسان و برگزاری مجامع عمومی' : 'Statutory compliance, payment lists, censors, and AGM governance',
       href: `/${lang}/solutions/associations`,
       icon: Building2,
-      tag: 'Association OS'
+      tag: lang === 'fa' ? 'Association OS • سیستم مدیریت انجمن مالکان' : 'Association OS'
     },
     {
       title: lang === 'ro' ? 'Proprietari Portofoliu (Multi-Property)' : lang === 'fa' ? 'مالکان سبد املاک (چند واحدی)' : 'Multi-Property Owners',
       desc: lang === 'ro' ? 'Consolidare apartamente, monitorizare chirii, yield net și contracte' : lang === 'fa' ? 'پایش تجمیعی املاک، بازده خالص، وصول اجاره و تفکیک هزینه‌ها' : 'Consolidated rental income, net yields, tenant costs, and contracts',
       href: `/${lang}/solutions/property-owners`,
       icon: TrendingUp,
-      tag: 'Portfolio OS'
+      tag: lang === 'fa' ? 'Portfolio OS • سیستم مدیریت سبد املاک' : 'Portfolio OS'
     },
     {
       title: lang === 'ro' ? 'Companii de Administrare' : lang === 'fa' ? 'شرکت‌های مدیریت املاک' : 'Property Management Firms',
       desc: lang === 'ro' ? 'Închidere centralizată multi-bloc, SLA mentenanță și furnizori' : lang === 'fa' ? 'بستن دسته‌ای دوره‌ها، دیسپچ تیکت‌های فنی و پایش SLA' : 'Multi-association batch close, maintenance SLAs, and operations',
       href: `/${lang}/solutions/property-managers`,
       icon: Layers,
-      tag: 'Manager OS'
+      tag: lang === 'fa' ? 'Manager OS • سیستم شرکت‌های مدیریت املاک' : 'Manager OS'
     },
     {
       title: lang === 'ro' ? 'Proprietari & Rezidenți' : lang === 'fa' ? 'مالکان و ساکنان' : 'Owners & Residents',
       desc: lang === 'ro' ? 'Transparență totală la calculul cotelor, index contoare și plăți' : lang === 'fa' ? 'شفافیت کامل در فیش شارژ، ثبت تصویری کنتورها و پرداخت' : 'Explainable charges, online meter submission, and notices',
       href: `/${lang}/solutions/residents`,
       icon: Home,
-      tag: 'Resident App'
+      tag: lang === 'fa' ? 'اپلیکیشن مالکان و ساکنان' : 'Resident App'
     },
     {
       title: lang === 'ro' ? 'Chiriași' : lang === 'fa' ? 'مستأجران' : 'Tenants',
       desc: lang === 'ro' ? 'Acces strict la cheltuielile operaționale de consum și tichete' : lang === 'fa' ? 'مشاهده مصارف انشعابات بدون دسترسی به صندوق‌های مالک' : 'Direct access to consumption costs without owner ledger access',
       href: `/${lang}/solutions/tenants`,
       icon: KeyRound,
-      tag: 'Tenant Portal'
+      tag: lang === 'fa' ? 'پرتال مستأجران' : 'Tenant Portal'
     }
   ];
 

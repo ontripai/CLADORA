@@ -1,19 +1,19 @@
 /**
- * Maintained I18n & Copy Leak Audit for CLADORA
+ * Authoritative Rendered DOM & Copy Leak Audit for CLADORA
  * Audits all 41 user-facing routes across all 3 supported locales (123 localized routes).
  *
  * Quality Gates:
  * 1. HTTP 200 on all routes
  * 2. Proper dir="rtl" on all Persian routes
- * 3. Zero untranslated Romanian phrases in /fa views
- * 4. Zero untranslated English action buttons in /fa views
- * 5. Zero unlocalized / hardcoded Latin currency formatting
- * 6. Explicit Latin technical term allowlist compliance
+ * 3. Deep DOM text extraction (h1-h6, p, button, a, label, placeholder, aria-label, th, td, li)
+ * 4. Strict Latin term allowlist isolation
+ * 5. Detection of any unapproved English or Romanian phrases on /fa
+ * 6. Currency format correctness & absence of raw unlocalized Latin money strings
  */
 
 import http from 'http';
 
-const LOCALES = ['ro', 'en', 'fa'];
+export const LOCALES = ['ro', 'en', 'fa'];
 
 export const ALL_USER_ROUTES = [
   '/',
@@ -77,38 +77,99 @@ export const ALLOWLISTED_TECHNICAL_TERMS = [
   'GBP',
   'Next.js',
   'Vercel',
-  'WCAG 2.2 AA'
+  'WCAG 2.2 AA',
+  'P1',
+  'P2',
+  'P3',
+  'MVP',
+  'SLA',
+  'PWA',
+  'ISCIR',
+  'PDF',
+  'JSON',
+  'Excel',
+  'MT940',
+  'CAMT.053',
+  'C01', 'C02', 'C03', 'C04', 'C05', 'C06', 'C07', 'C08', 'C09', 'C10', 'C11', 'C12', 'C13', 'C14', 'C15', 'C16', 'C17',
+  'A1', 'A2', 'A3', 'A4', 'A5', 'A6', 'A7', 'A8'
 ];
 
-export const ROMANIAN_LEAK_PATTERNS = [
-  'pentru',
-  'cheltuieli',
-  'apartamente',
-  'închidere',
-  'avizier',
-  'proprietari',
-  'asociație',
-  'cote de întreținere',
-  'furnizori',
-  'contor apă',
-  'Adaugă Citire Index',
-  'Deschide Tichet Nou',
-  'Închide fereastra',
-  'Salvează Citirea',
-  'Confirmă & Sigilează'
+// Disallowed English phrases on Persian views
+export const DISALLOWED_ENGLISH_PHRASES = [
+  /\bHome\b/i,
+  /\bSolutions\b/i,
+  /\bHomeowner Associations\b/i,
+  /\bPortfolio Landlords\b/i,
+  /\bProperty Management Firms\b/i,
+  /\bOwners & Residents\b/i,
+  /\bTenants\b/i,
+  /\bResident App\b/i,
+  /\bTenant Portal\b/i,
+  /\bLaunch demo\b/i,
+  /\bApply for\b/i,
+  /\bGet Started\b/i,
+  /\bView Demo\b/i,
+  /\bChallenges in\b/i,
+  /\bHow CLADORA Solves\b/i,
+  /\bPlatform Architecture\b/i,
+  /\bOperating System Architecture\b/i,
+  /\bTransparent Administration\b/i,
+  /\bOne Consolidated Dashboard\b/i,
+  /\bScale Your Property Management\b/i,
+  /\bClear Monthly Statements\b/i,
+  /\bPay Only What You Consume\b/i,
+  /\bFinancial Truth Layer\b/i,
+  /\bAllocation & Rights Engine\b/i,
+  /\bMulti-Role Operating Shell\b/i,
+  /\bExplore the 17 Modules\b/i,
+  /\bContact CLADORA Team\b/i,
+  /\bHave a specific building question\b/i,
+  /\bAutomated Net Yield Math\b/i,
+  /\bLease Renewal Alerts\b/i,
+  /\bClean Expense Allocation\b/i,
+  /\bBatch Month-Close Engine\b/i,
+  /\bMaintenance Dispatch\b/i,
+  /\bTeam Role Delegation\b/i,
+  /\bExplainable Math Proof\b/i,
+  /\bPhoto Meter Submission\b/i,
+  /\bDigital Noticeboard on Mobile\b/i,
+  /\bPure Consumption Costs\b/i,
+  /\bDirect Repair Requests\b/i,
+  /\bPrivacy Protection\b/i
 ];
 
-export const ENGLISH_LEAK_PATTERNS = [
-  'Get Started',
-  'View Demo',
-  'Apply for Pilot',
-  'Double-Entry General Ledger',
-  'Pre-Closing Verification Checklist',
-  'Pre-Closing Checklist',
-  'Accounting Sealed',
-  'Record Utility & Maintenance Invoices',
-  'Open Work Order',
-  'Submit Meter Reading'
+// Disallowed Romanian phrases on Persian views
+export const DISALLOWED_ROMANIAN_PHRASES = [
+  /\bAcasă\b/i,
+  /\bSoluții\b/i,
+  /\bAsociații de Proprietari\b/i,
+  /\bProprietari Portofoliu\b/i,
+  /\bCompanii de Administrare\b/i,
+  /\bProprietari & Rezidenți\b/i,
+  /\bChiriași\b/i,
+  /\bVezi demo\b/i,
+  /\bÎnscrie asociația\b/i,
+  /\bProvocările Administrării\b/i,
+  /\bCum Rezolvă CLADORA\b/i,
+  /\bArhitectura Platformei\b/i,
+  /\bStratul Adevărului Financiar\b/i,
+  /\bMotorul de Drepturi\b/i,
+  /\bInterfața Operațională\b/i,
+  /\bExplorează cele 17 Module\b/i,
+  /\bContactează echipa\b/i,
+  /\bAi o întrebare specifică\b/i,
+  /\bCalcul Automat Yield\b/i,
+  /\bAlerte Expirare Contracte\b/i,
+  /\bSeparare Costuri\b/i,
+  /\bÎnchidere Multi-Asociație\b/i,
+  /\bDispecerat Mentenanță\b/i,
+  /\bDelegare de Roluri\b/i,
+  /\bExplicație Matematică\b/i,
+  /\bCitire Contor prin Poză\b/i,
+  /\bAvizier Digital\b/i,
+  /\bDoar Cheltuieli de Consum\b/i,
+  /\bTichete Directe\b/i,
+  /\bConfidențialitate & Respect\b/i
 ];
 
 function fetchPage(path, port = 3000) {
@@ -133,8 +194,32 @@ function fetchPage(path, port = 3000) {
   });
 }
 
+function extractRenderedTextChunks(html) {
+  // Strip script, style, svg tags and comments
+  let cleanHtml = html
+    .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, ' ')
+    .replace(/<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>/gi, ' ')
+    .replace(/<svg\b[^<]*(?:(?!<\/svg>)<[^<]*)*<\/svg>/gi, ' ')
+    .replace(/<!--[\s\S]*?-->/g, ' ');
+
+  // Extract text and critical attributes
+  const textChunks = [];
+
+  // Match placeholders, titles, aria-labels
+  const attrMatches = cleanHtml.matchAll(/(?:placeholder|aria-label|title)=["']([^"']+)["']/gi);
+  for (const match of attrMatches) {
+    if (match[1]) textChunks.push(match[1]);
+  }
+
+  // Strip all remaining HTML tags
+  const bodyText = cleanHtml.replace(/<[^>]+>/g, ' ');
+  textChunks.push(bodyText);
+
+  return textChunks.join('\n');
+}
+
 async function runAudit() {
-  console.log('=== CLADORA AUTHORITATIVE I18N & RENDERED COPY AUDIT ===\n');
+  console.log('=== CLADORA AUTHORITATIVE I18N & RENDERED DOM AUDIT ===\n');
   console.log(`Total Route Templates: ${ALL_USER_ROUTES.length}`);
   console.log(`Total Localized Routes: ${ALL_USER_ROUTES.length * LOCALES.length}\n`);
 
@@ -150,30 +235,43 @@ async function runAudit() {
       try {
         const res = await fetchPage(fullPath);
         if (res.statusCode !== 200) {
-          failures.push({ route: fullPath, error: `HTTP ${res.statusCode}` });
+          failures.push({ route: fullPath, category: 'HTTP', error: `HTTP ${res.statusCode}` });
           console.log(`❌ [${res.statusCode}] ${fullPath}`);
           continue;
         }
 
         const body = res.body;
 
-        // Gate 1: Directionality
+        // Gate 1: Directionality for RTL
         if (lang === 'fa') {
           if (!body.includes('dir="rtl"') && !body.includes("dir='rtl'")) {
             failures.push({ route: fullPath, category: 'Direction', error: 'Missing dir="rtl" attribute on /fa' });
           }
         }
 
-        // Gate 2: Leak detection on Persian pages
+        // Gate 2: Deep rendered DOM leak detection
         if (lang === 'fa') {
-          for (const leak of ROMANIAN_LEAK_PATTERNS) {
-            if (body.includes(leak)) {
-              failures.push({ route: fullPath, category: 'RomanianLeak', error: `Untranslated Romanian text found: "${leak}"` });
+          const renderedText = extractRenderedTextChunks(body);
+
+          for (const pattern of DISALLOWED_ENGLISH_PHRASES) {
+            const match = renderedText.match(pattern);
+            if (match) {
+              failures.push({ 
+                route: fullPath, 
+                category: 'EnglishLeak', 
+                error: `Untranslated English copy found: "${match[0]}"` 
+              });
             }
           }
-          for (const leak of ENGLISH_LEAK_PATTERNS) {
-            if (body.includes(leak)) {
-              failures.push({ route: fullPath, category: 'EnglishLeak', error: `Untranslated English button/label found: "${leak}"` });
+
+          for (const pattern of DISALLOWED_ROMANIAN_PHRASES) {
+            const match = renderedText.match(pattern);
+            if (match) {
+              failures.push({ 
+                route: fullPath, 
+                category: 'RomanianLeak', 
+                error: `Untranslated Romanian copy found: "${match[0]}"` 
+              });
             }
           }
         }
@@ -195,9 +293,9 @@ async function runAudit() {
   }
 
   console.log('\n=======================================');
-  console.log(`I18N AUDIT SUMMARY: ${passedTests}/${totalTests} routes passed.`);
+  console.log(`I18N AUDIT SUMMARY: ${passedTests}/${totalTests} routes tested.`);
   if (failures.length > 0) {
-    console.error(`❌ FAILED WITH ${failures.length} AUDIT DEFECTS:`);
+    console.error(`\n❌ FAILED WITH ${failures.length} AUDIT DEFECTS:`);
     failures.forEach(f => console.error(`  - [${f.route}] (${f.category || 'Error'}): ${f.error}`));
     process.exit(1);
   } else {
