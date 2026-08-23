@@ -12,6 +12,8 @@ import {
   Info
 } from 'lucide-react';
 import { MOCK_CHARGE_BREAKDOWN } from '@/data/mockData';
+import { Money } from '@/components/ui/Money';
+import { formatPercent } from '@/config/currencies';
 
 interface FinancialTruthSectionProps {
   lang: Language;
@@ -146,8 +148,8 @@ export const FinancialTruthSection: React.FC<FinancialTruthSectionProps> = ({ la
                     </div>
                   </div>
                   <div className="text-end">
-                    <div className="text-sm font-display font-extrabold text-[#102A43] tabular-nums">
-                      {line.calculatedAmount.toFixed(2)} RON
+                    <div className="text-sm font-display font-extrabold text-[#102A43]">
+                      <Money amount={line.calculatedAmount} currency="RON" locale={lang} />
                     </div>
                     <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-[#EAF8F5] text-[#0A6E62]">
                       {line.operationalPayer === 'TENANT' 
@@ -185,21 +187,27 @@ export const FinancialTruthSection: React.FC<FinancialTruthSectionProps> = ({ la
                     <span className="text-[#52667A]">
                       {lang === 'ro' ? 'Total Factură Asociație:' : lang === 'fa' ? 'مجموع فاکتور کل ساختمان:' : 'Total Association Invoice:'}
                     </span>
-                    <span className="font-bold text-[#102A43] tabular-nums font-mono">{currentItem.totalInvoiceAmount.toFixed(2)} RON</span>
+                    <span className="font-bold text-[#102A43]">
+                      <Money amount={currentItem.totalInvoiceAmount} currency="RON" locale={lang} />
+                    </span>
                   </div>
 
                   <div className="flex justify-between p-3 rounded-lg bg-[#F6F9FC]">
                     <span className="text-[#52667A]">
                       {lang === 'ro' ? 'Cota Parte / Bază de Calcul Ap. 14:' : lang === 'fa' ? 'سهم مشاع واحد ۱۴:' : 'Share Ratio for Unit 14:'}
                     </span>
-                    <span className="font-bold text-[#0E9F8E] tabular-nums">{currentItem.unitSharePercent}%</span>
+                    <span className="font-bold text-[#0E9F8E]">
+                      {formatPercent(currentItem.unitSharePercent, lang, 2)}
+                    </span>
                   </div>
 
                   <div className="flex justify-between p-3 rounded-lg bg-[#EAF8F5] border border-[#B2E5DF]">
                     <span className="font-bold text-[#0A6E62]">
                       {lang === 'ro' ? 'Sumă Datorată de Apartament:' : lang === 'fa' ? 'مبلغ سهم محاسبه‌شده واحد:' : 'Calculated Share Due:'}
                     </span>
-                    <span className="font-extrabold text-[#0A6E62] text-sm tabular-nums">{currentItem.calculatedAmount.toFixed(2)} RON</span>
+                    <span className="font-extrabold text-[#0A6E62] text-sm">
+                      <Money amount={currentItem.calculatedAmount} currency="RON" locale={lang} />
+                    </span>
                   </div>
                 </div>
 

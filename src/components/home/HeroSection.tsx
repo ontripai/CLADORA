@@ -11,6 +11,8 @@ import {
   ShieldCheck, 
   PlayCircle
 } from 'lucide-react';
+import { Money } from '@/components/ui/Money';
+import { formatMoney } from '@/config/currencies';
 
 interface HeroSectionProps {
   lang: Language;
@@ -174,7 +176,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ lang }) => {
                       {lang === 'ro' ? 'Total Cheltuieli Facturate' : lang === 'fa' ? 'مجموع فاکتورهای دوره' : 'Invoiced Expenses'}
                     </div>
                     <div className="text-xl font-display font-extrabold text-[#102A43] tabular-nums mt-1">
-                      18.420,50 RON
+                      <Money amount={18420.50} currency="RON" locale={lang} />
                     </div>
                     <div className="text-[11px] text-[#059669] mt-1">
                       {lang === 'ro' ? '✓ 100% alocate pe cote' : lang === 'fa' ? '✓ ۱۰۰٪ تسهیم بر اساس سهم مشاع' : '✓ 100% statutory allocated'}
@@ -186,7 +188,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ lang }) => {
                       {lang === 'ro' ? 'Sold Fond Rulment + Reparații' : lang === 'fa' ? 'مانده صندوق سرمایه و تعمیرات' : 'Reserve & Repair Funds'}
                     </div>
                     <div className="text-xl font-display font-extrabold text-[#102A43] tabular-nums mt-1">
-                      45.800,00 RON
+                      <Money amount={45800.00} currency="RON" locale={lang} />
                     </div>
                     <div className="text-[11px] text-[#52667A] mt-1">
                       {lang === 'ro' ? 'Separare strictă conturi Legea 196' : lang === 'fa' ? 'تفکیک دقیق حساب‌ها بر اساس قانون' : 'Strict statutory account split'}
@@ -237,7 +239,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ lang }) => {
                       {lang === 'ro' ? 'Venit Brut Chirii Lunar' : lang === 'fa' ? 'مجموع اجاره ماهانه ناخالص' : 'Gross Monthly Rent'}
                     </div>
                     <div className="text-xl font-display font-extrabold text-[#102A43] tabular-nums mt-1">
-                      3.180,00 EUR
+                      <Money amount={3180.00} currency="EUR" locale={lang} />
                     </div>
                     <div className="text-[11px] text-[#059669] mt-1">
                       {lang === 'ro' ? '✓ 4/4 chirii încasate la termen' : lang === 'fa' ? '✓ ۴ از ۴ اجاره به‌موقع وصول شد' : '✓ 4/4 collected on time'}
@@ -249,10 +251,10 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ lang }) => {
                       {lang === 'ro' ? 'Costuri Proprietar vs Chiriaș' : lang === 'fa' ? 'تفکیک هزینه مالک در برابر مستأجر' : 'Owner vs Tenant Costs'}
                     </div>
                     <div className="text-xl font-display font-extrabold text-[#102A43] tabular-nums mt-1">
-                      307 EUR <span className="text-xs font-normal text-[#7B8A9A]">{lang === 'ro' ? 'proprietar' : lang === 'fa' ? 'سهم مالک' : 'owner'}</span>
+                      <Money amount={307} currency="EUR" locale={lang} /> <span className="text-xs font-normal text-[#7B8A9A]">{lang === 'ro' ? 'proprietar' : lang === 'fa' ? 'سهم مالک' : 'owner'}</span>
                     </div>
                     <div className="text-[11px] text-[#52667A] mt-1">
-                      {lang === 'ro' ? '767 EUR cheltuieli operaționale chiriași' : lang === 'fa' ? '۷۶۷ یورو شارژ مصرفی مستأجران' : '767 EUR tenant consumption'}
+                      {lang === 'ro' ? `${formatMoney(767, 'EUR', lang)} cheltuieli operaționale chiriași` : lang === 'fa' ? `${formatMoney(767, 'EUR', lang)} شارژ مصرفی مستأجران` : `${formatMoney(767, 'EUR', lang)} tenant consumption`}
                     </div>
                   </div>
 
@@ -261,7 +263,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ lang }) => {
                       {lang === 'ro' ? 'Garanții Reținute în Depozit' : lang === 'fa' ? 'مبالغ ودیعه نزد حساب امانی' : 'Deposits Held'}
                     </div>
                     <div className="text-xl font-display font-extrabold text-[#2F80ED] tabular-nums mt-1">
-                      5.400,00 EUR
+                      <Money amount={5400.00} currency="EUR" locale={lang} />
                     </div>
                     <div className="text-[11px] text-[#52667A] mt-1">
                       {lang === 'ro' ? 'Conturi escrow monitorizate' : lang === 'fa' ? 'پایش در حساب‌های سپرده امن' : 'Tracked in separate accounts'}

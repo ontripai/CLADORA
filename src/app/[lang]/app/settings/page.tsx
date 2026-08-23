@@ -14,13 +14,21 @@ export default function SettingsPage({ params }: { params: { lang: Language } })
       
       <div className="card-proptech p-6 bg-white border-[#D3DCE6]">
         <div className="text-xs font-bold text-[#0E9F8E] uppercase tracking-wider">
-          Setări Cont & Organizație
+          {lang === 'ro' 
+            ? 'Setări Cont & Organizație' 
+            : lang === 'fa' 
+            ? 'تنظیمات حساب کاربری و مجتمع' 
+            : 'Account & Organization Settings'}
         </div>
         <h1 className="text-2xl font-display font-extrabold text-[#102A43] mt-1">
-          {lang === 'ro' ? 'Setări Profil & Permisiuni' : 'Settings & Role Permissions'}
+          {lang === 'ro' ? 'Setări Profil & Permisiuni' : lang === 'fa' ? 'تنظیمات پروفایل و سطوح دسترسی' : 'Settings & Role Permissions'}
         </h1>
         <p className="text-xs text-[#52667A]">
-          Gestiune identitate multi-rol, asociații conectate și preferințe notificări
+          {lang === 'ro' 
+            ? 'Gestiune identitate multi-rol, asociații conectate și preferințe notificări' 
+            : lang === 'fa' 
+            ? 'مدیریت هویت کاربری چندنقشی، مجتمع‌های متصل و تنظیمات دریافت اعلان‌ها' 
+            : 'Manage unified multi-role identity, linked properties, and notification channels'}
         </p>
       </div>
 
@@ -29,26 +37,30 @@ export default function SettingsPage({ params }: { params: { lang: Language } })
         {/* User Identity */}
         <div className="card-proptech p-6 bg-white space-y-4">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-[#EAF8F5] text-[#0E9F8E] flex items-center justify-center">
+            <div className="w-10 h-10 rounded-xl bg-[#EAF8F5] text-[#0E9F8E] flex items-center justify-center shrink-0">
               <User className="w-5 h-5" />
             </div>
             <div>
-              <h3 className="text-sm font-bold text-[#102A43]">Identitate Utilizator Multi-Rol</h3>
-              <p className="text-xs text-[#52667A]">Radu Popescu · radu.popescu@gmail.com</p>
+              <h3 className="text-sm font-bold text-[#102A43]">
+                {lang === 'ro' ? 'Identitate Utilizator Multi-Rol' : lang === 'fa' ? 'هویت یکپارچه چندنقشی کاربر' : 'Unified User Identity'}
+              </h3>
+              <p className="text-xs text-[#52667A]">
+                {lang === 'ro' ? 'Radu Popescu' : lang === 'fa' ? 'علی حسینی' : 'Alex Popescu'} · <span className="ltr-isolate">user@cladora.ro</span>
+              </p>
             </div>
           </div>
 
           <div className="space-y-2 pt-2 border-t border-[#F0F4F8] text-xs">
             <div className="flex justify-between p-2.5 rounded-lg bg-[#F6F9FC]">
-              <span className="text-[#52667A]">Rol activ curent:</span>
-              <span className="font-bold text-[#0E9F8E]">{activeRole}</span>
+              <span className="text-[#52667A]">{lang === 'ro' ? 'Rol activ curent:' : lang === 'fa' ? 'نقش فعال فعلی:' : 'Active Role:'}</span>
+              <span className="font-bold text-[#0E9F8E] font-mono ltr-isolate">{activeRole}</span>
             </div>
             <div className="flex justify-between p-2.5 rounded-lg bg-[#F6F9FC]">
-              <span className="text-[#52667A]">Asociație principală:</span>
+              <span className="text-[#52667A]">{lang === 'ro' ? 'Asociație principală:' : lang === 'fa' ? 'مجتمع متصل اصلی:' : 'Primary Association:'}</span>
               <span className="font-bold text-[#102A43]">{context.associationName}</span>
             </div>
             <div className="flex justify-between p-2.5 rounded-lg bg-[#F6F9FC]">
-              <span className="text-[#52667A]">Unitate rezidențială:</span>
+              <span className="text-[#52667A]">{lang === 'ro' ? 'Unitate rezidențială:' : lang === 'fa' ? 'واحد مسکونی:' : 'Residential Unit:'}</span>
               <span className="font-bold text-[#102A43]">{context.unitNumber}</span>
             </div>
           </div>
@@ -57,27 +69,31 @@ export default function SettingsPage({ params }: { params: { lang: Language } })
         {/* Security & Notifications */}
         <div className="card-proptech p-6 bg-white space-y-4">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-[#EDF5FF] text-[#2F80ED] flex items-center justify-center">
+            <div className="w-10 h-10 rounded-xl bg-[#EDF5FF] text-[#2F80ED] flex items-center justify-center shrink-0">
               <ShieldCheck className="w-5 h-5" />
             </div>
             <div>
-              <h3 className="text-sm font-bold text-[#102A43]">Securitate & Sesiune</h3>
-              <p className="text-xs text-[#52667A]">Autentificare securizată cu 2FA</p>
+              <h3 className="text-sm font-bold text-[#102A43]">
+                {lang === 'ro' ? 'Securitate & Sesiune' : lang === 'fa' ? 'امنیت و نشست‌های فعال' : 'Security & Session'}
+              </h3>
+              <p className="text-xs text-[#52667A]">
+                {lang === 'ro' ? 'Autentificare securizată cu 2FA' : lang === 'fa' ? 'احراز هویت دومرحله‌ای و کنترل دسترسی' : 'Two-factor authentication & session controls'}
+              </p>
             </div>
           </div>
 
           <div className="space-y-2 pt-2 border-t border-[#F0F4F8] text-xs">
             <div className="flex justify-between p-2.5 rounded-lg bg-[#F6F9FC]">
-              <span className="text-[#52667A]">Autentificare în doi pași (2FA):</span>
-              <span className="font-bold text-[#10B981]">Activată</span>
+              <span className="text-[#52667A]">{lang === 'ro' ? 'Autentificare în doi pași (2FA):' : lang === 'fa' ? 'احراز هویت دو مرحله‌ای (2FA):' : 'Two-factor authentication:'}</span>
+              <span className="font-bold text-[#10B981]">{lang === 'ro' ? 'Activată' : lang === 'fa' ? 'فعال' : 'Enabled'}</span>
             </div>
             <div className="flex justify-between p-2.5 rounded-lg bg-[#F6F9FC]">
-              <span className="text-[#52667A]">Notificări avizier pe email:</span>
-              <span className="font-bold text-[#102A43]">Imediat</span>
+              <span className="text-[#52667A]">{lang === 'ro' ? 'Notificări avizier pe email:' : lang === 'fa' ? 'ارسال اعلانات تابلو به ایمیل:' : 'Email noticeboard alerts:'}</span>
+              <span className="font-bold text-[#102A43]">{lang === 'ro' ? 'Imediat' : lang === 'fa' ? 'فوری' : 'Immediate'}</span>
             </div>
             <div className="flex justify-between p-2.5 rounded-lg bg-[#F6F9FC]">
-              <span className="text-[#52667A]">Alerte scadență întreținere:</span>
-              <span className="font-bold text-[#102A43]">Cu 3 zile înainte</span>
+              <span className="text-[#52667A]">{lang === 'ro' ? 'Alerte scadență întreținere:' : lang === 'fa' ? 'یادآوری مهلت پرداخت شارژ:' : 'Payment due reminder:'}</span>
+              <span className="font-bold text-[#102A43]">{lang === 'ro' ? 'Cu 3 zile înainte' : lang === 'fa' ? '۳ روز قبل از سررسید' : '3 days prior'}</span>
             </div>
           </div>
         </div>

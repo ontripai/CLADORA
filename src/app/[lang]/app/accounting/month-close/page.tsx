@@ -14,6 +14,8 @@ import {
   FileSpreadsheet
 } from 'lucide-react';
 import { useDemoStore } from '@/data/demoStore';
+import { Money } from '@/components/ui/Money';
+import { getActionLabel } from '@/config/actions';
 
 export default function MonthClosePage({ params }: { params: { lang: Language } }) {
   const { lang } = params;
@@ -34,20 +36,24 @@ export default function MonthClosePage({ params }: { params: { lang: Language } 
       <div className="card-proptech p-6 bg-white border-[#D3DCE6] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <div className="text-xs font-bold text-[#0E9F8E] uppercase tracking-wider">
-            Nucleul C01 — Month-End Closing Engine
+            {lang === 'ro' 
+              ? 'Nucleul C01 — Motor de Închidere Lunară' 
+              : lang === 'fa' 
+              ? 'هسته C01 — موتور بستن و قفل قطعی دوره ماهانه' 
+              : 'Core C01 — Month-End Closing Engine'}
           </div>
           <h1 className="text-2xl font-display font-extrabold text-[#102A43] mt-1">
-            {lang === 'ro' ? 'Asistent Închidere Lunară Contabilă' : 'Month-End Close Stepper'}
+            {lang === 'ro' ? 'Asistent Închidere Lunară Contabilă' : lang === 'fa' ? 'دستیار گام‌به‌گام بستن دوره حسابداری' : 'Month-End Close Stepper'}
           </h1>
           <p className="text-xs text-[#52667A]">
-            Perioadă: <strong className="text-[#102A43]">{monthCloseState.period}</strong> · Status: {monthCloseState.status}
+            {lang === 'ro' ? 'Perioadă:' : lang === 'fa' ? 'دوره مالی:' : 'Period:'} <strong className="text-[#102A43] font-mono ltr-isolate">{monthCloseState.period}</strong> · {lang === 'ro' ? 'Status:' : lang === 'fa' ? 'وضعیت:' : 'Status:'} {monthCloseState.status}
           </p>
         </div>
 
         {monthCloseState.status === 'SEALED' ? (
           <div className="px-4 py-2 rounded-xl bg-[#ECFDF5] border border-[#A7F3D0] text-xs font-bold text-[#059669] flex items-center gap-2">
             <Lock className="w-4 h-4" />
-            <span>{lang === 'ro' ? 'Lună Sigilată Contabil' : 'Month Accounting Sealed'}</span>
+            <span>{lang === 'ro' ? 'Lună Sigilată Contabil' : lang === 'fa' ? 'دوره حسابداری قفل و نهایی شد' : 'Month Accounting Sealed'}</span>
           </div>
         ) : (
           <button
@@ -61,7 +67,7 @@ export default function MonthClosePage({ params }: { params: { lang: Language } 
             }`}
           >
             <Lock className="w-4 h-4" />
-            <span>{lang === 'ro' ? 'Sigilează Luna Contabilă' : 'Seal Accounting Month'}</span>
+            <span>{lang === 'ro' ? 'Sigilează Luna Contabilă' : lang === 'fa' ? 'قفل و نهایی‌سازی قطعی دوره' : 'Seal Accounting Month'}</span>
           </button>
         )}
       </div>
@@ -69,7 +75,7 @@ export default function MonthClosePage({ params }: { params: { lang: Language } 
       {/* Stepper Checklist */}
       <div className="card-proptech p-6 sm:p-8 bg-white space-y-6">
         <h3 className="text-base font-bold text-[#102A43]">
-          {lang === 'ro' ? 'Verificare Puncte Cheie Înainte de Sigilare' : 'Pre-Closing Verification Checklist'}
+          {lang === 'ro' ? 'Verificare Puncte Cheie Înainte de Sigilare' : lang === 'fa' ? 'چک‌لیست کنترل و اعتبارسنجی پیش از قفل نهایی' : 'Pre-Closing Verification Checklist'}
         </h3>
 
         <div className="space-y-4 text-xs">
@@ -86,12 +92,26 @@ export default function MonthClosePage({ params }: { params: { lang: Language } 
               />
               <div>
                 <label htmlFor="chk-invoices" className="font-bold text-[#102A43] cursor-pointer">
-                  1. Înregistrare Facturi Furnizori Utilități (Apă, Gaze, Energie, Salubrizare)
+                  {lang === 'ro' 
+                    ? '1. Înregistrare Facturi Furnizori Utilități (Apă, Gaze, Energie, Salubrizare)' 
+                    : lang === 'fa'
+                    ? '۱. ثبت فاکتورهای تأمین‌کنندگان خدمات (آب، گاز، برق مشاعات، پسماند و آسانسور)'
+                    : '1. Record Utility & Maintenance Invoices (Water, Gas, Power, Waste)'}
                 </label>
-                <div className="text-[11px] text-[#52667A]">3 facturi înregistrate în valoare de 13.670,50 RON</div>
+                <div className="text-[11px] text-[#52667A]">
+                  {lang === 'ro' ? (
+                    <>3 facturi înregistrate în valoare de <Money amount={13670.50} currency="RON" locale={lang} /></>
+                  ) : lang === 'fa' ? (
+                    <>۳ فاکتور به ارزش مجموع <Money amount={13670.50} currency="RON" locale={lang} /> با موفقیت ثبت شد</>
+                  ) : (
+                    <>3 supplier invoices recorded totaling <Money amount={13670.50} currency="RON" locale={lang} /></>
+                  )}
+                </div>
               </div>
             </div>
-            <span className="text-[10px] font-bold text-[#059669]">✓ VERIFICAT</span>
+            <span className="text-[10px] font-bold text-[#059669]">
+              {lang === 'ro' ? '✓ VERIFICAT' : lang === 'fa' ? '✓ تأیید شد' : '✓ VERIFIED'}
+            </span>
           </div>
 
           {/* Step 2 */}
@@ -106,12 +126,24 @@ export default function MonthClosePage({ params }: { params: { lang: Language } 
               />
               <div>
                 <label htmlFor="chk-meters" className="font-bold text-[#102A43] cursor-pointer">
-                  2. Închidere Perioadă Citire Contoare & Estimare Apartamente Lipsă
+                  {lang === 'ro' 
+                    ? '2. Închidere Perioadă Citire Contoare & Estimare Apartamente Lipsă' 
+                    : lang === 'fa'
+                    ? '۲. بستن بازه قرائت کنتورها و برآورد میانگین برای واحدهای ثبت‌نشده'
+                    : '2. Close Meter Submission Window & Auto-Estimate Missing Units'}
                 </label>
-                <div className="text-[11px] text-[#52667A]">116 citiri validate prin foto OCR, 4 estimate conform mediei</div>
+                <div className="text-[11px] text-[#52667A]">
+                  {lang === 'ro' 
+                    ? '116 citiri validate prin foto OCR, 4 estimate conform mediei' 
+                    : lang === 'fa'
+                    ? '۱۱۶ قرائت تصویری تأییدشده با OCR و ۴ مورد برآورد میانگین'
+                    : '116 Photo-OCR verified readings, 4 estimated'}
+                </div>
               </div>
             </div>
-            <span className="text-[10px] font-bold text-[#059669]">✓ VERIFICAT</span>
+            <span className="text-[10px] font-bold text-[#059669]">
+              {lang === 'ro' ? '✓ VERIFICAT' : lang === 'fa' ? '✓ تأیید شد' : '✓ VERIFIED'}
+            </span>
           </div>
 
           {/* Step 3 */}
@@ -126,12 +158,26 @@ export default function MonthClosePage({ params }: { params: { lang: Language } 
               />
               <div>
                 <label htmlFor="chk-bank" className="font-bold text-[#102A43] cursor-pointer">
-                  3. Reconciliere Sold Extras de Cont Bancar BCR
+                  {lang === 'ro' 
+                    ? '3. Reconciliere Sold Extras de Cont Bancar BCR' 
+                    : lang === 'fa'
+                    ? '۳. تطبیق مانده دفتر صندوق و حساب بانکی BCR'
+                    : '3. Reconcile Bank Statements & Cash Journal'}
                 </label>
-                <div className="text-[11px] text-[#52667A]">Sold registru casă & bancă = 34.820,40 RON (Discrepanță: 0,00 RON)</div>
+                <div className="text-[11px] text-[#52667A]">
+                  {lang === 'ro' ? (
+                    <>Sold registru casă & bancă = <Money amount={34820.40} currency="RON" locale={lang} /> (Discrepanță: <Money amount={0} currency="RON" locale={lang} />)</>
+                  ) : lang === 'fa' ? (
+                    <>مانده تراز دفتر صندوق و بانک = <Money amount={34820.40} currency="RON" locale={lang} /> (مغایرت: <Money amount={0} currency="RON" locale={lang} />)</>
+                  ) : (
+                    <>Ledger bank balance = <Money amount={34820.40} currency="RON" locale={lang} /> (Variance: <Money amount={0} currency="RON" locale={lang} />)</>
+                  )}
+                </div>
               </div>
             </div>
-            <span className="text-[10px] font-bold text-[#059669]">✓ VERIFICAT</span>
+            <span className="text-[10px] font-bold text-[#059669]">
+              {lang === 'ro' ? '✓ VERIFICAT' : lang === 'fa' ? '✓ تأیید شد' : '✓ VERIFIED'}
+            </span>
           </div>
 
           {/* Step 4 */}
@@ -146,13 +192,25 @@ export default function MonthClosePage({ params }: { params: { lang: Language } 
               />
               <div>
                 <label htmlFor="chk-alloc" className="font-bold text-[#102A43] cursor-pointer">
-                  4. Generare Cote de Întreținere pe Apartamente (CPI & Persoane)
+                  {lang === 'ro' 
+                    ? '4. Generare Cote de Întreținere pe Apartamente (CPI & Persoane)' 
+                    : lang === 'fa'
+                    ? '۴. محاسبه و صدور سهم شارژ واحدها بر اساس سهم مشاع (CPI) و تعداد نفرات'
+                    : '4. Compute Unit Maintenance Quotas (CPI & Occupants)'}
                 </label>
-                <div className="text-[11px] text-[#52667A]">Calculul listei de plată este gata pentru afișare</div>
+                <div className="text-[11px] text-[#52667A]">
+                  {lang === 'ro' 
+                    ? 'Calculul listei de plată este gata pentru afișare' 
+                    : lang === 'fa'
+                    ? 'محاسبات فیش شارژ آماده صدور و انتشار است'
+                    : 'Statement calculations ready for publication'}
+                </div>
               </div>
             </div>
             <span className={`text-[10px] font-bold ${monthCloseState.checklist.allocationsGenerated ? 'text-[#059669]' : 'text-[#D97706]'}`}>
-              {monthCloseState.checklist.allocationsGenerated ? '✓ GENERAT' : 'AȘTEPTARE BIFĂ'}
+              {monthCloseState.checklist.allocationsGenerated 
+                ? (lang === 'ro' ? '✓ GENERAT' : lang === 'fa' ? '✓ محاسبه شد' : '✓ GENERATED') 
+                : (lang === 'ro' ? 'AȘTEPTARE BIFĂ' : lang === 'fa' ? 'در انتظار تأیید' : 'PENDING')}
             </span>
           </div>
 
@@ -165,18 +223,24 @@ export default function MonthClosePage({ params }: { params: { lang: Language } 
               <div className="flex items-center gap-3 text-[#E5484D]">
                 <ShieldAlert className="w-6 h-6" />
                 <h3 className="text-base font-bold text-[#102A43]">
-                  {lang === 'ro' ? 'Confirmare Sigilare Lună Contabilă' : 'Confirm Month Sealing'}
+                  {lang === 'ro' ? 'Confirmare Sigilare Lună Contabilă' : lang === 'fa' ? 'تأیید قفل نهایی و قطعیت دوره مالی' : 'Confirm Month Sealing'}
                 </h3>
               </div>
 
               <p className="text-xs text-[#52667A] leading-relaxed">
                 {lang === 'ro'
                   ? 'După sigilare, jurnalele contabile ale lunii Octombrie 2026 devin imutabile. Orice corecție ulterioară se va putea efectua exclusiv prin notă de stornare în luna următoare.'
+                  : lang === 'fa'
+                  ? 'پس از قفل قطعی، کلیه اسناد حسابداری دوره جاری غیرقابل ویرایش می‌شوند. هرگونه اصلاح بعدی منحصراً از طریق سند بستانکاری/استورنو در دوره آتی امکان‌پذیر خواهد بود.'
                   : 'Once sealed, October 2026 ledgers become immutable. Any corrections will require an auditable reversing entry in the subsequent period.'}
               </p>
 
               <div className="p-3 rounded-xl bg-[#FFF7E6] text-xs text-[#B45309]">
-                ℹ️ În modul demo, această acțiune actualizează starea locală a sandbox-ului.
+                {lang === 'ro' 
+                  ? 'ℹ️ În modul demo, această acțiune actualizează starea locală a sandbox-ului.' 
+                  : lang === 'fa' 
+                  ? 'ℹ️ در محیط دمو، این اقدام وضعیت سندباکس آزمایشی را به‌روزرسانی می‌کند.' 
+                  : 'ℹ️ In demo mode, this updates your local sandbox state.'}
               </div>
 
               <div className="flex justify-end gap-3 pt-2">
@@ -185,7 +249,7 @@ export default function MonthClosePage({ params }: { params: { lang: Language } 
                   onClick={() => setSealModalOpen(false)}
                   className="px-4 py-2 rounded-xl text-xs font-bold text-[#52667A] hover:bg-[#F0F4F8]"
                 >
-                  Anulează
+                  {getActionLabel('cancel', lang)}
                 </button>
                 <button
                   type="button"
@@ -195,7 +259,7 @@ export default function MonthClosePage({ params }: { params: { lang: Language } 
                   }}
                   className="px-5 py-2 rounded-xl bg-[#E5484D] text-white text-xs font-bold shadow-sm hover:bg-[#DC2626]"
                 >
-                  Confirmă & Sigilează
+                  {lang === 'ro' ? 'Confirmă & Sigilează' : lang === 'fa' ? 'تأیید و قفل نهایی' : 'Confirm & Seal'}
                 </button>
               </div>
             </div>

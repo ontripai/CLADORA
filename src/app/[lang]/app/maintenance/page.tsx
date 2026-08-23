@@ -13,6 +13,8 @@ import {
   Building
 } from 'lucide-react';
 import { useDemoStore } from '@/data/demoStore';
+import { getStatusLabel } from '@/config/statuses';
+import { getActionLabel } from '@/config/actions';
 
 export default function MaintenancePage({ params }: { params: { lang: Language } }) {
   const { lang } = params;
@@ -34,8 +36,8 @@ export default function MaintenancePage({ params }: { params: { lang: Language }
       category,
       urgency,
       status: 'OPEN',
-      assignedTo: 'Echipa Tehnică de Gardă',
-      slaDeadline: '24 Ore'
+      assignedTo: lang === 'ro' ? 'Echipa Tehnică de Gardă' : lang === 'fa' ? 'تیم فنی شیفت' : 'On-Duty Tech Team',
+      slaDeadline: lang === 'ro' ? '24 Ore' : lang === 'fa' ? '۲۴ ساعت' : '24 Hours'
     });
     setTitle('');
     setModalOpen(false);
@@ -47,13 +49,21 @@ export default function MaintenancePage({ params }: { params: { lang: Language }
       <div className="card-proptech p-6 bg-white border-[#D3DCE6] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <div className="text-xs font-bold text-[#0E9F8E] uppercase tracking-wider">
-            Nucleul C09 — Maintenance & Work Orders
+            {lang === 'ro' 
+              ? 'Nucleul C09 — Mentenanță & Tichete de Lucru' 
+              : lang === 'fa' 
+              ? 'هسته C09 — مدیریت نگهداری، تیکت‌های فنی و دیسپچینگ' 
+              : 'Core C09 — Maintenance & Work Orders'}
           </div>
           <h1 className="text-2xl font-display font-extrabold text-[#102A43] mt-1">
-            {lang === 'ro' ? 'Mentenanță, Tichete & Dispecerat' : 'Maintenance & Work Orders'}
+            {lang === 'ro' ? 'Mentenanță, Tichete & Dispecerat' : lang === 'fa' ? 'مرکز درخواست‌های تعمیرات و نگهداری' : 'Maintenance & Work Orders'}
           </h1>
           <p className="text-xs text-[#52667A]">
-            Urmărire defecțiuni, SLA orar tehnicieni și devize conectate direct la contabilitate
+            {lang === 'ro' 
+              ? 'Urmărire defecțiuni, SLA orar tehnicieni și devize conectate direct la contabilitate' 
+              : lang === 'fa' 
+              ? 'پایش حوادث، کنترل مهلت SLA تکنسین‌ها و اتصال فاکتورهای تعمیرات به دفتر کل حسابداری' 
+              : 'Issue tracking, contractor hourly SLAs, and expense ledger connectivity'}
           </p>
         </div>
 
@@ -63,7 +73,7 @@ export default function MaintenancePage({ params }: { params: { lang: Language }
           className="px-5 py-2.5 rounded-xl bg-[#0E9F8E] hover:bg-[#0C8778] text-white text-xs font-bold shadow-sm transition-all flex items-center gap-2 self-start sm:self-auto"
         >
           <Plus className="w-4 h-4" />
-          <span>{lang === 'ro' ? 'Deschide Tichet Nou' : 'Open Work Order'}</span>
+          <span>{lang === 'ro' ? 'Deschide Tichet Nou' : lang === 'fa' ? 'ثبت درخواست جدید' : 'Open Work Order'}</span>
         </button>
       </div>
 
@@ -79,21 +89,29 @@ export default function MaintenancePage({ params }: { params: { lang: Language }
                       ? 'bg-[#FEE2E2] text-[#E5484D]'
                       : 'bg-[#EDF5FF] text-[#2F80ED]'
                   }`}>
-                    {wo.urgency}
+                    {wo.urgency === 'HIGH' || wo.urgency === 'CRITICAL_SAFETY'
+                      ? (lang === 'fa' ? 'فوری' : wo.urgency)
+                      : (lang === 'fa' ? 'عادی' : wo.urgency)}
                   </span>
-                  <span className="text-xs font-mono text-[#7B8A9A]">{wo.id}</span>
+                  <span className="text-xs font-mono text-[#7B8A9A] ltr-isolate">{wo.id}</span>
                 </div>
                 <h3 className="text-sm font-bold text-[#102A43] mt-1.5">{wo.title}</h3>
               </div>
               <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-[#FFF7E6] text-[#B45309]">
-                {wo.status}
+                {wo.status === 'OPEN' 
+                  ? getStatusLabel('open', lang)
+                  : wo.status === 'IN_PROGRESS' 
+                  ? getStatusLabel('in_progress', lang) 
+                  : getStatusLabel('completed', lang)}
               </span>
             </div>
 
             <div className="text-xs text-[#52667A] space-y-1 pt-2 border-t border-[#F0F4F8]">
-              <div>Locație: <strong>{wo.unitOrArea}</strong></div>
-              <div>Alocat: <strong>{wo.assignedTo || 'Nealocat'}</strong></div>
-              <div className="text-[11px] text-[#7B8A9A]">Creat: {wo.createdAt} · Termen SLA: {wo.slaDeadline}</div>
+              <div>{lang === 'ro' ? 'Locație:' : lang === 'fa' ? 'محل خرابی:' : 'Location:'} <strong>{wo.unitOrArea}</strong></div>
+              <div>{lang === 'ro' ? 'Alocat:' : lang === 'fa' ? 'تکنسین مسئول:' : 'Assigned to:'} <strong>{wo.assignedTo || (lang === 'fa' ? 'تخصیص‌نیافته' : 'Unassigned')}</strong></div>
+              <div className="text-[11px] text-[#7B8A9A]">
+                {lang === 'ro' ? 'Creat:' : lang === 'fa' ? 'زمان ثبت:' : 'Created:'} <span className="ltr-isolate">{wo.createdAt}</span> · SLA: <span className="ltr-isolate">{wo.slaDeadline}</span>
+              </div>
             </div>
           </div>
         ))}
@@ -105,18 +123,27 @@ export default function MaintenancePage({ params }: { params: { lang: Language }
           <div className="card-proptech p-6 sm:p-8 bg-white max-w-md w-full space-y-4 shadow-elevated">
             <div className="flex items-center justify-between pb-3 border-b border-[#E2E8F0]">
               <h3 className="text-base font-bold text-[#102A43]">
-                {lang === 'ro' ? 'Deschide Tichet Mentenanță' : 'Open Maintenance Order'}
+                {lang === 'ro' ? 'Deschide Tichet Mentenanță' : lang === 'fa' ? 'ثبت درخواست تعمیرات و نگهداری' : 'Open Maintenance Order'}
               </h3>
-              <button onClick={() => setModalOpen(false)} className="text-xs font-bold text-[#7B8A9A]">✕</button>
+              <button 
+                type="button"
+                onClick={() => setModalOpen(false)} 
+                className="text-xs font-bold text-[#7B8A9A] p-1"
+                aria-label={getActionLabel('close', lang)}
+              >
+                ✕
+              </button>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-4 text-xs">
               <div>
-                <label className="block font-bold text-[#102A43] mb-1">Titlu Problemă</label>
+                <label className="block font-bold text-[#102A43] mb-1">
+                  {lang === 'ro' ? 'Titlu Problemă' : lang === 'fa' ? 'عنوان و شرح خلاصه خرابی' : 'Issue Summary'}
+                </label>
                 <input
                   type="text"
                   required
-                  placeholder="Ex. Țeavă spartă subsol Sc. B"
+                  placeholder={lang === 'ro' ? 'Ex. Țeavă spartă subsol Sc. B' : lang === 'fa' ? 'مثال: نشتی لوله آب در پارکینگ منفی یک' : 'E.g. Leaking pipe in basement'}
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
                   className="w-full px-3 py-2 rounded-xl border border-[#D3DCE6] text-[#102A43]"
@@ -124,7 +151,9 @@ export default function MaintenancePage({ params }: { params: { lang: Language }
               </div>
 
               <div>
-                <label className="block font-bold text-[#102A43] mb-1">Locație / Zonă</label>
+                <label className="block font-bold text-[#102A43] mb-1">
+                  {lang === 'ro' ? 'Locație / Zonă' : lang === 'fa' ? 'محل وقوع' : 'Location / Area'}
+                </label>
                 <input
                   type="text"
                   value={unitOrArea}
@@ -135,29 +164,34 @@ export default function MaintenancePage({ params }: { params: { lang: Language }
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block font-bold text-[#102A43] mb-1">Categorie</label>
+                  <label className="block font-bold text-[#102A43] mb-1">
+                    {lang === 'ro' ? 'Categorie' : lang === 'fa' ? 'دسته‌بندی' : 'Category'}
+                  </label>
                   <select
                     value={category}
                     onChange={(e) => setCategory(e.target.value as any)}
                     className="w-full px-3 py-2 rounded-xl border border-[#D3DCE6] text-[#102A43]"
                   >
-                    <option value="PLUMBING">Instalații Apă</option>
-                    <option value="ELECTRICAL">Electric</option>
-                    <option value="ELEVATOR">Ascensor</option>
-                    <option value="CLEANING">Curățenie</option>
+                    <option value="PLUMBING">{lang === 'ro' ? 'Instalații Sanitare / Apă' : lang === 'fa' ? 'تأسیسات آب و لوله‌کشی' : 'Plumbing'}</option>
+                    <option value="ELECTRICAL">{lang === 'ro' ? 'Instalații Electrice' : lang === 'fa' ? 'تأسیسات برقی و روشنایی' : 'Electrical'}</option>
+                    <option value="ELEVATOR">{lang === 'ro' ? 'Ascensor / Lift' : lang === 'fa' ? 'آسانسور و بالابر' : 'Elevator'}</option>
+                    <option value="CLEANING">{lang === 'ro' ? 'Curățenie & Menaj' : lang === 'fa' ? 'نظافت و خدمات عمومی' : 'Cleaning'}</option>
                   </select>
                 </div>
+
                 <div>
-                  <label className="block font-bold text-[#102A43] mb-1">Urgență</label>
+                  <label className="block font-bold text-[#102A43] mb-1">
+                    {lang === 'ro' ? 'Urgență' : lang === 'fa' ? 'درجه اولویت' : 'Urgency'}
+                  </label>
                   <select
                     value={urgency}
                     onChange={(e) => setUrgency(e.target.value as any)}
                     className="w-full px-3 py-2 rounded-xl border border-[#D3DCE6] text-[#102A43]"
                   >
-                    <option value="LOW">Scăzută</option>
-                    <option value="MEDIUM">Medie</option>
-                    <option value="HIGH">Urgență Mare</option>
-                    <option value="CRITICAL_SAFETY">Pericol Siguranță</option>
+                    <option value="LOW">{lang === 'ro' ? 'Scăzută' : lang === 'fa' ? 'پایین' : 'Low'}</option>
+                    <option value="MEDIUM">{lang === 'ro' ? 'Medie' : lang === 'fa' ? 'متوسط' : 'Medium'}</option>
+                    <option value="HIGH">{lang === 'ro' ? 'Ridicată' : lang === 'fa' ? 'فوری / بالا' : 'High'}</option>
+                    <option value="CRITICAL_SAFETY">{lang === 'ro' ? 'Critică (Siguranță)' : lang === 'fa' ? 'بحرانی (ایمنی)' : 'Critical'}</option>
                   </select>
                 </div>
               </div>
@@ -166,15 +200,15 @@ export default function MaintenancePage({ params }: { params: { lang: Language }
                 <button
                   type="button"
                   onClick={() => setModalOpen(false)}
-                  className="px-4 py-2 rounded-xl text-xs font-bold text-[#52667A]"
+                  className="px-4 py-2 rounded-xl text-xs font-bold text-[#52667A] hover:bg-[#F0F4F8]"
                 >
-                  Anulează
+                  {getActionLabel('cancel', lang)}
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 rounded-xl bg-[#0E9F8E] text-white text-xs font-bold shadow-sm"
+                  className="px-5 py-2 rounded-xl bg-[#0E9F8E] text-white text-xs font-bold shadow-sm hover:bg-[#0C8778]"
                 >
-                  Creează Tichet
+                  {getActionLabel('createTicket', lang)}
                 </button>
               </div>
             </form>

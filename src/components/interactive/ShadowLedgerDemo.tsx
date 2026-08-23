@@ -3,6 +3,8 @@
 import React, { useState } from 'react';
 import { Language } from '@/types';
 import { Database, ShieldCheck, RefreshCw } from 'lucide-react';
+import { Money } from '@/components/ui/Money';
+import { formatMoney } from '@/config/currencies';
 
 interface ShadowLedgerDemoProps {
   lang: Language;
@@ -15,43 +17,44 @@ export const ShadowLedgerDemo: React.FC<ShadowLedgerDemoProps> = ({ lang }) => {
     {
       id: 'DISC-01',
       unit: lang === 'ro' ? 'Ap. 12' : lang === 'fa' ? 'واحد ۱۲' : 'Apt. 12',
-      legacySum: '1,420.00 RON',
+      legacyAmount: 1420.00,
       legacyNote: lang === 'ro' ? 'Sold restanță Excel nespecificat' : lang === 'fa' ? 'مانده بدهی ثبت‌شده بدون مستند در فایل اکسل' : 'Unspecified Excel balance',
-      shadowSum: '1,385.40 RON',
+      shadowAmount: 1385.40,
       shadowFinding: lang === 'ro' 
         ? 'Penalitate 0.2%/zi calculată eronat după scadență' 
         : lang === 'fa'
         ? 'محاسبه اشتباه جریمه روزانه پس از تاریخ سررسید'
         : 'Penalty cap 0.2%/day miscalculated',
-      difference: '-34.60 RON',
+      diffAmount: -34.60,
       status: resolved ? 'RESOLVED' : 'DISCREPANCY',
     },
     {
       id: 'DISC-02',
       unit: lang === 'ro' ? 'Ap. 45' : lang === 'fa' ? 'واحد ۴۵' : 'Apt. 45',
-      legacySum: '210.00 RON',
+      legacyAmount: 210.00,
       legacyNote: lang === 'ro' ? 'Index contor apă estimat din oficiu' : lang === 'fa' ? 'رقم تخمینی دستی برای کنتور آب' : 'Estimated water meter index',
-      shadowSum: '165.00 RON',
+      shadowAmount: 165.00,
       shadowFinding: lang === 'ro' 
         ? 'OCR foto contor a corectat citirea cu 3 m³' 
         : lang === 'fa'
         ? 'تصویر کنتور و هوش مصنوعی ۳ متر مکعب اضافه مصرف را اصلاح کرد'
         : 'AI Photo OCR corrected 3 m³ over-estimate',
-      difference: '-45.00 RON',
+      diffAmount: -45.00,
       status: resolved ? 'RESOLVED' : 'DISCREPANCY',
     },
     {
       id: 'DISC-03',
       unit: lang === 'ro' ? 'Ap. 88' : lang === 'fa' ? 'واحد ۸۸' : 'Apt. 88',
-      legacySum: '850.00 RON',
+      legacyAmount: 850.00,
       legacyNote: lang === 'ro' ? 'Fond reparații inclus la chiriaș' : lang === 'fa' ? 'درج هزینه صندوق تعمیرات اساسی در فیش مستأجر' : 'Reserve fund billed to tenant',
-      shadowSum: '850.00 RON',
+      shadowAmount: 850.00,
       shadowFinding: lang === 'ro' 
-        ? 'Re-alocat: 400 RON proprietar, 450 RON chiriaș' 
+        ? `Re-alocat: ${formatMoney(400, 'RON', lang)} proprietar, ${formatMoney(450, 'RON', lang)} chiriaș` 
         : lang === 'fa'
-        ? 'تسهیم اصلاحی: ۴۰۰ لئو بر عهده مالک، ۴۵۰ لئو سهم مستأجر'
-        : 'Split: 400 RON owner, 450 RON tenant',
-      difference: '0.00 RON (Split)',
+        ? `تسهیم اصلاحی: ${formatMoney(400, 'RON', lang)} بر عهده مالک، ${formatMoney(450, 'RON', lang)} سهم مستأجر`
+        : `Split: ${formatMoney(400, 'RON', lang)} owner, ${formatMoney(450, 'RON', lang)} tenant`,
+      diffAmount: 0.00,
+      isSplit: true,
       status: resolved ? 'RESOLVED' : 'DISCREPANCY',
     },
   ];
@@ -81,7 +84,7 @@ export const ShadowLedgerDemo: React.FC<ShadowLedgerDemoProps> = ({ lang }) => {
 
         <button
           type="button"
-          aria-label={resolved ? 'Status: Reconciled' : 'Run Auto Reconciliation'}
+          aria-label={resolved ? (lang === 'ro' ? 'Stare: Reconciliat' : lang === 'fa' ? 'وضعیت: تطبیق‌یافته' : 'Status: Reconciled') : (lang === 'ro' ? 'Reconciliere automată' : lang === 'fa' ? 'اجرای تطبیق خودکار' : 'Run Auto Reconciliation')}
           onClick={() => setResolved(!resolved)}
           className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
             resolved
@@ -133,7 +136,9 @@ export const ShadowLedgerDemo: React.FC<ShadowLedgerDemoProps> = ({ lang }) => {
 
                 <div className="text-xs text-[#52667A] pt-1">
                   <span className="text-[#7B8A9A]">{lang === 'ro' ? 'Stare veche: ' : lang === 'fa' ? 'سوابق پیشین: ' : 'Legacy state: '}</span>
-                  <span className="text-[#102A43] font-medium">{item.legacyNote} ({item.legacySum})</span>
+                  <span className="text-[#102A43] font-medium">
+                    {item.legacyNote} (<Money amount={item.legacyAmount} currency="RON" locale={lang} />)
+                  </span>
                 </div>
 
                 <div className="text-xs text-[#0E9F8E] font-medium">
@@ -144,11 +149,19 @@ export const ShadowLedgerDemo: React.FC<ShadowLedgerDemoProps> = ({ lang }) => {
 
               {/* Numbers */}
               <div className="text-end shrink-0">
-                <div className="text-sm font-mono font-bold text-[#102A43] tabular-nums">
-                  {resolved ? item.shadowSum : item.legacySum}
+                <div className="text-sm font-display font-extrabold text-[#102A43]">
+                  <Money 
+                    amount={resolved ? item.shadowAmount : item.legacyAmount} 
+                    currency="RON" 
+                    locale={lang} 
+                  />
                 </div>
                 <div className={`text-xs font-mono font-bold ${resolved ? 'text-[#059669]' : 'text-[#B45309]'}`}>
-                  {resolved ? (lang === 'ro' ? 'Reconciliat' : lang === 'fa' ? 'تراز شد' : 'Zero Variance') : `${lang === 'ro' ? 'Diferență:' : lang === 'fa' ? 'مغایرت:' : 'Variance:'} ${item.difference}`}
+                  {resolved 
+                    ? (lang === 'ro' ? 'Reconciliat' : lang === 'fa' ? 'تراز شد' : 'Zero Variance') 
+                    : item.isSplit
+                    ? (lang === 'ro' ? 'Diferență: 0,00 RON (Split)' : lang === 'fa' ? 'مغایرت: ۰٫۰۰ RON (تفکیک‌شده)' : 'Variance: 0.00 RON (Split)')
+                    : `${lang === 'ro' ? 'Diferență:' : lang === 'fa' ? 'مغایرت:' : 'Variance:'} ${formatMoney(item.diffAmount, 'RON', lang)}`}
                 </div>
               </div>
             </div>

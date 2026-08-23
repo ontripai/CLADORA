@@ -117,6 +117,7 @@ export const MOCK_JOURNAL_ENTRIES: JournalEntry[] = [
     debitAccount: '401.01 (Furnizori Utilități)',
     creditAccount: '605.01 (Cheltuieli Apă Rece Asociație)',
     amount: 4820.50,
+    currency: 'RON',
     status: 'POSTED',
     createdBy: 'Ing. Mihai Voinea (Admin)',
     auditHash: 'sha256:7f8e9a2b1c4d5e6f8a9b'
@@ -129,6 +130,7 @@ export const MOCK_JOURNAL_ENTRIES: JournalEntry[] = [
     debitAccount: '401.01 (Furnizori Utilități)',
     creditAccount: '605.02 (Cheltuieli Încălzire & Gaze)',
     amount: 7650.00,
+    currency: 'RON',
     status: 'POSTED',
     createdBy: 'Ing. Mihai Voinea (Admin)',
     auditHash: 'sha256:3a4b5c6d7e8f9a0b1c2d'
@@ -141,6 +143,7 @@ export const MOCK_JOURNAL_ENTRIES: JournalEntry[] = [
     debitAccount: '5121.01 (Cont Curent BCR Asociație)',
     creditAccount: '411.01 (Clienți / Proprietari Cote Întreținere)',
     amount: 1495.20,
+    currency: 'RON',
     status: 'POSTED',
     createdBy: 'Sistem Automat Reconciliere BCR',
     auditHash: 'sha256:9c8b7a6f5e4d3c2b1a0f'
@@ -153,6 +156,7 @@ export const MOCK_JOURNAL_ENTRIES: JournalEntry[] = [
     debitAccount: '401.02 (Furnizori Servicii)',
     creditAccount: '611.01 (Cheltuieli Întreținere Lift - CPI)',
     amount: 1200.00,
+    currency: 'RON',
     status: 'PENDING_AUDIT',
     createdBy: 'Elena Popescu (Contabil)',
     auditHash: 'sha256:2b3c4d5e6f7a8b9c0d1e'
@@ -168,6 +172,7 @@ export const MOCK_CHARGE_BREAKDOWN: ChargeBreakdownLine[] = [
     allocationMethod: 'METER_CONSUMPTION',
     unitSharePercent: 2.15,
     calculatedAmount: 103.64,
+    currency: 'RON',
     legalDebtor: 'OWNER',
     operationalPayer: 'TENANT',
     verifiedAt: '2026-10-21 14:30'
@@ -180,6 +185,7 @@ export const MOCK_CHARGE_BREAKDOWN: ChargeBreakdownLine[] = [
     allocationMethod: 'CPI',
     unitSharePercent: 1.25,
     calculatedAmount: 20.63,
+    currency: 'RON',
     legalDebtor: 'OWNER',
     operationalPayer: 'TENANT',
     verifiedAt: '2026-10-21 14:30'
@@ -192,6 +198,7 @@ export const MOCK_CHARGE_BREAKDOWN: ChargeBreakdownLine[] = [
     allocationMethod: 'PER_PERSON',
     unitSharePercent: 1.66,
     calculatedAmount: 40.00,
+    currency: 'RON',
     legalDebtor: 'OWNER',
     operationalPayer: 'TENANT',
     verifiedAt: '2026-10-21 14:30'
@@ -204,6 +211,7 @@ export const MOCK_CHARGE_BREAKDOWN: ChargeBreakdownLine[] = [
     allocationMethod: 'CPI',
     unitSharePercent: 1.25,
     calculatedAmount: 62.50,
+    currency: 'RON',
     legalDebtor: 'OWNER',
     operationalPayer: 'OWNER',
     verifiedAt: '2026-10-21 14:30'
@@ -216,6 +224,7 @@ export const MOCK_CHARGE_BREAKDOWN: ChargeBreakdownLine[] = [
     allocationMethod: 'CPI',
     unitSharePercent: 1.25,
     calculatedAmount: 15.00,
+    currency: 'RON',
     legalDebtor: 'OWNER',
     operationalPayer: 'TENANT',
     verifiedAt: '2026-10-21 14:30'

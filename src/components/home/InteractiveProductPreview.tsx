@@ -8,6 +8,7 @@ import {
   ArrowRight
 } from 'lucide-react';
 import { DEMO_ROLES } from '@/data/mockData';
+import { Money } from '@/components/ui/Money';
 
 interface ProductPreviewProps {
   lang: Language;
@@ -165,7 +166,9 @@ export const InteractiveProductPreview: React.FC<ProductPreviewProps> = ({ lang 
                   <>
                     <div className="p-2.5 rounded-lg bg-[#F6F9FC] flex justify-between">
                       <span>{lang === 'ro' ? 'Total Listă de Plată' : lang === 'fa' ? 'مبلغ کل شارژ ماهانه' : 'Monthly Statement'}</span>
-                      <span className="text-[#102A43] tabular-nums font-mono">241,77 RON</span>
+                      <span className="text-[#102A43]">
+                        <Money amount={241.77} currency="RON" locale={lang} />
+                      </span>
                     </div>
                     <div className="p-2.5 rounded-lg bg-[#F6F9FC] flex justify-between">
                       <span>{lang === 'ro' ? 'Transmitere Contor Apă' : lang === 'fa' ? 'ثبت رقم کنتور آب' : 'Meter Submission'}</span>
@@ -181,7 +184,9 @@ export const InteractiveProductPreview: React.FC<ProductPreviewProps> = ({ lang 
                   <>
                     <div className="p-2.5 rounded-lg bg-[#F6F9FC] flex justify-between">
                       <span>{lang === 'ro' ? 'Consum Utilizator Octombrie' : lang === 'fa' ? 'سهم مصرفی مستأجر' : 'Tenant Consumption'}</span>
-                      <span className="text-[#102A43] tabular-nums font-mono">179,27 RON</span>
+                      <span className="text-[#102A43]">
+                        <Money amount={179.27} currency="RON" locale={lang} />
+                      </span>
                     </div>
                     <div className="p-2.5 rounded-lg bg-[#F6F9FC] flex justify-between">
                       <span>{lang === 'ro' ? 'Acces Cheltuieli Fond Rulment' : lang === 'fa' ? 'دسترسی به صندوق‌های مالک' : 'Reserve Funds Access'}</span>

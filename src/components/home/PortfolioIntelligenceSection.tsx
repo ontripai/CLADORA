@@ -6,6 +6,8 @@ import {
   ArrowRight
 } from 'lucide-react';
 import { MOCK_PORTFOLIO_PROPERTIES } from '@/data/mockData';
+import { Money } from '@/components/ui/Money';
+import { formatPercent } from '@/config/currencies';
 
 interface PortfolioSectionProps {
   lang: Language;
@@ -54,11 +56,11 @@ export const PortfolioIntelligenceSection: React.FC<PortfolioSectionProps> = ({ 
             <div className="text-xs font-bold text-[#7B8A9A] uppercase tracking-wide">
               {lang === 'ro' ? 'Venit Lunar Brut Chirii' : lang === 'fa' ? 'درآمد ماهانه ناخالص اجاره' : 'Gross Monthly Rent'}
             </div>
-            <div className="text-2xl font-display font-extrabold text-[#0E9F8E] mt-2 tabular-nums">
-              3.180 EUR
+            <div className="text-2xl font-display font-extrabold text-[#0E9F8E] mt-2">
+              <Money amount={3180} currency="EUR" locale={lang} minimumFractionDigits={0} maximumFractionDigits={0} />
             </div>
             <div className="text-xs text-[#52667A] mt-1 font-mono">
-              ~15.900 RON / {lang === 'ro' ? 'lună' : lang === 'fa' ? 'ماه' : 'month'}
+              ~<Money amount={15900} currency="RON" locale={lang} minimumFractionDigits={0} maximumFractionDigits={0} /> / {lang === 'ro' ? 'lună' : lang === 'fa' ? 'ماه' : 'month'}
             </div>
           </div>
 
@@ -66,8 +68,8 @@ export const PortfolioIntelligenceSection: React.FC<PortfolioSectionProps> = ({ 
             <div className="text-xs font-bold text-[#7B8A9A] uppercase tracking-wide">
               {lang === 'ro' ? 'Randament Mediu Net' : lang === 'fa' ? 'میانگین بازده خالص سالانه' : 'Average Net Yield'}
             </div>
-            <div className="text-2xl font-display font-extrabold text-[#2F80ED] mt-2 tabular-nums">
-              6.8% / {lang === 'ro' ? 'an' : lang === 'fa' ? 'سال' : 'year'}
+            <div className="text-2xl font-display font-extrabold text-[#2F80ED] mt-2">
+              {formatPercent(6.8, lang, 1)} / {lang === 'ro' ? 'an' : lang === 'fa' ? 'سال' : 'year'}
             </div>
             <div className="text-xs text-[#52667A] mt-1">
               {lang === 'ro' ? 'După scădere fonduri & taxe' : lang === 'fa' ? 'پس از کسر مالیات و هزینه‌ها' : 'Net of fees & taxes'}
@@ -78,8 +80,8 @@ export const PortfolioIntelligenceSection: React.FC<PortfolioSectionProps> = ({ 
             <div className="text-xs font-bold text-[#7B8A9A] uppercase tracking-wide">
               {lang === 'ro' ? 'Garanții Păstrate' : lang === 'fa' ? 'مجموع مبالغ ودیعه نزد امین' : 'Total Deposits Held'}
             </div>
-            <div className="text-2xl font-display font-extrabold text-[#102A43] mt-2 tabular-nums">
-              5.400 EUR
+            <div className="text-2xl font-display font-extrabold text-[#102A43] mt-2">
+              <Money amount={5400} currency="EUR" locale={lang} minimumFractionDigits={0} maximumFractionDigits={0} />
             </div>
             <div className="text-xs text-[#52667A] mt-1">
               {lang === 'ro' ? 'Evidență separată depozite' : lang === 'fa' ? 'پایش در حساب‌های سپرده مجزا' : 'Separate escrow tracking'}
@@ -102,8 +104,8 @@ export const PortfolioIntelligenceSection: React.FC<PortfolioSectionProps> = ({ 
                   <p className="text-xs text-[#52667A]">{prop.associationName}</p>
                 </div>
                 <div className="text-end">
-                  <div className="text-lg font-display font-extrabold text-[#0E9F8E] tabular-nums">
-                    {prop.monthlyRent} {prop.currency}
+                  <div className="text-lg font-display font-extrabold text-[#0E9F8E]">
+                    <Money amount={prop.monthlyRent} currency={prop.currency as any} locale={lang} minimumFractionDigits={0} maximumFractionDigits={0} />
                   </div>
                   <span className="text-[10px] font-semibold text-[#52667A]">
                     {lang === 'ro' ? 'chirie lunară' : lang === 'fa' ? 'اجاره ماهانه' : 'monthly rent'}
@@ -122,7 +124,7 @@ export const PortfolioIntelligenceSection: React.FC<PortfolioSectionProps> = ({ 
                 </div>
                 <div className="p-2 rounded-lg bg-[#F6F9FC]">
                   <div className="text-[#7B8A9A] text-[10px]">{lang === 'ro' ? 'Yield Net' : lang === 'fa' ? 'بازده خالص' : 'Net Yield'}</div>
-                  <div className="font-bold text-[#2F80ED] mt-0.5 tabular-nums">{prop.netYieldPercent}%</div>
+                  <div className="font-bold text-[#2F80ED] mt-0.5">{formatPercent(prop.netYieldPercent, lang, 1)}</div>
                 </div>
               </div>
             </div>

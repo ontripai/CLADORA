@@ -5,6 +5,8 @@ import Link from 'next/link';
 import { Language } from '@/types';
 import { getDictionary } from '@/dictionaries';
 import { Check, ArrowRight } from 'lucide-react';
+import { Money } from '@/components/ui/Money';
+import { formatMoney, formatNumber } from '@/config/currencies';
 
 interface PricingCalculatorProps {
   lang: Language;
@@ -17,8 +19,7 @@ export const PricingCalculator: React.FC<PricingCalculatorProps> = ({ lang }) =>
   const [includeIntelligence, setIncludeIntelligence] = useState<boolean>(true);
 
   const discountMultiplier = isYearly ? 0.8 : 1.0;
-  const isRo = lang === 'ro';
-  const currency = isRo ? 'RON' : 'EUR';
+  const currency = 'RON';
 
   return (
     <div className="space-y-12">
@@ -59,13 +60,13 @@ export const PricingCalculator: React.FC<PricingCalculatorProps> = ({ lang }) =>
               {dict.pricing.unitsLabel}
             </label>
             <span className="text-base font-mono font-bold text-[#0E9F8E]">
-              {units} {lang === 'ro' ? 'apartamente / proprietăți' : lang === 'fa' ? 'واحد مسکونی / ملک' : 'units / properties'}
+              {formatNumber(units, lang)} {lang === 'ro' ? 'apartamente / proprietăți' : lang === 'fa' ? 'واحد مسکونی / ملک' : 'units / properties'}
             </span>
           </div>
           <input
             id="pricingUnitsRangeInput"
             name="pricingUnitsRangeInput"
-            aria-label={lang === 'ro' ? 'Număr apartamente pentru calcul tarif' : 'Number of units for pricing calculation'}
+            aria-label={lang === 'ro' ? 'Număr apartamente pentru calcul tarif' : lang === 'fa' ? 'تعداد واحدها برای محاسبه تعرفه' : 'Number of units for pricing calculation'}
             type="range"
             min="10"
             max="250"
@@ -82,7 +83,7 @@ export const PricingCalculator: React.FC<PricingCalculatorProps> = ({ lang }) =>
             type="checkbox"
             id="intelAddon"
             name="intelAddon"
-            aria-label={isRo ? 'Include modulul Cladora Intelligence' : 'Include Cladora Intelligence module'}
+            aria-label={lang === 'ro' ? 'Include modulul Cladora Intelligence' : lang === 'fa' ? 'افزودن ماژول هوش مصنوعی کلادورا' : 'Include Cladora Intelligence module'}
             checked={includeIntelligence}
             onChange={(e) => setIncludeIntelligence(e.target.checked)}
             className="w-4 h-4 rounded bg-white border-[#D3DCE6] text-[#0E9F8E] focus:ring-0 cursor-pointer"
@@ -91,8 +92,8 @@ export const PricingCalculator: React.FC<PricingCalculatorProps> = ({ lang }) =>
             ✨ {lang === 'ro' 
               ? 'Include modulul Cladora Intelligence & Economii Verificate (+0.50 RON/unitate)' 
               : lang === 'fa'
-              ? 'افزودن هوش مصنوعی کلادورا و پایش خودکار صرفه‌جویی (+۰.۱۰ یورو/واحد)'
-              : 'Include Cladora Intelligence & Verified Savings (+0.10 EUR/unit)'}
+              ? 'افزودن هوش مصنوعی کلادورا و پایش خودکار صرفه‌جویی (+۰٫۵۰ RON به ازای هر واحد)'
+              : 'Include Cladora Intelligence & Verified Savings (+0.50 RON/unit)'}
           </label>
         </div>
 
@@ -104,8 +105,9 @@ export const PricingCalculator: React.FC<PricingCalculatorProps> = ({ lang }) =>
           const isFeatured = plan.id === 'association';
           const basePrice = plan.basePriceMonthly * discountMultiplier;
           const unitRate = plan.perUnitMonthly * discountMultiplier;
-          const addonRate = includeIntelligence ? (isRo ? 0.5 : 0.1) * discountMultiplier : 0;
+          const addonRate = includeIntelligence ? 0.5 * discountMultiplier : 0;
           const totalMonthly = basePrice + (units * (unitRate + addonRate));
+          const perUnitRate = totalMonthly / units;
 
           return (
             <div
@@ -135,19 +137,19 @@ export const PricingCalculator: React.FC<PricingCalculatorProps> = ({ lang }) =>
                 {/* Price Display */}
                 <div className="p-4 rounded-2xl bg-[#F6F9FC] border border-[#E2E8F0] space-y-1">
                   <div className="flex items-baseline gap-2">
-                    <span className="text-3xl sm:text-4xl font-display font-extrabold text-[#102A43] tabular-nums">
-                      {Math.round(totalMonthly)}
+                    <span className="text-3xl sm:text-4xl font-display font-extrabold text-[#102A43]">
+                      <Money amount={Math.round(totalMonthly)} currency={currency} locale={lang} minimumFractionDigits={0} maximumFractionDigits={0} />
                     </span>
                     <span className="text-xs font-mono text-[#52667A] font-bold">
-                      {currency} / {lang === 'ro' ? 'lună' : lang === 'fa' ? 'ماه' : 'month'}
+                      / {lang === 'ro' ? 'lună' : lang === 'fa' ? 'ماه' : 'month'}
                     </span>
                   </div>
                   <div className="text-[11px] text-[#059669] font-bold font-mono">
                     {lang === 'ro' 
-                      ? `Echivalent ~${(totalMonthly / units).toFixed(2)} RON / apartament`
+                      ? `Echivalent ~${formatMoney(perUnitRate, currency, lang)} / apartament`
                       : lang === 'fa'
-                      ? `معادل ~${(totalMonthly / units).toFixed(2)} یورو به ازای هر واحد`
-                      : `~${(totalMonthly / units).toFixed(2)} EUR / unit`}
+                      ? `معادل ~${formatMoney(perUnitRate, currency, lang)} به ازای هر واحد`
+                      : `~${formatMoney(perUnitRate, currency, lang)} / unit`}
                   </div>
                 </div>
 

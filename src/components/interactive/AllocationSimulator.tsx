@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { Language } from '@/types';
 import { Scale, Info, User, Home } from 'lucide-react';
+import { Money } from '@/components/ui/Money';
 
 interface AllocationSimulatorProps {
   lang: Language;
@@ -100,10 +101,10 @@ export const AllocationSimulator: React.FC<AllocationSimulatorProps> = ({ lang }
             id="invoiceAmountInput"
             name="invoiceAmount"
             type="number"
-            aria-label={lang === 'ro' ? 'Sumă factură în RON' : 'Invoice amount in RON'}
+            aria-label={lang === 'ro' ? 'Sumă factură în RON' : lang === 'fa' ? 'مبلغ فاکتور به لئوی رومانی' : 'Invoice amount in RON'}
             value={amount}
             onChange={(e) => setAmount(Number(e.target.value) || 0)}
-            className="w-28 px-3 py-1.5 rounded-lg bg-[#F6F9FC] border border-[#D3DCE6] text-[#102A43] font-mono text-sm font-bold text-right focus:border-[#0E9F8E] focus:outline-none"
+            className="w-28 px-3 py-1.5 rounded-lg bg-[#F6F9FC] border border-[#D3DCE6] text-[#102A43] font-mono text-sm font-bold text-right focus:border-[#0E9F8E] focus:outline-none ltr-isolate"
           />
           <span className="text-xs font-mono text-[#52667A] font-bold">RON</span>
         </div>
@@ -202,8 +203,8 @@ export const AllocationSimulator: React.FC<AllocationSimulatorProps> = ({ lang }
                 </span>
               </div>
             </div>
-            <div className="text-xl font-display font-extrabold text-[#059669] tabular-nums">
-              {current.split.owner.toFixed(2)} RON
+            <div className="text-xl font-display font-extrabold text-[#059669]">
+              <Money amount={current.split.owner} currency="RON" locale={lang} />
             </div>
           </div>
 
@@ -221,8 +222,8 @@ export const AllocationSimulator: React.FC<AllocationSimulatorProps> = ({ lang }
                 </span>
               </div>
             </div>
-            <div className="text-xl font-display font-extrabold text-[#0E9F8E] tabular-nums">
-              {current.split.tenant.toFixed(2)} RON
+            <div className="text-xl font-display font-extrabold text-[#0E9F8E]">
+              <Money amount={current.split.tenant} currency="RON" locale={lang} />
             </div>
           </div>
         </div>

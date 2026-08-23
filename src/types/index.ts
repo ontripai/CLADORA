@@ -1,6 +1,10 @@
 import type { Language } from '@/config/locales';
+import type { SupportedCurrency } from '@/config/currencies';
 export type { Locale, Language, Direction } from '@/config/locales';
 export { localeConfig, isSupportedLocale, getLocaleDirection, isRtlLocale, getIntlLocale, getLocaleConfig, SUPPORTED_LOCALES, DEFAULT_LOCALE } from '@/config/locales';
+export type { SupportedCurrency, MonetaryContext, FormatMoneyOptions } from '@/config/currencies';
+export { currencyConfig, DEFAULT_OPERATIONAL_CURRENCY, DEFAULT_MARKET_CURRENCY, formatMoney, formatNumber, formatPercent, formatCompactNumber, getLocalizedCurrencyName } from '@/config/currencies';
+export { Money } from '@/components/ui/Money';
 
 export type UserRole = 
   | 'association_admin'
@@ -100,6 +104,7 @@ export interface JournalEntry {
   debitAccount: string;
   creditAccount: string;
   amount: number;
+  currency?: SupportedCurrency;
   status: 'POSTED' | 'REVERSED' | 'PENDING_AUDIT';
   createdBy: string;
   auditHash: string;
@@ -113,6 +118,7 @@ export interface ChargeBreakdownLine {
   allocationMethod: 'CPI' | 'PER_PERSON' | 'SURFACE_M2' | 'METER_CONSUMPTION' | 'DIRECT';
   unitSharePercent: number;
   calculatedAmount: number;
+  currency?: SupportedCurrency;
   legalDebtor: 'OWNER' | 'TENANT';
   operationalPayer: 'OWNER' | 'TENANT';
   verifiedAt: string;
