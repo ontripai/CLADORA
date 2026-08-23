@@ -36,7 +36,7 @@ export const ro = {
     buildingDna: "Inginerie & Arhetipuri Clădiri",
     meters: "Contoare & Citire Asistată",
     intelligence: "Optimizare Costuri & Energie",
-    migration: "Migrare Sigură (Shadow Ledger)",
+    migration: "Migrare Controlată (Shadow Ledger)",
     pricing: "Tarife & Calculator",
     pilot: "Program Pilot București-Ilfov",
     trust: "Securitate & Încredere",
@@ -60,7 +60,7 @@ export const ro = {
   modesSection: {
     badge: "O singură platformă. Roluri dedicate.",
     title: "Adaptat pentru fiecare participant din comunitate",
-    description: "Fie că administrezi un bloc, deții apartamente închiriate sau conduci o firmă de property management, CLADORA îți oferă un flux de lucru intuitiv și organizat.",
+    description: "Fie că administrezi un bloc, deții apartamente închiriate sau conduci o firmă de administrare imobiliară, CLADORA îți oferă un flux de lucru intuitiv și organizat.",
     association: {
       title: "Cladora Association (Association OS)",
       target: "Pentru Asociații de Proprietari, Președinți, Administratori & Cenzori",

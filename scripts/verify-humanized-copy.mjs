@@ -67,6 +67,28 @@ async function verify() {
   console.log(`  - Contains "بستن دوره حسابداری": ${faClose1}`);
   if (faClose.statusCode !== 200 || !faClose1) allPassed = false;
 
+  // 6. Task 007 Hotfix Assertions
+  // RO: Migrare Controlată & administrare imobiliară (no Migrare Sigură, no property management)
+  const roMigrare = ro.body.includes('Migrare Controlat\u0103');
+  const roNoSigura = !ro.body.includes('Migrare Sigur\u0103');
+  const roAdmin = ro.body.includes('administrare imobiliar\u0103');
+  const roNoPropMgmt = !ro.body.includes('property management');
+  console.log(`\n[RO Polish] Contains "Migrare Controlată": ${roMigrare}, No "Migrare Sigură": ${roNoSigura}`);
+  console.log(`[RO Polish] Contains "administrare imobiliară": ${roAdmin}, No "property management": ${roNoPropMgmt}`);
+  if (!roMigrare || !roNoSigura || !roAdmin || !roNoPropMgmt) allPassed = false;
+
+  // EN: Aviației 12B Homeowners Association (no Asociația Aviației 12B)
+  const enAssoc = en.body.includes('Avia\u021biei 12B Homeowners Association');
+  const enNoAsoc = !en.body.includes('Asocia\u021bia Avia\u021biei 12B');
+  console.log(`\n[EN Polish] Contains "Aviației 12B Homeowners Association": ${enAssoc}, No "Asociația Aviației 12B": ${enNoAsoc}`);
+  if (!enAssoc || !enNoAsoc) allPassed = false;
+
+  // FA: تراز تطبیق‌یافته (no تراز کاملاً همتراز / کاملاً همتراز)
+  const faBalance = fa.body.includes('تراز تطبیق\u200cیافته') || fa.body.includes('تراز تطبیقیافته');
+  const faNoKamelan = !fa.body.includes('کاملاً هم‌تراز') && !fa.body.includes('کاملاً همتراز');
+  console.log(`\n[FA Polish] Contains "تراز تطبیق‌یافته": ${faBalance}, No "کاملاً همتراز": ${faNoKamelan}`);
+  if (!faBalance || !faNoKamelan) allPassed = false;
+
   if (!allPassed) {
     console.error('\n❌ ERROR: Some copy verification checks failed.');
     process.exit(1);

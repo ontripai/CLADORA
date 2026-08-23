@@ -260,7 +260,7 @@ export const Header: React.FC<HeaderProps> = ({ lang }) => {
               href={`/${lang}/migration`}
               className="px-3.5 py-2 rounded-lg text-sm font-semibold text-[#52667A] hover:text-[#102A43] hover:bg-[#F0F4F8] transition-colors"
             >
-              {lang === 'ro' ? 'Migrare Sigură' : lang === 'fa' ? 'مهاجرت امن' : 'Migration'}
+              {lang === 'ro' ? 'Migrare Controlată' : lang === 'fa' ? 'مهاجرت امن' : 'Migration'}
             </Link>
 
             <Link
@@ -348,7 +348,7 @@ export const Header: React.FC<HeaderProps> = ({ lang }) => {
               onClick={() => setMobileMenuOpen(false)}
               className="block py-2.5 text-base font-bold text-[#102A43]"
             >
-              {lang === 'ro' ? 'Migrare Sigură (Shadow Ledger)' : lang === 'fa' ? 'مهاجرت امن (Shadow Ledger)' : 'Safe Migration (Shadow Ledger)'}
+              {lang === 'ro' ? 'Migrare Controlată (Shadow Ledger)' : lang === 'fa' ? 'مهاجرت امن (Shadow Ledger)' : 'Safe Migration (Shadow Ledger)'}
             </Link>
 
             <Link

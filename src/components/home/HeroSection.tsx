@@ -137,7 +137,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ lang }) => {
                           ? 'Asociația de Proprietari Aviației 12B — Închidere Octombrie 2026'
                           : lang === 'fa'
                           ? 'انجمن مالکان مجتمع آویاتسی ۱۲B — بستن دوره ماهانه'
-                          : 'Asociația Aviației 12B — October 2026 Month Close'}
+                          : 'Aviației 12B Homeowners Association — October 2026 Month Close'}
                       </h3>
                       <p className="text-xs text-[#52667A]">
                         {lang === 'ro' ? '120 unități · 4 scări · Balanță reconciliată BCR' : lang === 'fa' ? '۱۲۰ واحد مسکونی · ۴ ورودی · تراز تطبیق‌یافته با بانک BCR' : '120 units · 4 entrances · BCR bank reconciled'}
@@ -146,7 +146,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ lang }) => {
                   </div>
                   <div className="flex items-center gap-2">
                     <span className="px-2.5 py-1 rounded-full bg-[#ECFDF5] text-[#059669] text-xs font-bold border border-[#A7F3D0]">
-                      ● {lang === 'ro' ? 'Balanță Echilibrată' : lang === 'fa' ? 'تراز کاملاً هم‌تراز' : 'Balanced Ledger'}
+                      ● {lang === 'ro' ? 'Balanță Echilibrată' : lang === 'fa' ? 'تراز تطبیق‌یافته' : 'Balanced Ledger'}
                     </span>
                   </div>
                 </div>

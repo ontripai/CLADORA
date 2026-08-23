@@ -309,6 +309,9 @@ it('No forbidden absolute claims across dictionaries (Task 004B & 005 Final Gate
     'conformă cu legea',
     'اطمینان از صحت',
     'کنترل جامع',
+    'تراز کاملاً همتراز',
+    'کاملاً همتراز',
+    'Migrare Sigură',
   ];
 
   for (const lang of ['ro', 'en', 'fa']) {
@@ -317,6 +320,27 @@ it('No forbidden absolute claims across dictionaries (Task 004B & 005 Final Gate
       assert.ok(!content.includes(claim), `Forbidden claim "${claim}" detected in src/dictionaries/${lang}.ts`);
     }
   }
+});
+
+it('Post-merge copy polish exact phrase assertions (Task 007)', () => {
+  const ro = fs.readFileSync('src/dictionaries/ro.ts', 'utf8');
+  const heroSection = fs.readFileSync('src/components/home/HeroSection.tsx', 'utf8');
+
+  // 1. Persian Balance Status
+  assert.ok(heroSection.includes('تراز تطبیق‌یافته'), 'HeroSection includes Persian تراز تطبیق‌یافته');
+  assert.ok(!heroSection.includes('تراز کاملاً هم‌تراز') && !heroSection.includes('کاملاً هم‌تراز'), 'HeroSection has no کاملاً هم‌تراز');
+
+  // 2. Romanian Migration Navigation
+  assert.ok(ro.includes('Migrare Controlată (Shadow Ledger)'), 'ro.ts includes Migrare Controlată');
+  assert.ok(!ro.includes('Migrare Sigură'), 'ro.ts has no Migrare Sigură');
+
+  // 3. Romanian Property Management wording
+  assert.ok(ro.includes('administrare imobiliară'), 'ro.ts includes administrare imobiliară');
+  assert.ok(!ro.includes('property management'), 'ro.ts has no property management');
+
+  // 4. English Demo Association Name
+  assert.ok(heroSection.includes('Aviației 12B Homeowners Association'), 'HeroSection includes Aviației 12B Homeowners Association');
+  assert.ok(!heroSection.includes('Asociația Aviației 12B'), 'HeroSection has no Asociația Aviației 12B in English');
 });
 
 console.log('\n=======================================');

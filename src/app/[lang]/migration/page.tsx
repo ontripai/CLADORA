@@ -18,7 +18,7 @@ export async function generateMetadata({
   const isFa = params.lang === 'fa';
   return {
     title: isRo 
-      ? 'Migrare Sigură din Xisoft, Aviziero, Excel (Shadow Ledger) | CLADORA' 
+      ? 'Migrare Controlată din Xisoft, Aviziero, Excel (Shadow Ledger) | CLADORA' 
       : isFa
       ? 'مهاجرت امن سوابق مالی با پروتکل Shadow Ledger | کلادورا'
       : 'Safe Legacy Migration with Shadow Ledger Protocol | CLADORA',
