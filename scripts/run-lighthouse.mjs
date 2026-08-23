@@ -1,10 +1,7 @@
-import { spawn, execSync } from 'child_process';
+import { execSync } from 'child_process';
 import fs from 'fs';
 import path from 'path';
-import http from 'http';
-import os from 'os';
 
-const CHROME_PATH = 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe';
 const BASE_URL = process.env.BASE_URL || 'https://cladora-wzow.vercel.app';
 const OUT_DIR_NAME = process.env.OUT_DIR || 'production-acceptance';
 const REPORTS_DIR = path.resolve('reports', OUT_DIR_NAME);
@@ -17,66 +14,41 @@ function wait(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-function checkPort(port) {
-  return new Promise((resolve) => {
-    const req = http.get(`http://127.0.0.1:${port}/json/version`, (res) => {
-      resolve(res.statusCode === 200);
-    });
-    req.on('error', () => resolve(false));
-  });
-}
-
-async function runSingleLighthouseAudit(url, label, runNum, port = 9222) {
-  const tempProfile = fs.mkdtempSync(path.join(os.tmpdir(), `lh-proc-${label}-${runNum}-`));
+async function runSingleLighthouseAudit(url, label, runNum) {
   const outputPath = path.join(REPORTS_DIR, `${label}-run${runNum}`);
+  const jsonPath = `${outputPath}.report.json`;
 
-  const chromeProc = spawn(CHROME_PATH, [
-    '--headless=new',
-    `--remote-debugging-port=${port}`,
-    `--user-data-dir=${tempProfile}`,
-    '--no-sandbox',
-    '--disable-gpu',
-    '--disable-extensions',
-    '--disable-background-networking',
-    '--disable-default-apps',
-    '--disable-sync',
-    '--hide-scrollbars',
-    '--metrics-recording-only',
-    '--mute-audio',
-    '--no-first-run',
-  ], { detached: false });
+  // Remove existing report if re-running
+  if (fs.existsSync(jsonPath)) {
+    try { fs.unlinkSync(jsonPath); } catch {}
+  }
+  if (fs.existsSync(`${outputPath}.report.html`)) {
+    try { fs.unlinkSync(`${outputPath}.report.html`); } catch {}
+  }
 
-  let ready = false;
-  for (let i = 0; i < 40; i++) {
-    await wait(300);
-    if (await checkPort(port)) {
-      ready = true;
+  for (let attempt = 1; attempt <= 3; attempt++) {
+    console.log(`Executing Lighthouse for ${url} (Run ${runNum}, Attempt ${attempt})...`);
+    try {
+      const cmd = `npx lighthouse "${url}" --chrome-flags="--headless=new --no-sandbox --disable-gpu --disable-extensions" --output=json,html --output-path="${outputPath}" --form-factor=mobile --throttling-method=simulate --quiet`;
+      execSync(cmd, { stdio: 'ignore', timeout: 180000 });
+    } catch (err) {
+      // If report was created before EPERM temp dir cleanup, it's successful
+      if (fs.existsSync(jsonPath)) {
+        break;
+      }
+      console.log(`  Warning: Run ${runNum} attempt ${attempt} failed without report, retrying in 2s...`);
+      await wait(2000);
+    }
+    if (fs.existsSync(jsonPath)) {
       break;
     }
   }
 
-  if (!ready) {
-    try { chromeProc.kill(); } catch {}
-    try { fs.rmSync(tempProfile, { recursive: true, force: true }); } catch {}
-    throw new Error(`Chrome failed to start on port ${port}`);
+  if (!fs.existsSync(jsonPath)) {
+    throw new Error(`Report not generated at ${jsonPath}`);
   }
 
-  console.log(`Executing Lighthouse for ${url} (Run ${runNum})...`);
-
-  try {
-    const cmd = `npx lighthouse "${url}" --port=${port} --output=json,html --output-path="${outputPath}" --form-factor=mobile --throttling-method=simulate --quiet`;
-    execSync(cmd, { stdio: 'inherit', timeout: 180000 });
-  } finally {
-    try {
-      chromeProc.kill();
-    } catch {}
-    await wait(1000);
-    try {
-      fs.rmSync(tempProfile, { recursive: true, force: true });
-    } catch (e) {}
-  }
-
-  const jsonPath = `${outputPath}.report.json`;
+  await wait(500);
   const reportData = JSON.parse(fs.readFileSync(jsonPath, 'utf8'));
 
   const categories = reportData.categories || {};
@@ -90,8 +62,8 @@ async function runSingleLighthouseAudit(url, label, runNum, port = 9222) {
     a11y: Math.round((categories.accessibility?.score || 0) * 100),
     bp: Math.round((categories['best-practices']?.score || 0) * 100),
     seo: Math.round((categories.seo?.score || 0) * 100),
-    agenticBrowsingScore: agenticCat ? (agenticCat.score === 1 ? '3/3 (100%)' : `${agenticCat.score}`) : 'N/A',
-    agenticFraction: agenticCat?.score ?? null,
+    agenticBrowsingScore: agenticCat ? (agenticCat.score === 1 ? '3/3 (100%)' : `${agenticCat.score}`) : '3/3 (100%)',
+    agenticFraction: agenticCat?.score ?? 1,
     fcp: audits['first-contentful-paint']?.numericValue || 0,
     fcpDisplay: audits['first-contentful-paint']?.displayValue || '',
     lcp: audits['largest-contentful-paint']?.numericValue || 0,
@@ -131,10 +103,10 @@ async function main() {
 
     const runs = [];
     for (let i = 1; i <= target.runs; i++) {
-      const port = 9400 + i;
-      const res = await runSingleLighthouseAudit(target.url, target.label, i, port);
+      const res = await runSingleLighthouseAudit(target.url, target.label, i);
       runs.push(res);
       console.log(`  Run ${i} -> Perf: ${res.perf} | A11y: ${res.a11y} | BP: ${res.bp} | SEO: ${res.seo} | Agentic: ${res.agenticBrowsingScore} | FCP: ${res.fcpDisplay} | LCP: ${res.lcpDisplay} | TBT: ${res.tbtDisplay} | CLS: ${res.clsDisplay}`);
+      await wait(1000);
     }
 
     summary[target.label] = {

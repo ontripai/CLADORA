@@ -1,0 +1,295 @@
+{
+  "ro-home": {
+    "runs": [
+      {
+        "runNum": 1,
+        "url": "https://cladora-wzow.vercel.app/ro",
+        "perf": 77,
+        "a11y": 94,
+        "bp": 100,
+        "seo": 100,
+        "fcp": 1115.6125,
+        "lcp": 3317.6125,
+        "tbt": 623,
+        "cls": 0,
+        "lcpElement": "N/A",
+        "jsonFile": "ro-home-run1.report.json",
+        "htmlFile": "ro-home-run1.report.html"
+      },
+      {
+        "runNum": 2,
+        "url": "https://cladora-wzow.vercel.app/ro",
+        "perf": 77,
+        "a11y": 94,
+        "bp": 100,
+        "seo": 100,
+        "fcp": 1123.8806,
+        "lcp": 3239.8806,
+        "tbt": 613,
+        "cls": 0,
+        "lcpElement": "N/A",
+        "jsonFile": "ro-home-run2.report.json",
+        "htmlFile": "ro-home-run2.report.html"
+      },
+      {
+        "runNum": 3,
+        "url": "https://cladora-wzow.vercel.app/ro",
+        "perf": 73,
+        "a11y": 94,
+        "bp": 100,
+        "seo": 100,
+        "fcp": 1008.4477202224693,
+        "lcp": 3242.4477202224693,
+        "tbt": 817,
+        "cls": 0,
+        "lcpElement": "N/A",
+        "jsonFile": "ro-home-run3.report.json",
+        "htmlFile": "ro-home-run3.report.html"
+      }
+    ],
+    "median": {
+      "perf": 77,
+      "a11y": 94,
+      "bp": 100,
+      "seo": 100,
+      "fcp": 1115.6125,
+      "lcp": 3242.4477202224693,
+      "tbt": 623,
+      "cls": 0
+    }
+  },
+  "en-home": {
+    "runs": [
+      {
+        "runNum": 1,
+        "url": "https://cladora-wzow.vercel.app/en",
+        "perf": 84,
+        "a11y": 94,
+        "bp": 100,
+        "seo": 100,
+        "fcp": 1154.7015999999999,
+        "lcp": 3178.7016,
+        "tbt": 383.5,
+        "cls": 0,
+        "lcpElement": "N/A",
+        "jsonFile": "en-home-run1.report.json",
+        "htmlFile": "en-home-run1.report.html"
+      },
+      {
+        "runNum": 2,
+        "url": "https://cladora-wzow.vercel.app/en",
+        "perf": 77,
+        "a11y": 94,
+        "bp": 100,
+        "seo": 100,
+        "fcp": 1181.6387,
+        "lcp": 3316.6387,
+        "tbt": 586,
+        "cls": 0,
+        "lcpElement": "N/A",
+        "jsonFile": "en-home-run2.report.json",
+        "htmlFile": "en-home-run2.report.html"
+      },
+      {
+        "runNum": 3,
+        "url": "https://cladora-wzow.vercel.app/en",
+        "perf": 85,
+        "a11y": 94,
+        "bp": 100,
+        "seo": 100,
+        "fcp": 990.0567,
+        "lcp": 3239.0567,
+        "tbt": 329.0000000000001,
+        "cls": 0,
+        "lcpElement": "N/A",
+        "jsonFile": "en-home-run3.report.json",
+        "htmlFile": "en-home-run3.report.html"
+      }
+    ],
+    "median": {
+      "perf": 84,
+      "a11y": 94,
+      "bp": 100,
+      "seo": 100,
+      "fcp": 1154.7015999999999,
+      "lcp": 3239.0567,
+      "tbt": 383.5,
+      "cls": 0
+    }
+  },
+  "fa-home": {
+    "runs": [
+      {
+        "runNum": 1,
+        "url": "https://cladora-wzow.vercel.app/fa",
+        "perf": 77,
+        "a11y": 94,
+        "bp": 100,
+        "seo": 100,
+        "fcp": 1994.0668,
+        "lcp": 3511.5668,
+        "tbt": 476,
+        "cls": 0,
+        "lcpElement": "N/A",
+        "jsonFile": "fa-home-run1.report.json",
+        "htmlFile": "fa-home-run1.report.html"
+      },
+      {
+        "runNum": 2,
+        "url": "https://cladora-wzow.vercel.app/fa",
+        "perf": 75,
+        "a11y": 94,
+        "bp": 100,
+        "seo": 100,
+        "fcp": 1216.0954000000002,
+        "lcp": 3391.0954,
+        "tbt": 692,
+        "cls": 0,
+        "lcpElement": "N/A",
+        "jsonFile": "fa-home-run2.report.json",
+        "htmlFile": "fa-home-run2.report.html"
+      },
+      {
+        "runNum": 3,
+        "url": "https://cladora-wzow.vercel.app/fa",
+        "perf": 80,
+        "a11y": 94,
+        "bp": 100,
+        "seo": 100,
+        "fcp": 1068.6553,
+        "lcp": 3393.6553,
+        "tbt": 479,
+        "cls": 0,
+        "lcpElement": "N/A",
+        "jsonFile": "fa-home-run3.report.json",
+        "htmlFile": "fa-home-run3.report.html"
+      }
+    ],
+    "median": {
+      "perf": 77,
+      "a11y": 94,
+      "bp": 100,
+      "seo": 100,
+      "fcp": 1216.0954000000002,
+      "lcp": 3393.6553,
+      "tbt": 479,
+      "cls": 0
+    }
+  },
+  "ro-migration": {
+    "runs": [
+      {
+        "runNum": 1,
+        "url": "https://cladora-wzow.vercel.app/ro/migration",
+        "perf": 94,
+        "a11y": 92,
+        "bp": 100,
+        "seo": 100,
+        "fcp": 1011.3771,
+        "lcp": 3014.3771,
+        "tbt": 31.500000000000114,
+        "cls": 0,
+        "lcpElement": "N/A",
+        "jsonFile": "ro-migration-run1.report.json",
+        "htmlFile": "ro-migration-run1.report.html"
+      }
+    ],
+    "median": {
+      "perf": 94,
+      "a11y": 92,
+      "bp": 100,
+      "seo": 100,
+      "fcp": 1011.3771,
+      "lcp": 3014.3771,
+      "tbt": 31.500000000000114,
+      "cls": 0
+    }
+  },
+  "ro-solutions-managers": {
+    "runs": [
+      {
+        "runNum": 1,
+        "url": "https://cladora-wzow.vercel.app/ro/solutions/property-managers",
+        "perf": 95,
+        "a11y": 96,
+        "bp": 100,
+        "seo": 100,
+        "fcp": 915.783,
+        "lcp": 2865.783,
+        "tbt": 6.5,
+        "cls": 0,
+        "lcpElement": "N/A",
+        "jsonFile": "ro-solutions-managers-run1.report.json",
+        "htmlFile": "ro-solutions-managers-run1.report.html"
+      }
+    ],
+    "median": {
+      "perf": 95,
+      "a11y": 96,
+      "bp": 100,
+      "seo": 100,
+      "fcp": 915.783,
+      "lcp": 2865.783,
+      "tbt": 6.5,
+      "cls": 0
+    }
+  },
+  "ro-demo": {
+    "runs": [
+      {
+        "runNum": 1,
+        "url": "https://cladora-wzow.vercel.app/ro/demo",
+        "perf": 95,
+        "a11y": 96,
+        "bp": 100,
+        "seo": 66,
+        "fcp": 973.6545,
+        "lcp": 2866.6545,
+        "tbt": 27.500000000000114,
+        "cls": 0,
+        "lcpElement": "N/A",
+        "jsonFile": "ro-demo-run1.report.json",
+        "htmlFile": "ro-demo-run1.report.html"
+      }
+    ],
+    "median": {
+      "perf": 95,
+      "a11y": 96,
+      "bp": 100,
+      "seo": 66,
+      "fcp": 973.6545,
+      "lcp": 2866.6545,
+      "tbt": 27.500000000000114,
+      "cls": 0
+    }
+  },
+  "ro-contact": {
+    "runs": [
+      {
+        "runNum": 1,
+        "url": "https://cladora-wzow.vercel.app/ro/contact",
+        "perf": 93,
+        "a11y": 96,
+        "bp": 100,
+        "seo": 100,
+        "fcp": 921.0751,
+        "lcp": 2871.0751,
+        "tbt": 171,
+        "cls": 0,
+        "lcpElement": "N/A",
+        "jsonFile": "ro-contact-run1.report.json",
+        "htmlFile": "ro-contact-run1.report.html"
+      }
+    ],
+    "median": {
+      "perf": 93,
+      "a11y": 96,
+      "bp": 100,
+      "seo": 100,
+      "fcp": 921.0751,
+      "lcp": 2871.0751,
+      "tbt": 171,
+      "cls": 0
+    }
+  }
+}
