@@ -13,13 +13,14 @@ import {
 import { useDemoStore } from '@/data/demoStore';
 import { formatNumber } from '@/config/currencies';
 import { getActionLabel } from '@/config/actions';
+import { formatUnitLabel } from '@/config/formatters';
 
 export default function MetersPage({ params }: { params: { lang: Language } }) {
   const { lang } = params;
   const { meterReadings, addMeterReading } = useDemoStore();
 
   const [modalOpen, setModalOpen] = useState(false);
-  const [unitInput, setUnitInput] = useState('Ap. 14');
+  const [unitInput, setUnitInput] = useState(lang === 'fa' ? 'واحد ۱۴' : 'Ap. 14');
   const [meterType, setMeterType] = useState<'COLD_WATER' | 'HOT_WATER'>('COLD_WATER');
   const [newIndex, setNewIndex] = useState('');
 
@@ -92,7 +93,7 @@ export default function MetersPage({ params }: { params: { lang: Language } }) {
           <tbody className="divide-y divide-[#F0F4F8]">
             {meterReadings.map((reading) => (
               <tr key={reading.id} className="hover:bg-[#F6F9FC]">
-                <td className="p-3.5 font-bold text-[#102A43] text-start">{reading.unitNumber}</td>
+                <td className="p-3.5 font-bold text-[#102A43] text-start">{formatUnitLabel(reading.unitNumber, lang)}</td>
                 <td className="p-3.5 text-start">
                   <div className="font-semibold text-[#102A43]">
                     {reading.meterType === 'COLD_WATER' 

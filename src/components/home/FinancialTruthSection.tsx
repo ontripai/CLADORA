@@ -130,35 +130,51 @@ export const FinancialTruthSection: React.FC<FinancialTruthSectionProps> = ({ la
             
             {/* Lines List */}
             <div className="lg:col-span-6 space-y-2">
-              {MOCK_CHARGE_BREAKDOWN.map((line) => (
-                <button
-                  key={line.id}
-                  type="button"
-                  onClick={() => setSelectedLine(line.id)}
-                  className={`w-full text-start p-4 rounded-xl transition-all border flex items-center justify-between ${
-                    selectedLine === line.id
-                      ? 'bg-white border-[#0E9F8E] shadow-card ring-1 ring-[#0E9F8E]'
-                      : 'bg-white/60 hover:bg-white border-[#E2E8F0]'
-                  }`}
-                >
-                  <div>
-                    <div className="text-sm font-bold text-[#102A43]">{line.expenseCategory}</div>
-                    <div className="text-xs text-[#52667A] mt-0.5 font-mono">
-                      <span className="ltr-isolate">{line.supplierInvoiceRef}</span> · {lang === 'ro' ? 'Metodă:' : lang === 'fa' ? 'روش:' : 'Method:'} {line.allocationMethod}
+              {MOCK_CHARGE_BREAKDOWN.map((line) => {
+                let category = line.expenseCategory;
+                let method = line.allocationMethod as string;
+                if (lang === 'fa') {
+                  if (line.id === 'CH-01') category = 'آب سرد (مصرف کنتور فرعی)';
+                  if (line.id === 'CH-02') category = 'برق مشاعات و روشنایی';
+                  if (line.id === 'CH-03') category = 'هزینه پسماند و نظافت';
+                  if (line.id === 'CH-04') category = 'صندوق ذخیره تعمیرات اساسی';
+                  if (line.id === 'CH-05') category = 'سرویس و نگهداری آسانسور';
+
+                  if (line.allocationMethod === 'METER_CONSUMPTION') method = 'کنتور اختصاصی';
+                  if (line.allocationMethod === 'CPI') method = 'سهم مشاع (CPI)';
+                  if (line.allocationMethod === 'PER_PERSON') method = 'تعداد نفرات';
+                }
+
+                return (
+                  <button
+                    key={line.id}
+                    type="button"
+                    onClick={() => setSelectedLine(line.id)}
+                    className={`w-full text-start p-4 rounded-xl transition-all border flex items-center justify-between ${
+                      selectedLine === line.id
+                        ? 'bg-white border-[#0E9F8E] shadow-card ring-1 ring-[#0E9F8E]'
+                        : 'bg-white/60 hover:bg-white border-[#E2E8F0]'
+                    }`}
+                  >
+                    <div>
+                      <div className="text-sm font-bold text-[#102A43]">{category}</div>
+                      <div className="text-xs text-[#52667A] mt-0.5 font-mono">
+                        <span className="ltr-isolate">{line.supplierInvoiceRef}</span> · {lang === 'ro' ? 'Metodă:' : lang === 'fa' ? 'روش:' : 'Method:'} {method}
+                      </div>
                     </div>
-                  </div>
-                  <div className="text-end">
-                    <div className="text-sm font-display font-extrabold text-[#102A43]">
-                      <Money amount={line.calculatedAmount} currency="RON" locale={lang} />
+                    <div className="text-end">
+                      <div className="text-sm font-display font-extrabold text-[#102A43]">
+                        <Money amount={line.calculatedAmount} currency="RON" locale={lang} />
+                      </div>
+                      <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-[#EAF8F5] text-[#0A6E62]">
+                        {line.operationalPayer === 'TENANT' 
+                          ? (lang === 'ro' ? 'Chiriaș / Consum' : lang === 'fa' ? 'مستأجر / مصرف' : 'Tenant / Use') 
+                          : (lang === 'ro' ? 'Proprietar' : lang === 'fa' ? 'مالک واحد' : 'Owner')}
+                      </span>
                     </div>
-                    <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-[#EAF8F5] text-[#0A6E62]">
-                      {line.operationalPayer === 'TENANT' 
-                        ? (lang === 'ro' ? 'Chiriaș / Consum' : lang === 'fa' ? 'مستأجر / مصرف' : 'Tenant / Use') 
-                        : (lang === 'ro' ? 'Proprietar' : lang === 'fa' ? 'مالک واحد' : 'Owner')}
-                    </span>
-                  </div>
-                </button>
-              ))}
+                  </button>
+                );
+              })}
             </div>
 
             {/* Drill-down Detail Panel */}

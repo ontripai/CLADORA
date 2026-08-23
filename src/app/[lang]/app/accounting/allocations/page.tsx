@@ -65,27 +65,45 @@ export default function AllocationsPage({ params }: { params: { lang: Language }
               </tr>
             </thead>
             <tbody className="divide-y divide-[#F0F4F8]">
-              {chargeBreakdown.map((item) => (
-                <tr key={item.id} className="hover:bg-[#F6F9FC]">
-                  <td className="p-3 font-bold text-[#102A43] text-start">{item.expenseCategory}</td>
-                  <td className="p-3 font-mono text-[#52667A] text-start ltr-isolate">{item.supplierInvoiceRef}</td>
-                  <td className="p-3 text-start">
-                    <Money amount={item.totalInvoiceAmount} currency={item.currency || 'RON'} locale={lang} />
-                  </td>
-                  <td className="p-3 font-semibold text-[#0E9F8E] text-start ltr-isolate">{item.allocationMethod}</td>
-                  <td className="p-3 font-bold text-start">
-                    {formatPercent(item.unitSharePercent, lang, 2)}
-                  </td>
-                  <td className="p-3 text-end font-bold text-[#102A43]">
-                    <Money amount={item.calculatedAmount} currency={item.currency || 'RON'} locale={lang} />
-                  </td>
-                  <td className="p-3 text-center">
-                    <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-[#EAF8F5] text-[#0A6E62]">
-                      {item.legalDebtor === 'OWNER' ? (lang === 'fa' ? 'مالک' : 'OWNER') : item.legalDebtor} / {item.operationalPayer === 'TENANT' ? (lang === 'fa' ? 'مستأجر' : 'TENANT') : (lang === 'fa' ? 'مالک' : 'OWNER')}
-                    </span>
-                  </td>
-                </tr>
-              ))}
+              {chargeBreakdown.map((item) => {
+                let category = item.expenseCategory;
+                let method = item.allocationMethod as string;
+                if (lang === 'fa') {
+                  if (item.id === 'CH-01') category = 'آب سرد (مصرف کنتور فرعی)';
+                  if (item.id === 'CH-02') category = 'برق مشاعات و روشنایی';
+                  if (item.id === 'CH-03') category = 'هزینه پسماند و نظافت';
+                  if (item.id === 'CH-04') category = 'صندوق ذخیره تعمیرات اساسی';
+                  if (item.id === 'CH-05') category = 'سرویس و نگهداری آسانسور';
+
+                  if (item.allocationMethod === 'METER_CONSUMPTION') method = 'کنتور اختصاصی';
+                  if (item.allocationMethod === 'CPI') method = 'سهم مشاع (CPI)';
+                  if (item.allocationMethod === 'PER_PERSON') method = 'تعداد نفرات';
+                  if (item.allocationMethod === 'SURFACE_M2') method = 'متراژ مفید';
+                  if (item.allocationMethod === 'DIRECT') method = 'مستقیم';
+                }
+
+                return (
+                  <tr key={item.id} className="hover:bg-[#F6F9FC]">
+                    <td className="p-3 font-bold text-[#102A43] text-start">{category}</td>
+                    <td className="p-3 font-mono text-[#52667A] text-start ltr-isolate">{item.supplierInvoiceRef}</td>
+                    <td className="p-3 text-start">
+                      <Money amount={item.totalInvoiceAmount} currency={item.currency || 'RON'} locale={lang} />
+                    </td>
+                    <td className="p-3 font-semibold text-[#0E9F8E] text-start">{method}</td>
+                    <td className="p-3 font-bold text-start">
+                      {formatPercent(item.unitSharePercent, lang, 2)}
+                    </td>
+                    <td className="p-3 text-end font-bold text-[#102A43]">
+                      <Money amount={item.calculatedAmount} currency={item.currency || 'RON'} locale={lang} />
+                    </td>
+                    <td className="p-3 text-center">
+                      <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-[#EAF8F5] text-[#0A6E62]">
+                        {item.legalDebtor === 'OWNER' ? (lang === 'fa' ? 'مالک' : 'OWNER') : (lang === 'fa' ? 'مستأجر' : item.legalDebtor)} / {item.operationalPayer === 'TENANT' ? (lang === 'fa' ? 'مستأجر' : 'TENANT') : (lang === 'fa' ? 'مالک' : 'OWNER')}
+                      </span>
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>

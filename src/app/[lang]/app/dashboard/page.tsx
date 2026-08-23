@@ -24,6 +24,15 @@ import {
 import { useDemoStore } from '@/data/demoStore';
 import { Money } from '@/components/ui/Money';
 import { formatNumber, formatPercent } from '@/config/currencies';
+import { 
+  formatUnitLabel, 
+  formatAccountingPeriod, 
+  getLocalizedWorkOrder, 
+  formatPropertyUnitDetails, 
+  formatTenantDisplay,
+  formatAddress
+} from '@/config/formatters';
+import { formatStatusBadge } from '@/config/statuses';
 
 export default function DashboardPage({ params }: { params: { lang: Language } }) {
   const { lang } = params;
@@ -47,7 +56,7 @@ export default function DashboardPage({ params }: { params: { lang: Language } }
             <span>{lang === 'fa' ? 'مجتمع مسکونی آویاتسی ۱۲B' : context.associationName}</span>
             <span>·</span>
             <span>
-              {lang === 'ro' ? 'Perioadă Contabilă:' : lang === 'fa' ? 'دوره حسابداری:' : 'Accounting Period:'} {context.accountingPeriod}
+              {lang === 'ro' ? 'Perioadă Contabilă:' : lang === 'fa' ? 'دوره حسابداری:' : 'Accounting Period:'} {formatAccountingPeriod(context.accountingPeriod, lang)}
             </span>
           </div>
           <h1 className="text-2xl font-display font-extrabold text-[#102A43] mt-1">
@@ -233,19 +242,23 @@ export default function DashboardPage({ params }: { params: { lang: Language } }
               </div>
 
               <div className="space-y-3">
-                {workOrders.map((wo) => (
-                  <div key={wo.id} className="p-3 rounded-xl bg-[#F6F9FC] border border-[#E2E8F0] space-y-1">
-                    <div className="flex items-center justify-between text-[11px]">
-                      <span className="font-bold text-[#102A43] truncate max-w-[200px]">{wo.title}</span>
-                      <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-[#FFF7E6] text-[#B45309]">
-                        {wo.status}
-                      </span>
+                {workOrders.map((wo) => {
+                  const loc = getLocalizedWorkOrder(wo.id, lang);
+                  const statusBadge = formatStatusBadge(wo.status, lang);
+                  return (
+                    <div key={wo.id} className="p-3 rounded-xl bg-[#F6F9FC] border border-[#E2E8F0] space-y-1">
+                      <div className="flex items-center justify-between text-[11px]">
+                        <span className="font-bold text-[#102A43] truncate max-w-[200px]">{loc.title}</span>
+                        <span className={`text-[10px] font-bold px-2 py-0.5 rounded border ${statusBadge.badgeClass}`}>
+                          {statusBadge.label}
+                        </span>
+                      </div>
+                      <div className="text-[10px] text-[#52667A]">
+                        {loc.unitOrArea} · SLA: <span className="ltr-isolate">{wo.slaDeadline}</span>
+                      </div>
                     </div>
-                    <div className="text-[10px] text-[#52667A]">
-                      {wo.unitOrArea} · SLA: {wo.slaDeadline}
-                    </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
 
@@ -404,15 +417,17 @@ export default function DashboardPage({ params }: { params: { lang: Language } }
                 <div key={p.id} className="p-4 rounded-xl bg-[#F6F9FC] border border-[#E2E8F0] space-y-2">
                   <div className="flex justify-between items-start">
                     <div>
-                      <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-[#EAF8F5] text-[#0A6E62]">{p.unit}</span>
-                      <h4 className="text-sm font-bold text-[#102A43] mt-1">{p.address}</h4>
+                      <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-[#EAF8F5] text-[#0A6E62]">
+                        {formatPropertyUnitDetails(p.unit, lang)}
+                      </span>
+                      <h4 className="text-sm font-bold text-[#102A43] mt-1">{formatAddress(p.address, lang)}</h4>
                     </div>
                     <span className="text-sm font-extrabold text-[#0E9F8E]">
                       <Money amount={p.monthlyRent} currency={p.currency as any} locale={lang} minimumFractionDigits={0} maximumFractionDigits={0} />
                     </span>
                   </div>
                   <div className="flex justify-between text-xs text-[#52667A] pt-2 border-t border-[#E2E8F0]">
-                    <span>{lang === 'ro' ? 'Chiriaș:' : lang === 'fa' ? 'مستأجر:' : 'Tenant:'} {p.tenantName || (lang === 'fa' ? 'خالی' : 'Vacant')}</span>
+                    <span>{lang === 'ro' ? 'Chiriaș:' : lang === 'fa' ? 'مستأجر:' : 'Tenant:'} {formatTenantDisplay(p.tenantName, lang)}</span>
                     <span className="font-bold text-[#2F80ED]">Yield: {formatPercent(p.netYieldPercent, lang, 1)}</span>
                   </div>
                 </div>

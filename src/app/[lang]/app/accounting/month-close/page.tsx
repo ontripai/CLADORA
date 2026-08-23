@@ -16,6 +16,8 @@ import {
 import { useDemoStore } from '@/data/demoStore';
 import { Money } from '@/components/ui/Money';
 import { getActionLabel } from '@/config/actions';
+import { getStatusLabel } from '@/config/statuses';
+import { formatAccountingPeriod } from '@/config/formatters';
 
 export default function MonthClosePage({ params }: { params: { lang: Language } }) {
   const { lang } = params;
@@ -46,7 +48,14 @@ export default function MonthClosePage({ params }: { params: { lang: Language } 
             {lang === 'ro' ? 'Asistent Închidere Lunară Contabilă' : lang === 'fa' ? 'دستیار گام‌به‌گام بستن دوره حسابداری' : 'Month-End Close Stepper'}
           </h1>
           <p className="text-xs text-[#52667A]">
-            {lang === 'ro' ? 'Perioadă:' : lang === 'fa' ? 'دوره مالی:' : 'Period:'} <strong className="text-[#102A43] font-mono ltr-isolate">{monthCloseState.period}</strong> · {lang === 'ro' ? 'Status:' : lang === 'fa' ? 'وضعیت:' : 'Status:'} {monthCloseState.status}
+            {lang === 'ro' ? 'Perioadă:' : lang === 'fa' ? 'دوره مالی:' : 'Period:'}{' '}
+            <strong className="text-[#102A43] font-mono">
+              {formatAccountingPeriod(monthCloseState.period, lang)}
+            </strong>{' '}
+            · {lang === 'ro' ? 'Status:' : lang === 'fa' ? 'وضعیت:' : 'Status:'}{' '}
+            <span className="font-bold text-[#0E9F8E]">
+              {getStatusLabel(monthCloseState.status === 'SEALED' ? 'locked' : monthCloseState.status === 'OPEN' ? 'open' : 'in_progress', lang)}
+            </span>
           </p>
         </div>
 

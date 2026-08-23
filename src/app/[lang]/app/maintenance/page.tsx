@@ -13,8 +13,9 @@ import {
   Building
 } from 'lucide-react';
 import { useDemoStore } from '@/data/demoStore';
-import { getStatusLabel } from '@/config/statuses';
+import { getStatusLabel, formatStatusBadge } from '@/config/statuses';
 import { getActionLabel } from '@/config/actions';
+import { getLocalizedWorkOrder } from '@/config/formatters';
 
 export default function MaintenancePage({ params }: { params: { lang: Language } }) {
   const { lang } = params;
@@ -79,42 +80,43 @@ export default function MaintenancePage({ params }: { params: { lang: Language }
 
       {/* Work Orders List */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {workOrders.map((wo) => (
-          <div key={wo.id} className="card-proptech p-5 bg-white space-y-3">
-            <div className="flex items-start justify-between gap-2">
-              <div>
-                <div className="flex items-center gap-2">
-                  <span className={`text-[10px] font-bold px-2 py-0.5 rounded ${
-                    wo.urgency === 'HIGH' || wo.urgency === 'CRITICAL_SAFETY'
-                      ? 'bg-[#FEE2E2] text-[#E5484D]'
-                      : 'bg-[#EDF5FF] text-[#2F80ED]'
-                  }`}>
-                    {wo.urgency === 'HIGH' || wo.urgency === 'CRITICAL_SAFETY'
-                      ? (lang === 'fa' ? 'فوری' : wo.urgency)
-                      : (lang === 'fa' ? 'عادی' : wo.urgency)}
-                  </span>
-                  <span className="text-xs font-mono text-[#7B8A9A] ltr-isolate">{wo.id}</span>
-                </div>
-                <h3 className="text-sm font-bold text-[#102A43] mt-1.5">{wo.title}</h3>
-              </div>
-              <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-[#FFF7E6] text-[#B45309]">
-                {wo.status === 'OPEN' 
-                  ? getStatusLabel('open', lang)
-                  : wo.status === 'IN_PROGRESS' 
-                  ? getStatusLabel('in_progress', lang) 
-                  : getStatusLabel('completed', lang)}
-              </span>
-            </div>
+        {workOrders.map((wo) => {
+          const loc = getLocalizedWorkOrder(wo.id, lang);
+          const statusBadge = formatStatusBadge(wo.status, lang);
 
-            <div className="text-xs text-[#52667A] space-y-1 pt-2 border-t border-[#F0F4F8]">
-              <div>{lang === 'ro' ? 'Locație:' : lang === 'fa' ? 'محل خرابی:' : 'Location:'} <strong>{wo.unitOrArea}</strong></div>
-              <div>{lang === 'ro' ? 'Alocat:' : lang === 'fa' ? 'تکنسین مسئول:' : 'Assigned to:'} <strong>{wo.assignedTo || (lang === 'fa' ? 'تخصیص‌نیافته' : 'Unassigned')}</strong></div>
-              <div className="text-[11px] text-[#7B8A9A]">
-                {lang === 'ro' ? 'Creat:' : lang === 'fa' ? 'زمان ثبت:' : 'Created:'} <span className="ltr-isolate">{wo.createdAt}</span> · SLA: <span className="ltr-isolate">{wo.slaDeadline}</span>
+          return (
+            <div key={wo.id} className="card-proptech p-5 bg-white space-y-3">
+              <div className="flex items-start justify-between gap-2">
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className={`text-[10px] font-bold px-2 py-0.5 rounded ${
+                      wo.urgency === 'HIGH' || wo.urgency === 'CRITICAL_SAFETY'
+                        ? 'bg-[#FEE2E2] text-[#E5484D]'
+                        : 'bg-[#EDF5FF] text-[#2F80ED]'
+                    }`}>
+                      {wo.urgency === 'HIGH' || wo.urgency === 'CRITICAL_SAFETY'
+                        ? (lang === 'fa' ? 'فوری' : wo.urgency)
+                        : (lang === 'fa' ? 'عادی' : wo.urgency)}
+                    </span>
+                    <span className="text-xs font-mono text-[#7B8A9A] ltr-isolate">{wo.id}</span>
+                  </div>
+                  <h3 className="text-sm font-bold text-[#102A43] mt-1.5">{loc.title}</h3>
+                </div>
+                <span className={`text-xs font-bold px-2.5 py-1 rounded-full border ${statusBadge.badgeClass}`}>
+                  {statusBadge.label}
+                </span>
+              </div>
+
+              <div className="text-xs text-[#52667A] space-y-1 pt-2 border-t border-[#F0F4F8]">
+                <div>{lang === 'ro' ? 'Locație:' : lang === 'fa' ? 'محل خرابی:' : 'Location:'} <strong>{loc.unitOrArea}</strong></div>
+                <div>{lang === 'ro' ? 'Alocat:' : lang === 'fa' ? 'تکنسین مسئول:' : 'Assigned to:'} <strong>{loc.assignedTo || (lang === 'fa' ? 'تخصیص‌نیافته' : 'Unassigned')}</strong></div>
+                <div className="text-[11px] text-[#7B8A9A]">
+                  {lang === 'ro' ? 'Creat:' : lang === 'fa' ? 'زمان ثبت:' : 'Created:'} <span className="ltr-isolate">{wo.createdAt}</span> · SLA: <span className="ltr-isolate">{wo.slaDeadline}</span>
+                </div>
               </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       {/* Add Modal */}

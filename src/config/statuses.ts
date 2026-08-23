@@ -15,10 +15,12 @@ export type EntityStatus =
   | 'overdue'
   | 'draft'
   | 'open'
+  | 'assigned'
   | 'in_progress'
   | 'completed'
   | 'cancelled'
   | 'locked'
+  | 'blocked'
   | 'reconciled'
   | 'unreconciled'
   | 'verified'
@@ -105,6 +107,13 @@ export const statusConfig: Record<EntityStatus, StatusMeta> = {
     fa: 'باز',
     badgeClass: 'bg-[#EFF6FF] text-[#2563EB] border-[#BFDBFE]',
   },
+  assigned: {
+    key: 'assigned',
+    ro: 'Alocat',
+    en: 'Assigned',
+    fa: 'تخصیص‌یافته',
+    badgeClass: 'bg-[#EFF6FF] text-[#1D4ED8] border-[#BFDBFE]',
+  },
   in_progress: {
     key: 'in_progress',
     ro: 'În lucru',
@@ -132,6 +141,13 @@ export const statusConfig: Record<EntityStatus, StatusMeta> = {
     en: 'Locked',
     fa: 'قفل‌شده',
     badgeClass: 'bg-[#F1F5F9] text-[#334155] border-[#94A3B8]',
+  },
+  blocked: {
+    key: 'blocked',
+    ro: 'Blocat Operațional',
+    en: 'Blocked',
+    fa: 'متوقف‌شده',
+    badgeClass: 'bg-[#FEF2F2] text-[#B91C1C] border-[#FCA5A5]',
   },
   reconciled: {
     key: 'reconciled',
@@ -181,4 +197,26 @@ export function getStatusLabel(status: EntityStatus, locale: Locale = 'ro'): str
   const meta = statusConfig[status];
   if (!meta) return status;
   return meta[locale] || meta.en;
+}
+
+export function normalizeStatusKey(rawStatus: string): EntityStatus {
+  if (!rawStatus) return 'open';
+  const s = rawStatus.toLowerCase().replace(/[\s-]+/g, '_');
+  if (s in statusConfig) return s as EntityStatus;
+  if (s === 'validated' || s === 'posted') return 'completed';
+  if (s === 'pending_audit' || s === 'pending_review') return 'needs_review';
+  if (s === 'anomaly_flagged') return 'rejected';
+  if (s === 'occupied') return 'active';
+  if (s === 'vacant') return 'open';
+  if (s === 'renovating') return 'in_progress';
+  return 'open';
+}
+
+export function formatStatusBadge(rawStatus: string, locale: Locale = 'ro'): { label: string; badgeClass: string } {
+  const key = normalizeStatusKey(rawStatus);
+  const meta = statusConfig[key] || statusConfig.open;
+  return {
+    label: meta[locale] || meta.en,
+    badgeClass: meta.badgeClass,
+  };
 }

@@ -94,7 +94,7 @@ export const ALLOWLISTED_TECHNICAL_TERMS = [
   'A1', 'A2', 'A3', 'A4', 'A5', 'A6', 'A7', 'A8'
 ];
 
-// Disallowed English phrases on Persian views
+// Disallowed English phrases and raw enums on Persian views
 export const DISALLOWED_ENGLISH_PHRASES = [
   /\bHome\b/i,
   /\bSolutions\b/i,
@@ -135,7 +135,19 @@ export const DISALLOWED_ENGLISH_PHRASES = [
   /\bDigital Noticeboard on Mobile\b/i,
   /\bPure Consumption Costs\b/i,
   /\bDirect Repair Requests\b/i,
-  /\bPrivacy Protection\b/i
+  /\bPrivacy Protection\b/i,
+  // Section 10 required detections
+  /\bStudio\b/,
+  /\bExpat\b/i,
+  /\bOPEN\b/,
+  /\bASSIGNED\b/,
+  /\bIN_PROGRESS\b/,
+  /\bassociation_admin\b/,
+  /\bportfolio_owner\b/,
+  /\bproperty_manager\b/,
+  /\bplatform_admin\b/,
+  /\bAp\.\s*\d+/i,
+  /\b(OCT|JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|NOV|DEC)-\d{4}\b/
 ];
 
 // Disallowed Romanian phrases and keywords on Persian views
@@ -185,7 +197,23 @@ export const DISALLOWED_ROMANIAN_PHRASES = [
   /\blun[ăa]\b/i,
   /\bluni\b/i,
   /\bcheltuieli\b/i,
-  /\bpentru\b/i
+  /\bpentru\b/i,
+  // Section 10 required Romanian runtime detections
+  /\bcamere\b/i,
+  /\bAmbasada\b/i,
+  /\bPierdere\b/i,
+  /\bpresiune\b/i,
+  /\bcoloan[ăa]\b/i,
+  /\bTronson\b/i,
+  /\bScara\b/i,
+  /\bSubsol\b/i,
+  /\bTehnic\b/i,
+  /\bBlocare\b/i,
+  /\bsenzor\b/i,
+  /\bsenzori\b/i,
+  /\bÎnlocuire\b/i,
+  /\bEtaj\b/i,
+  /\bAscensor\b/i
 ];
 
 function fetchPage(path, port = 3000) {

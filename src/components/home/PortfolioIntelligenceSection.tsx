@@ -8,6 +8,7 @@ import {
 import { MOCK_PORTFOLIO_PROPERTIES } from '@/data/mockData';
 import { Money } from '@/components/ui/Money';
 import { formatPercent } from '@/config/currencies';
+import { formatPropertyUnitDetails, formatTenantDisplay, formatGregorianDate, formatAddress } from '@/config/formatters';
 
 interface PortfolioSectionProps {
   lang: Language;
@@ -24,28 +25,28 @@ export const PortfolioIntelligenceSection: React.FC<PortfolioSectionProps> = ({ 
           </span>
           <h2 className="text-3xl sm:text-5xl font-display font-extrabold text-[#102A43] tracking-tight">
             {lang === 'ro' 
-              ? 'Inteligență Financiară pentru Portofoliul Tău' 
+              ? 'Consolă Unificată pentru Portofolii & Chirii' 
               : lang === 'fa'
-              ? 'پایش هوشمند و تجمیعی سبد دارایی‌های ملکی'
-              : 'Consolidated Portfolio Intelligence'}
+              ? 'کنسول متمرکز پایش سبد املاک و درآمد اجاره'
+              : 'Unified Property & Rental Portfolio Console'}
           </h2>
           <p className="text-base sm:text-lg text-[#52667A]">
             {lang === 'ro'
-              ? 'Un proprietar din România poate locui într-un apartament și închiria alte 3 proprietăți. CLADORA îți oferă o singură consolă pentru randament, chirii, garanții și contracte.'
+              ? 'Fie că deții 2 apartamente sau administrezi 50 de unități rezidențiale, CLADORA calculează automat randamentul net și separă costurile proprietar-chiriaș.'
               : lang === 'fa'
-              ? 'یک مالک می‌تواند در یک واحد ساکن بوده و هم‌زمان چند ملک استیجاری داشته باشد. کلادورا یک داشبورد جامع برای پایش بازده خالص، وصول اجاره‌ها، حساب امانی ودیعه و سررسید قراردادها فراهم می‌کند.'
-              : 'One Romanian owner can live in one condo while renting out 3 others. CLADORA gives you a single dashboard for gross rent, net yield, tenant recovery, and renewals.'}
+              ? 'چه مالک ۲ واحد مسکونی باشید یا ۵۰ ملک استیجاری را اداره کنید، کلادورا بازده خالص را لحظه‌ای محاسبه و مخارج مالک و مستأجر را تفکیک می‌کند.'
+              : 'Whether you own 2 units or manage 50 properties, CLADORA tracks cashflow, automated gross-to-net yields, and separates operational expenses from owner reserve funds.'}
           </p>
         </div>
 
-        {/* Portfolio KPI Summary Strip */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-14">
+        {/* Portfolio KPI Bar */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-12">
           <div className="card-proptech p-5 bg-white">
             <div className="text-xs font-bold text-[#7B8A9A] uppercase tracking-wide">
-              {lang === 'ro' ? 'Total Proprietăți Active' : lang === 'fa' ? 'تعداد کل املاک تحت پوشش' : 'Total Properties'}
+              {lang === 'ro' ? 'Proprietăți Active' : lang === 'fa' ? 'املاک فعال تحت مدیریت' : 'Active Units'}
             </div>
             <div className="text-2xl font-display font-extrabold text-[#102A43] mt-2">
-              {lang === 'ro' ? '4 Apartamente' : lang === 'fa' ? '۴ واحد مسکونی' : '4 Properties'}
+              {lang === 'ro' ? '4 Unități' : lang === 'fa' ? '۴ واحد مسکونی' : '4 Units'}
             </div>
             <div className="text-xs text-[#059669] font-bold mt-1">
               {lang === 'ro' ? '✓ 100% Grad Ocupare' : lang === 'fa' ? '✓ نرخ اشغال ۱۰۰٪' : '✓ 100% Occupancy'}
@@ -96,12 +97,16 @@ export const PortfolioIntelligenceSection: React.FC<PortfolioSectionProps> = ({ 
               <div className="flex items-start justify-between">
                 <div>
                   <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-[#EAF8F5] text-[#0A6E62]">
-                    {prop.unit}
+                    {formatPropertyUnitDetails(prop.unit, lang)}
                   </span>
                   <h3 className="text-base font-bold text-[#102A43] mt-1">
-                    {prop.address}
+                    {formatAddress(prop.address, lang)}
                   </h3>
-                  <p className="text-xs text-[#52667A]">{prop.associationName}</p>
+                  <p className="text-xs text-[#52667A]">
+                    {lang === 'fa' 
+                      ? (prop.associationName.includes('Titan') ? 'مجتمع مسکونی تیتان پارک' : 'مجتمع مسکونی آویاتسی') 
+                      : prop.associationName}
+                  </p>
                 </div>
                 <div className="text-end">
                   <div className="text-lg font-display font-extrabold text-[#0E9F8E]">
@@ -116,11 +121,11 @@ export const PortfolioIntelligenceSection: React.FC<PortfolioSectionProps> = ({ 
               <div className="grid grid-cols-3 gap-2 pt-3 border-t border-[#F0F4F8] text-center text-xs">
                 <div className="p-2 rounded-lg bg-[#F6F9FC]">
                   <div className="text-[#7B8A9A] text-[10px]">{lang === 'ro' ? 'Chiriaș' : lang === 'fa' ? 'مستأجر' : 'Tenant'}</div>
-                  <div className="font-bold text-[#102A43] truncate mt-0.5">{prop.tenantName || (lang === 'ro' ? 'Vacant' : lang === 'fa' ? 'خالی' : 'Vacant')}</div>
+                  <div className="font-bold text-[#102A43] truncate mt-0.5">{formatTenantDisplay(prop.tenantName, lang)}</div>
                 </div>
                 <div className="p-2 rounded-lg bg-[#F6F9FC]">
                   <div className="text-[#7B8A9A] text-[10px]">{lang === 'ro' ? 'Expirare Contract' : lang === 'fa' ? 'انقضای قرارداد' : 'Lease Expiry'}</div>
-                  <div className="font-bold text-[#102A43] font-mono mt-0.5 ltr-isolate">{prop.leaseEndDate}</div>
+                  <div className="font-bold text-[#102A43] font-mono mt-0.5">{formatGregorianDate(prop.leaseEndDate || '', lang)}</div>
                 </div>
                 <div className="p-2 rounded-lg bg-[#F6F9FC]">
                   <div className="text-[#7B8A9A] text-[10px]">{lang === 'ro' ? 'Yield Net' : lang === 'fa' ? 'بازده خالص' : 'Net Yield'}</div>

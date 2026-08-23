@@ -33,6 +33,7 @@ import {
 import { useDemoStore } from '@/data/demoStore';
 import { DEMO_ROLES } from '@/data/mockData';
 import { LanguageSwitcher } from '@/components/ui/LanguageSwitcher';
+import { formatUnitLabel, formatAccountingPeriod } from '@/config/formatters';
 
 export default function AppLayout({
   children,
@@ -101,7 +102,10 @@ export default function AppLayout({
                 {lang === 'fa' ? 'مجتمع مسکونی آویاتسی ۱۲B' : context.associationName}
               </span>
               <span className="text-[10px] text-[#7B8A9A] -mt-0.5">
-                {context.unitNumber} · {lang === 'ro' ? 'Perioadă:' : lang === 'fa' ? 'دوره:' : 'Period:'} <strong className="text-[#0E9F8E] font-mono">{context.accountingPeriod}</strong>
+                {lang === 'fa' 
+                  ? `${formatUnitLabel(context.unitNumber || 'Ap. 14', lang)} · دوره: ${formatAccountingPeriod(context.accountingPeriod, lang)}` 
+                  : `${context.unitNumber} · ${lang === 'ro' ? 'Perioadă:' : 'Period:'} `}
+                {lang !== 'fa' && <strong className="text-[#0E9F8E] font-mono">{context.accountingPeriod}</strong>}
               </span>
             </div>
           </div>

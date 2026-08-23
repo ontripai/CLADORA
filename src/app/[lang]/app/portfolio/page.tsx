@@ -13,6 +13,7 @@ import {
 import { useDemoStore } from '@/data/demoStore';
 import { Money } from '@/components/ui/Money';
 import { formatPercent } from '@/config/currencies';
+import { formatPropertyUnitDetails, formatTenantDisplay, formatGregorianDate, formatAddress } from '@/config/formatters';
 
 export default function PortfolioPage({ params }: { params: { lang: Language } }) {
   const { lang } = params;
@@ -50,9 +51,9 @@ export default function PortfolioPage({ params }: { params: { lang: Language } }
             <div className="flex items-start justify-between">
               <div>
                 <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-[#EAF8F5] text-[#0A6E62]">
-                  {prop.unit}
+                  {formatPropertyUnitDetails(prop.unit, lang)}
                 </span>
-                <h3 className="text-base font-bold text-[#102A43] mt-1.5">{prop.address}</h3>
+                <h3 className="text-base font-bold text-[#102A43] mt-1.5">{formatAddress(prop.address, lang)}</h3>
                 <p className="text-xs text-[#7B8A9A]">
                   {lang === 'fa' 
                     ? (prop.associationName.includes('Titan') ? 'مجتمع مسکونی تیتان پارک' : 'مجتمع مسکونی آویاتسی') 
@@ -72,11 +73,11 @@ export default function PortfolioPage({ params }: { params: { lang: Language } }
             <div className="grid grid-cols-3 gap-2 pt-3 border-t border-[#F0F4F8] text-center text-xs">
               <div className="p-2 rounded-lg bg-[#F6F9FC]">
                 <div className="text-[#7B8A9A] text-[10px]">{lang === 'ro' ? 'Chiriaș' : lang === 'fa' ? 'مستأجر' : 'Tenant'}</div>
-                <div className="font-bold text-[#102A43] truncate mt-0.5">{prop.tenantName || (lang === 'fa' ? 'خالی' : 'Vacant')}</div>
+                <div className="font-bold text-[#102A43] truncate mt-0.5">{formatTenantDisplay(prop.tenantName, lang)}</div>
               </div>
               <div className="p-2 rounded-lg bg-[#F6F9FC]">
                 <div className="text-[#7B8A9A] text-[10px]">{lang === 'ro' ? 'Expirare Contract' : lang === 'fa' ? 'انقضای قرارداد' : 'Lease Expiry'}</div>
-                <div className="font-bold text-[#102A43] font-mono mt-0.5 ltr-isolate">{prop.leaseEndDate || 'N/A'}</div>
+                <div className="font-bold text-[#102A43] font-mono mt-0.5">{formatGregorianDate(prop.leaseEndDate || '', lang)}</div>
               </div>
               <div className="p-2 rounded-lg bg-[#F6F9FC]">
                 <div className="text-[#7B8A9A] text-[10px]">{lang === 'ro' ? 'Yield Net' : lang === 'fa' ? 'بازده خالص' : 'Net Yield'}</div>

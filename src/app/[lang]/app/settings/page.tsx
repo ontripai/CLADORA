@@ -5,6 +5,8 @@ import { Language } from '@/types';
 import { Settings, ShieldCheck, User, Building, Bell } from 'lucide-react';
 import { useDemoStore } from '@/data/demoStore';
 
+import { formatRoleTitle, formatUnitLabel } from '@/config/formatters';
+
 export default function SettingsPage({ params }: { params: { lang: Language } }) {
   const { lang } = params;
   const { activeRole, context } = useDemoStore();
@@ -53,7 +55,7 @@ export default function SettingsPage({ params }: { params: { lang: Language } })
           <div className="space-y-2 pt-2 border-t border-[#F0F4F8] text-xs">
             <div className="flex justify-between p-2.5 rounded-lg bg-[#F6F9FC]">
               <span className="text-[#52667A]">{lang === 'ro' ? 'Rol activ curent:' : lang === 'fa' ? 'نقش فعال فعلی:' : 'Active Role:'}</span>
-              <span className="font-bold text-[#0E9F8E] font-mono ltr-isolate">{activeRole}</span>
+              <span className="font-bold text-[#0E9F8E]">{formatRoleTitle(activeRole, lang)}</span>
             </div>
             <div className="flex justify-between p-2.5 rounded-lg bg-[#F6F9FC]">
               <span className="text-[#52667A]">{lang === 'ro' ? 'Asociație principală:' : lang === 'fa' ? 'مجتمع متصل اصلی:' : 'Primary Association:'}</span>
@@ -61,7 +63,7 @@ export default function SettingsPage({ params }: { params: { lang: Language } })
             </div>
             <div className="flex justify-between p-2.5 rounded-lg bg-[#F6F9FC]">
               <span className="text-[#52667A]">{lang === 'ro' ? 'Unitate rezidențială:' : lang === 'fa' ? 'واحد مسکونی:' : 'Residential Unit:'}</span>
-              <span className="font-bold text-[#102A43]">{context.unitNumber}</span>
+              <span className="font-bold text-[#102A43]">{formatUnitLabel(context.unitNumber || 'Ap. 14', lang)}</span>
             </div>
           </div>
         </div>
