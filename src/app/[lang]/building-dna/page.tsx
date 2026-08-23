@@ -11,10 +11,17 @@ export async function generateMetadata({
   params: { lang: Language };
 }): Promise<Metadata> {
   const isRo = params.lang === 'ro';
+  const isFa = params.lang === 'fa';
   return {
-    title: isRo ? 'ADN Clădire & Arhetipuri Inginerești (A1-A8) | CLADORA' : 'Building DNA & 8 Engineering Archetypes | CLADORA',
+    title: isRo 
+      ? 'ADN Clădire & Arhetipuri Inginerești (A1-A8) | CLADORA' 
+      : isFa
+      ? 'شناسنامه فنی ساختمان و ۸ کهن‌الگوی مهندسی (A1-A8) | کلادورا'
+      : 'Building DNA & 8 Engineering Archetypes | CLADORA',
     description: isRo
       ? 'Modele inginerești adaptate clădirilor din România: blocuri vechi pre-1990, reabilitate, complexe noi, ansambluri de vile și imobile mixte.'
+      : isFa
+      ? 'بسته‌های قوانین مهندسی منطبق با ساختار واقعی ساختمان‌ها: بلوک‌های قبل از ۱۹۹۰، ساختمان‌های نوسازی‌شده، مجتمع‌های ویلایی و بناهای چندمنظوره.'
       : 'Engineering rule packs tailored to real building structures: pre-1990 communist blocks, renovated envelopes, gated villas, and mixed-use complexes.',
   };
 }

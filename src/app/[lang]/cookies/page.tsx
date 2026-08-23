@@ -16,30 +16,36 @@ export default function CookiesPage({ params }: { params: { lang: Language } }) 
         
         <div className="flex items-center gap-2 text-xs text-[#52667A] mb-8 font-medium">
           <Link href={`/${lang}`} className="hover:text-[#102A43]">
-            {lang === 'ro' ? 'Acasă' : 'Home'}
+            {lang === 'ro' ? 'Acasă' : lang === 'fa' ? 'صفحه اصلی' : 'Home'}
           </Link>
           <span>/</span>
-          <span className="text-[#102A43] font-bold">Cookies</span>
+          <span className="text-[#102A43] font-bold">
+            {lang === 'ro' ? 'Politica Cookie' : lang === 'fa' ? 'سیاست کوکی‌ها' : 'Cookie Policy'}
+          </span>
         </div>
 
         <div className="card-proptech p-8 sm:p-12 bg-white space-y-6">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-[#EAF8F5] text-[#0E9F8E] flex items-center justify-center">
+            <div className="w-10 h-10 rounded-xl bg-[#EAF8F5] text-[#0E9F8E] flex items-center justify-center shrink-0">
               <Cookie className="w-5 h-5" />
             </div>
             <div>
               <h1 className="text-2xl sm:text-3xl font-display font-extrabold text-[#102A43]">
-                {lang === 'ro' ? 'Politica privind Modulele Cookie' : 'Cookie Policy'}
+                {lang === 'ro' ? 'Politica privind Modulele Cookie' : lang === 'fa' ? 'سیاست استفاده از کوکی‌ها و حافظه مرورگر' : 'Cookie Policy'}
               </h1>
-              <p className="text-xs text-[#7B8A9A]">Actualizat: Octombrie 2026</p>
+              <p className="text-xs text-[#7B8A9A]">
+                {lang === 'ro' ? 'Actualizat: Octombrie 2026' : lang === 'fa' ? 'آخرین به‌روزرسانی: اکتبر ۲۰۲۶' : 'Last updated: October 2026'}
+              </p>
             </div>
           </div>
 
           <div className="prose prose-sm max-w-none text-[#52667A] space-y-4 text-xs sm:text-sm leading-relaxed border-t border-[#F0F4F8] pt-6">
             <p>
               {lang === 'ro'
-                ? 'CLADORA utilizează module cookie esențiale strict necesare pentru funcționarea platformei, autentificarea utilizatorilor și memorarea preferințelor de limbă (RO/EN). Nu utilizăm cookie-uri de urmărire terță fără consimțământul tău expres.'
-                : 'CLADORA uses essential cookies strictly necessary for application authentication and language preferences (RO/EN). We do not deploy third-party trackers without consent.'}
+                ? 'CLADORA utilizează module cookie esențiale strict necesare pentru funcționarea platformei, autentificarea utilizatorilor și memorarea preferințelor de limbă (RO/EN/FA). Nu utilizăm cookie-uri de urmărire terță fără consimțământul tău expres.'
+                : lang === 'fa'
+                ? 'کلادورا صرفاً از کوکی‌های ضروری برای حفظ نشست‌های امن کاربری و ذخیره‌سازی ترجیحات زبانی (فارسی/رومانیایی/انگلیسی) استفاده می‌نماید. ما هیچ‌گونه کوکی ردیابی شخص ثالث بدون رضایت صریح شما فعال نمی‌کنیم.'
+                : 'CLADORA uses essential cookies strictly necessary for application authentication and language preferences (RO/EN/FA). We do not deploy third-party trackers without consent.'}
             </p>
           </div>
         </div>

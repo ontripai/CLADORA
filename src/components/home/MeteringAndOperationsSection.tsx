@@ -7,6 +7,7 @@ import {
   Wrench, 
   CheckCircle2 
 } from 'lucide-react';
+import { formatNumber } from '@/config/currencies';
 
 interface MeteringProps {
   lang: Language;
@@ -121,7 +122,7 @@ export const MeteringAndOperationsSection: React.FC<MeteringProps> = ({ lang }) 
                     {lang === 'ro' ? 'Consum Rezultat' : lang === 'fa' ? 'میزان مصرف دوره' : 'Calculated Usage'}
                   </label>
                   <div className="px-3 py-2 rounded-xl bg-[#ECFDF5] border border-[#A7F3D0] text-sm font-mono font-extrabold text-[#059669]">
-                    +{(parseFloat(readingInput || '0') - 142.50).toFixed(2)} m³
+                    +{formatNumber(parseFloat(readingInput || '0') - 142.50, lang, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} m³
                   </div>
                 </div>
               </div>

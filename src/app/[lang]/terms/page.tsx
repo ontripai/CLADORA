@@ -17,39 +17,49 @@ export default function TermsPage({ params }: { params: { lang: Language } }) {
         {/* Breadcrumbs */}
         <div className="flex items-center gap-2 text-xs text-[#52667A] mb-8 font-medium">
           <Link href={`/${lang}`} className="hover:text-[#102A43]">
-            {lang === 'ro' ? 'Acasă' : 'Home'}
+            {lang === 'ro' ? 'Acasă' : lang === 'fa' ? 'صفحه اصلی' : 'Home'}
           </Link>
           <span>/</span>
           <span className="text-[#102A43] font-bold">
-            {lang === 'ro' ? 'Termeni și Condiții' : 'Terms of Service'}
+            {lang === 'ro' ? 'Termeni și Condiții' : lang === 'fa' ? 'شرایط و قوانین استفاده' : 'Terms of Service'}
           </span>
         </div>
 
         <div className="card-proptech p-8 sm:p-12 bg-white space-y-6">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-[#EAF8F5] text-[#0E9F8E] flex items-center justify-center">
+            <div className="w-10 h-10 rounded-xl bg-[#EAF8F5] text-[#0E9F8E] flex items-center justify-center shrink-0">
               <FileText className="w-5 h-5" />
             </div>
             <div>
               <h1 className="text-2xl sm:text-3xl font-display font-extrabold text-[#102A43]">
-                {lang === 'ro' ? 'Termeni și Condiții de Utilizare' : 'Terms of Service'}
+                {lang === 'ro' ? 'Termeni și Condiții de Utilizare' : lang === 'fa' ? 'شرایط و قوانین استفاده از خدمات کلادورا' : 'Terms of Service'}
               </h1>
-              <p className="text-xs text-[#7B8A9A]">Versiunea 1.2 · Octombrie 2026</p>
+              <p className="text-xs text-[#7B8A9A]">
+                {lang === 'ro' ? 'Versiunea 1.2 · Octombrie 2026' : lang === 'fa' ? 'نسخه ۱.۲ · اکتبر ۲۰۲۶' : 'Version 1.2 · October 2026'}
+              </p>
             </div>
           </div>
 
           <div className="prose prose-sm max-w-none text-[#52667A] space-y-4 text-xs sm:text-sm leading-relaxed border-t border-[#F0F4F8] pt-6">
-            <h2 className="text-base font-bold text-[#102A43]">1. Obiectul Serviciilor</h2>
+            <h2 className="text-base font-bold text-[#102A43]">
+              {lang === 'ro' ? '1. Obiectul Serviciilor' : lang === 'fa' ? '۱. موضوع خدمات' : '1. Service Scope'}
+            </h2>
             <p>
               {lang === 'ro'
                 ? 'CLADORA pune la dispoziție o platformă software de tip SaaS destinată administrării financiare, tehnice și operaționale a clădirilor rezidențiale, asociațiilor de proprietari și portofoliilor de active imobiliare.'
+                : lang === 'fa'
+                ? 'کلادورا ارائه‌دهنده پلتفرم ابری (SaaS) مدیریت جامع مالی، فنی و عملیاتی مجتمع‌های مسکونی، انجمن‌های مالکان و سبدهای سرمایه‌گذاری املاک است.'
                 : 'CLADORA provides a SaaS operating platform for the financial, technical, and operational administration of condominium associations and residential real estate assets.'}
             </p>
 
-            <h2 className="text-base font-bold text-[#102A43]">2. Conformitate cu Legea 196/2018</h2>
+            <h2 className="text-base font-bold text-[#102A43]">
+              {lang === 'ro' ? '2. Conformitate cu Legislația Aplicabilă' : lang === 'fa' ? '۲. انطباق با قوانین و استانداردهای حاکم' : '2. Statutory Compliance'}
+            </h2>
             <p>
               {lang === 'ro'
                 ? 'Algoritmii de calcul și repartizare a cheltuielilor respectă normele prevăzute de Legea nr. 196/2018. Răspunderea privind exactitatea datelor de intrare (indecși, facturi introduse, număr persoane) revine administratorului sau comitetului executiv al asociației.'
+                : lang === 'fa'
+                ? 'الگوریتم‌های محاسباتی و تسهیم هزینه‌های کلادورا کاملاً بر مبنای موازین حقوقی، سهم مشاعات و مقررات مربوطه تدوین شده‌اند. صحت داده‌های ورودی اولیّه (ارقام فاکتورها، تعداد نفرات) بر عهده مدیر مجتمع یا متصدی مربوطه است.'
                 : 'Allocation formulas align with Romanian Law 196/2018. The association board and designated administrator remain responsible for input data fidelity.'}
             </p>
           </div>

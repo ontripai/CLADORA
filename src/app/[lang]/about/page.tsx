@@ -16,22 +16,24 @@ export default function AboutPage({ params }: { params: { lang: Language } }) {
         
         <div className="flex items-center gap-2 text-xs text-[#52667A] mb-8 font-medium">
           <Link href={`/${lang}`} className="hover:text-[#102A43]">
-            {lang === 'ro' ? 'Acasă' : 'Home'}
+            {lang === 'ro' ? 'Acasă' : lang === 'fa' ? 'صفحه اصلی' : 'Home'}
           </Link>
           <span>/</span>
           <span className="text-[#102A43] font-bold">
-            {lang === 'ro' ? 'Despre Noi' : 'About CLADORA'}
+            {lang === 'ro' ? 'Despre Noi' : lang === 'fa' ? 'درباره کلادورا' : 'About CLADORA'}
           </span>
         </div>
 
         <div className="card-proptech p-8 sm:p-12 bg-white space-y-6">
           <span className="text-xs font-bold text-[#0E9F8E] uppercase tracking-wider bg-[#EAF8F5] px-3 py-1 rounded-full border border-[#B2E5DF]">
-            {lang === 'ro' ? 'Misiunea Noastră' : 'Our Mission'}
+            {lang === 'ro' ? 'Misiunea Noastră' : lang === 'fa' ? 'ماموریت سازمانی ما' : 'Our Mission'}
           </span>
 
           <h1 className="text-3xl sm:text-4xl font-display font-extrabold text-[#102A43]">
             {lang === 'ro' 
               ? 'Construim sistemul de operare pentru clădirile rezidențiale din România'
+              : lang === 'fa'
+              ? 'توسعه سیستم‌عامل جامع برای بهره‌برداری و مدیریت دارایی‌های مسکونی'
               : 'Building the Operating System for European Residential Real Estate'}
           </h1>
 
@@ -39,11 +41,15 @@ export default function AboutPage({ params }: { params: { lang: Language } }) {
             <p>
               {lang === 'ro'
                 ? 'CLADORA a fost fondată pornind de la o realitate evidentă: piața de administrare a blocurilor și proprietăților din România funcționează încă pe tabele Excel opace, softuri desktop vechi de 20 de ani și neîncredere cronică între locatari și comitete.'
+                : lang === 'fa'
+                ? 'کلادورا با درک یک چالش واقعی بنیان نهاده شد: سامانه‌های سنتی مدیریت ساختمان و مجتمع‌های مسکونی غالباً بر پایه فایل‌های اکسل مبهم، نرم‌افزارهای قدیمی و فقدان شفافیت مالی میان مالکان و هیئت‌مدیره استوار بوده‌اند.'
                 : 'CLADORA was founded to transform residential property operations from opaque spreadsheets and 20-year-old desktop utilities into modern, explainable software.'}
             </p>
             <p>
               {lang === 'ro'
                 ? 'Misiunea noastră este să oferim fiecărei clădiri rezidențiale o singură sursă de adevăr financiar, respectând cu strictețe Legea 196/2018 și drepturile proprietar-chiriaș.'
+                : lang === 'fa'
+                ? 'ماموریت بنیادین ما ایجاد یک حقیقت مالی واحد، تغییرناپذیر و شفاف برای هر مجتمع مسکونی است؛ با رعایت دقیق الزامات قانونی و تفکیک ۵ بعدی حقوق مالکان و مستأجران.'
                 : 'Our mission is to establish one immutable source of financial truth for every residential building, fully adhering to European standards and local condominium law.'}
             </p>
           </div>

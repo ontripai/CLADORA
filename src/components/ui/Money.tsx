@@ -17,7 +17,7 @@ export interface MoneyProps extends FormatMoneyOptions {
 
 /**
  * Reusable Money component for bidirectional-safe monetary rendering
- * Uses <bdi> and .ltr-isolate / .tabular-nums to prevent currency scrambling in RTL
+ * Uses <bdi> with explicit directionality and .tabular-nums to ensure correct digit and currency order
  */
 export const Money: React.FC<MoneyProps> = ({
   amount,
@@ -37,9 +37,11 @@ export const Money: React.FC<MoneyProps> = ({
     maximumFractionDigits,
   });
 
+  const isRtl = locale === 'fa';
+
   return (
-    <Component className={`tabular-nums ${className}`}>
-      <bdi className="ltr-isolate">{formatted}</bdi>
+    <Component className={`tabular-nums inline-block ${className}`}>
+      <bdi dir={isRtl ? 'rtl' : 'ltr'}>{formatted}</bdi>
     </Component>
   );
 };

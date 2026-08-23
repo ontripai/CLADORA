@@ -12,10 +12,17 @@ export async function generateMetadata({
   params: { lang: Language };
 }): Promise<Metadata> {
   const isRo = params.lang === 'ro';
+  const isFa = params.lang === 'fa';
   return {
-    title: isRo ? 'Adevăr Financiar & Contabilitate în Partidă Dublă | CLADORA' : 'Financial Truth Core & Double-Entry Accounting | CLADORA',
+    title: isRo 
+      ? 'Adevăr Financiar & Contabilitate în Partidă Dublă | CLADORA' 
+      : isFa
+      ? 'حقیقت مالی و حسابداری دوطرفه تغییرناپذیر | کلادورا'
+      : 'Financial Truth Core & Double-Entry Accounting | CLADORA',
     description: isRo
       ? 'Contabilitate imutabilă, reconciliere bancară automată, închidere sigilată de lună și audit trail fără reproș.'
+      : isFa
+      ? 'دفتر کل دوطرفه تغییرناپذیر، تطبیق خودکار با صورت‌حساب بانکی، بستن قطعی دوره ماهانه و ردپای ممیزی با امضای دیجیتال.'
       : 'Immutable double-entry accounting, automated bank reconciliation, sealed month-end closing, and complete audit trails.',
   };
 }

@@ -159,7 +159,7 @@ export function formatPercent(
   });
 
   if (locale === 'fa') {
-    return `٪${formatted}`;
+    return `${formatted}٪`;
   }
   return `${formatted}%`;
 }

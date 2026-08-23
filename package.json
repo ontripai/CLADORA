@@ -9,7 +9,10 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "test:unit": "node scripts/test-currency-unit.mjs",
+    "test:i18n": "node scripts/audit-untranslated-copy.mjs",
+    "test": "npm run test:unit && npm run test:i18n"
   },
   "dependencies": {
     "clsx": "^2.1.1",
