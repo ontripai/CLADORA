@@ -63,8 +63,8 @@ export const ShadowLedgerDemo: React.FC<ShadowLedgerDemoProps> = ({ lang }) => {
     <div className="p-6 sm:p-8 rounded-3xl bg-white border border-[#D3DCE6] shadow-elevated relative overflow-hidden">
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-6 border-b border-[#E2E8F0]">
         <div>
-          <div className="flex items-center gap-2 text-xs font-semibold text-[#0E9F8E] uppercase tracking-wider">
-            <Database className="w-4 h-4 text-[#0E9F8E]" />
+          <div className="flex items-center gap-2 text-xs font-semibold text-[#0A6E62] uppercase tracking-wider">
+            <Database className="w-4 h-4 text-[#0A6E62]" />
             <span>
               {lang === 'ro' 
                 ? 'Simulare Protocol Shadow Ledger (Core C16)' 
@@ -84,11 +84,10 @@ export const ShadowLedgerDemo: React.FC<ShadowLedgerDemoProps> = ({ lang }) => {
 
         <button
           type="button"
-          aria-label={resolved ? (lang === 'ro' ? 'Stare: Reconciliat' : lang === 'fa' ? 'وضعیت: تطبیق‌یافته' : 'Status: Reconciled') : (lang === 'ro' ? 'Reconciliere automată' : lang === 'fa' ? 'اجرای تطبیق خودکار' : 'Run Auto Reconciliation')}
           onClick={() => setResolved(!resolved)}
           className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
             resolved
-              ? 'bg-[#ECFDF5] text-[#059669] border border-[#A7F3D0]'
+              ? 'bg-[#ECFDF5] text-[#047857] border border-[#A7F3D0]'
               : 'bg-[#102A43] hover:bg-[#173F5F] text-white shadow-sm'
           }`}
         >
@@ -118,13 +117,13 @@ export const ShadowLedgerDemo: React.FC<ShadowLedgerDemoProps> = ({ lang }) => {
                   <span className="font-mono text-xs font-bold text-[#102A43] px-2 py-0.5 rounded bg-white border border-[#E2E8F0]">
                     {item.unit}
                   </span>
-                  <span className="text-xs text-[#7B8A9A] font-medium font-mono">
+                  <span className="text-xs text-[#52667A] font-medium font-mono">
                     {item.id}
                   </span>
                   <span
                     className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
                       resolved
-                        ? 'bg-[#ECFDF5] text-[#059669] border border-[#A7F3D0]'
+                        ? 'bg-[#ECFDF5] text-[#047857] border border-[#A7F3D0]'
                         : 'bg-[#FFF7E6] text-[#B45309] border border-[#FDE68A]'
                     }`}
                   >
@@ -135,13 +134,13 @@ export const ShadowLedgerDemo: React.FC<ShadowLedgerDemoProps> = ({ lang }) => {
                 </div>
 
                 <div className="text-xs text-[#52667A] pt-1">
-                  <span className="text-[#7B8A9A]">{lang === 'ro' ? 'Stare veche: ' : lang === 'fa' ? 'سوابق پیشین: ' : 'Legacy state: '}</span>
+                  <span className="text-[#52667A]">{lang === 'ro' ? 'Stare veche: ' : lang === 'fa' ? 'سوابق پیشین: ' : 'Legacy state: '}</span>
                   <span className="text-[#102A43] font-medium">
                     {item.legacyNote} (<Money amount={item.legacyAmount} currency="RON" locale={lang} />)
                   </span>
                 </div>
 
-                <div className="text-xs text-[#0E9F8E] font-medium">
+                <div className="text-xs text-[#0A6E62] font-medium">
                   <span>{lang === 'ro' ? 'Descoperire CLADORA: ' : lang === 'fa' ? 'نتیجه حسابرسی کلادورا: ' : 'CLADORA Finding: '}</span>
                   <span className="text-[#102A43] font-semibold">{item.shadowFinding}</span>
                 </div>
@@ -156,7 +155,7 @@ export const ShadowLedgerDemo: React.FC<ShadowLedgerDemoProps> = ({ lang }) => {
                     locale={lang} 
                   />
                 </div>
-                <div className={`text-xs font-mono font-bold ${resolved ? 'text-[#059669]' : 'text-[#B45309]'}`}>
+                <div className={`text-xs font-mono font-bold ${resolved ? 'text-[#047857]' : 'text-[#B45309]'}`}>
                   {resolved 
                     ? (lang === 'ro' ? 'Reconciliat' : lang === 'fa' ? 'تراز شد' : 'Zero Variance') 
                     : item.isSplit
@@ -171,7 +170,7 @@ export const ShadowLedgerDemo: React.FC<ShadowLedgerDemoProps> = ({ lang }) => {
 
       <div className="mt-6 p-4 rounded-xl bg-[#F6F9FC] border border-[#E2E8F0] flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-[#52667A]">
         <div className="flex items-center gap-2">
-          <ShieldCheck className="w-4 h-4 text-[#0E9F8E] shrink-0" />
+          <ShieldCheck className="w-4 h-4 text-[#0A6E62] shrink-0" />
           <span>
             {lang === 'ro' 
               ? 'Rulăm în paralel 1-3 luni cu validare pas cu pas pentru asociație.' 
@@ -180,7 +179,7 @@ export const ShadowLedgerDemo: React.FC<ShadowLedgerDemoProps> = ({ lang }) => {
               : 'Parallel run for 1-3 billing cycles with step-by-step balance validation.'}
           </span>
         </div>
-        <span className="font-mono text-[#059669] font-bold">
+        <span className="font-mono text-[#047857] font-bold">
           {lang === 'ro' ? 'Statut: Validare Paralelă' : lang === 'fa' ? 'وضعیت: اعتبارسنجی موازی' : 'Status: Parallel Validation'}
         </span>
       </div>

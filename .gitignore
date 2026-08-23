@@ -32,3 +32,8 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# lighthouse temporary profiles
+reports/chrome-profile/
+reports/clean-ro-validation/
+*.trace.json

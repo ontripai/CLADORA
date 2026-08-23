@@ -45,7 +45,7 @@ export const PilotApplicationModal: React.FC<PilotApplicationModalProps> = ({
           type="button"
           onClick={onClose}
           aria-label={lang === 'ro' ? 'Închide fereastra' : lang === 'fa' ? 'بستن پنجره' : 'Close modal'}
-          className="absolute top-4 end-4 p-2 rounded-xl text-[#7B8A9A] hover:bg-[#F0F4F8] transition-colors"
+          className="absolute top-4 end-4 p-2 rounded-xl text-[#52667A] hover:bg-[#F0F4F8] transition-colors"
         >
           <X className="w-5 h-5" />
         </button>
@@ -53,7 +53,7 @@ export const PilotApplicationModal: React.FC<PilotApplicationModalProps> = ({
 
       {submitted ? (
         <div className="text-center py-10 space-y-4">
-          <div className="w-16 h-16 rounded-2xl bg-[#ECFDF5] text-[#059669] border border-[#A7F3D0] flex items-center justify-center mx-auto shadow-sm">
+          <div className="w-16 h-16 rounded-2xl bg-[#ECFDF5] text-[#047857] border border-[#A7F3D0] flex items-center justify-center mx-auto shadow-sm">
             <CheckCircle2 className="w-8 h-8" />
           </div>
           <h3 className="text-2xl font-display font-bold text-[#102A43]">
@@ -66,7 +66,7 @@ export const PilotApplicationModal: React.FC<PilotApplicationModalProps> = ({
             <button
               type="button"
               onClick={onClose}
-              className="px-6 py-2.5 rounded-xl bg-[#0E9F8E] text-white text-xs font-bold"
+              className="px-6 py-2.5 rounded-xl bg-[#087A6E] text-white text-xs font-bold"
             >
               {lang === 'ro' ? 'Închide' : lang === 'fa' ? 'بستن' : 'Close'}
             </button>
@@ -75,8 +75,8 @@ export const PilotApplicationModal: React.FC<PilotApplicationModalProps> = ({
       ) : (
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-1">
-            <div className="inline-flex items-center gap-2 text-xs font-bold text-[#0E9F8E] uppercase tracking-wider">
-              <Sparkles className="w-4 h-4 text-[#0E9F8E]" />
+            <div className="inline-flex items-center gap-2 text-xs font-bold text-[#0A6E62] uppercase tracking-wider">
+              <Sparkles className="w-4 h-4 text-[#0A6E62]" />
               <span>{lang === 'ro' ? 'Cohortă Pilot 2026' : lang === 'fa' ? 'دوره پایلوت ۲۰۲۶' : 'Pilot Cohort 2026'}</span>
             </div>
             <h3 className="text-xl sm:text-2xl font-display font-extrabold text-[#102A43]">
@@ -158,7 +158,7 @@ export const PilotApplicationModal: React.FC<PilotApplicationModalProps> = ({
           </div>
 
           <div className="p-3.5 rounded-xl bg-[#F6F9FC] border border-[#E2E8F0] flex items-center gap-3 text-xs text-[#52667A]">
-            <ShieldCheck className="w-4 h-4 text-[#0E9F8E] shrink-0" />
+            <ShieldCheck className="w-4 h-4 text-[#0A6E62] shrink-0" />
             <span>
               {lang === 'ro' 
                 ? 'Datele transmise sunt strict confidențiale conform GDPR și sunt utilizate exclusiv pentru configurarea instanței pilot.' 
@@ -170,7 +170,7 @@ export const PilotApplicationModal: React.FC<PilotApplicationModalProps> = ({
 
           <button
             type="submit"
-            className="w-full flex items-center justify-center gap-2 py-3.5 px-6 rounded-xl text-xs font-extrabold bg-[#0E9F8E] hover:bg-[#0C8778] text-white shadow-sm transition-all"
+            className="w-full flex items-center justify-center gap-2 py-3.5 px-6 rounded-xl text-xs font-extrabold bg-[#087A6E] hover:bg-[#066056] text-white shadow-sm transition-all"
           >
             <Send className="w-4 h-4" />
             <span>{fields.submit}</span>

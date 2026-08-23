@@ -20,7 +20,7 @@ export const PortfolioIntelligenceSection: React.FC<PortfolioSectionProps> = ({ 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         <div className="text-center max-w-3xl mx-auto space-y-3">
-          <span className="text-xs font-bold text-[#0E9F8E] uppercase tracking-wider bg-[#EAF8F5] px-3 py-1 rounded-full border border-[#B2E5DF]">
+          <span className="text-xs font-bold text-[#0A6E62] uppercase tracking-wider bg-[#EAF8F5] px-3 py-1 rounded-full border border-[#B2E5DF]">
             {lang === 'ro' ? 'CLADORA Portfolio OS' : lang === 'fa' ? 'سیستم‌عامل پایش سبد املاک CLADORA' : 'CLADORA Portfolio OS'}
           </span>
           <h2 className="text-3xl sm:text-5xl font-display font-extrabold text-[#102A43] tracking-tight">
@@ -66,10 +66,10 @@ export const PortfolioIntelligenceSection: React.FC<PortfolioSectionProps> = ({ 
           </div>
 
           <div className="card-proptech p-5 bg-white">
-            <div className="text-xs font-bold text-[#7B8A9A] uppercase tracking-wide">
+            <div className="text-xs font-bold text-[#486581] uppercase tracking-wide">
               {lang === 'ro' ? 'Randament Mediu Net' : lang === 'fa' ? 'میانگین بازده خالص سالانه' : 'Average Net Yield'}
             </div>
-            <div className="text-2xl font-display font-extrabold text-[#2F80ED] mt-2">
+            <div className="text-2xl font-display font-extrabold text-[#1D4ED8] mt-2">
               {formatPercent(6.8, lang, 1)} / {lang === 'ro' ? 'an' : lang === 'fa' ? 'سال' : 'year'}
             </div>
             <div className="text-xs text-[#52667A] mt-1">
@@ -78,7 +78,7 @@ export const PortfolioIntelligenceSection: React.FC<PortfolioSectionProps> = ({ 
           </div>
 
           <div className="card-proptech p-5 bg-white">
-            <div className="text-xs font-bold text-[#7B8A9A] uppercase tracking-wide">
+            <div className="text-xs font-bold text-[#486581] uppercase tracking-wide">
               {lang === 'ro' ? 'Garanții Păstrate' : lang === 'fa' ? 'مجموع مبالغ ودیعه نزد امین' : 'Total Deposits Held'}
             </div>
             <div className="text-2xl font-display font-extrabold text-[#102A43] mt-2">
@@ -109,7 +109,7 @@ export const PortfolioIntelligenceSection: React.FC<PortfolioSectionProps> = ({ 
                   </p>
                 </div>
                 <div className="text-end">
-                  <div className="text-lg font-display font-extrabold text-[#0E9F8E]">
+                  <div className="text-lg font-display font-extrabold text-[#087A6E]">
                     <Money amount={prop.monthlyRent} currency={prop.currency as any} locale={lang} minimumFractionDigits={0} maximumFractionDigits={0} />
                   </div>
                   <span className="text-[10px] font-semibold text-[#52667A]">
@@ -120,16 +120,16 @@ export const PortfolioIntelligenceSection: React.FC<PortfolioSectionProps> = ({ 
 
               <div className="grid grid-cols-3 gap-2 pt-3 border-t border-[#F0F4F8] text-center text-xs">
                 <div className="p-2 rounded-lg bg-[#F6F9FC]">
-                  <div className="text-[#7B8A9A] text-[10px]">{lang === 'ro' ? 'Chiriaș' : lang === 'fa' ? 'مستأجر' : 'Tenant'}</div>
+                  <div className="text-[#52667A] text-[10px]">{lang === 'ro' ? 'Chiriaș' : lang === 'fa' ? 'مستأجر' : 'Tenant'}</div>
                   <div className="font-bold text-[#102A43] truncate mt-0.5">{formatTenantDisplay(prop.tenantName, lang)}</div>
                 </div>
                 <div className="p-2 rounded-lg bg-[#F6F9FC]">
-                  <div className="text-[#7B8A9A] text-[10px]">{lang === 'ro' ? 'Expirare Contract' : lang === 'fa' ? 'انقضای قرارداد' : 'Lease Expiry'}</div>
+                  <div className="text-[#52667A] text-[10px]">{lang === 'ro' ? 'Expirare Contract' : lang === 'fa' ? 'انقضای قرارداد' : 'Lease Expiry'}</div>
                   <div className="font-bold text-[#102A43] font-mono mt-0.5">{formatGregorianDate(prop.leaseEndDate || '', lang)}</div>
                 </div>
                 <div className="p-2 rounded-lg bg-[#F6F9FC]">
-                  <div className="text-[#7B8A9A] text-[10px]">{lang === 'ro' ? 'Yield Net' : lang === 'fa' ? 'بازده خالص' : 'Net Yield'}</div>
-                  <div className="font-bold text-[#2F80ED] mt-0.5">{formatPercent(prop.netYieldPercent, lang, 1)}</div>
+                  <div className="text-[#52667A] text-[10px]">{lang === 'ro' ? 'Yield Net' : lang === 'fa' ? 'بازده خالص' : 'Net Yield'}</div>
+                  <div className="font-bold text-[#1D4ED8] mt-0.5">{formatPercent(prop.netYieldPercent, lang, 1)}</div>
                 </div>
               </div>
             </div>
@@ -139,7 +139,7 @@ export const PortfolioIntelligenceSection: React.FC<PortfolioSectionProps> = ({ 
         <div className="mt-8 text-center">
           <Link
             href={`/${lang}/solutions/property-owners`}
-            className="inline-flex items-center gap-2 text-sm font-bold text-[#0E9F8E] hover:text-[#0C8778]"
+            className="inline-flex items-center gap-2 text-sm font-bold text-[#087A6E] hover:text-[#066056]"
           >
             <span>
               {lang === 'ro' 

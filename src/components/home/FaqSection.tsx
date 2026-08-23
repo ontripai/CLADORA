@@ -91,7 +91,7 @@ export const FaqSection: React.FC<FaqSectionProps> = ({ lang }) => {
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         
         <div className="text-center space-y-3">
-          <span className="text-xs font-bold text-[#0E9F8E] uppercase tracking-wider bg-[#EAF8F5] px-3 py-1 rounded-full border border-[#B2E5DF]">
+          <span className="text-xs font-bold text-[#0A6E62] uppercase tracking-wider bg-[#EAF8F5] px-3 py-1 rounded-full border border-[#B2E5DF]">
             {lang === 'ro' ? 'Răspunsuri la Întrebări Frecvente' : lang === 'fa' ? 'پاسخ به پرسش‌های پرتکرار' : 'Frequently Asked Questions'}
           </span>
           <h2 className="text-3xl sm:text-4xl font-display font-extrabold text-[#102A43]">
@@ -120,7 +120,7 @@ export const FaqSection: React.FC<FaqSectionProps> = ({ lang }) => {
                   className="w-full p-5 text-start flex items-center justify-between gap-4 font-bold text-[#102A43] hover:text-[#0E9F8E] transition-colors"
                 >
                   <span className="text-sm sm:text-base">{faq.q}</span>
-                  <ChevronDown className={`w-5 h-5 shrink-0 text-[#7B8A9A] transition-transform duration-200 ${isOpen ? 'rotate-180 text-[#0E9F8E]' : ''}`} />
+                  <ChevronDown className={`w-5 h-5 shrink-0 text-[#52667A] transition-transform duration-200 ${isOpen ? 'rotate-180 text-[#0E9F8E]' : ''}`} />
                 </button>
 
                 {isOpen && (

@@ -1,5 +1,3 @@
-'use client';
-
 import React from 'react';
 import { Language } from '@/types';
 import { ShieldCheck, UserCheck, Key, ArrowRightLeft } from 'lucide-react';
@@ -62,7 +60,7 @@ export const OwnerTenantSeparationSection: React.FC<OwnerTenantSectionProps> = (
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         <div className="text-center max-w-3xl mx-auto space-y-3">
-          <span className="text-xs font-bold text-[#0E9F8E] uppercase tracking-wider bg-[#EAF8F5] px-3 py-1 rounded-full border border-[#B2E5DF]">
+          <span className="text-xs font-bold text-[#0A6E62] uppercase tracking-wider bg-[#EAF8F5] px-3 py-1 rounded-full border border-[#B2E5DF]">
             {lang === 'ro' ? 'Separarea Drepturilor 5D' : lang === 'fa' ? 'تفکیک ۵ بعدی حقوق و تعهدات' : '5D Rights Isolation'}
           </span>
           <h2 className="text-3xl sm:text-5xl font-display font-extrabold text-[#102A43] tracking-tight">
@@ -89,7 +87,7 @@ export const OwnerTenantSeparationSection: React.FC<OwnerTenantSectionProps> = (
               <div key={idx} className="card-proptech p-6 flex flex-col justify-between">
                 <div>
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold text-[#7B8A9A]">{dim.title}</span>
+                    <span className="text-xs font-bold text-[#52667A]">{dim.title}</span>
                     <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${dim.color}`}>
                       <Icon className="w-4 h-4" />
                     </div>

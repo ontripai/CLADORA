@@ -324,7 +324,8 @@ it('No forbidden absolute claims across dictionaries (Task 004B & 005 Final Gate
 
 it('Post-merge copy polish exact phrase assertions (Task 007)', () => {
   const ro = fs.readFileSync('src/dictionaries/ro.ts', 'utf8');
-  const heroSection = fs.readFileSync('src/components/home/HeroSection.tsx', 'utf8');
+  const heroSection = fs.readFileSync('src/components/home/HeroSection.tsx', 'utf8') + 
+    (fs.existsSync('src/components/home/HeroExperienceSwitcher.tsx') ? fs.readFileSync('src/components/home/HeroExperienceSwitcher.tsx', 'utf8') : '');
 
   // 1. Persian Balance Status
   assert.ok(heroSection.includes('تراز تطبیق‌یافته'), 'HeroSection includes Persian تراز تطبیق‌یافته');

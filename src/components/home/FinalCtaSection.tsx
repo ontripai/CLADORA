@@ -12,10 +12,10 @@ export const FinalCtaSection: React.FC<FinalCtaProps> = ({ lang }) => {
     <section className="py-24 bg-white relative overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
-        <div className="card-proptech p-10 sm:p-16 bg-[#102A43] text-white text-center space-y-6 shadow-elevated relative overflow-hidden">
+        <div className="rounded-3xl p-10 sm:p-16 bg-[#102A43] text-white text-center space-y-6 shadow-elevated relative overflow-hidden border border-[#102A43]">
           
           <div className="max-w-3xl mx-auto space-y-4">
-            <span className="text-xs font-bold text-[#75CFC3] uppercase tracking-wider bg-white/10 px-3.5 py-1.5 rounded-full border border-white/15">
+            <span className="text-xs font-bold text-[#93E6DC] uppercase tracking-wider bg-white/10 px-3.5 py-1.5 rounded-full border border-white/15">
               {lang === 'ro' ? 'Tranziția la Noul Standard de Administrare' : lang === 'fa' ? 'گذر به استاندارد نوین مدیریت دارایی‌های مسکونی' : 'Upgrade to the Modern Standard'}
             </span>
 
@@ -27,7 +27,7 @@ export const FinalCtaSection: React.FC<FinalCtaProps> = ({ lang }) => {
                 : 'Ready to Bring Truth & Clarity to Your Residential Assets?'}
             </h2>
 
-            <p className="text-base sm:text-lg text-[#BCCCDC] max-w-2xl mx-auto leading-relaxed">
+            <p className="text-base sm:text-lg text-[#CBD5E1] max-w-2xl mx-auto leading-relaxed">
               {lang === 'ro'
                 ? 'Explorează gratuit demo-ul interactiv cu date de test sau programează o discuție tehnică pentru asociația sau portofoliul tău.'
                 : lang === 'fa'
@@ -39,7 +39,7 @@ export const FinalCtaSection: React.FC<FinalCtaProps> = ({ lang }) => {
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
             <Link
               href={`/${lang}/demo`}
-              className="w-full sm:w-auto flex items-center justify-center gap-2.5 px-8 py-4 rounded-2xl bg-[#0E9F8E] hover:bg-[#0C8778] text-white font-display font-bold text-base shadow-card-hover hover:scale-[1.02] transition-all"
+              className="w-full sm:w-auto flex items-center justify-center gap-2.5 px-8 py-4 rounded-2xl bg-[#087A6E] hover:bg-[#066056] text-white font-display font-bold text-base shadow-card-hover hover:scale-[1.02] transition-all"
             >
               <PlayCircle className="w-5 h-5" />
               <span>{lang === 'ro' ? 'Lansează Demo Interactiv' : lang === 'fa' ? 'ورود به دموی تعاملی' : 'Launch Interactive Demo'}</span>
@@ -49,7 +49,7 @@ export const FinalCtaSection: React.FC<FinalCtaProps> = ({ lang }) => {
               href={`/${lang}/pilot`}
               className="w-full sm:w-auto flex items-center justify-center gap-2 px-7 py-4 rounded-2xl bg-white/10 hover:bg-white/15 text-white border border-white/20 font-display font-bold text-base transition-all"
             >
-              <Building2 className="w-5 h-5 text-[#75CFC3]" />
+              <Building2 className="w-5 h-5 text-[#93E6DC]" />
               <span>{lang === 'ro' ? 'Înscrie clădirea în pilot' : lang === 'fa' ? 'ثبت‌نام مجتمع در برنامه پایلوت' : 'Enroll Building in Pilot'}</span>
             </Link>
           </div>

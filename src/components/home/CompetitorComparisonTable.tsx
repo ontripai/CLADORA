@@ -1,5 +1,3 @@
-'use client';
-
 import React from 'react';
 import { Language } from '@/types';
 import { getDictionary } from '@/dictionaries';

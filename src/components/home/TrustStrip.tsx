@@ -47,9 +47,9 @@ export const TrustStrip: React.FC<TrustStripProps> = ({ lang }) => {
                   <Icon className="w-4 h-4" />
                 </div>
                 <div>
-                  <h4 className="text-xs font-bold text-[#102A43] uppercase tracking-wide">
+                  <p className="text-xs font-bold text-[#102A43] uppercase tracking-wide">
                     {item.title}
-                  </h4>
+                  </p>
                   <p className="text-xs text-[#52667A] mt-0.5 leading-snug">
                     {item.desc}
                   </p>

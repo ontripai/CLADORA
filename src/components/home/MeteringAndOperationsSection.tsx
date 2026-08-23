@@ -30,7 +30,7 @@ export const MeteringAndOperationsSection: React.FC<MeteringProps> = ({ lang }) 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         <div className="text-center max-w-3xl mx-auto space-y-3">
-          <span className="text-xs font-bold text-[#0E9F8E] uppercase tracking-wider bg-[#EAF8F5] px-3 py-1 rounded-full border border-[#B2E5DF]">
+          <span className="text-xs font-bold text-[#0A6E62] uppercase tracking-wider bg-[#EAF8F5] px-3 py-1 rounded-full border border-[#B2E5DF]">
             {lang === 'ro' ? 'Nucleul C08 & C09' : lang === 'fa' ? 'هسته‌های نرم‌افزاری C08 و C09' : 'C08 & C09 Cores'}
           </span>
           <h2 className="text-3xl sm:text-5xl font-display font-extrabold text-[#102A43] tracking-tight">
@@ -55,14 +55,14 @@ export const MeteringAndOperationsSection: React.FC<MeteringProps> = ({ lang }) 
           <div className="lg:col-span-6 card-proptech p-6 sm:p-8 bg-white space-y-6">
             <div className="flex items-center justify-between pb-4 border-b border-[#E2E8F0]">
               <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-lg bg-[#EAF8F5] text-[#0E9F8E] flex items-center justify-center">
+                <div className="w-8 h-8 rounded-lg bg-[#EAF8F5] text-[#0A6E62] flex items-center justify-center">
                   <Camera className="w-4 h-4" />
                 </div>
                 <div>
                   <h3 className="text-sm font-bold text-[#102A43]">
                     {lang === 'ro' ? 'Transmitere Index Contor Apă (Demo Workflow)' : lang === 'fa' ? 'ثبت هوشمند رقم کنتور آب (گردش‌کار نمایشی)' : 'Submit Water Meter Index (Demo Workflow)'}
                   </h3>
-                  <p className="text-[11px] text-[#7B8A9A]">
+                  <p className="text-[11px] text-[#52667A]">
                     {lang === 'ro' ? 'Ap. 14 · Contor Apă Rece Bucătărie (RO-APA-882194)' : lang === 'fa' ? 'واحد ۱۴ · کنتور آب سرد آشپزخانه (RO-APA-882194)' : 'Unit 14 · Kitchen Cold Water Meter'}
                   </p>
                 </div>
@@ -80,13 +80,13 @@ export const MeteringAndOperationsSection: React.FC<MeteringProps> = ({ lang }) 
                 </div>
                 <div className="flex justify-between text-xs text-[#52667A]">
                   <span>{lang === 'ro' ? 'Consum mediu istoric ap.:' : lang === 'fa' ? 'میانگین مصرف گذشته واحد:' : 'Historical Average:'}</span>
-                  <span className="font-bold text-[#0E9F8E] tabular-nums font-mono">5.80 m³ / {lang === 'ro' ? 'lună' : lang === 'fa' ? 'ماه' : 'month'}</span>
+                  <span className="font-bold text-[#0A6E62] tabular-nums font-mono">5.80 m³ / {lang === 'ro' ? 'lună' : lang === 'fa' ? 'ماه' : 'month'}</span>
                 </div>
               </div>
 
               {/* Photo Upload Area */}
               <div className="p-4 rounded-xl border-2 border-dashed border-[#B2E5DF] bg-[#EAF8F5]/40 text-center space-y-2">
-                <Camera className="w-6 h-6 text-[#0E9F8E] mx-auto" />
+                <Camera className="w-6 h-6 text-[#0A6E62] mx-auto" />
                 <div className="text-xs font-bold text-[#102A43]">
                   {lang === 'ro' ? 'Foto contor încărcată pentru validare' : lang === 'fa' ? 'تصویر کنتور جهت استخراج خودکار بارگذاری شد' : 'Meter photo uploaded for review'}
                 </div>
@@ -96,7 +96,7 @@ export const MeteringAndOperationsSection: React.FC<MeteringProps> = ({ lang }) 
                 <button
                   type="button"
                   onClick={handleSimulateOcr}
-                  className="px-3 py-1.5 rounded-lg bg-[#0E9F8E] text-white text-xs font-bold shadow-sm hover:bg-[#0C8778] transition-colors"
+                  className="px-3 py-1.5 rounded-lg bg-[#087A6E] text-white text-xs font-bold shadow-sm hover:bg-[#066056] transition-colors"
                 >
                   {ocrStatus === 'ANALYZING' 
                     ? (lang === 'ro' ? 'Se analizează...' : lang === 'fa' ? 'در حال پردازش هوشمند...' : 'Analyzing...') 
@@ -149,12 +149,12 @@ export const MeteringAndOperationsSection: React.FC<MeteringProps> = ({ lang }) 
             <div className="card-proptech p-6 space-y-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2 text-sm font-bold text-[#102A43]">
-                  <Wrench className="w-4 h-4 text-[#0E9F8E]" />
+                  <Wrench className="w-4 h-4 text-[#0A6E62]" />
                   <span>
                     {lang === 'ro' ? 'Registru Active & Mentenanță Preventivă' : lang === 'fa' ? 'شناسنامه تأسیسات و نگهداری پیشگیرانه' : 'Asset Register & Work Orders'}
                   </span>
                 </div>
-                <span className="text-xs font-bold px-2 py-0.5 rounded bg-[#ECFDF5] text-[#059669]">
+                <span className="text-xs font-bold px-2 py-0.5 rounded bg-[#ECFDF5] text-[#047857]">
                   {lang === 'ro' ? '3 Active' : lang === 'fa' ? '۳ تیکت فعال' : '3 Active'}
                 </span>
               </div>
@@ -171,10 +171,10 @@ export const MeteringAndOperationsSection: React.FC<MeteringProps> = ({ lang }) 
               <div className="card-proptech p-4 bg-white flex items-start justify-between gap-4 border-l-4 border-l-[#E5484D]">
                 <div>
                   <div className="flex items-center gap-2">
-                    <span className="text-xs font-bold text-[#E5484D] px-2 py-0.5 rounded bg-[#FEE2E2]">
+                    <span className="text-xs font-bold text-[#B91C1C] px-2 py-0.5 rounded bg-[#FEE2E2]">
                       {lang === 'ro' ? 'URGENȚĂ MARE' : lang === 'fa' ? 'فوریت بالا' : 'HIGH PRIORITY'}
                     </span>
-                    <span className="text-xs text-[#7B8A9A] font-mono">WO-2026-089</span>
+                    <span className="text-xs text-[#52667A] font-mono">WO-2026-089</span>
                   </div>
                   <h4 className="text-sm font-bold text-[#102A43] mt-1.5">
                     {lang === 'ro' ? 'Pierdere presiune coloană apă caldă - Scara B' : lang === 'fa' ? 'افت فشار لوله اصلی آب گرم - ورودی B' : 'Hot water riser pressure drop'}
@@ -191,10 +191,10 @@ export const MeteringAndOperationsSection: React.FC<MeteringProps> = ({ lang }) 
               <div className="card-proptech p-4 bg-white flex items-start justify-between gap-4 border-l-4 border-l-[#2F80ED]">
                 <div>
                   <div className="flex items-center gap-2">
-                    <span className="text-xs font-bold text-[#2F80ED] px-2 py-0.5 rounded bg-[#EDF5FF]">
+                    <span className="text-xs font-bold text-[#1D4ED8] px-2 py-0.5 rounded bg-[#EDF5FF]">
                       {lang === 'ro' ? 'REVIZIE PERIODICĂ' : lang === 'fa' ? 'سرویس دوره‌ای' : 'PERIODIC AUDIT'}
                     </span>
-                    <span className="text-xs text-[#7B8A9A] font-mono">WO-2026-090</span>
+                    <span className="text-xs text-[#52667A] font-mono">WO-2026-090</span>
                   </div>
                   <h4 className="text-sm font-bold text-[#102A43] mt-1.5">
                     {lang === 'ro' ? 'Revizie Tehnică Ascensor & Verificare ISCIR' : lang === 'fa' ? 'سرویس ماهانه آسانسور و بازرسی استاندارد فنی' : 'Elevator maintenance & safety inspection'}
@@ -203,7 +203,7 @@ export const MeteringAndOperationsSection: React.FC<MeteringProps> = ({ lang }) 
                     {lang === 'ro' ? 'Alocat: Otis Lift Servicii · Programat: 28 Octombrie' : lang === 'fa' ? 'پیمانکار: شرکت اوتیس سرویس · زمان‌بندی: ۲۸ ماه جاری' : 'Assigned: Elevator Services · Scheduled'}
                   </p>
                 </div>
-                <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-[#ECFDF5] text-[#059669] shrink-0">
+                <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-[#ECFDF5] text-[#047857] shrink-0">
                   {lang === 'ro' ? 'Programat' : lang === 'fa' ? 'زمان‌بندی‌شده' : 'Scheduled'}
                 </span>
               </div>

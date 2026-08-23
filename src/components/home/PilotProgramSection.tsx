@@ -45,7 +45,7 @@ export const PilotProgramSection: React.FC<PilotSectionProps> = ({ lang }) => {
     <section id="pilot" className="py-24 bg-white border-b border-[#E2E8F0] relative overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
-        <div className="card-proptech p-8 sm:p-14 bg-gradient-to-br from-[#102A43] via-[#173F5F] to-[#0B2239] text-white relative overflow-hidden shadow-elevated">
+        <div className="rounded-3xl p-8 sm:p-14 bg-gradient-to-br from-[#102A43] via-[#173F5F] to-[#0B2239] text-white relative overflow-hidden shadow-elevated border border-[#102A43]">
           
           {/* Subtle background glow */}
           <div className="absolute -right-20 -top-20 w-80 h-80 bg-[#0E9F8E]/20 rounded-full blur-3xl pointer-events-none" />
@@ -54,8 +54,8 @@ export const PilotProgramSection: React.FC<PilotSectionProps> = ({ lang }) => {
             
             <div className="lg:col-span-7 space-y-6">
               
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 border border-white/15 text-xs font-bold text-[#75CFC3]">
-                <MapPin className="w-3.5 h-3.5 text-[#0E9F8E]" />
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 border border-white/15 text-xs font-bold text-[#93E6DC]">
+                <MapPin className="w-3.5 h-3.5 text-[#14B8A6]" />
                 <span>
                   {lang === 'ro' 
                     ? 'Cohorta Pilot: București & Județul Ilfov' 
@@ -73,7 +73,7 @@ export const PilotProgramSection: React.FC<PilotSectionProps> = ({ lang }) => {
                   : 'Enroll Your Association or Portfolio in the CLADORA Pilot Cohort'}
               </h2>
 
-              <p className="text-base text-[#BCCCDC] leading-relaxed">
+              <p className="text-base text-[#CBD5E1] leading-relaxed">
                 {lang === 'ro'
                   ? 'Lucrăm direct cu comitetele executive, administratorii profesioniști și proprietarii de portofoliu pentru a asigura o tranziție curată și transparentă la noul standard de administrare.'
                   : lang === 'fa'
@@ -84,7 +84,7 @@ export const PilotProgramSection: React.FC<PilotSectionProps> = ({ lang }) => {
               <div className="space-y-3 pt-2">
                 {perks.map((perk, idx) => (
                   <div key={idx} className="flex items-start gap-3 text-xs text-[#E2E8F0]">
-                    <CheckCircle2 className="w-4 h-4 text-[#0E9F8E] shrink-0 mt-0.5" />
+                    <CheckCircle2 className="w-4 h-4 text-[#14B8A6] shrink-0 mt-0.5" />
                     <span>{perk}</span>
                   </div>
                 ))}
@@ -94,7 +94,7 @@ export const PilotProgramSection: React.FC<PilotSectionProps> = ({ lang }) => {
                 <button
                   type="button"
                   onClick={() => setModalOpen(true)}
-                  className="w-full sm:w-auto px-8 py-4 rounded-2xl bg-[#0E9F8E] hover:bg-[#0C8778] text-white font-display font-bold text-sm shadow-card-hover transition-all flex items-center justify-center gap-2"
+                  className="w-full sm:w-auto px-8 py-4 rounded-2xl bg-[#087A6E] hover:bg-[#066056] text-white font-display font-bold text-sm shadow-card-hover transition-all flex items-center justify-center gap-2"
                 >
                   <span>{lang === 'ro' ? 'Completează cererea de pilot' : lang === 'fa' ? 'تکمیل فرم ثبت‌نام پایلوت' : 'Submit Pilot Application'}</span>
                   <ArrowRight className="w-4 h-4 rtl:rotate-180" />
@@ -102,7 +102,7 @@ export const PilotProgramSection: React.FC<PilotSectionProps> = ({ lang }) => {
 
                 <Link
                   href={`/${lang}/pilot`}
-                  className="text-xs text-[#BCCCDC] hover:text-white font-semibold underline underline-offset-4"
+                  className="text-xs text-[#CBD5E1] hover:text-white font-semibold underline underline-offset-4"
                 >
                   {lang === 'ro' ? 'Află mai multe despre criteriile de selecție →' : lang === 'fa' ? 'مشاهده شرایط و معیارهای پذیرش در پایلوت →' : 'Learn about selection criteria →'}
                 </Link>
@@ -112,7 +112,7 @@ export const PilotProgramSection: React.FC<PilotSectionProps> = ({ lang }) => {
 
             <div className="lg:col-span-5">
               <div className="p-6 rounded-2xl bg-white/5 border border-white/10 space-y-4 backdrop-blur-sm">
-                <div className="text-xs font-bold text-[#75CFC3] uppercase tracking-wider">
+                <div className="text-xs font-bold text-[#93E6DC] uppercase tracking-wider">
                   {lang === 'ro' ? 'Profiluri Eligibile pentru Pilot' : lang === 'fa' ? 'متقاضیان واجد شرایط شرکت در پایلوت' : 'Eligible Cohort Profiles'}
                 </div>
 
@@ -121,7 +121,7 @@ export const PilotProgramSection: React.FC<PilotSectionProps> = ({ lang }) => {
                     <div className="font-bold text-white">
                       {lang === 'ro' ? 'Asociații de Bloc (30–300 Unități)' : lang === 'fa' ? 'مجتمع‌های مسکونی (۳۰ تا ۳۰۰ واحد)' : 'Condo Associations (30–300 Units)'}
                     </div>
-                    <div className="text-[#BCCCDC] mt-0.5">
+                    <div className="text-[#CBD5E1] mt-0.5">
                       {lang === 'ro' ? 'Blocuri vechi sau ansambluri noi din Sectoarele 1-6 sau Ilfov' : lang === 'fa' ? 'ساختمان‌های سنتی یا برج‌های نوساز در مناطق شهری بخارست و حومه' : 'Residential buildings in urban districts'}
                     </div>
                   </div>
@@ -130,7 +130,7 @@ export const PilotProgramSection: React.FC<PilotSectionProps> = ({ lang }) => {
                     <div className="font-bold text-white">
                       {lang === 'ro' ? 'Proprietari Multi-Apartamente' : lang === 'fa' ? 'مالکان و سرمایه‌گذاران چند واحدی' : 'Portfolio Landlords (2+ Units)'}
                     </div>
-                    <div className="text-[#BCCCDC] mt-0.5">
+                    <div className="text-[#CBD5E1] mt-0.5">
                       {lang === 'ro' ? 'Deținători de 2+ locuințe închiriate în București/Ilfov' : lang === 'fa' ? 'مالکانی که ۲ یا چند واحد استیجاری دارند' : 'Owners managing multiple rental units'}
                     </div>
                   </div>
@@ -139,7 +139,7 @@ export const PilotProgramSection: React.FC<PilotSectionProps> = ({ lang }) => {
                     <div className="font-bold text-white">
                       {lang === 'ro' ? 'Firme de Administrare Imobile' : lang === 'fa' ? 'شرکت‌های مدیریت ساختمان' : 'Property Management Firms'}
                     </div>
-                    <div className="text-[#BCCCDC] mt-0.5">
+                    <div className="text-[#CBD5E1] mt-0.5">
                       {lang === 'ro' ? 'Companii care doresc să automatizeze închiderea lunară' : lang === 'fa' ? 'مجموعه‌هایی که به دنبال خودکارسازی بستن دوره‌ها و جلب رضایت مشتریانند' : 'Companies scaling multi-building operations'}
                     </div>
                   </div>

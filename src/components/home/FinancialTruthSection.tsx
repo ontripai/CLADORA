@@ -34,7 +34,7 @@ export const FinancialTruthSection: React.FC<FinancialTruthSectionProps> = ({ la
         
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto space-y-3">
-          <span className="text-xs font-bold text-[#0E9F8E] uppercase tracking-wider bg-[#EAF8F5] px-3 py-1 rounded-full border border-[#B2E5DF]">
+          <span className="text-xs font-bold text-[#0A6E62] uppercase tracking-wider bg-[#EAF8F5] px-3 py-1 rounded-full border border-[#B2E5DF]">
             {dict.financialTruth.badge}
           </span>
           <h2 className="text-3xl sm:text-5xl font-display font-extrabold text-[#102A43] tracking-tight">
@@ -110,7 +110,7 @@ export const FinancialTruthSection: React.FC<FinancialTruthSectionProps> = ({ la
         <div className="mt-14 card-proptech p-6 sm:p-8 bg-[#F6F9FC] border-[#D3DCE6]">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-[#E2E8F0]">
             <div>
-              <span className="text-xs font-bold text-[#0E9F8E] uppercase tracking-wider">
+              <span className="text-xs font-bold text-[#0A6E62] uppercase tracking-wider">
                 {lang === 'ro' ? 'Simulare Interactivă Notă de Plată' : lang === 'fa' ? 'شبیه‌ساز تعاملی فیش شارژ ماهانه' : 'Interactive Charge Drill-Down Demo'}
               </span>
               <h3 className="text-xl font-bold text-[#102A43] mt-1">
@@ -177,7 +177,7 @@ export const FinancialTruthSection: React.FC<FinancialTruthSectionProps> = ({ la
                       {lang === 'ro' ? 'Fișă Justificativă de Calcul' : lang === 'fa' ? 'برگه اثبات محاسباتی سند' : 'Statutory Allocation Proof'}
                     </span>
                   </div>
-                  <span className="text-xs font-mono text-[#7B8A9A]">ID: <span className="ltr-isolate">{currentItem.id}</span></span>
+                  <span className="text-xs font-mono text-[#52667A]">ID: <span className="ltr-isolate">{currentItem.id}</span></span>
                 </div>
 
                 <div className="space-y-3 text-xs">
@@ -201,7 +201,7 @@ export const FinancialTruthSection: React.FC<FinancialTruthSectionProps> = ({ la
                     <span className="text-[#52667A]">
                       {lang === 'ro' ? 'Cota Parte / Bază de Calcul Ap. 14:' : lang === 'fa' ? 'سهم مشاع واحد ۱۴:' : 'Share Ratio for Unit 14:'}
                     </span>
-                    <span className="font-bold text-[#0E9F8E]">
+                    <span className="font-bold text-[#0A6E62]">
                       {formatPercent(currentItem.unitSharePercent, lang, 2)}
                     </span>
                   </div>

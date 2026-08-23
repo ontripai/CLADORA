@@ -4,8 +4,8 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { Language, UserRole } from '@/types';
 import { 
-  PlayCircle,
-  ArrowRight
+  PlayCircle, 
+  ArrowRight 
 } from 'lucide-react';
 import { DEMO_ROLES } from '@/data/mockData';
 import { Money } from '@/components/ui/Money';
@@ -24,7 +24,7 @@ export const InteractiveProductPreview: React.FC<ProductPreviewProps> = ({ lang 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         <div className="text-center max-w-3xl mx-auto space-y-3">
-          <span className="text-xs font-bold text-[#0E9F8E] uppercase tracking-wider bg-[#EAF8F5] px-3 py-1 rounded-full border border-[#B2E5DF]">
+          <span className="text-xs font-bold text-[#0A6E62] uppercase tracking-wider bg-[#EAF8F5] px-3 py-1 rounded-full border border-[#B2E5DF]">
             {lang === 'ro' ? 'Experiență de Produs Live' : lang === 'fa' ? 'پیش‌نمایش زنده تجربه کاربری' : 'Live Product Experience'}
           </span>
           <h2 className="text-3xl sm:text-5xl font-display font-extrabold text-[#102A43] tracking-tight">
@@ -64,7 +64,7 @@ export const InteractiveProductPreview: React.FC<ProductPreviewProps> = ({ lang 
               onClick={() => setSelectedRole('owner')}
               className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all ${
                 selectedRole === 'owner'
-                  ? 'bg-[#0E9F8E] text-white shadow-sm'
+                  ? 'bg-[#087A6E] text-white shadow-sm'
                   : 'text-[#52667A] hover:bg-white hover:text-[#102A43]'
               }`}
             >
@@ -88,7 +88,7 @@ export const InteractiveProductPreview: React.FC<ProductPreviewProps> = ({ lang 
               onClick={() => setSelectedRole('censor')}
               className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all ${
                 selectedRole === 'censor'
-                  ? 'bg-[#D97706] text-white shadow-sm'
+                  ? 'bg-[#B45309] text-white shadow-sm'
                   : 'text-[#52667A] hover:bg-white hover:text-[#102A43]'
               }`}
             >
@@ -100,7 +100,7 @@ export const InteractiveProductPreview: React.FC<ProductPreviewProps> = ({ lang 
               onClick={() => setSelectedRole('portfolio_owner')}
               className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all ${
                 selectedRole === 'portfolio_owner'
-                  ? 'bg-[#10B981] text-white shadow-sm'
+                  ? 'bg-[#047857] text-white shadow-sm'
                   : 'text-[#52667A] hover:bg-white hover:text-[#102A43]'
               }`}
             >
@@ -116,10 +116,10 @@ export const InteractiveProductPreview: React.FC<ProductPreviewProps> = ({ lang 
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-[#E2E8F0]">
             <div>
               <div className="flex items-center gap-2">
-                <span className="text-xs font-bold text-[#0E9F8E] uppercase tracking-wider">
+                <span className="text-xs font-bold text-[#0A6E62] uppercase tracking-wider">
                   {roleInfo.badge[lang]}
                 </span>
-                <span className="text-xs text-[#7B8A9A]">
+                <span className="text-xs text-[#52667A]">
                   · {lang === 'ro' ? 'Mod Sandbox Live' : lang === 'fa' ? 'محیط سندباکس تعاملی' : 'Live Sandbox Mode'}
                 </span>
               </div>
@@ -131,7 +131,7 @@ export const InteractiveProductPreview: React.FC<ProductPreviewProps> = ({ lang 
 
             <Link
               href={`/${lang}/demo`}
-              className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#0E9F8E] hover:bg-[#0C8778] text-white text-xs font-bold shadow-sm self-start sm:self-auto"
+              className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#087A6E] hover:bg-[#066056] text-white text-xs font-bold shadow-sm self-start sm:self-auto"
             >
               <PlayCircle className="w-4 h-4" />
               <span>{lang === 'ro' ? 'Deschide în Demo App' : lang === 'fa' ? 'اجرا در دموی کامل' : 'Launch Full Demo App'}</span>
@@ -142,7 +142,7 @@ export const InteractiveProductPreview: React.FC<ProductPreviewProps> = ({ lang 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
             
             <div className="card-proptech p-5 bg-white space-y-3">
-              <span className="text-xs font-bold text-[#7B8A9A] uppercase tracking-wider">
+              <span className="text-xs font-bold text-[#52667A] uppercase tracking-wider">
                 {lang === 'ro' ? 'Acțiuni Primare' : lang === 'fa' ? 'اقدامات دارای اولویت' : 'Primary Actions'}
               </span>
               <div className="space-y-2 text-xs font-bold text-[#102A43]">
@@ -150,15 +150,15 @@ export const InteractiveProductPreview: React.FC<ProductPreviewProps> = ({ lang 
                   <>
                     <div className="p-2.5 rounded-lg bg-[#F6F9FC] flex justify-between">
                       <span>{lang === 'ro' ? 'Închidere Lună Octombrie' : lang === 'fa' ? 'بستن دوره ماه جاری' : 'Month Close'}</span>
-                      <span className="text-[#D97706]">{lang === 'ro' ? 'În Curs' : lang === 'fa' ? 'در حال انجام' : 'In Progress'}</span>
+                      <span className="text-[#B45309]">{lang === 'ro' ? 'În Curs' : lang === 'fa' ? 'در حال انجام' : 'In Progress'}</span>
                     </div>
                     <div className="p-2.5 rounded-lg bg-[#F6F9FC] flex justify-between">
                       <span>{lang === 'ro' ? 'Index Contoare Neverificate' : lang === 'fa' ? 'کنتورهای نیازمند بررسی' : 'Meters Pending Review'}</span>
-                      <span className="text-[#0E9F8E]">{lang === 'ro' ? '4 Rămase' : lang === 'fa' ? '۴ مورد' : '4 Left'}</span>
+                      <span className="text-[#0A6E62]">{lang === 'ro' ? '4 Rămase' : lang === 'fa' ? '۴ مورد' : '4 Left'}</span>
                     </div>
                     <div className="p-2.5 rounded-lg bg-[#F6F9FC] flex justify-between">
                       <span>{lang === 'ro' ? 'Plăți Bancare de Reconciliat' : lang === 'fa' ? 'تراکنش‌های بانکی جدید' : 'Bank Matches'}</span>
-                      <span className="text-[#10B981]">{lang === 'ro' ? '12 Noi' : lang === 'fa' ? '۱۲ تراکنش' : '12 New'}</span>
+                      <span className="text-[#047857]">{lang === 'ro' ? '12 Noi' : lang === 'fa' ? '۱۲ تراکنش' : '12 New'}</span>
                     </div>
                   </>
                 )}
@@ -172,11 +172,11 @@ export const InteractiveProductPreview: React.FC<ProductPreviewProps> = ({ lang 
                     </div>
                     <div className="p-2.5 rounded-lg bg-[#F6F9FC] flex justify-between">
                       <span>{lang === 'ro' ? 'Transmitere Contor Apă' : lang === 'fa' ? 'ثبت رقم کنتور آب' : 'Meter Submission'}</span>
-                      <span className="text-[#10B981]">{lang === 'ro' ? '✓ Transmis' : lang === 'fa' ? '✓ ثبت شد' : '✓ Submitted'}</span>
+                      <span className="text-[#047857]">{lang === 'ro' ? '✓ Transmis' : lang === 'fa' ? '✓ ثبت شد' : '✓ Submitted'}</span>
                     </div>
                     <div className="p-2.5 rounded-lg bg-[#F6F9FC] flex justify-between">
                       <span>{lang === 'ro' ? 'Vot Adunare Generală' : lang === 'fa' ? 'رأی‌گیری مجمع عمومی' : 'AGM Voting'}</span>
-                      <span className="text-[#0E9F8E]">{lang === 'ro' ? '1 Activ' : lang === 'fa' ? '۱ رأی‌گیری فعال' : '1 Active'}</span>
+                      <span className="text-[#0A6E62]">{lang === 'ro' ? '1 Activ' : lang === 'fa' ? '۱ رأی‌گیری فعال' : '1 Active'}</span>
                     </div>
                   </>
                 )}
@@ -190,11 +190,11 @@ export const InteractiveProductPreview: React.FC<ProductPreviewProps> = ({ lang 
                     </div>
                     <div className="p-2.5 rounded-lg bg-[#F6F9FC] flex justify-between">
                       <span>{lang === 'ro' ? 'Acces Cheltuieli Fond Rulment' : lang === 'fa' ? 'دسترسی به صندوق‌های مالک' : 'Reserve Funds Access'}</span>
-                      <span className="text-[#7B8A9A]">{lang === 'ro' ? 'Mascat (Proprietar)' : lang === 'fa' ? 'محفوظ (مالک)' : 'Masked (Owner)'}</span>
+                      <span className="text-[#52667A]">{lang === 'ro' ? 'Mascat (Proprietar)' : lang === 'fa' ? 'محفوظ (مالک)' : 'Masked (Owner)'}</span>
                     </div>
                     <div className="p-2.5 rounded-lg bg-[#F6F9FC] flex justify-between">
                       <span>{lang === 'ro' ? 'Tichet Mentenanță Deschis' : lang === 'fa' ? 'تیکت تعمیرات واحد' : 'Maintenance Ticket'}</span>
-                      <span className="text-[#0E9F8E]">{lang === 'ro' ? '1 În Lucru' : lang === 'fa' ? '۱ در دست اقدام' : '1 In Progress'}</span>
+                      <span className="text-[#0A6E62]">{lang === 'ro' ? '1 În Lucru' : lang === 'fa' ? '۱ در دست اقدام' : '1 In Progress'}</span>
                     </div>
                   </>
                 )}
@@ -202,15 +202,15 @@ export const InteractiveProductPreview: React.FC<ProductPreviewProps> = ({ lang 
                   <>
                     <div className="p-2.5 rounded-lg bg-[#F6F9FC] flex justify-between">
                       <span>{lang === 'ro' ? 'Luni Așteptând Validare Audit' : lang === 'fa' ? 'دوره در انتظار ممیزی' : 'Pending Audit Month'}</span>
-                      <span className="text-[#D97706]">{lang === 'ro' ? 'Septembrie 2026' : lang === 'fa' ? 'شهریور ۱۴۰۵' : 'Sep 2026'}</span>
+                      <span className="text-[#B45309]">{lang === 'ro' ? 'Septembrie 2026' : lang === 'fa' ? 'شهریور ۱۴۰۵' : 'Sep 2026'}</span>
                     </div>
                     <div className="p-2.5 rounded-lg bg-[#F6F9FC] flex justify-between">
                       <span>{lang === 'ro' ? 'Discrepanțe Balanță' : lang === 'fa' ? 'مغایرت تراز مالی' : 'Ledger Variances'}</span>
-                      <span className="text-[#10B981]">{lang === 'ro' ? '0 Erori' : lang === 'fa' ? '۰ مغایرت' : '0 Errors'}</span>
+                      <span className="text-[#047857]">{lang === 'ro' ? '0 Erori' : lang === 'fa' ? '۰ مغایرت' : '0 Errors'}</span>
                     </div>
                     <div className="p-2.5 rounded-lg bg-[#F6F9FC] flex justify-between">
                       <span>{lang === 'ro' ? 'Documente Sursă Lipsă' : lang === 'fa' ? 'فاکتورهای فاقد سند' : 'Missing Documents'}</span>
-                      <span className="text-[#10B981]">0</span>
+                      <span className="text-[#047857]">0</span>
                     </div>
                   </>
                 )}
@@ -218,11 +218,11 @@ export const InteractiveProductPreview: React.FC<ProductPreviewProps> = ({ lang 
                   <>
                     <div className="p-2.5 rounded-lg bg-[#F6F9FC] flex justify-between">
                       <span>{lang === 'ro' ? 'Total Chirii Încasate Luna Curentă' : lang === 'fa' ? 'مجموع اجاره وصول‌شده' : 'Collected Rents'}</span>
-                      <span className="text-[#10B981] tabular-nums font-mono">3.180 EUR</span>
+                      <span className="text-[#047857] tabular-nums font-mono">3.180 EUR</span>
                     </div>
                     <div className="p-2.5 rounded-lg bg-[#F6F9FC] flex justify-between">
                       <span>{lang === 'ro' ? 'Contracte Expirând în 90 Zile' : lang === 'fa' ? 'سررسید قرارداد تا ۹۰ روز' : 'Expiring in 90 Days'}</span>
-                      <span className="text-[#D97706]">{lang === 'ro' ? '1 Contract' : lang === 'fa' ? '۱ قرارداد' : '1 Lease'}</span>
+                      <span className="text-[#B45309]">{lang === 'ro' ? '1 Contract' : lang === 'fa' ? '۱ قرارداد' : '1 Lease'}</span>
                     </div>
                     <div className="p-2.5 rounded-lg bg-[#F6F9FC] flex justify-between">
                       <span>{lang === 'ro' ? 'Randament Mediu Portofoliu' : lang === 'fa' ? 'میانگین بازدهی سبد املاک' : 'Portfolio Yield'}</span>
@@ -234,7 +234,7 @@ export const InteractiveProductPreview: React.FC<ProductPreviewProps> = ({ lang 
             </div>
 
             <div className="card-proptech p-5 bg-white space-y-3">
-              <span className="text-xs font-bold text-[#7B8A9A] uppercase tracking-wider">
+              <span className="text-xs font-bold text-[#52667A] uppercase tracking-wider">
                 {lang === 'ro' ? 'Securitate & Vizibilitate' : lang === 'fa' ? 'امنیت و سطوح دسترسی' : 'Security & Scope'}
               </span>
               <p className="text-xs text-[#52667A] leading-relaxed">
@@ -250,7 +250,7 @@ export const InteractiveProductPreview: React.FC<ProductPreviewProps> = ({ lang 
             </div>
 
             <div className="card-proptech p-5 bg-white space-y-3">
-              <span className="text-xs font-bold text-[#7B8A9A] uppercase tracking-wider">
+              <span className="text-xs font-bold text-[#52667A] uppercase tracking-wider">
                 {lang === 'ro' ? 'Testare Gratuită' : lang === 'fa' ? 'آزمودن آنلاین و رایگان' : 'Free Sandbox'}
               </span>
               <p className="text-xs text-[#52667A] leading-relaxed">

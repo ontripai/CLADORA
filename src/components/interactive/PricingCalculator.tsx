@@ -28,7 +28,7 @@ export const PricingCalculator: React.FC<PricingCalculatorProps> = ({ lang }) =>
         
         {/* Monthly vs Yearly Toggle */}
         <div className="flex items-center justify-center gap-4">
-          <span className={`text-sm font-bold ${!isYearly ? 'text-[#102A43]' : 'text-[#7B8A9A]'}`}>
+          <span className={`text-sm font-bold ${!isYearly ? 'text-[#102A43]' : 'text-[#52667A]'}`}>
             {dict.pricing.monthly}
           </span>
           <button
@@ -38,16 +38,16 @@ export const PricingCalculator: React.FC<PricingCalculatorProps> = ({ lang }) =>
             aria-label={lang === 'ro' ? 'Comută între facturare lunară și anuală' : lang === 'fa' ? 'تغییر وضعیت پرداخت ماهانه یا سالانه' : 'Toggle between monthly and annual billing'}
           >
             <div
-              className={`w-5 h-5 rounded-full bg-[#0E9F8E] shadow-md transform transition-transform ${
+              className={`w-5 h-5 rounded-full bg-[#087A6E] shadow-md transform transition-transform ${
                 isYearly ? 'translate-x-7 rtl:-translate-x-7' : 'translate-x-0'
               }`}
             />
           </button>
           <div className="flex items-center gap-2">
-            <span className={`text-sm font-bold ${isYearly ? 'text-[#102A43]' : 'text-[#7B8A9A]'}`}>
+            <span className={`text-sm font-bold ${isYearly ? 'text-[#102A43]' : 'text-[#52667A]'}`}>
               {dict.pricing.yearly}
             </span>
-            <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#ECFDF5] text-[#059669] border border-[#A7F3D0]">
+            <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#ECFDF5] text-[#047857] border border-[#A7F3D0]">
               -20%
             </span>
           </div>
@@ -59,7 +59,7 @@ export const PricingCalculator: React.FC<PricingCalculatorProps> = ({ lang }) =>
             <label htmlFor="pricingUnitsRangeInput" className="text-xs font-bold text-[#102A43]">
               {dict.pricing.unitsLabel}
             </label>
-            <span className="text-base font-mono font-bold text-[#0E9F8E]">
+            <span className="text-base font-mono font-bold text-[#0A6E62]">
               {formatNumber(units, lang)} {lang === 'ro' ? 'apartamente / proprietăți' : lang === 'fa' ? 'واحد مسکونی / ملک' : 'units / properties'}
             </span>
           </div>
@@ -114,12 +114,12 @@ export const PricingCalculator: React.FC<PricingCalculatorProps> = ({ lang }) =>
               key={plan.id}
               className={`rounded-3xl p-8 flex flex-col justify-between relative transition-all duration-300 ${
                 isFeatured
-                  ? 'bg-white border-2 border-[#0E9F8E] shadow-elevated lg:-translate-y-2'
+                  ? 'bg-white border-2 border-[#087A6E] shadow-elevated lg:-translate-y-2'
                   : 'bg-white border border-[#E2E8F0] shadow-card hover:border-[#B2E5DF]'
               }`}
             >
               {isFeatured && (
-                <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-[#0E9F8E] text-white text-[11px] font-bold tracking-wider uppercase shadow-md">
+                <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-[#087A6E] text-white text-[11px] font-bold tracking-wider uppercase shadow-md">
                   {plan.badge}
                 </div>
               )}
@@ -144,7 +144,7 @@ export const PricingCalculator: React.FC<PricingCalculatorProps> = ({ lang }) =>
                       / {lang === 'ro' ? 'lună' : lang === 'fa' ? 'ماه' : 'month'}
                     </span>
                   </div>
-                  <div className="text-[11px] text-[#059669] font-bold font-mono">
+                  <div className="text-[11px] text-[#047857] font-bold font-mono">
                     {lang === 'ro' 
                       ? `Echivalent ~${formatMoney(perUnitRate, currency, lang)} / apartament`
                       : lang === 'fa'
@@ -155,12 +155,12 @@ export const PricingCalculator: React.FC<PricingCalculatorProps> = ({ lang }) =>
 
                 {/* Features List */}
                 <div className="space-y-2.5">
-                  <span className="text-xs font-bold text-[#7B8A9A] uppercase tracking-wider block">
+                  <span className="text-xs font-bold text-[#52667A] uppercase tracking-wider block">
                     {lang === 'ro' ? 'Ce include pachetul:' : lang === 'fa' ? 'امکانات این بسته:' : 'Included capabilities:'}
                   </span>
                   {plan.features.map((feat, fIdx) => (
                     <div key={fIdx} className="flex items-start gap-2.5 text-xs text-[#52667A]">
-                      <Check className="w-4 h-4 text-[#10B981] shrink-0 mt-0.5" />
+                      <Check className="w-4 h-4 text-[#047857] shrink-0 mt-0.5" />
                       <span>{feat}</span>
                     </div>
                   ))}
@@ -173,7 +173,7 @@ export const PricingCalculator: React.FC<PricingCalculatorProps> = ({ lang }) =>
                   href={`/${lang}/pilot`}
                   className={`w-full flex items-center justify-center gap-2 py-3.5 px-4 rounded-xl text-xs font-bold transition-all ${
                     isFeatured
-                      ? 'bg-[#0E9F8E] hover:bg-[#0C8778] text-white shadow-sm'
+                      ? 'bg-[#087A6E] hover:bg-[#066056] text-white shadow-sm'
                       : 'bg-[#102A43] hover:bg-[#173F5F] text-white shadow-sm'
                   }`}
                 >

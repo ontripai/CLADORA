@@ -74,8 +74,8 @@ export const AllocationSimulator: React.FC<AllocationSimulatorProps> = ({ lang }
     <div id="simulator" className="p-6 sm:p-8 rounded-3xl bg-white border border-[#D3DCE6] shadow-elevated relative overflow-hidden">
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-6 border-b border-[#E2E8F0]">
         <div>
-          <div className="flex items-center gap-2 text-xs font-semibold text-[#0E9F8E] uppercase tracking-wider">
-            <Scale className="w-4 h-4 text-[#0E9F8E]" />
+          <div className="flex items-center gap-2 text-xs font-semibold text-[#0A6E62] uppercase tracking-wider">
+            <Scale className="w-4 h-4 text-[#0A6E62]" />
             <span>
               {lang === 'ro' 
                 ? 'Simulator Interactiv de Alocare (Core C02)' 
@@ -129,7 +129,7 @@ export const AllocationSimulator: React.FC<AllocationSimulatorProps> = ({ lang }
           onClick={() => setExpenseType('repairFund')}
           className={`p-3 rounded-xl text-start text-xs font-bold transition-all border ${
             expenseType === 'repairFund'
-              ? 'bg-[#ECFDF5] border-[#10B981] text-[#059669] shadow-sm ring-1 ring-[#10B981]'
+              ? 'bg-[#ECFDF5] border-[#10B981] text-[#047857] shadow-sm ring-1 ring-[#10B981]'
               : 'bg-[#F6F9FC] border-[#E2E8F0] text-[#52667A] hover:bg-white'
           }`}
         >
@@ -164,22 +164,22 @@ export const AllocationSimulator: React.FC<AllocationSimulatorProps> = ({ lang }
       {/* 4 Dimensions Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 p-4 rounded-2xl bg-[#F6F9FC] border border-[#E2E8F0]">
         <div className="p-3 rounded-xl bg-white border border-[#E2E8F0] space-y-1">
-          <span className="text-[11px] text-[#7B8A9A] block font-mono font-medium">1. Legal Debtor (Lege 196)</span>
-          <span className="text-sm font-bold text-[#0E9F8E]">{current.legalDebtor}</span>
+          <span className="text-[11px] text-[#52667A] block font-mono font-medium">1. Legal Debtor (Lege 196)</span>
+          <span className="text-sm font-bold text-[#0A6E62]">{current.legalDebtor}</span>
         </div>
 
         <div className="p-3 rounded-xl bg-white border border-[#E2E8F0] space-y-1">
-          <span className="text-[11px] text-[#7B8A9A] block font-mono font-medium">2. Operational Payer</span>
-          <span className="text-sm font-bold text-[#059669]">{current.operationalPayer}</span>
+          <span className="text-[11px] text-[#52667A] block font-mono font-medium">2. Operational Payer</span>
+          <span className="text-sm font-bold text-[#047857]">{current.operationalPayer}</span>
         </div>
 
         <div className="p-3 rounded-xl bg-white border border-[#E2E8F0] space-y-1">
-          <span className="text-[11px] text-[#7B8A9A] block font-mono font-medium">3. Economic Beneficiary</span>
+          <span className="text-[11px] text-[#52667A] block font-mono font-medium">3. Economic Beneficiary</span>
           <span className="text-sm font-bold text-[#102A43]">{current.beneficiary}</span>
         </div>
 
         <div className="p-3 rounded-xl bg-white border border-[#E2E8F0] space-y-1">
-          <span className="text-[11px] text-[#7B8A9A] block font-mono font-medium">4. Reimbursement Flow</span>
+          <span className="text-[11px] text-[#52667A] block font-mono font-medium">4. Reimbursement Flow</span>
           <span className="text-sm font-bold text-[#B45309]">{current.reimbursement}</span>
         </div>
       </div>
@@ -191,11 +191,11 @@ export const AllocationSimulator: React.FC<AllocationSimulatorProps> = ({ lang }
         <div className="space-y-3">
           <div className="p-4 rounded-xl bg-white border border-[#E2E8F0] flex items-center justify-between shadow-xs">
             <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-[#ECFDF5] text-[#059669]">
+              <div className="p-2 rounded-lg bg-[#ECFDF5] text-[#047857]">
                 <Home className="w-4 h-4" />
               </div>
               <div>
-                <span className="text-xs text-[#7B8A9A] block">
+                <span className="text-xs text-[#52667A] block">
                   {lang === 'ro' ? 'Facturat către Proprietar' : lang === 'fa' ? 'سهم فاکتور مالک' : 'Billed to Owner'}
                 </span>
                 <span className="text-sm font-bold text-[#102A43]">
@@ -203,18 +203,18 @@ export const AllocationSimulator: React.FC<AllocationSimulatorProps> = ({ lang }
                 </span>
               </div>
             </div>
-            <div className="text-xl font-display font-extrabold text-[#059669]">
+            <div className="text-xl font-display font-extrabold text-[#047857]">
               <Money amount={current.split.owner} currency="RON" locale={lang} />
             </div>
           </div>
 
           <div className="p-4 rounded-xl bg-white border border-[#E2E8F0] flex items-center justify-between shadow-xs">
             <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-[#EAF8F5] text-[#0E9F8E]">
+              <div className="p-2 rounded-lg bg-[#EAF8F5] text-[#0A6E62]">
                 <User className="w-4 h-4" />
               </div>
               <div>
-                <span className="text-xs text-[#7B8A9A] block">
+                <span className="text-xs text-[#52667A] block">
                   {lang === 'ro' ? 'Facturat către Chiriaș' : lang === 'fa' ? 'سهم فاکتور مستأجر' : 'Billed to Tenant'}
                 </span>
                 <span className="text-sm font-bold text-[#102A43]">
@@ -222,7 +222,7 @@ export const AllocationSimulator: React.FC<AllocationSimulatorProps> = ({ lang }
                 </span>
               </div>
             </div>
-            <div className="text-xl font-display font-extrabold text-[#0E9F8E]">
+            <div className="text-xl font-display font-extrabold text-[#0A6E62]">
               <Money amount={current.split.tenant} currency="RON" locale={lang} />
             </div>
           </div>
@@ -231,7 +231,7 @@ export const AllocationSimulator: React.FC<AllocationSimulatorProps> = ({ lang }
         {/* Legal & Compliance Insight */}
         <div className="p-4 rounded-xl bg-[#EAF8F5] border border-[#B2E5DF] text-xs text-[#0A6E62] space-y-2">
           <div className="flex items-center gap-2 font-bold text-[#0A6E62]">
-            <Info className="w-4 h-4 text-[#0E9F8E]" />
+            <Info className="w-4 h-4 text-[#0A6E62]" />
             <span>{lang === 'ro' ? 'De ce contează această separare?' : lang === 'fa' ? 'چرا این تفکیک دقیق اهمیت دارد؟' : 'Why this precision matters'}</span>
           </div>
           <p className="leading-relaxed text-[#52667A]">

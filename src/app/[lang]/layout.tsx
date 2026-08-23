@@ -7,14 +7,14 @@ import { getSiteUrl } from '@/config/site';
 
 const inter = Inter({
   subsets: ['latin', 'latin-ext'],
-  weight: ['400', '500', '600', '700', '800'],
+  weight: ['400', '600', '700', '800'],
   variable: '--font-inter',
   display: 'swap',
 });
 
 const manrope = Manrope({
   subsets: ['latin', 'latin-ext'],
-  weight: ['600', '700', '800'],
+  weight: ['700', '800'],
   variable: '--font-manrope',
   display: 'swap',
 });
@@ -151,11 +151,15 @@ export default function LangLayout({
     },
   };
 
+  const fontVariables = isFa
+    ? `${vazirmatn.variable} ${inter.variable}`
+    : `${inter.variable} ${manrope.variable}`;
+
   return (
     <html 
       lang={locale.code} 
       dir={locale.direction}
-      className={`${inter.variable} ${manrope.variable} ${vazirmatn.variable} scroll-smooth`}
+      className={`${fontVariables} scroll-smooth`}
     >
       <head>
         <script

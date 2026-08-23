@@ -29,7 +29,7 @@ export const Footer: React.FC<FooterProps> = ({ lang }) => {
               </span>
             </div>
             
-            <p className="text-sm text-[#BCCCDC] leading-relaxed max-w-sm">
+            <p className="text-sm text-[#CBD5E1] leading-relaxed max-w-sm">
               {lang === 'ro'
                 ? 'Sistemul de operare pentru active rezidențiale. Unifică contabilitatea în partidă dublă, Legea 196/2018, drepturile proprietar-chiriaș, citirea contoarelor și portofoliile imobiliare într-un singur adevăr financiar.'
                 : lang === 'fa'
@@ -37,7 +37,7 @@ export const Footer: React.FC<FooterProps> = ({ lang }) => {
                 : 'The residential asset operating system. Unifying double-entry accounting truth, Law 196/2018 statutory compliance, 5D owner-tenant rights, meter readings, and property portfolios.'}
             </p>
 
-            <div className="pt-2 flex items-center gap-2 text-xs text-[#0E9F8E] font-semibold">
+            <div className="pt-2 flex items-center gap-2 text-xs text-[#14B8A6] font-semibold">
               <ShieldCheck className="w-4 h-4 text-[#10B981]" />
               <span>
                 {lang === 'ro' 
@@ -56,10 +56,10 @@ export const Footer: React.FC<FooterProps> = ({ lang }) => {
 
           {/* Solutions Column */}
           <div className="space-y-3">
-            <div className="text-xs font-bold text-[#75CFC3] uppercase tracking-wider">
+            <div className="text-xs font-bold text-[#93E6DC] uppercase tracking-wider">
               {lang === 'ro' ? 'Soluții pe Roluri' : lang === 'fa' ? 'راهکارها بر اساس نقش' : 'Solutions by Role'}
             </div>
-            <ul className="space-y-2 text-sm text-[#BCCCDC]">
+            <ul className="space-y-2 text-sm text-[#CBD5E1]">
               <li>
                 <Link href={`/${lang}/solutions/associations`} className="hover:text-white transition-colors">
                   {lang === 'ro' ? 'Asociații de Proprietari' : lang === 'fa' ? 'انجمن‌های مالکان' : 'Homeowner Associations'}
@@ -90,10 +90,10 @@ export const Footer: React.FC<FooterProps> = ({ lang }) => {
 
           {/* Platform & Modules Column */}
           <div className="space-y-3">
-            <div className="text-xs font-bold text-[#75CFC3] uppercase tracking-wider">
+            <div className="text-xs font-bold text-[#93E6DC] uppercase tracking-wider">
               {lang === 'ro' ? 'Platformă & Module' : lang === 'fa' ? 'پلتفرم و ماژول‌ها' : 'Platform & Modules'}
             </div>
-            <ul className="space-y-2 text-sm text-[#BCCCDC]">
+            <ul className="space-y-2 text-sm text-[#CBD5E1]">
               <li>
                 <Link href={`/${lang}/platform`} className="hover:text-white transition-colors">
                   {lang === 'ro' ? 'Arhitectura Platformei' : lang === 'fa' ? 'معماری جامع پلتفرم' : 'Platform Architecture'}
@@ -117,7 +117,7 @@ export const Footer: React.FC<FooterProps> = ({ lang }) => {
               <li>
                 <Link href={`/${lang}/demo`} className="hover:text-white transition-colors flex items-center gap-1">
                   <span>{lang === 'ro' ? 'Mediu Demonstrativ Public' : lang === 'fa' ? 'دموی تعاملی سندباکس' : 'Public Demo Sandbox'}</span>
-                  <ArrowUpRight className="w-3.5 h-3.5 text-[#0E9F8E]" />
+                  <ArrowUpRight className="w-3.5 h-3.5 text-[#14B8A6]" />
                 </Link>
               </li>
             </ul>
@@ -125,10 +125,10 @@ export const Footer: React.FC<FooterProps> = ({ lang }) => {
 
           {/* Resources & Legal Column */}
           <div className="space-y-3">
-            <div className="text-xs font-bold text-[#75CFC3] uppercase tracking-wider">
+            <div className="text-xs font-bold text-[#93E6DC] uppercase tracking-wider">
               {lang === 'ro' ? 'Resurse & Conformitate' : lang === 'fa' ? 'منابع و امنیت' : 'Resources & Trust'}
             </div>
-            <ul className="space-y-2 text-sm text-[#BCCCDC]">
+            <ul className="space-y-2 text-sm text-[#CBD5E1]">
               <li>
                 <Link href={`/${lang}/resources/faq`} className="hover:text-white transition-colors">
                   {lang === 'ro' ? 'Întrebări Frecvente (FAQ)' : lang === 'fa' ? 'پرسش‌های متداول (FAQ)' : 'Frequently Asked Questions'}
@@ -160,7 +160,7 @@ export const Footer: React.FC<FooterProps> = ({ lang }) => {
         </div>
 
         {/* Legal Disclaimer & Regulatory Note */}
-        <div className="py-6 text-xs text-[#7B8A9A] leading-relaxed border-b border-[#173F5F]">
+        <div className="py-6 text-xs text-[#9FB3C8] leading-relaxed border-b border-[#173F5F]">
           <p>
             {lang === 'ro'
               ? 'Notă legală și metodologică: Estimările de economii și calculele de randament sunt orientative și depind de specificul clădirii, starea instalațiilor, istoricul de consum și calitatea datelor importate. Algoritmii de repartizare a cheltuielilor sunt proiectați în conformitate cu prevederile Legii nr. 196/2018 privind înființarea, organizarea și funcționarea asociațiilor de proprietari și administrarea condominiilor din România. Funcționalitatea de migrare Shadow Ledger este concepută pentru a identifica discrepanțele înainte de trecerea operațională efectivă.'
@@ -171,7 +171,7 @@ export const Footer: React.FC<FooterProps> = ({ lang }) => {
         </div>
 
         {/* Bottom Strip */}
-        <div className="pt-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[#7B8A9A]">
+        <div className="pt-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[#9FB3C8]">
           <div>
             © {currentYear} CLADORA Technologies. {lang === 'ro' ? 'Toate drepturile rezervate.' : lang === 'fa' ? 'تمامی حقوق برای کلادورا محفوظ است.' : 'All rights reserved.'}
           </div>

@@ -156,7 +156,7 @@ export const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({
   if (variant === 'footer') {
     return (
       <div className={`flex items-center gap-2 flex-wrap ${className}`}>
-        <span className="text-xs text-[#7B8A9A] font-medium me-1">
+        <span className="text-xs text-[#9FB3C8] font-medium me-1">
           {currentLang === 'ro' ? 'Limbă:' : currentLang === 'fa' ? 'زبان:' : 'Language:'}
         </span>
         {LANGUAGES.map((item) => {
@@ -169,8 +169,8 @@ export const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({
               aria-label={`${getAriaLabel()}: ${item.nativeName}`}
               className={`min-h-[36px] px-2.5 py-1.5 rounded-lg border text-xs font-bold flex items-center gap-1.5 transition-colors ${
                 isSelected
-                  ? 'bg-white text-[#102A43] border-[#102A43] shadow-sm'
-                  : 'bg-transparent text-[#7B8A9A] border-[#D3DCE6] hover:bg-white hover:text-[#102A43]'
+                  ? 'bg-white text-[#102A43] border-white shadow-sm'
+                  : 'bg-transparent text-[#9FB3C8] border-[#243B53] hover:bg-white hover:text-[#102A43]'
               }`}
             >
               <Flag className="w-4 h-3" />
@@ -190,7 +190,7 @@ export const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({
         onClick={() => setIsOpen(!isOpen)}
         aria-expanded={isOpen}
         aria-haspopup="true"
-        aria-label={getAriaLabel()}
+        aria-label={`${getAriaLabel()}: ${activeLangObj.nativeName}`}
         className="min-h-[40px] px-3 py-2 rounded-xl border border-[#D3DCE6] bg-white text-[#102A43] hover:bg-[#F6F9FC] text-xs font-bold flex items-center gap-2 transition-all shadow-xs focus:outline-none focus:ring-2 focus:ring-[#0E9F8E]"
       >
         <ActiveFlag className="w-4 h-3" />

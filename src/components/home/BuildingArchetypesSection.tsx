@@ -111,7 +111,7 @@ export const BuildingArchetypesSection: React.FC<BuildingArchetypesProps> = ({ l
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         <div className="text-center max-w-3xl mx-auto space-y-3">
-          <span className="text-xs font-bold text-[#0E9F8E] uppercase tracking-wider bg-[#EAF8F5] px-3 py-1 rounded-full border border-[#B2E5DF]">
+          <span className="text-xs font-bold text-[#0A6E62] uppercase tracking-wider bg-[#EAF8F5] px-3 py-1 rounded-full border border-[#B2E5DF]">
             {lang === 'ro' ? 'Nucleul C07 — Building DNA' : lang === 'fa' ? 'هسته نرم‌افزاری C07 — شناسنامه فنی ساختمان' : 'C07 Core — Building DNA'}
           </span>
           <h2 className="text-3xl sm:text-5xl font-display font-extrabold text-[#102A43] tracking-tight">
@@ -148,7 +148,7 @@ export const BuildingArchetypesSection: React.FC<BuildingArchetypesProps> = ({ l
                   <h3 className="text-base font-bold text-[#102A43] mt-4">
                     {arch.name}
                   </h3>
-                  <div className="text-xs text-[#7B8A9A] font-medium mt-0.5">
+                  <div className="text-xs text-[#52667A] font-medium mt-0.5">
                     {arch.period}
                   </div>
 

@@ -9,10 +9,7 @@ import {
   TrendingUp, 
   Layers, 
   CheckCircle2, 
-  ArrowRight,
-  ShieldCheck,
-  Zap,
-  Users
+  ArrowRight
 } from 'lucide-react';
 
 interface ThreeModesSectionProps {
@@ -57,7 +54,7 @@ export const ThreeModesSection: React.FC<ThreeModesSectionProps> = ({ lang }) =>
               className={`flex-1 min-w-[160px] flex items-center justify-center gap-2.5 py-3 px-4 rounded-xl text-sm font-extrabold transition-all ${
                 activeTab === 'association'
                   ? 'bg-cyan-400 text-slate-950 shadow-glow-cyan'
-                  : 'bg-surface-200/50 text-slate-100 hover:bg-surface-200 hover:text-white border border-white/10'
+                  : 'bg-white/10 text-white hover:bg-white/15 border border-white/10'
               }`}
             >
               <Building2 className={`w-4 h-4 ${activeTab === 'association' ? 'text-slate-950' : 'text-cyan-400'}`} />
@@ -71,7 +68,7 @@ export const ThreeModesSection: React.FC<ThreeModesSectionProps> = ({ lang }) =>
               className={`flex-1 min-w-[160px] flex items-center justify-center gap-2.5 py-3 px-4 rounded-xl text-sm font-extrabold transition-all ${
                 activeTab === 'portfolio'
                   ? 'bg-emerald-400 text-slate-950 shadow-glow-emerald'
-                  : 'bg-surface-200/50 text-slate-100 hover:bg-surface-200 hover:text-white border border-white/10'
+                  : 'bg-white/10 text-white hover:bg-white/15 border border-white/10'
               }`}
             >
               <TrendingUp className={`w-4 h-4 ${activeTab === 'portfolio' ? 'text-slate-950' : 'text-emerald-400'}`} />
@@ -85,7 +82,7 @@ export const ThreeModesSection: React.FC<ThreeModesSectionProps> = ({ lang }) =>
               className={`flex-1 min-w-[160px] flex items-center justify-center gap-2.5 py-3 px-4 rounded-xl text-sm font-extrabold transition-all ${
                 activeTab === 'manager'
                   ? 'bg-violet-400 text-slate-950 shadow-glow-cyan'
-                  : 'bg-surface-200/50 text-slate-100 hover:bg-surface-200 hover:text-white border border-white/10'
+                  : 'bg-white/10 text-white hover:bg-white/15 border border-white/10'
               }`}
             >
               <Layers className={`w-4 h-4 ${activeTab === 'manager' ? 'text-slate-950' : 'text-violet-400'}`} />
@@ -137,28 +134,28 @@ export const ThreeModesSection: React.FC<ThreeModesSectionProps> = ({ lang }) =>
 
             {/* Right Metrics Box */}
             <div className="lg:col-span-5">
-              <div className="rounded-2xl bg-surface-100/95 border border-white/15 p-6 space-y-6">
+              <div className="rounded-2xl bg-[#0F172A] border border-white/15 p-6 space-y-6">
                 <div className="text-xs font-bold text-slate-200 uppercase tracking-wider">
                   {lang === 'ro' ? 'Impactul Măsurabil al Modulului' : lang === 'fa' ? 'نتایج ملموس و قابل سنجش' : 'Measurable Module Impact'}
                 </div>
 
                 <div className="grid grid-cols-1 gap-4">
-                  <div className="p-4 rounded-xl glass-panel border border-white/10 flex items-center justify-between">
+                  <div className="p-4 rounded-xl bg-white/5 border border-white/10 flex items-center justify-between">
                     <span className="text-sm text-slate-100 font-semibold">{lang === 'ro' ? 'Închidere perioadă' : lang === 'fa' ? 'بستن دوره مالی' : 'Period Close'}</span>
                     <span className="text-sm font-semibold text-emerald-400">{lang === 'ro' ? 'Flux ghidat' : lang === 'fa' ? 'گردش‌کار مرحله‌ای' : 'Guided workflow'}</span>
                   </div>
-                  <div className="p-4 rounded-xl glass-panel border border-white/10 flex items-center justify-between">
+                  <div className="p-4 rounded-xl bg-white/5 border border-white/10 flex items-center justify-between">
                     <span className="text-sm text-slate-100 font-semibold">{lang === 'ro' ? 'Control discrepanțe' : lang === 'fa' ? 'شناسایی مغایرت‌ها' : 'Discrepancy Checks'}</span>
                     <span className="text-sm font-semibold text-emerald-400">{lang === 'ro' ? 'Validări automate' : lang === 'fa' ? 'اعتبارسنجی خودکار' : 'Automated validations'}</span>
                   </div>
-                  <div className="p-4 rounded-xl glass-panel border border-white/10 flex items-center justify-between">
+                  <div className="p-4 rounded-xl bg-white/5 border border-white/10 flex items-center justify-between">
                     <span className="text-sm text-slate-100 font-semibold">{lang === 'ro' ? 'Adunări & Cvorum' : lang === 'fa' ? 'حدنصاب و مجمع' : 'Quorum & Turnout'}</span>
                     <span className="text-sm font-semibold text-emerald-400">{lang === 'ro' ? 'Urmărire participare' : lang === 'fa' ? 'پایش حضور و آرا' : 'Participation tracking'}</span>
                   </div>
                 </div>
 
-                <div className="p-4 rounded-xl bg-brand-500/20 border border-brand-500/40 text-xs text-slate-100 leading-relaxed font-medium">
-                  <span>⚖️ <strong>{lang === 'ro' ? 'Cadru structurat Legea 196/2018:' : lang === 'fa' ? 'پشتیبانی از الزامات قانونی:' : 'Structured Statutory Support:'}</strong> {lang === 'ro' ? 'Reguli de repartizare configurabile și documentate pentru împărțirea pe cote-părți indivize (CPI), persoane și suprafață utilă.' : lang === 'fa' ? 'قواعد تسهیم شفاف و مستند بر مبنای سهام مشاع، تعداد نفرات و متراژ مفید.' : 'Documented and configurable allocation rules for CPI shares, person counts, and heated surface area.'}</span>
+                <div className="p-4 rounded-xl bg-[#0B2239] border border-white/15 text-xs text-slate-100 leading-relaxed font-medium">
+                  <span>⚖️ <strong className="text-brand-300">{lang === 'ro' ? 'Cadru structurat Legea 196/2018:' : lang === 'fa' ? 'پشتیبانی از الزامات قانونی:' : 'Structured Statutory Support:'}</strong> {lang === 'ro' ? 'Reguli de repartizare configurabile și documentate pentru împărțirea pe cote-părți indivize (CPI), persoane și suprafață utilă.' : lang === 'fa' ? 'قواعد تسهیم شفاف و مستند بر مبنای سهام مشاع، تعداد نفرات و متراژ مفید.' : 'Documented and configurable allocation rules for CPI shares, person counts, and heated surface area.'}</span>
                 </div>
               </div>
             </div>

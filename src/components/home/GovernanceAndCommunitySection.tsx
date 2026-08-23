@@ -1,5 +1,3 @@
-'use client';
-
 import React from 'react';
 import { Language } from '@/types';
 import { 
@@ -18,7 +16,7 @@ export const GovernanceAndCommunitySection: React.FC<GovernanceSectionProps> = (
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         <div className="text-center max-w-3xl mx-auto space-y-3">
-          <span className="text-xs font-bold text-[#0E9F8E] uppercase tracking-wider bg-[#EAF8F5] px-3 py-1 rounded-full border border-[#B2E5DF]">
+          <span className="text-xs font-bold text-[#0A6E62] uppercase tracking-wider bg-[#EAF8F5] px-3 py-1 rounded-full border border-[#B2E5DF]">
             {lang === 'ro' ? 'Nucleul C11 & C12' : lang === 'fa' ? 'هسته‌های نرم‌افزاری C11 و C12' : 'C11 & C12 Cores'}
           </span>
           <h2 className="text-3xl sm:text-5xl font-display font-extrabold text-[#102A43] tracking-tight">
@@ -59,7 +57,7 @@ export const GovernanceAndCommunitySection: React.FC<GovernanceSectionProps> = (
                   </p>
                 </div>
               </div>
-              <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-[#ECFDF5] text-[#059669] border border-[#A7F3D0]">
+              <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-[#ECFDF5] text-[#047857] border border-[#A7F3D0]">
                 {lang === 'ro' ? 'Cvorum Întrunit: 68.5%' : lang === 'fa' ? 'حدنصاب مجمع: ۶۸.۵٪' : 'Quorum: 68.5%'}
               </span>
             </div>
@@ -74,7 +72,7 @@ export const GovernanceAndCommunitySection: React.FC<GovernanceSectionProps> = (
                     ? 'بند ۱: تصویب بودجه تعویض لوله‌کشی موتورخانه (۵۰,۰۰۰ لئو)'
                     : 'Item 1: Heating Riser Overhaul Budget'}
                 </span>
-                <span className="font-extrabold text-[#0E9F8E]">
+                <span className="font-extrabold text-[#0A6E62]">
                   {lang === 'ro' ? '82 Voturi PENTRU (76%)' : lang === 'fa' ? '۸۲ رأی موافق (۷۶٪)' : '82 Votes FOR (76%)'}
                 </span>
               </div>
@@ -83,7 +81,7 @@ export const GovernanceAndCommunitySection: React.FC<GovernanceSectionProps> = (
                 <div className="bg-[#F59E0B] h-full" style={{ width: '14%' }} />
                 <div className="bg-[#E5484D] h-full" style={{ width: '10%' }} />
               </div>
-              <div className="flex justify-between text-[11px] text-[#7B8A9A]">
+              <div className="flex justify-between text-[11px] text-[#52667A]">
                 <span>✓ {lang === 'ro' ? '82 Pentru' : lang === 'fa' ? '۸۲ موافق' : '82 For'}</span>
                 <span>{lang === 'ro' ? '15 Abțineri' : lang === 'fa' ? '۱۵ ممتنع' : '15 Abstain'}</span>
                 <span>{lang === 'ro' ? '11 Împotrivă' : lang === 'fa' ? '۱۱ مخالف' : '11 Against'}</span>
@@ -140,10 +138,10 @@ export const GovernanceAndCommunitySection: React.FC<GovernanceSectionProps> = (
 
             <div className="card-proptech p-4 bg-white border-l-4 border-l-[#0E9F8E] space-y-1">
               <div className="flex items-center justify-between text-xs">
-                <span className="font-bold text-[#0E9F8E]">
+                <span className="font-bold text-[#0A6E62]">
                   {lang === 'ro' ? 'ANUNȚ ADMINISTRATOR' : lang === 'fa' ? 'اطلاعیه مدیریت مجتمع' : 'ADMIN NOTICE'}
                 </span>
-                <span className="text-[#7B8A9A]">
+                <span className="text-[#52667A]">
                   {lang === 'ro' ? 'Acum 2 ore' : lang === 'fa' ? '۲ ساعت پیش' : '2h ago'}
                 </span>
               </div>
@@ -161,7 +159,7 @@ export const GovernanceAndCommunitySection: React.FC<GovernanceSectionProps> = (
                   ? 'خواهشمند است جهت بررسی نشتی و ایمنی، امکان حضور یا دسترسی به واحد را فراهم فرمایید.'
                   : 'Please grant access for leak checks.'}
               </p>
-              <div className="pt-2 text-[11px] text-[#059669] font-bold">
+              <div className="pt-2 text-[11px] text-[#047857] font-bold">
                 ✓ {lang === 'ro' ? '94 rezidenți au confirmat citirea' : lang === 'fa' ? '۹۴ ساکن اطلاعیه را مشاهده و تأیید کردند' : '94 residents confirmed read'}
               </div>
             </div>
