@@ -66,11 +66,11 @@
   }
 
   .gradient-text-teal {
-    @apply bg-clip-text text-transparent bg-gradient-to-r from-[#0E9F8E] to-[#10B981] inline-block;
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-[#0E9F8E] to-[#10B981];
   }
 
   .gradient-text-navy {
-    @apply bg-clip-text text-transparent bg-gradient-to-r from-[#102A43] via-[#173F5F] to-[#2F80ED] inline-block;
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-[#102A43] via-[#173F5F] to-[#2F80ED];
   }
 
   .mesh-subtle {
