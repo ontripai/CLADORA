@@ -14,12 +14,15 @@ import {
 import { Money } from '@/components/ui/Money';
 import { formatMoney } from '@/config/currencies';
 
+import { getDictionary } from '@/dictionaries';
+
 interface HeroSectionProps {
   lang: Language;
 }
 
 export const HeroSection: React.FC<HeroSectionProps> = ({ lang }) => {
   const [activeTab, setActiveTab] = useState<'association' | 'portfolio' | 'manager'>('association');
+  const dict = getDictionary(lang);
 
   return (
     <section className="relative pt-32 pb-20 overflow-hidden bg-gradient-to-b from-[#F0F4F8] via-[#F6F9FC] to-[#F6F9FC] mesh-subtle">
@@ -33,11 +36,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ lang }) => {
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white border border-[#B2E5DF] shadow-sm text-xs font-bold text-[#0A6E62]">
             <span className="flex h-2 w-2 rounded-full bg-[#10B981] animate-pulse" />
             <span>
-              {lang === 'ro' 
-                ? 'Programul Pilot București & Ilfov — Înscrieri Deschise' 
-                : lang === 'fa'
-                ? 'برنامه پایلوت بخارست و ایلفوف — ثبت‌نام فعال شد'
-                : 'Bucharest & Ilfov Pilot Cohort — Open for Applications'}
+              {dict.hero.badge}
             </span>
             <ArrowRight className="w-3.5 h-3.5 text-[#0E9F8E] rtl:rotate-180" />
           </div>
@@ -46,48 +45,30 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ lang }) => {
         {/* Hero Title & Subtitle */}
         <div className="text-center max-w-4xl mx-auto mt-6 space-y-5">
           <h1 className="text-4xl sm:text-6xl font-display font-extrabold text-[#102A43] tracking-tight leading-[1.15]">
-            {lang === 'ro' ? (
-              <>
-                Control complet asupra{' '}
-                <span className="gradient-text-teal">clădirilor și proprietăților</span> tale.
-              </>
-            ) : lang === 'fa' ? (
-              <>
-                مدیریت هوشمند و تسلط کامل بر{' '}
-                <span className="gradient-text-teal">ساختمان‌ها و دارایی‌های مسکونی</span>
-              </>
-            ) : (
-              <>
-                Complete control over your{' '}
-                <span className="gradient-text-teal">buildings and residential assets</span>.
-              </>
-            )}
+            {dict.hero.titleLine1}{' '}
+            <span className="gradient-text-teal">{dict.hero.titleLine2}</span>
           </h1>
 
           <p className="text-lg sm:text-xl text-[#52667A] max-w-3xl mx-auto leading-relaxed font-normal">
-            {lang === 'ro'
-              ? 'CLADORA unește contabilitatea în partidă dublă, Legea 196/2018, citirea automată a contoarelor, drepturile proprietar-chiriaș și portofoliile rezidențiale într-un singur sistem de operare auditat.'
-              : lang === 'fa'
-              ? 'کلادورا حسابداری دوطرفه، تفکیک ۵ بعدی حقوق مالک و مستأجر، قرائت تصویری کنتورها با هوش مصنوعی و سبد املاک را در یک سیستم‌عامل یکپارچه پیوند می‌دهد.'
-              : 'CLADORA unifies double-entry accounting truth, Law 196/2018 statutory compliance, meter OCR, owner-tenant rights, and residential portfolios in one auditable operating system.'}
+            {dict.hero.description}
           </p>
 
           {/* Primary CTA Buttons */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-3">
             <Link
-              href={`/${lang}/demo`}
-              className="w-full sm:w-auto flex items-center justify-center gap-2.5 px-8 py-4 rounded-2xl bg-[#0E9F8E] hover:bg-[#0C8778] text-white font-display font-bold text-base shadow-card-hover hover:scale-[1.02] transition-all"
+              href={`/${lang}/pilot`}
+              className="w-full sm:w-auto flex items-center justify-center gap-2 px-7 py-4 rounded-2xl bg-[#0E9F8E] hover:bg-[#0C8778] text-white font-display font-bold text-base shadow-card-hover hover:scale-[1.02] transition-all"
             >
-              <PlayCircle className="w-5 h-5" />
-              <span>{lang === 'ro' ? 'Vezi demonstrația interactivă' : lang === 'fa' ? 'آزمودن دموی تعاملی' : 'Explore Interactive Demo'}</span>
+              <span>{dict.hero.ctaPrimary}</span>
+              <ArrowRight className="w-4 h-4 rtl:rotate-180" />
             </Link>
 
             <Link
-              href={`/${lang}/pilot`}
-              className="w-full sm:w-auto flex items-center justify-center gap-2 px-7 py-4 rounded-2xl bg-white hover:bg-[#F0F4F8] text-[#102A43] border border-[#D3DCE6] font-display font-bold text-base shadow-card transition-all"
+              href={`/${lang}/demo`}
+              className="w-full sm:w-auto flex items-center justify-center gap-2.5 px-8 py-4 rounded-2xl bg-white hover:bg-[#F0F4F8] text-[#102A43] border border-[#D3DCE6] font-display font-bold text-base shadow-card transition-all"
             >
-              <span>{lang === 'ro' ? 'Aplică în programul pilot' : lang === 'fa' ? 'ثبت‌نام در برنامه پایلوت' : 'Apply for Pilot Program'}</span>
-              <ArrowRight className="w-4 h-4 text-[#52667A] rtl:rotate-180" />
+              <PlayCircle className="w-5 h-5 text-[#0E9F8E]" />
+              <span>{dict.hero.ctaSecondary}</span>
             </Link>
           </div>
         </div>

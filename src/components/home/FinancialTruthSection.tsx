@@ -16,12 +16,15 @@ import { Money } from '@/components/ui/Money';
 import { formatPercent } from '@/config/currencies';
 import { formatExpenseCategory, formatAllocationMethod } from '@/config/formatters';
 
+import { getDictionary } from '@/dictionaries';
+
 interface FinancialTruthSectionProps {
   lang: Language;
 }
 
 export const FinancialTruthSection: React.FC<FinancialTruthSectionProps> = ({ lang }) => {
   const [selectedLine, setSelectedLine] = useState<string>(MOCK_CHARGE_BREAKDOWN[0].id);
+  const dict = getDictionary(lang);
 
   const currentItem = MOCK_CHARGE_BREAKDOWN.find(item => item.id === selectedLine) || MOCK_CHARGE_BREAKDOWN[0];
 
@@ -32,17 +35,13 @@ export const FinancialTruthSection: React.FC<FinancialTruthSectionProps> = ({ la
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto space-y-3">
           <span className="text-xs font-bold text-[#0E9F8E] uppercase tracking-wider bg-[#EAF8F5] px-3 py-1 rounded-full border border-[#B2E5DF]">
-            {lang === 'ro' ? 'Nucleul C01 & C02' : lang === 'fa' ? 'هسته‌های نرم‌افزاری C01 و C02' : 'C01 & C02 Core'}
+            {dict.financialTruth.badge}
           </span>
           <h2 className="text-3xl sm:text-5xl font-display font-extrabold text-[#102A43] tracking-tight">
-            {lang === 'ro' ? 'Un singur adevăr financiar pentru fiecare leu' : lang === 'fa' ? 'یک حقیقت مالی شفاف برای هر ریال شارژ' : 'One Financial Source of Truth for Every Cent'}
+            {dict.financialTruth.title}
           </h2>
           <p className="text-base sm:text-lg text-[#52667A]">
-            {lang === 'ro'
-              ? 'Fiecare sumă are o sursă. Fiecare cheltuială are o regulă de alocare. Fără ștergeri neautorizate — doar stornări înregistrate cu trasabilitate de audit.'
-              : lang === 'fa'
-              ? 'هر رقم دارای فاکتور مرجع است. هر هزینه از یک فرمول مشخص تبعیت می‌کند. بدون حذف خام اطلاعات؛ صرفاً اسناد اصلاحی با ردپای حسابرسی.'
-              : 'Every financial amount traces to a source invoice. Every expense follows a defined statutory rule. No silent deletions — strictly auditable reversals.'}
+            {dict.financialTruth.description}
           </p>
         </div>
 
