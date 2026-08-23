@@ -1,13 +1,14 @@
 import React from 'react';
 import type { Metadata } from 'next';
-import { Inter, Manrope, Vazirmatn } from 'next/font/google';
+import { Inter, Manrope } from 'next/font/google';
 import { Language, SUPPORTED_LOCALES, getLocaleConfig, getIntlLocale } from '@/types';
 import { AppOrMarketingLayout } from '@/components/layout/AppOrMarketingLayout';
+import { vazirmatn } from '@/components/layout/PersianFontLoader';
 import { getSiteUrl } from '@/config/site';
 
 const inter = Inter({
   subsets: ['latin', 'latin-ext'],
-  weight: ['400', '600', '700', '800'],
+  weight: ['400', '600', '700'],
   variable: '--font-inter',
   display: 'swap',
 });
@@ -16,13 +17,6 @@ const manrope = Manrope({
   subsets: ['latin', 'latin-ext'],
   weight: ['700', '800'],
   variable: '--font-manrope',
-  display: 'swap',
-});
-
-const vazirmatn = Vazirmatn({
-  subsets: ['arabic', 'latin'],
-  weight: ['400', '600', '700', '800'],
-  variable: '--font-vazirmatn',
   display: 'swap',
 });
 
