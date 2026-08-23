@@ -52,7 +52,7 @@ export const ro = {
     ctaSecondary: "Vezi demonstrația interactivă",
     metrics: [
       { value: "Claritate", label: "Validare Asistată a Soldurilor", subtext: "Partidă dublă & jurnal de audit" },
-      { value: "30-50%", label: "Economie de Timp la Închidere", subtext: "În scenariile de lucru testate" },
+      { value: "Eficiență", label: "Mai puține operațiuni repetitive", subtext: "Flux ghidat pentru închiderea perioadei" },
       { value: "Legea 196/2018", label: "Model Structurat Legal", subtext: "Conceput pentru repartizări și fonduri" },
       { value: "3 în 1", label: "Asociație, Portofoliu, Manager", subtext: "Spații de lucru dedicate" },
     ],
@@ -144,7 +144,7 @@ export const ro = {
   },
   metersSection: {
     badge: "Contorizare & Citire Asistată",
-    title: "Colectare simplă a indexurilor, fără bătăi de cap",
+    title: "Înregistrează mai ușor indexurile contoarelor",
     description: "Colectează indexurile de apă, gaz, electricitate și căldură prin orice metodă convenabilă: de la poza cu telefonul validată asistat, până la senzori radio M-Bus și LoRaWAN.",
     features: [
       { title: "Citire Asistată prin Poză", desc: "Locatarul fotografiază contorul; algoritmul extrage cifrele și ajută la transmiterea corectă a indexului." },

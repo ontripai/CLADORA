@@ -51,8 +51,8 @@ export const en = {
     ctaPrimary: "Apply for Pilot Access",
     ctaSecondary: "View Interactive Demo",
     metrics: [
-      { value: "Clarity", label: "Mathematical Ledger Checks", subtext: "Double-entry & complete audit trail" },
-      { value: "30-50%", label: "Time Saved on Month-End Close", subtext: "Observed in benchmark pilot workflows" },
+      { value: "Clarity", label: "Mathematical Ledger Checks", subtext: "Double-entry & traceable audit history" },
+      { value: "Efficiency", label: "Fewer repetitive closing tasks", subtext: "A guided month-end workflow" },
       { value: "Law 196/2018", label: "Statutory Workflow Support", subtext: "Structured for joint-property shares & funds" },
       { value: "3 in 1", label: "Association, Portfolio, Manager", subtext: "Tailored workspaces in one platform" },
     ],

@@ -9,6 +9,7 @@
  */
 
 import assert from 'assert';
+import fs from 'fs';
 
 // Test IntFormat helpers directly mirroring currencies.ts
 const currencyConfig = {
@@ -289,7 +290,7 @@ it('formatExpenseCategory maps expense IDs CH-01..CH-05 to clean localized label
   }
 });
 
-it('No forbidden absolute claims across dictionaries (Task 004B Quality Gate)', () => {
+it('No forbidden absolute claims across dictionaries (Task 004B & 005 Final Gate)', () => {
   const forbiddenClaims = [
     'Migrare Fără Risc',
     'Bank-Grade Security',
@@ -297,10 +298,25 @@ it('No forbidden absolute claims across dictionaries (Task 004B Quality Gate)', 
     'Immutable Audit Trail',
     'Jurnal de Audit Imutabil',
     'Zero Risk',
-    'Zero Friction'
+    'Zero Friction',
+    '30-50%',
+    '۳۰ تا ۵۰٪',
+    'benchmark pilot workflows',
+    'scenariile de lucru testate',
+    'سناریوهای پایلوت',
+    'fără stres',
+    'fără bătăi de cap',
+    'conformă cu legea',
+    'اطمینان از صحت',
+    'کنترل جامع',
   ];
-  // Claims are qualified across all dictionaries and UI components
-  assert.ok(true);
+
+  for (const lang of ['ro', 'en', 'fa']) {
+    const content = fs.readFileSync(`src/dictionaries/${lang}.ts`, 'utf8');
+    for (const claim of forbiddenClaims) {
+      assert.ok(!content.includes(claim), `Forbidden claim "${claim}" detected in src/dictionaries/${lang}.ts`);
+    }
+  }
 });
 
 console.log('\n=======================================');

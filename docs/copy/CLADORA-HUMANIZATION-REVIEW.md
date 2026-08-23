@@ -81,9 +81,9 @@ This document presents 30 representative Before / After copy humanization exampl
   ```
 - **After:**
   ```text
-  Liniște în bloc, contabilitate clară și adunări generale organizate fără bătăi de cap.
+  Contabilitate clară și adunări generale mai bine organizate.
   ```
-- **Why:** Authentic Romanian conversational tone ("fără bătăi de cap", "Liniște în bloc") reflecting real association leadership concerns.
+- **Why:** Clear, professional Romanian phrasing reflecting real condominium association operational focus.
 - **Claim Safety:** Neutral and outcome-focused.
 
 ---
@@ -96,9 +96,9 @@ This document presents 30 representative Before / After copy humanization exampl
   ```
 - **After:**
   ```text
-  Scapi de grija citirii contoarelor
+  Înregistrează mai ușor indexurile contoarelor
   ```
-- **Why:** Avoids negative framing ("elimină erorile") and speaks to user relief.
+- **Why:** Direct and practical benefit for resident meter submissions.
 - **Claim Safety:** Free of absolute zero-error claims.
 
 ---
@@ -126,9 +126,9 @@ This document presents 30 representative Before / After copy humanization exampl
   ```
 - **After:**
   ```text
-  Trecerea la CLADORA se face fără stres. Sistemul nostru de verificare rulează în paralel cu softul tău actual timp de 1-2 luni, până când toate soldurile sunt verificate și aliniate la virgulă.
+  Trecerea la CLADORA se face etapizat, cu verificări înainte de schimbarea operațională. Sistemul nostru de verificare rulează în paralel cu softul tău actual timp de 1-2 luni, pentru compararea și reconcilierea soldurilor înainte de trecerea operațională.
   ```
-- **Why:** Replaced bureaucratic warning tone with reassuring guidance; avoided "100% reconciliat" absolute phrasing.
+- **Why:** Accurately describes phased verification and reconciliation before operational cutover.
 - **Claim Safety:** Replaces "100%" with realistic operational language ("verificate și aliniate").
 
 ---
@@ -141,10 +141,10 @@ This document presents 30 representative Before / After copy humanization exampl
   ```
 - **After:**
   ```text
-  Tot ce ai nevoie pentru o administrare corectă, transparentă și conformă cu legea.
+  Instrumente pentru o administrare corectă și transparentă, adaptate cerințelor aplicabile.
   ```
 - **Why:** Smooth phrasing natural to condominium committees.
-- **Claim Safety:** Maintains Law 196/2018 compliance baseline.
+- **Claim Safety:** Prudent statutory alignment tailored to Romanian condominium requirements.
 
 ---
 
@@ -248,9 +248,9 @@ This document presents 30 representative Before / After copy humanization exampl
   ```
 - **After:**
   ```text
-  Simple, Reliable Meter Readings
+  Simpler meter reading and review
   ```
-- **Why:** Replaced absolute negative claim ("eliminate human error") with positive, confident product tone.
+- **Why:** Clear, outcome-oriented heading without exaggerated accuracy claims.
 - **Claim Safety:** Strictly no zero-error claims.
 
 ---
@@ -430,9 +430,9 @@ This document presents 30 representative Before / After copy humanization exampl
   ```
 - **After:**
   ```text
-  انتقال سوابق به کلادورا با اطمینان از صحت مانده‌ها
+  انتقال سوابق به کلادورا با بررسی و تطبیق مانده‌ها
   ```
-- **Why:** Clear, confidence-inspiring phrasing that speaks directly to boards moving away from legacy spreadsheets.
+- **Why:** Objective and clear description of balance reconciliation during migration.
 - **Claim Safety:** Strictly describes verification and reconciliation.
 
 ---
@@ -445,9 +445,9 @@ This document presents 30 representative Before / After copy humanization exampl
   ```
 - **After:**
   ```text
-  کنترل جامع قراردادهای اجاره، وصول مطالبات و پایش بازده دارایی‌ها.
+  مدیریت قراردادهای اجاره، پیگیری مطالبات و پایش بازده املاک.
   ```
-- **Why:** Polished, professional tone tailored for multi-property investors and landlords.
+- **Why:** Balanced and professional tone for property portfolio workflows.
 - **Claim Safety:** Accurate scope description.
 
 ---
