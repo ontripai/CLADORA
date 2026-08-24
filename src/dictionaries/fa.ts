@@ -378,7 +378,7 @@ export const fa = {
   },
   metrics: {
     productionModules: "ماژول‌های عملیاتی",
-    managerWorkspaces: "فضاهای کاری مدیر",
+    managerWorkspaces: "فضای کاری مدیران",
     totalBaseScreens: "مجموع صفحات پایه",
     totalResponsiveBaseViews: "مجموع نماهای واکنش‌گرا",
     prototypeJourneys: "مسیرهای پروتوتایپ",
@@ -387,9 +387,9 @@ export const fa = {
   utilityBills: {
     title: "قبوض آب و برق و هوش پردازش صورت‌حساب‌ها",
     workspaceId: "M25",
-    workspaceTag: "محیط کاری M25",
-    workspaceBadge: "محیط کاری M25 • حسابداری و قبوض انرژی",
-    workspacesLabel: "فضاهای کاری مدیر",
+    workspaceTag: "فضای کاری M25",
+    workspaceBadge: "فضای کاری M25 • حسابداری و قبوض خدماتی",
+    workspacesLabel: "فضای کاری مدیران",
     screensLabel: "صفحه پایه",
     viewsLabel: "نمای واکنش‌گرا",
     role: "مدیر املاک و ساختمان",
