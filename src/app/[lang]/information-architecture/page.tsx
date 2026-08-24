@@ -47,11 +47,11 @@ export default function InformationArchitecturePage({
   const isFa = lang === 'fa';
 
   const intakeChannels = [
-    { name: 'e-Factura SPV', type: 'RO e-Factura XML UBL 2.1', icon: Zap, color: 'text-[#1E62C4]' },
-    { name: 'Dedicated Inbound Email', type: 'MIME Parser & PDF Attachment', icon: Mail, color: 'text-[#059669]' },
-    { name: 'PDF & Image Upload', type: 'Direct UI Multi-file Ingestion', icon: Upload, color: 'text-[#D99B26]' },
+    { name: 'e-Factura SPV', type: 'RO e-Factura XML UBL 2.1', icon: Zap, color: 'text-[#1E40AF]' },
+    { name: 'Dedicated Inbound Email', type: 'MIME Parser & PDF Attachment', icon: Mail, color: 'text-[#065F46]' },
+    { name: 'PDF & Image Upload', type: 'Direct UI Multi-file Ingestion', icon: Upload, color: 'text-[#92400E]' },
     { name: 'Batch CSV Ingestion', type: 'Standardized Structured Import', icon: FileSpreadsheet, color: 'text-[#102A43]' },
-    { name: 'REST API & EDI', type: 'Vendor Webhook Pipeline', icon: Cpu, color: 'text-[#0E9F8E]' },
+    { name: 'REST API & EDI', type: 'Vendor Webhook Pipeline', icon: Cpu, color: 'text-[#0A6E62]' },
     { name: 'Automated OCR Service', type: 'Neural Text & Table Extraction', icon: FileText, color: 'text-[#102A43]' },
   ];
 
@@ -69,7 +69,7 @@ export default function InformationArchitecturePage({
       {/* Header Card */}
       <div className="card-proptech p-6 sm:p-8 bg-white border-[#E2E8F0] space-y-3 text-center max-w-4xl mx-auto">
         <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#EAF8F5] border border-[#B2E5DF] text-xs font-bold text-[#0A6E62]">
-          <Network className="w-3.5 h-3.5 text-[#0E9F8E]" />
+          <Network className="w-3.5 h-3.5 text-[#0A6E62]" />
           <span>System Architecture & Taxonomy</span>
         </div>
         <h1 className="text-3xl sm:text-4xl font-display font-extrabold text-[#102A43] tracking-tight">
@@ -88,19 +88,19 @@ export default function InformationArchitecturePage({
       <div className="card-proptech p-5 bg-white border-[#E2E8F0] grid grid-cols-2 sm:grid-cols-5 gap-4 text-center font-mono">
         <div className="space-y-1">
           <span className="text-[11px] font-bold text-[#52667A] uppercase tracking-wider block">Production Modules</span>
-          <strong className="text-2xl font-extrabold text-[#0E9F8E]">{PRODUCT_METRICS.productionModules}</strong>
+          <strong className="text-2xl font-extrabold text-[#0A6E62]">{PRODUCT_METRICS.productionModules}</strong>
         </div>
         <div className="space-y-1">
           <span className="text-[11px] font-bold text-[#52667A] uppercase tracking-wider block">Base Screens</span>
-          <strong className="text-2xl font-extrabold text-[#1E62C4]">{PRODUCT_METRICS.totalBaseScreens}</strong>
+          <strong className="text-2xl font-extrabold text-[#1E40AF]">{PRODUCT_METRICS.totalBaseScreens}</strong>
         </div>
         <div className="space-y-1">
           <span className="text-[11px] font-bold text-[#52667A] uppercase tracking-wider block">Responsive Views</span>
-          <strong className="text-2xl font-extrabold text-[#059669]">{PRODUCT_METRICS.totalResponsiveBaseViews}</strong>
+          <strong className="text-2xl font-extrabold text-[#065F46]">{PRODUCT_METRICS.totalResponsiveBaseViews}</strong>
         </div>
         <div className="space-y-1">
           <span className="text-[11px] font-bold text-[#52667A] uppercase tracking-wider block">Prototype Journeys</span>
-          <strong className="text-2xl font-extrabold text-[#D99B26]">{PRODUCT_METRICS.prototypeJourneys}</strong>
+          <strong className="text-2xl font-extrabold text-[#92400E]">{PRODUCT_METRICS.prototypeJourneys}</strong>
         </div>
         <div className="space-y-1 col-span-2 sm:col-span-1">
           <span className="text-[11px] font-bold text-[#52667A] uppercase tracking-wider block">User Testing Tasks</span>
@@ -113,7 +113,7 @@ export default function InformationArchitecturePage({
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#E2E8F0]">
           <div>
             <div className="flex items-center gap-2">
-              <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-[#ECFDF5] text-[#059669] border border-[#A7F3D0]">
+              <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-[#ECFDF5] text-[#065F46] border border-[#A7F3D0]">
                 Module M25 Added
               </span>
               <span className="text-xs text-[#52667A] font-mono">Taxonomy: Manager OS → Finance → M25</span>
@@ -125,7 +125,7 @@ export default function InformationArchitecturePage({
 
           <Link
             href={`/${lang}/ui/manager/utility-bills`}
-            className="px-4 py-2.5 rounded-xl bg-[#0E9F8E] hover:bg-[#0C8778] text-white text-xs font-bold shadow-sm inline-flex items-center gap-2 transition-all self-start sm:self-auto"
+            className="px-4 py-2.5 rounded-xl bg-[#0A6E62] hover:bg-[#08544B] text-white text-xs font-bold shadow-sm inline-flex items-center gap-2 transition-all self-start sm:self-auto"
           >
             <span>{isRo ? 'Deschide Workspace M25' : isFa ? 'مشاهده ماژول M25' : 'Open M25 Workspace'}</span>
             <ArrowRight className="w-4 h-4" />
@@ -158,7 +158,7 @@ export default function InformationArchitecturePage({
         {/* 6 Core Inter-Module Relationships */}
         <div className="space-y-3 pt-4 border-t border-[#E2E8F0]">
           <h3 className="text-xs font-bold text-[#52667A] uppercase tracking-wider">
-            {isRo ? 'Relațiile Fundamentale cu Modulele Platformei:' : isFa ? 'ارتباطات هسته با سایر بخش‌های سیستم:' : 'Core Inter-Module Relationships:'}
+            {isRo ? 'Relațiile Structurale ale Modulului M25:' : isFa ? 'ارتباطات ساختاری و تبادل داده ماژول M25:' : 'Six Core Inter-Module Relationships:'}
           </h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {m25Relationships.map((r) => {
@@ -166,15 +166,15 @@ export default function InformationArchitecturePage({
               return (
                 <div key={r.title} className="p-5 rounded-2xl bg-[#F6F9FC] border border-[#E2E8F0] space-y-2">
                   <div className="flex items-center justify-between">
-                    <div className="p-2 rounded-xl bg-white border border-[#E2E8F0] text-[#0E9F8E] shadow-sm">
+                    <span className="p-2 rounded-xl bg-white border border-[#E2E8F0] text-[#0A6E62]">
                       <Icon className="w-4 h-4" />
-                    </div>
+                    </span>
                     <span className="font-mono text-[10px] font-bold px-2 py-0.5 rounded bg-white text-[#52667A] border border-[#D3DCE6]">
                       {r.code}
                     </span>
                   </div>
-                  <h4 className="text-sm font-bold text-[#102A43]">{r.title}</h4>
-                  <p className="text-xs text-[#52667A] leading-relaxed">{r.desc}</p>
+                  <h4 className="text-xs font-bold text-[#102A43]">{r.title}</h4>
+                  <p className="text-[11px] text-[#52667A] leading-relaxed">{r.desc}</p>
                 </div>
               );
             })}

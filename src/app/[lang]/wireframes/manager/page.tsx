@@ -47,7 +47,7 @@ export default function ManagerWireframesPage({
       {/* Header Card */}
       <div className="card-proptech p-6 sm:p-8 bg-white border-[#E2E8F0] space-y-3 text-center max-w-4xl mx-auto">
         <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#EAF8F5] border border-[#B2E5DF] text-xs font-bold text-[#0A6E62]">
-          <Layout className="w-3.5 h-3.5 text-[#0E9F8E]" />
+          <Layout className="w-3.5 h-3.5 text-[#0A6E62]" />
           <span>High-Density Responsive Wireframes</span>
         </div>
         <h1 className="text-3xl sm:text-4xl font-display font-extrabold text-[#102A43] tracking-tight">
@@ -64,9 +64,9 @@ export default function ManagerWireframesPage({
 
       {/* Metrics Banner */}
       <div className="card-proptech p-4 bg-white border-[#E2E8F0] flex flex-wrap items-center justify-between gap-4 text-xs font-mono text-[#52667A]">
-        <div>Total Production Modules: <strong className="text-[#0E9F8E]">{PRODUCT_METRICS.productionModules}</strong></div>
-        <div>Total Base Screens: <strong className="text-[#1E62C4]">{PRODUCT_METRICS.totalBaseScreens}</strong></div>
-        <div>Total Responsive Views: <strong className="text-[#059669]">{PRODUCT_METRICS.totalResponsiveBaseViews}</strong></div>
+        <div>Total Production Modules: <strong className="text-[#0A6E62]">{PRODUCT_METRICS.productionModules}</strong></div>
+        <div>Total Base Screens: <strong className="text-[#1E40AF]">{PRODUCT_METRICS.totalBaseScreens}</strong></div>
+        <div>Total Responsive Views: <strong className="text-[#065F46]">{PRODUCT_METRICS.totalResponsiveBaseViews}</strong></div>
       </div>
 
       {/* 3 Viewport Architecture Cards */}
@@ -76,7 +76,7 @@ export default function ManagerWireframesPage({
         <div className="card-proptech p-6 bg-white border-[#E2E8F0] space-y-4 flex flex-col justify-between">
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <div className="p-3 rounded-xl bg-[#EDF5FF] text-[#1E62C4]">
+              <div className="p-3 rounded-xl bg-[#EDF5FF] text-[#1E40AF]">
                 <Monitor className="w-6 h-6" />
               </div>
               <span className="font-mono text-xs font-bold px-2.5 py-0.5 rounded-full bg-[#F0F4F8] text-[#102A43] border border-[#D3DCE6]">
@@ -154,7 +154,7 @@ export default function ManagerWireframesPage({
         <div className="card-proptech p-6 bg-white border-[#E2E8F0] space-y-4 flex flex-col justify-between">
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <div className="p-3 rounded-xl bg-[#FFF7E6] text-[#D99B26]">
+              <div className="p-3 rounded-xl bg-[#FFF7E6] text-[#92400E]">
                 <Smartphone className="w-6 h-6" />
               </div>
               <span className="font-mono text-xs font-bold px-2.5 py-0.5 rounded-full bg-[#F0F4F8] text-[#102A43] border border-[#D3DCE6]">

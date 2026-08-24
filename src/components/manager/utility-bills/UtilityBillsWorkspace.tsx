@@ -209,7 +209,7 @@ export function UtilityBillsWorkspace({ lang }: UtilityBillsWorkspaceProps) {
     return bills.find(b => b.id === selectedBillId) || filteredBills[0] || bills[0];
   }, [bills, selectedBillId, filteredBills]);
 
-  // Status Badge Formatting & Severity
+  // Status Badge Formatting & Severity (Strict >= 4.5:1 WCAG AA compliant)
   const getStatusBadge = (state: UtilityWorkflowState) => {
     switch (state) {
       case 'RECEIVED':
@@ -221,14 +221,14 @@ export function UtilityBillsWorkspace({ lang }: UtilityBillsWorkspaceProps) {
       case 'EXTRACTED':
         return {
           label: isRo ? '2. Extras OCR' : isFa ? '۲. استخراج OCR' : '2. Extracted',
-          classes: 'bg-[#EDF5FF] text-[#1E62C4] border-[#BDD8FF]',
-          icon: <Zap className="w-3.5 h-3.5 text-[#1E62C4]" />,
+          classes: 'bg-[#EDF5FF] text-[#1E40AF] border-[#BDD8FF]',
+          icon: <Zap className="w-3.5 h-3.5 text-[#1E40AF]" />,
         };
       case 'MATCHED':
         return {
           label: isRo ? '3. Reconciliat Contor' : isFa ? '۳. تطبیق کنتور' : '3. Matched',
-          classes: 'bg-[#FFF7E6] text-[#D99B26] border-[#FCE3AA]',
-          icon: <Scale className="w-3.5 h-3.5 text-[#D99B26]" />,
+          classes: 'bg-[#FFF7E6] text-[#92400E] border-[#FCE3AA]',
+          icon: <Scale className="w-3.5 h-3.5 text-[#92400E]" />,
         };
       case 'VALIDATED':
         return {
@@ -239,20 +239,20 @@ export function UtilityBillsWorkspace({ lang }: UtilityBillsWorkspaceProps) {
       case 'APPROVED':
         return {
           label: isRo ? '5. Aprobare Umană' : isFa ? '۵. تأیید انسانی' : '5. Approved',
-          classes: 'bg-[#F0F4F8] text-[#102A43] border-[#102A43]/30 font-bold',
+          classes: 'bg-[#F0F4F8] text-[#102A43] border-[#102A43]/40 font-bold',
           icon: <UserCheck className="w-3.5 h-3.5 text-[#102A43]" />,
         };
       case 'POSTED':
         return {
           label: isRo ? '6. Înregistrat în Jurnal' : isFa ? '۶. ثبت در دفتر' : '6. Posted',
-          classes: 'bg-[#ECFDF5] text-[#059669] border-[#A7F3D0]',
-          icon: <FileCheck className="w-3.5 h-3.5 text-[#059669]" />,
+          classes: 'bg-[#ECFDF5] text-[#065F46] border-[#A7F3D0]',
+          icon: <FileCheck className="w-3.5 h-3.5 text-[#065F46]" />,
         };
       case 'PAID':
         return {
           label: isRo ? '7. Plătit & Reconciliat' : isFa ? '۷. پرداخت شد' : '7. Paid',
-          classes: 'bg-[#ECFDF5] text-[#059669] border-[#10B981]/40',
-          icon: <CheckCircle2 className="w-3.5 h-3.5 text-[#059669]" />,
+          classes: 'bg-[#ECFDF5] text-[#065F46] border-[#10B981]/40',
+          icon: <CheckCircle2 className="w-3.5 h-3.5 text-[#065F46]" />,
         };
       default:
         return {
@@ -267,13 +267,13 @@ export function UtilityBillsWorkspace({ lang }: UtilityBillsWorkspaceProps) {
   const getBillTypeIcon = (type: BillType) => {
     switch (type) {
       case 'ELECTRICITY':
-        return <Zap className="w-4 h-4 text-[#D99B26]" />;
+        return <Zap className="w-4 h-4 text-[#92400E]" />;
       case 'WATER':
-        return <Droplets className="w-4 h-4 text-[#1E62C4]" />;
+        return <Droplets className="w-4 h-4 text-[#1E40AF]" />;
       case 'GAS':
-        return <Flame className="w-4 h-4 text-[#F2633F]" />;
+        return <Flame className="w-4 h-4 text-[#991B1B]" />;
       case 'WASTE':
-        return <Trash2 className="w-4 h-4 text-[#059669]" />;
+        return <Trash2 className="w-4 h-4 text-[#065F46]" />;
       case 'MAINTENANCE_CONTRACT':
         return <Wrench className="w-4 h-4 text-[#102A43]" />;
       default:
@@ -395,7 +395,7 @@ export function UtilityBillsWorkspace({ lang }: UtilityBillsWorkspaceProps) {
       {/* 1. Header & AI Safety Boundary Banner */}
       <div className="card-proptech p-5 bg-[#EAF8F5] border-[#B2E5DF] flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
         <div className="flex items-center gap-3.5">
-          <div className="p-3 rounded-xl bg-[#0E9F8E] text-white shadow-sm shrink-0">
+          <div className="p-3 rounded-xl bg-[#0A6E62] text-white shadow-sm shrink-0">
             <Sparkles className="w-5 h-5" />
           </div>
           <div>
@@ -425,7 +425,7 @@ export function UtilityBillsWorkspace({ lang }: UtilityBillsWorkspaceProps) {
             className="px-3 py-1.5 text-xs rounded-xl bg-white hover:bg-[#F0F4F8] text-[#102A43] font-semibold border border-[#D3DCE6] inline-flex items-center gap-1.5 shadow-sm transition-all"
             title="e-Factura SPV Ingestion"
           >
-            <Zap className="w-3.5 h-3.5 text-[#1E62C4]" />
+            <Zap className="w-3.5 h-3.5 text-[#1E40AF]" />
             <span>e-Factura</span>
           </button>
           <button
@@ -433,7 +433,7 @@ export function UtilityBillsWorkspace({ lang }: UtilityBillsWorkspaceProps) {
             className="px-3 py-1.5 text-xs rounded-xl bg-white hover:bg-[#F0F4F8] text-[#102A43] font-semibold border border-[#D3DCE6] inline-flex items-center gap-1.5 shadow-sm transition-all"
             title="Dedicated Inbound Email"
           >
-            <Mail className="w-3.5 h-3.5 text-[#059669]" />
+            <Mail className="w-3.5 h-3.5 text-[#065F46]" />
             <span>Email</span>
           </button>
           <button
@@ -441,7 +441,7 @@ export function UtilityBillsWorkspace({ lang }: UtilityBillsWorkspaceProps) {
             className="px-3 py-1.5 text-xs rounded-xl bg-white hover:bg-[#F0F4F8] text-[#102A43] font-semibold border border-[#D3DCE6] inline-flex items-center gap-1.5 shadow-sm transition-all"
             title="PDF / Image OCR Upload"
           >
-            <Upload className="w-3.5 h-3.5 text-[#D99B26]" />
+            <Upload className="w-3.5 h-3.5 text-[#92400E]" />
             <span>PDF/OCR</span>
           </button>
           <button
@@ -457,7 +457,7 @@ export function UtilityBillsWorkspace({ lang }: UtilityBillsWorkspaceProps) {
             className="px-3 py-1.5 text-xs rounded-xl bg-white hover:bg-[#F0F4F8] text-[#102A43] font-semibold border border-[#D3DCE6] inline-flex items-center gap-1.5 shadow-sm transition-all"
             title="REST API EDI"
           >
-            <Cpu className="w-3.5 h-3.5 text-[#0E9F8E]" />
+            <Cpu className="w-3.5 h-3.5 text-[#0A6E62]" />
             <span>API</span>
           </button>
         </div>
@@ -465,15 +465,15 @@ export function UtilityBillsWorkspace({ lang }: UtilityBillsWorkspaceProps) {
 
       {/* Success Alert if Action Performed */}
       {actionSuccessMessage && (
-        <div className="card-proptech p-4 bg-[#ECFDF5] border-[#A7F3D0] flex items-center justify-between gap-3 text-[#059669] text-sm animate-fadeIn">
+        <div className="card-proptech p-4 bg-[#ECFDF5] border-[#A7F3D0] flex items-center justify-between gap-3 text-[#065F46] text-sm animate-fadeIn">
           <div className="flex items-center gap-2">
-            <CheckCircle2 className="w-5 h-5 text-[#059669] shrink-0" />
+            <CheckCircle2 className="w-5 h-5 text-[#065F46] shrink-0" />
             <span className="font-semibold">{actionSuccessMessage}</span>
           </div>
           <button
             type="button"
             onClick={() => setActionSuccessMessage(null)}
-            className="p-1 text-[#059669] hover:text-[#047857]"
+            className="p-1 text-[#065F46] hover:text-[#047857]"
           >
             <X className="w-4 h-4" />
           </button>
@@ -488,14 +488,14 @@ export function UtilityBillsWorkspace({ lang }: UtilityBillsWorkspaceProps) {
             <span className="text-xs font-bold text-[#52667A] uppercase tracking-wider">
               {isRo ? 'În Așteptare Revizuire' : isFa ? 'در انتظار بررسی' : 'Pending Review'}
             </span>
-            <span className="p-2 rounded-xl bg-[#EDF5FF] text-[#1E62C4]">
+            <span className="p-2 rounded-xl bg-[#EDF5FF] text-[#1E40AF]">
               <Clock className="w-4 h-4" />
             </span>
           </div>
           <div className="text-2xl font-display font-extrabold text-[#102A43] tabular-nums">
             {kpiMetrics.pendingReviewCount} {isRo ? 'facturi' : isFa ? 'صورت‌حساب' : 'invoices'}
           </div>
-          <p className="text-xs text-[#7B8A9A]">
+          <p className="text-xs text-[#52667A]">
             {isRo ? 'Necesită validare reguli sau semnare umană' : isFa ? 'نیازمند بررسی قواعد یا تأیید انسانی' : 'Awaiting automated rules or human approval'}
           </p>
         </div>
@@ -503,17 +503,17 @@ export function UtilityBillsWorkspace({ lang }: UtilityBillsWorkspaceProps) {
         {/* KPI 2: Active Policy Exceptions */}
         <div className="card-proptech p-5 bg-white border-[#E2E8F0] space-y-2 hover:border-[#FCE3AA] transition-all">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-[#D99B26] uppercase tracking-wider">
+            <span className="text-xs font-bold text-[#92400E] uppercase tracking-wider">
               {isRo ? 'Excepții Active' : isFa ? 'مغایرت‌های فعال' : 'Active Exceptions'}
             </span>
-            <span className="p-2 rounded-xl bg-[#FFF7E6] text-[#D99B26]">
+            <span className="p-2 rounded-xl bg-[#FFF7E6] text-[#92400E]">
               <AlertTriangle className="w-4 h-4" />
             </span>
           </div>
           <div className="text-2xl font-display font-extrabold text-[#102A43] tabular-nums">
             {kpiMetrics.exceptionsCount} {isRo ? 'anomalii' : isFa ? 'مغایرت' : 'anomalies'}
           </div>
-          <p className="text-xs text-[#7B8A9A]">
+          <p className="text-xs text-[#52667A]">
             {isRo ? 'Nepotriviri de index, depășire tarif sau OCR scăzut' : isFa ? 'مغایرت کنتور، اختلاف تعرفه یا اطمینان پایین' : 'Meter mismatches, tariff variance, or low OCR'}
           </p>
         </div>
@@ -531,7 +531,7 @@ export function UtilityBillsWorkspace({ lang }: UtilityBillsWorkspaceProps) {
           <div className="text-2xl font-display font-extrabold text-[#102A43] tabular-nums">
             {formatRON(kpiMetrics.readyForPaymentAmount)}
           </div>
-          <p className="text-xs text-[#7B8A9A]">
+          <p className="text-xs text-[#52667A]">
             {isRo ? 'Semnate de manager și trimise spre trezorerie' : isFa ? 'تأییدشده توسط مدیر و آماده تسویه بانکی' : 'Approved by manager and ready for bank settlement'}
           </p>
         </div>
@@ -549,7 +549,7 @@ export function UtilityBillsWorkspace({ lang }: UtilityBillsWorkspaceProps) {
           <div className="text-2xl font-display font-extrabold text-[#102A43] tabular-nums">
             {kpiMetrics.totalCount} {isRo ? 'înregistrări' : isFa ? 'سند' : 'records'}
           </div>
-          <p className="text-xs text-[#7B8A9A]">
+          <p className="text-xs text-[#52667A]">
             {isRo ? 'Toate cele 7 stări de procesare reprezentate' : isFa ? 'شامل تمامی ۷ وضعیت گردش‌کار' : 'All 7 workflow states covered deterministically'}
           </p>
         </div>
@@ -560,7 +560,7 @@ export function UtilityBillsWorkspace({ lang }: UtilityBillsWorkspaceProps) {
         {/* Filter Controls Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-[#E2E8F0]">
           <div className="flex items-center gap-2">
-            <Filter className="w-4 h-4 text-[#0E9F8E]" />
+            <Filter className="w-4 h-4 text-[#0A6E62]" />
             <span className="text-xs font-bold text-[#102A43] uppercase tracking-wider">
               {isRo ? 'Filtre Avansate Facturi (7 Dimensiuni):' : isFa ? 'فیلترهای پیشرفته اسناد (۷ بعد):' : 'Advanced Bill Filters (7 Dimensions):'}
             </span>
@@ -578,7 +578,7 @@ export function UtilityBillsWorkspace({ lang }: UtilityBillsWorkspaceProps) {
               onClick={() => setFilterExceptionsOnly(prev => !prev)}
               className={`px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all ${
                 filterExceptionsOnly
-                  ? 'bg-[#FFF7E6] text-[#D99B26] border border-[#F5B942]'
+                  ? 'bg-[#FFF7E6] text-[#92400E] border border-[#F5B942]'
                   : 'bg-[#F0F4F8] hover:bg-[#E2E8F0] text-[#52667A] border border-[#D3DCE6]'
               }`}
             >
@@ -603,7 +603,7 @@ export function UtilityBillsWorkspace({ lang }: UtilityBillsWorkspaceProps) {
             <button
               type="button"
               onClick={() => setIsMobileFilterOpen(true)}
-              className="md:hidden px-3 py-1.5 rounded-xl bg-[#0E9F8E] text-white text-xs font-bold flex items-center gap-1.5 shadow-sm"
+              className="md:hidden px-3 py-1.5 rounded-xl bg-[#0A6E62] text-white text-xs font-bold flex items-center gap-1.5 shadow-sm"
             >
               <SlidersHorizontal className="w-3.5 h-3.5" />
               <span>{isRo ? 'Filtre Mobile' : isFa ? 'فیلترهای پیشرفته' : 'Filter Drawer'}</span>
@@ -621,7 +621,7 @@ export function UtilityBillsWorkspace({ lang }: UtilityBillsWorkspaceProps) {
             <select
               value={selectedType}
               onChange={(e) => setSelectedType(e.target.value)}
-              className="w-full bg-white border border-[#D3DCE6] rounded-xl px-2.5 py-1.5 text-xs text-[#102A43] font-medium focus:outline-none focus:ring-2 focus:ring-[#0E9F8E]"
+              className="w-full bg-white border border-[#D3DCE6] rounded-xl px-2.5 py-1.5 text-xs text-[#102A43] font-medium focus:outline-none focus:ring-2 focus:ring-[#0A6E62]"
             >
               <option value="ALL">{isRo ? 'Toate tipurile' : isFa ? 'همه انشعابات' : 'All Types'}</option>
               <option value="ELECTRICITY">{isRo ? 'Electricitate' : isFa ? 'برق' : 'Electricity'}</option>
@@ -643,7 +643,7 @@ export function UtilityBillsWorkspace({ lang }: UtilityBillsWorkspaceProps) {
                 setSelectedBuilding(e.target.value);
                 setSelectedUnit('ALL'); // Reset unit constraint
               }}
-              className="w-full bg-white border border-[#D3DCE6] rounded-xl px-2.5 py-1.5 text-xs text-[#102A43] font-medium focus:outline-none focus:ring-2 focus:ring-[#0E9F8E]"
+              className="w-full bg-white border border-[#D3DCE6] rounded-xl px-2.5 py-1.5 text-xs text-[#102A43] font-medium focus:outline-none focus:ring-2 focus:ring-[#0A6E62]"
             >
               <option value="ALL">{isRo ? 'Toate clădirile' : isFa ? 'همه ساختمان‌ها' : 'All Buildings'}</option>
               {availableBuildings.map(b => (
@@ -660,7 +660,7 @@ export function UtilityBillsWorkspace({ lang }: UtilityBillsWorkspaceProps) {
             <select
               value={selectedUnit}
               onChange={(e) => setSelectedUnit(e.target.value)}
-              className="w-full bg-white border border-[#D3DCE6] rounded-xl px-2.5 py-1.5 text-xs text-[#102A43] font-medium focus:outline-none focus:ring-2 focus:ring-[#0E9F8E]"
+              className="w-full bg-white border border-[#D3DCE6] rounded-xl px-2.5 py-1.5 text-xs text-[#102A43] font-medium focus:outline-none focus:ring-2 focus:ring-[#0A6E62]"
             >
               <option value="ALL">{isRo ? 'Toate unitățile' : isFa ? 'همه واحدها' : 'All Units'}</option>
               {availableUnits.map(u => (
@@ -677,7 +677,7 @@ export function UtilityBillsWorkspace({ lang }: UtilityBillsWorkspaceProps) {
             <select
               value={selectedSupplier}
               onChange={(e) => setSelectedSupplier(e.target.value)}
-              className="w-full bg-white border border-[#D3DCE6] rounded-xl px-2.5 py-1.5 text-xs text-[#102A43] font-medium focus:outline-none focus:ring-2 focus:ring-[#0E9F8E]"
+              className="w-full bg-white border border-[#D3DCE6] rounded-xl px-2.5 py-1.5 text-xs text-[#102A43] font-medium focus:outline-none focus:ring-2 focus:ring-[#0A6E62]"
             >
               <option value="ALL">{isRo ? 'Toți furnizorii' : isFa ? 'همه شرکت‌ها' : 'All Suppliers'}</option>
               {availableSuppliers.map(s => (
@@ -694,7 +694,7 @@ export function UtilityBillsWorkspace({ lang }: UtilityBillsWorkspaceProps) {
             <select
               value={selectedPeriod}
               onChange={(e) => setSelectedPeriod(e.target.value)}
-              className="w-full bg-white border border-[#D3DCE6] rounded-xl px-2.5 py-1.5 text-xs text-[#102A43] font-medium focus:outline-none focus:ring-2 focus:ring-[#0E9F8E]"
+              className="w-full bg-white border border-[#D3DCE6] rounded-xl px-2.5 py-1.5 text-xs text-[#102A43] font-medium focus:outline-none focus:ring-2 focus:ring-[#0A6E62]"
             >
               <option value="ALL">{isRo ? 'Toate perioadele' : isFa ? 'همه دوره‌ها' : 'All Periods'}</option>
               {availablePeriods.map(p => (
@@ -711,7 +711,7 @@ export function UtilityBillsWorkspace({ lang }: UtilityBillsWorkspaceProps) {
             <select
               value={selectedDueDateFilter}
               onChange={(e) => setSelectedDueDateFilter(e.target.value)}
-              className="w-full bg-white border border-[#D3DCE6] rounded-xl px-2.5 py-1.5 text-xs text-[#102A43] font-medium focus:outline-none focus:ring-2 focus:ring-[#0E9F8E]"
+              className="w-full bg-white border border-[#D3DCE6] rounded-xl px-2.5 py-1.5 text-xs text-[#102A43] font-medium focus:outline-none focus:ring-2 focus:ring-[#0A6E62]"
             >
               <option value="ALL">{isRo ? 'Oricând' : isFa ? 'همه زمان‌ها' : 'All Due Dates'}</option>
               <option value="URGENT">{isRo ? 'Urgent (< 7 zile)' : isFa ? 'فوری (کمتر از ۷ روز)' : 'Urgent (< 7 days)'}</option>
@@ -727,7 +727,7 @@ export function UtilityBillsWorkspace({ lang }: UtilityBillsWorkspaceProps) {
             <select
               value={selectedState}
               onChange={(e) => setSelectedState(e.target.value)}
-              className="w-full bg-white border border-[#D3DCE6] rounded-xl px-2.5 py-1.5 text-xs text-[#102A43] font-medium focus:outline-none focus:ring-2 focus:ring-[#0E9F8E]"
+              className="w-full bg-white border border-[#D3DCE6] rounded-xl px-2.5 py-1.5 text-xs text-[#102A43] font-medium focus:outline-none focus:ring-2 focus:ring-[#0A6E62]"
             >
               <option value="ALL">{isRo ? 'Toate stările (1-7)' : isFa ? 'همه وضعیت‌ها (۱-۷)' : 'All States (1-7)'}</option>
               <option value="RECEIVED">{isRo ? '1. Recepționat' : isFa ? '۱. دریافت شد' : '1. Received'}</option>
@@ -749,11 +749,11 @@ export function UtilityBillsWorkspace({ lang }: UtilityBillsWorkspaceProps) {
         <div className="lg:col-span-5 space-y-4">
           <div className="flex items-center justify-between">
             <h2 className="text-sm font-bold text-[#102A43] uppercase tracking-wider flex items-center gap-2">
-              <FileText className="w-4 h-4 text-[#0E9F8E]" />
+              <FileText className="w-4 h-4 text-[#0A6E62]" />
               <span>{isRo ? 'Coadă Facturi Utilități' : isFa ? 'صف پردازش قبوض' : 'Utility Invoice Queue'}</span>
               <span className="text-xs text-[#52667A] font-mono">({filteredBills.length})</span>
             </h2>
-            <span className="text-[11px] text-[#7B8A9A] font-mono">
+            <span className="text-[11px] text-[#52667A] font-mono">
               {isRo ? 'Selectează pentru detalii' : isFa ? 'جهت مشاهده انتخاب کنید' : 'Click to inspect'}
             </span>
           </div>
@@ -782,7 +782,7 @@ export function UtilityBillsWorkspace({ lang }: UtilityBillsWorkspaceProps) {
                         onClick={() => setSelectedBillId(b.id)}
                         className={`cursor-pointer transition-colors ${
                           isSelected
-                            ? 'bg-[#EAF8F5]/60 border-l-4 border-l-[#0E9F8E] rtl:border-l-0 rtl:border-r-4 rtl:border-r-[#0E9F8E]'
+                            ? 'bg-[#EAF8F5]/60 border-l-4 border-l-[#0A6E62] rtl:border-l-0 rtl:border-r-4 rtl:border-r-[#0A6E62]'
                             : 'hover:bg-[#F6F9FC]'
                         }`}
                       >
@@ -799,7 +799,7 @@ export function UtilityBillsWorkspace({ lang }: UtilityBillsWorkspaceProps) {
                         </td>
                         <td className="p-3 text-[#52667A]">
                           <div className="font-medium text-[#102A43]">{b.buildingName}</div>
-                          <div className="text-[11px] text-[#7B8A9A]">{formatUnitName(b.unitNumber)}</div>
+                          <div className="text-[11px] text-[#52667A]">{formatUnitName(b.unitNumber)}</div>
                         </td>
                         <td className="p-3 text-end font-mono font-bold text-[#102A43] tabular-nums">
                           {formatRON(b.totalAmount)}
@@ -811,7 +811,7 @@ export function UtilityBillsWorkspace({ lang }: UtilityBillsWorkspaceProps) {
                               <span>{badge.label}</span>
                             </span>
                             {hasExceptions && (
-                              <span className="text-[10px] text-[#D99B26] font-bold inline-flex items-center gap-0.5">
+                              <span className="text-[10px] text-[#92400E] font-bold inline-flex items-center gap-0.5">
                                 <AlertTriangle className="w-3 h-3" />
                                 <span>{b.exceptions!.length} {isRo ? 'anomalii' : isFa ? 'مغایرت' : 'issues'}</span>
                               </span>
@@ -839,7 +839,7 @@ export function UtilityBillsWorkspace({ lang }: UtilityBillsWorkspaceProps) {
                   onClick={() => setSelectedBillId(b.id)}
                   className={`card-proptech p-4 cursor-pointer transition-all ${
                     isSelected
-                      ? 'bg-[#EAF8F5]/60 border-[#0E9F8E] ring-2 ring-[#0E9F8E]'
+                      ? 'bg-[#EAF8F5]/60 border-[#0A6E62] ring-2 ring-[#0A6E62]'
                       : 'bg-white border-[#E2E8F0] hover:border-[#B2E5DF]'
                   }`}
                 >
@@ -862,7 +862,7 @@ export function UtilityBillsWorkspace({ lang }: UtilityBillsWorkspaceProps) {
 
                   <div className="mt-3 pt-3 border-t border-[#E2E8F0] flex items-center justify-between text-xs font-mono">
                     <div className="text-[#52667A]">
-                      <span>{b.buildingName}</span> • <span className="text-[#7B8A9A]">{formatUnitName(b.unitNumber)}</span>
+                      <span>{b.buildingName}</span> • <span className="text-[#52667A]">{formatUnitName(b.unitNumber)}</span>
                     </div>
                     <div className="font-bold text-[#102A43] text-sm tabular-nums">
                       {formatRON(b.totalAmount)}
@@ -870,7 +870,7 @@ export function UtilityBillsWorkspace({ lang }: UtilityBillsWorkspaceProps) {
                   </div>
 
                   {hasExceptions && (
-                    <div className="mt-2 text-[11px] text-[#D99B26] font-bold flex items-center gap-1">
+                    <div className="mt-2 text-[11px] text-[#92400E] font-bold flex items-center gap-1">
                       <AlertTriangle className="w-3.5 h-3.5" />
                       <span>{b.exceptions!.length} {isRo ? 'anomalii detectate' : isFa ? 'مغایرت شناسایی‌شده' : 'exceptions flagged'}</span>
                     </div>
@@ -901,14 +901,14 @@ export function UtilityBillsWorkspace({ lang }: UtilityBillsWorkspaceProps) {
                   <h3 className="text-2xl font-display font-extrabold text-[#102A43]">
                     {activeBill.supplierName} ({activeBill.invoiceNumber})
                   </h3>
-                  <div className="text-xs text-[#7B8A9A] font-mono flex flex-wrap gap-4">
-                    <span>{isRo ? 'Emis:' : isFa ? 'تاریخ صدور:' : 'Issued:'} <strong>{activeBill.issueDate}</strong></span>
-                    <span>{isRo ? 'Scadență:' : isFa ? 'مهلت پرداخت:' : 'Due:'} <strong className="text-[#0E9F8E]">{activeBill.dueDate}</strong></span>
-                    <span>{isRo ? 'Perioadă:' : isFa ? 'دوره:' : 'Period:'} <strong>{formatPeriodLabel(activeBill.billingPeriod)}</strong></span>
+                  <div className="text-xs text-[#52667A] font-mono flex flex-wrap gap-4">
+                    <span>{isRo ? 'Emis:' : isFa ? 'تاریخ صدور:' : 'Issued:'} <strong className="text-[#102A43]">{activeBill.issueDate}</strong></span>
+                    <span>{isRo ? 'Scadență:' : isFa ? 'مهلت پرداخت:' : 'Due:'} <strong className="text-[#0A6E62]">{activeBill.dueDate}</strong></span>
+                    <span>{isRo ? 'Perioadă:' : isFa ? 'دوره:' : 'Period:'} <strong className="text-[#102A43]">{formatPeriodLabel(activeBill.billingPeriod)}</strong></span>
                   </div>
                 </div>
 
-                {/* Primary Human Confirmation & Action Buttons */}
+                {/* Primary Human Confirmation & Action Buttons (Strict Contrast >= 4.5:1) */}
                 <div className="flex flex-wrap items-center gap-2 self-start sm:self-auto">
                   {activeBill.workflowState !== 'APPROVED' && activeBill.workflowState !== 'POSTED' && activeBill.workflowState !== 'PAID' && (
                     <button
@@ -917,7 +917,7 @@ export function UtilityBillsWorkspace({ lang }: UtilityBillsWorkspaceProps) {
                         setConfirmActionType('APPROVE');
                         setIsConfirmModalOpen(true);
                       }}
-                      className="px-4 py-2.5 rounded-xl bg-[#0E9F8E] hover:bg-[#0C8778] text-white text-xs font-bold shadow-sm transition-all flex items-center gap-1.5"
+                      className="px-4 py-2.5 rounded-xl bg-[#0A6E62] hover:bg-[#08544B] text-white text-xs font-bold shadow-sm transition-all flex items-center gap-1.5"
                     >
                       <UserCheck className="w-4 h-4" />
                       <span>{isRo ? 'Aprobare Umană Autorizată' : isFa ? 'بررسی و تأیید نهایی انسانی' : 'Human Review & Approve'}</span>
@@ -931,7 +931,7 @@ export function UtilityBillsWorkspace({ lang }: UtilityBillsWorkspaceProps) {
                         setConfirmActionType('POST');
                         setIsConfirmModalOpen(true);
                       }}
-                      className="px-4 py-2.5 rounded-xl bg-[#059669] hover:bg-[#047857] text-white text-xs font-bold shadow-sm transition-all flex items-center gap-1.5"
+                      className="px-4 py-2.5 rounded-xl bg-[#047857] hover:bg-[#065F46] text-white text-xs font-bold shadow-sm transition-all flex items-center gap-1.5"
                     >
                       <FileCheck className="w-4 h-4" />
                       <span>{isRo ? 'Înregistrează în Jurnal' : isFa ? 'ثبت در دفتر کل دوبل' : 'Post to Ledger'}</span>
@@ -939,7 +939,7 @@ export function UtilityBillsWorkspace({ lang }: UtilityBillsWorkspaceProps) {
                   )}
 
                   {activeBill.journalId && (
-                    <div className="px-3 py-1.5 rounded-xl bg-[#ECFDF5] border border-[#A7F3D0] text-[#059669] text-xs font-mono font-bold">
+                    <div className="px-3 py-1.5 rounded-xl bg-[#ECFDF5] border border-[#A7F3D0] text-[#065F46] text-xs font-mono font-bold">
                       Journal: {activeBill.journalId}
                     </div>
                   )}
@@ -953,7 +953,7 @@ export function UtilityBillsWorkspace({ lang }: UtilityBillsWorkspaceProps) {
                   onClick={() => setDetailActiveTab('EXTRACTED')}
                   className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
                     detailActiveTab === 'EXTRACTED'
-                      ? 'bg-[#0E9F8E] text-white shadow-sm'
+                      ? 'bg-[#0A6E62] text-white shadow-sm'
                       : 'bg-[#F0F4F8] hover:bg-[#E2E8F0] text-[#52667A]'
                   }`}
                 >
@@ -966,7 +966,7 @@ export function UtilityBillsWorkspace({ lang }: UtilityBillsWorkspaceProps) {
                   onClick={() => setDetailActiveTab('DOCUMENT')}
                   className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
                     detailActiveTab === 'DOCUMENT'
-                      ? 'bg-[#0E9F8E] text-white shadow-sm'
+                      ? 'bg-[#0A6E62] text-white shadow-sm'
                       : 'bg-[#F0F4F8] hover:bg-[#E2E8F0] text-[#52667A]'
                   }`}
                 >
@@ -987,7 +987,7 @@ export function UtilityBillsWorkspace({ lang }: UtilityBillsWorkspaceProps) {
                       <div className="text-xl font-display font-extrabold text-[#102A43] font-mono tabular-nums">
                         {formatRON(activeBill.totalAmount)}
                       </div>
-                      <div className="text-[11px] text-[#7B8A9A]">
+                      <div className="text-[11px] text-[#52667A]">
                         {isRo ? 'Bază Impozabilă:' : isFa ? 'پایه مالیاتی:' : 'Base Amount:'} {formatRON(activeBill.netAmount)}
                       </div>
                     </div>
@@ -999,7 +999,7 @@ export function UtilityBillsWorkspace({ lang }: UtilityBillsWorkspaceProps) {
                       <div className="text-xl font-display font-extrabold text-[#102A43] font-mono tabular-nums">
                         {formatRON(activeBill.vatAmount)}
                       </div>
-                      <div className="text-[11px] text-[#7B8A9A]">
+                      <div className="text-[11px] text-[#52667A]">
                         {isRo ? 'CUI Furnizor:' : isFa ? 'شناسه ملی:' : 'Fiscal ID:'} {activeBill.supplierTaxId}
                       </div>
                     </div>
@@ -1008,10 +1008,10 @@ export function UtilityBillsWorkspace({ lang }: UtilityBillsWorkspaceProps) {
                       <span className="text-[11px] font-bold text-[#52667A] uppercase tracking-wider block">
                         {isRo ? 'Scor Încredere OCR' : isFa ? 'ضریب اطمینان OCR' : 'OCR Confidence'}
                       </span>
-                      <div className="text-xl font-display font-extrabold text-[#059669] font-mono tabular-nums">
+                      <div className="text-xl font-display font-extrabold text-[#065F46] font-mono tabular-nums">
                         {formatPercent(activeBill.extractionConfidence)}
                       </div>
-                      <div className="text-[11px] text-[#7B8A9A]">
+                      <div className="text-[11px] text-[#52667A]">
                         {isRo ? 'Canal:' : isFa ? 'درگاه:' : 'Channel:'} {activeBill.intakeSource}
                       </div>
                     </div>
@@ -1022,7 +1022,7 @@ export function UtilityBillsWorkspace({ lang }: UtilityBillsWorkspaceProps) {
                     <div className="p-5 rounded-2xl bg-[#F6F9FC] border border-[#E2E8F0] space-y-3">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
-                          <Scale className="w-4 h-4 text-[#0E9F8E]" />
+                          <Scale className="w-4 h-4 text-[#0A6E62]" />
                           <span className="text-xs font-bold text-[#102A43] uppercase tracking-wider">
                             {isRo ? 'Reconciliere Contor & Consum Fizic' : isFa ? 'تطبیق شاخص کنتور و مصرف شبکه' : 'Meter & Consumption Reconciliation'}
                           </span>
@@ -1034,19 +1034,19 @@ export function UtilityBillsWorkspace({ lang }: UtilityBillsWorkspaceProps) {
 
                       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs font-mono">
                         <div className="p-2.5 rounded-xl bg-white border border-[#E2E8F0]">
-                          <span className="text-[#7B8A9A] block text-[10px]">{isRo ? 'Index Vechi' : isFa ? 'شاخص قبل' : 'Start Reading'}</span>
+                          <span className="text-[#52667A] block text-[10px]">{isRo ? 'Index Vechi' : isFa ? 'شاخص قبل' : 'Start Reading'}</span>
                           <strong className="text-[#102A43] text-sm tabular-nums">{activeBill.startMeterReading}</strong>
                         </div>
                         <div className="p-2.5 rounded-xl bg-white border border-[#E2E8F0]">
-                          <span className="text-[#7B8A9A] block text-[10px]">{isRo ? 'Index Nou' : isFa ? 'شاخص فعلی' : 'End Reading'}</span>
+                          <span className="text-[#52667A] block text-[10px]">{isRo ? 'Index Nou' : isFa ? 'شاخص فعلی' : 'End Reading'}</span>
                           <strong className="text-[#102A43] text-sm tabular-nums">{activeBill.endMeterReading}</strong>
                         </div>
                         <div className="p-2.5 rounded-xl bg-white border border-[#E2E8F0]">
-                          <span className="text-[#7B8A9A] block text-[10px]">{isRo ? 'Consum Calculat' : isFa ? 'مصرف کل' : 'Consumption'}</span>
-                          <strong className="text-[#0E9F8E] text-sm tabular-nums">{activeBill.calculatedConsumption} {activeBill.consumptionUnit || 'kWh'}</strong>
+                          <span className="text-[#52667A] block text-[10px]">{isRo ? 'Consum Calculat' : isFa ? 'مصرف کل' : 'Consumption'}</span>
+                          <strong className="text-[#0A6E62] text-sm tabular-nums">{activeBill.calculatedConsumption} {activeBill.consumptionUnit || 'kWh'}</strong>
                         </div>
                         <div className="p-2.5 rounded-xl bg-white border border-[#E2E8F0]">
-                          <span className="text-[#7B8A9A] block text-[10px]">{isRo ? 'Tarif Contract' : isFa ? 'نرخ تعرفه' : 'Unit Rate'}</span>
+                          <span className="text-[#52667A] block text-[10px]">{isRo ? 'Tarif Contract' : isFa ? 'نرخ تعرفه' : 'Unit Rate'}</span>
                           <strong className="text-[#102A43] text-sm tabular-nums">{activeBill.activeTariffRate} RON/{activeBill.consumptionUnit || 'kWh'}</strong>
                         </div>
                       </div>
@@ -1056,7 +1056,7 @@ export function UtilityBillsWorkspace({ lang }: UtilityBillsWorkspaceProps) {
                   {/* Allocation & Accounting Rule Section */}
                   <div className="p-5 rounded-2xl bg-[#F6F9FC] border border-[#E2E8F0] space-y-3">
                     <div className="flex items-center gap-2">
-                      <Building2 className="w-4 h-4 text-[#0E9F8E]" />
+                      <Building2 className="w-4 h-4 text-[#0A6E62]" />
                       <span className="text-xs font-bold text-[#102A43] uppercase tracking-wider">
                         {isRo ? 'Regulă de Alocare Statutară & Cont Contabil' : isFa ? 'قاعده تسهیم قانونی و سرفصل حسابداری' : 'Statutory Allocation Rule & Accounting Code'}
                       </span>
@@ -1075,7 +1075,7 @@ export function UtilityBillsWorkspace({ lang }: UtilityBillsWorkspaceProps) {
 
                       <div className="flex items-center justify-between p-2.5 rounded-xl bg-white border border-[#E2E8F0]">
                         <span className="text-[#52667A]">{isRo ? 'Responsabilitate Proprietar / Chiriaș:' : isFa ? 'سهم مالک / مستأجر:' : 'Owner / Tenant Responsibility:'}</span>
-                        <span className="font-mono font-bold text-[#059669]">
+                        <span className="font-mono font-bold text-[#065F46]">
                           {formatPercent(activeBill.ownerTenantSplit?.ownerPercent || 0)} {isRo ? 'Proprietar' : isFa ? 'مالک' : 'Owner'} / {formatPercent(activeBill.ownerTenantSplit?.tenantPercent || 100)} {isRo ? 'Chiriaș' : isFa ? 'مستأجر' : 'Tenant'}
                         </span>
                       </div>
@@ -1086,8 +1086,8 @@ export function UtilityBillsWorkspace({ lang }: UtilityBillsWorkspaceProps) {
                   {activeBill.exceptions && activeBill.exceptions.length > 0 && (
                     <div className="space-y-3">
                       <div className="flex items-center gap-2">
-                        <AlertTriangle className="w-4 h-4 text-[#D99B26]" />
-                        <span className="text-xs font-bold text-[#D99B26] uppercase tracking-wider">
+                        <AlertTriangle className="w-4 h-4 text-[#92400E]" />
+                        <span className="text-xs font-bold text-[#92400E] uppercase tracking-wider">
                           {isRo ? 'Excepții & Anomalii de Politică Financiară' : isFa ? 'مغایرت‌ها و هشدارهای سیاست مالی' : 'Policy Exceptions & Variance'}
                         </span>
                       </div>
@@ -1104,7 +1104,7 @@ export function UtilityBillsWorkspace({ lang }: UtilityBillsWorkspaceProps) {
                           >
                             <div className="flex items-center justify-between">
                               <span className="font-bold flex items-center gap-1.5">
-                                <AlertOctagon className={`w-4 h-4 ${ex.severity === 'HIGH' ? 'text-[#F2633F]' : 'text-[#D99B26]'}`} />
+                                <AlertOctagon className={`w-4 h-4 ${ex.severity === 'HIGH' ? 'text-[#991B1B]' : 'text-[#92400E]'}`} />
                                 <span>{ex.label}</span>
                               </span>
                               <span className="font-mono text-[10px] font-bold px-2 py-0.5 rounded bg-white text-[#102A43] border border-[#D3DCE6]">
@@ -1115,10 +1115,10 @@ export function UtilityBillsWorkspace({ lang }: UtilityBillsWorkspaceProps) {
                             <p className="text-xs text-[#52667A]">{ex.explanation}</p>
 
                             <div className="pt-2 border-t border-[#E2E8F0] flex flex-wrap items-center justify-between gap-2 font-mono text-[11px]">
-                              <span className="text-[#7B8A9A]">
+                              <span className="text-[#52667A]">
                                 <strong>Evidence:</strong> {ex.evidence}
                               </span>
-                              <span className="text-[#0E9F8E] font-semibold">
+                              <span className="text-[#0A6E62] font-semibold">
                                 <strong>Action:</strong> {ex.recommendedAction}
                               </span>
                             </div>
@@ -1132,7 +1132,7 @@ export function UtilityBillsWorkspace({ lang }: UtilityBillsWorkspaceProps) {
                   {activeBill.workflowHistory && activeBill.workflowHistory.length > 0 && (
                     <div className="space-y-3">
                       <div className="flex items-center gap-2">
-                        <History className="w-4 h-4 text-[#0E9F8E]" />
+                        <History className="w-4 h-4 text-[#0A6E62]" />
                         <span className="text-xs font-bold text-[#102A43] uppercase tracking-wider">
                           {isRo ? 'Jurnal de Audit & Etape de Semnare' : isFa ? 'زنجیره رویدادها و ممیزی سیستم' : 'Audit Trail & Signature History'}
                         </span>
@@ -1143,12 +1143,12 @@ export function UtilityBillsWorkspace({ lang }: UtilityBillsWorkspaceProps) {
                           <div key={log.auditId} className="text-xs border-b border-[#E2E8F0] last:border-b-0 pb-2.5 last:pb-0 space-y-1">
                             <div className="flex items-center justify-between">
                               <span className="font-bold text-[#102A43]">{log.state}</span>
-                              <span className="font-mono text-[10px] text-[#7B8A9A]">{log.timestamp}</span>
+                              <span className="font-mono text-[10px] text-[#52667A]">{log.timestamp}</span>
                             </div>
                             <div className="text-[#52667A]">
-                              <strong>{log.actor}</strong> <span className="text-[#7B8A9A]">({log.actorRole})</span>
+                              <strong>{log.actor}</strong> <span className="text-[#52667A]">({log.actorRole})</span>
                             </div>
-                            <p className="text-[#7B8A9A] text-[11px]">{log.evidence}</p>
+                            <p className="text-[#52667A] text-[11px]">{log.evidence}</p>
                           </div>
                         ))}
                       </div>
@@ -1161,7 +1161,7 @@ export function UtilityBillsWorkspace({ lang }: UtilityBillsWorkspaceProps) {
               {detailActiveTab === 'DOCUMENT' && (
                 <div className="space-y-4">
                   <div className="p-6 rounded-2xl bg-[#F6F9FC] border border-[#E2E8F0] space-y-4 text-center">
-                    <div className="p-4 rounded-full bg-white text-[#0E9F8E] border border-[#E2E8F0] w-16 h-16 mx-auto flex items-center justify-center shadow-sm">
+                    <div className="p-4 rounded-full bg-white text-[#0A6E62] border border-[#E2E8F0] w-16 h-16 mx-auto flex items-center justify-center shadow-sm">
                       <FileText className="w-8 h-8" />
                     </div>
                     <div>
@@ -1179,9 +1179,9 @@ export function UtilityBillsWorkspace({ lang }: UtilityBillsWorkspaceProps) {
 
                     <div className="max-w-md mx-auto p-4 rounded-xl bg-white border border-[#E2E8F0] text-xs font-mono text-start space-y-1">
                       <div>File Name: <strong className="text-[#102A43]">{activeBill.originalDocumentName || 'factura_enel_octombrie_2026.pdf'}</strong></div>
-                      <div>Document Hash (SHA-256): <strong className="text-[#0E9F8E]">0x9185dd4759671ed69dca39f17080c84593912134</strong></div>
-                      <div>Ingestion Channel: <strong className="text-[#1E62C4]">{activeBill.intakeSource}</strong></div>
-                      <div>SPV Message ID: <strong className="text-[#059669]">SPV-RO-2026-991823</strong></div>
+                      <div>Document Hash (SHA-256): <strong className="text-[#0A6E62]">0x9185dd4759671ed69dca39f17080c84593912134</strong></div>
+                      <div>Ingestion Channel: <strong className="text-[#1E40AF]">{activeBill.intakeSource}</strong></div>
+                      <div>SPV Message ID: <strong className="text-[#065F46]">SPV-RO-2026-991823</strong></div>
                     </div>
                   </div>
                 </div>
@@ -1190,7 +1190,7 @@ export function UtilityBillsWorkspace({ lang }: UtilityBillsWorkspaceProps) {
             </div>
           ) : (
             <div className="card-proptech p-12 bg-white border-[#E2E8F0] text-center space-y-3">
-              <FileText className="w-12 h-12 text-[#7B8A9A] mx-auto" />
+              <FileText className="w-12 h-12 text-[#52667A] mx-auto" />
               <p className="text-sm font-semibold text-[#52667A]">
                 {isRo ? 'Selectați o factură din coadă pentru a vizualiza detaliile.' : isFa ? 'جهت مشاهده جزییات، یک صورت‌حساب را انتخاب کنید.' : 'Select an invoice from the queue to view details.'}
               </p>
@@ -1206,7 +1206,7 @@ export function UtilityBillsWorkspace({ lang }: UtilityBillsWorkspaceProps) {
           <div className="card-proptech w-full max-w-lg bg-white border-t border-[#D3DCE6] rounded-t-3xl sm:rounded-2xl p-6 space-y-4 max-h-[85vh] overflow-y-auto animate-fadeIn shadow-elevated">
             <div className="flex items-center justify-between pb-3 border-b border-[#E2E8F0]">
               <div className="flex items-center gap-2">
-                <SlidersHorizontal className="w-5 h-5 text-[#0E9F8E]" />
+                <SlidersHorizontal className="w-5 h-5 text-[#0A6E62]" />
                 <h3 className="text-base font-display font-extrabold text-[#102A43]">
                   {isRo ? 'Filtre Avansate Facturi (7 Dimensiuni)' : isFa ? 'فیلترهای پیشرفته (۷ بعد)' : 'Advanced Bill Filters'}
                 </h3>
@@ -1360,7 +1360,7 @@ export function UtilityBillsWorkspace({ lang }: UtilityBillsWorkspaceProps) {
               <button
                 type="button"
                 onClick={() => setIsMobileFilterOpen(false)}
-                className="px-5 py-2 rounded-xl bg-[#0E9F8E] hover:bg-[#0C8778] text-white text-xs font-bold shadow-sm"
+                className="px-5 py-2 rounded-xl bg-[#0A6E62] hover:bg-[#08544B] text-white text-xs font-bold shadow-sm"
               >
                 {isRo ? 'Aplică Filtrele' : isFa ? 'اعمال فیلترها' : 'Apply Filters'}
               </button>
@@ -1376,7 +1376,7 @@ export function UtilityBillsWorkspace({ lang }: UtilityBillsWorkspaceProps) {
             {/* Modal Header */}
             <div className="flex items-center justify-between pb-3 border-b border-[#E2E8F0]">
               <div className="flex items-center gap-3">
-                <div className="p-2.5 rounded-xl bg-[#0E9F8E] text-white shadow-sm">
+                <div className="p-2.5 rounded-xl bg-[#0A6E62] text-white shadow-sm">
                   <ShieldCheck className="w-5 h-5" />
                 </div>
                 <div>
@@ -1399,13 +1399,13 @@ export function UtilityBillsWorkspace({ lang }: UtilityBillsWorkspaceProps) {
 
             {/* AI Boundary Alert Banner */}
             <div className="p-3.5 rounded-xl bg-[#EAF8F5] border border-[#B2E5DF] flex items-start gap-2.5 text-xs text-[#0A6E62]">
-              <Sparkles className="w-4 h-4 shrink-0 mt-0.5 text-[#0E9F8E]" />
+              <Sparkles className="w-4 h-4 shrink-0 mt-0.5 text-[#0A6E62]" />
               <p>
                 <strong>AI Boundary Notice:</strong>{' '}
                 {isRo
-                  ? 'AI solely provides suggestions; accounting and financial postings become legally effective only with your authorized human confirmation. AI cannot independently approve, post, or pay.'
+                  ? 'AI sugerează; un operator uman autorizat verifică și confirmă. Postările financiare devin efective legal exclusiv după semnătura umană directă.'
                   : isFa
-                  ? 'هوش مصنوعی صرفاً نقش پیشنهاددهنده دارد؛ ثبت‌های مالی و تعهدات قانونی تنها پس از تأیید مستقیم کاربر مجاز انسانی نافذ خواهند بود. هوش مصنوعی امکان تأیید، ثبت یا پرداخت مستقل ندارد.'
+                  ? 'هوش مصنوعی صرفاً نقش پیشنهاددهنده دارد؛ ثبت‌های مالی و تعهدات قانونی تنها پس از تأیید مستقیم کاربر مجاز انسانی نافذ خواهند بود.'
                   : 'AI solely provides suggestions; accounting and financial postings become legally effective only with your authorized human confirmation. AI cannot independently approve, post, or pay.'}
               </p>
             </div>
@@ -1440,7 +1440,7 @@ export function UtilityBillsWorkspace({ lang }: UtilityBillsWorkspaceProps) {
                 {/* 5. Amount & Currency */}
                 <div className="flex justify-between p-2 rounded-lg bg-white border border-[#E2E8F0]">
                   <span className="text-[#52667A] font-semibold">5. Total Amount:</span>
-                  <strong className="text-[#0E9F8E] font-mono text-sm tabular-nums">{formatRON(activeBill.totalAmount)}</strong>
+                  <strong className="text-[#0A6E62] font-mono text-sm tabular-nums">{formatRON(activeBill.totalAmount)}</strong>
                 </div>
 
                 {/* 6. Accounting Code */}
@@ -1458,7 +1458,7 @@ export function UtilityBillsWorkspace({ lang }: UtilityBillsWorkspaceProps) {
                 {/* 8. Owner / Tenant Responsibility Split */}
                 <div className="flex justify-between p-2 rounded-lg bg-white border border-[#E2E8F0] sm:col-span-2">
                   <span className="text-[#52667A] font-semibold">8. Responsibility Split:</span>
-                  <strong className="text-[#059669] font-mono">
+                  <strong className="text-[#065F46] font-mono">
                     {formatPercent(activeBill.ownerTenantSplit?.ownerPercent || 0)} {isRo ? 'Proprietar (0,00 RON)' : isFa ? 'مالک (۰٫۰۰ لئو)' : 'Owner (0.00 RON)'} / {formatPercent(activeBill.ownerTenantSplit?.tenantPercent || 100)} {isRo ? 'Chiriaș (3.420,50 RON)' : isFa ? 'مستأجر (۳۴۲۰٫۵۰ لئو)' : 'Tenant (3,420.50 RON)'}
                   </strong>
                 </div>
@@ -1466,7 +1466,7 @@ export function UtilityBillsWorkspace({ lang }: UtilityBillsWorkspaceProps) {
                 {/* 9. Evidence & Source Scan */}
                 <div className="flex justify-between p-2 rounded-lg bg-white border border-[#E2E8F0]">
                   <span className="text-[#52667A] font-semibold">9. Evidence:</span>
-                  <strong className="text-[#1E62C4] font-mono">{activeBill.originalDocumentName || 'factura_enel_octombrie_2026_8849201.pdf'}</strong>
+                  <strong className="text-[#1E40AF] font-mono">{activeBill.originalDocumentName || 'factura_enel_octombrie_2026_8849201.pdf'}</strong>
                 </div>
 
                 {/* 10. Timestamp */}
@@ -1478,7 +1478,7 @@ export function UtilityBillsWorkspace({ lang }: UtilityBillsWorkspaceProps) {
                 {/* 11. Audit ID */}
                 <div className="flex justify-between p-2 rounded-lg bg-white border border-[#E2E8F0] sm:col-span-2">
                   <span className="text-[#52667A] font-semibold">11. Audit Token:</span>
-                  <strong className="text-[#0E9F8E] font-mono">AUD-HA-884921</strong>
+                  <strong className="text-[#0A6E62] font-mono">AUD-HA-884921</strong>
                 </div>
               </div>
             </div>
@@ -1496,7 +1496,7 @@ export function UtilityBillsWorkspace({ lang }: UtilityBillsWorkspaceProps) {
               <button
                 type="button"
                 onClick={confirmActionType === 'APPROVE' ? handleExecuteApproval : handleExecutePost}
-                className="px-5 py-2.5 rounded-xl bg-[#0E9F8E] hover:bg-[#0C8778] text-white text-xs font-bold shadow-sm transition-all flex items-center gap-1.5"
+                className="px-5 py-2.5 rounded-xl bg-[#0A6E62] hover:bg-[#08544B] text-white text-xs font-bold shadow-sm transition-all flex items-center gap-1.5"
               >
                 <Check className="w-4 h-4" />
                 <span>

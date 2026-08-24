@@ -74,7 +74,7 @@ export default function PrototypePage({
     },
   ];
 
-  // Exact 9 Sequential Steps for Journey 4 (Section 14 & Item 3)
+  // Exact 9 Sequential Steps for Journey 4
   const journey4Steps = [
     {
       num: '1',
@@ -237,7 +237,7 @@ export default function PrototypePage({
       {/* Header Card */}
       <div className="card-proptech p-6 sm:p-8 bg-white border-[#E2E8F0] space-y-3 text-center max-w-4xl mx-auto">
         <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#EAF8F5] border border-[#B2E5DF] text-xs font-bold text-[#0A6E62]">
-          <Sparkles className="w-3.5 h-3.5 text-[#0E9F8E]" />
+          <Sparkles className="w-3.5 h-3.5 text-[#0A6E62]" />
           <span>Interactive Prototype Journeys</span>
         </div>
         <h1 className="text-3xl sm:text-4xl font-display font-extrabold text-[#102A43] tracking-tight">
@@ -254,9 +254,9 @@ export default function PrototypePage({
 
       {/* Metrics Banner */}
       <div className="card-proptech p-4 bg-white border-[#E2E8F0] flex flex-wrap items-center justify-between gap-4 text-xs font-mono text-[#52667A]">
-        <div>Total Prototype Journeys: <strong className="text-[#0E9F8E]">{PRODUCT_METRICS.prototypeJourneys}</strong></div>
-        <div>Total User Testing Tasks: <strong className="text-[#1E62C4]">{PRODUCT_METRICS.userTestingTasks}</strong></div>
-        <div>Manager Workspaces: <strong className="text-[#059669]">{PRODUCT_METRICS.managerWorkspaces}</strong></div>
+        <div>Total Prototype Journeys: <strong className="text-[#0A6E62]">{PRODUCT_METRICS.prototypeJourneys}</strong></div>
+        <div>Total User Testing Tasks: <strong className="text-[#1E40AF]">{PRODUCT_METRICS.userTestingTasks}</strong></div>
+        <div>Manager Workspaces: <strong className="text-[#065F46]">{PRODUCT_METRICS.managerWorkspaces}</strong></div>
       </div>
 
       {/* Journey Selector Tabs */}
@@ -274,7 +274,7 @@ export default function PrototypePage({
             }}
             className={`card-proptech p-5 text-start transition-all flex flex-col justify-between ${
               selectedJourneyIndex === idx
-                ? 'bg-[#EAF8F5]/50 border-[#0E9F8E] ring-2 ring-[#0E9F8E] shadow-sm'
+                ? 'bg-[#EAF8F5]/50 border-[#0A6E62] ring-2 ring-[#0A6E62] shadow-sm'
                 : 'bg-white border-[#E2E8F0] hover:border-[#B2E5DF]'
             }`}
           >
@@ -284,7 +284,7 @@ export default function PrototypePage({
                   {j.id}
                 </span>
                 {j.isNew && (
-                  <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-[#ECFDF5] text-[#059669] border border-[#A7F3D0]">
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-[#ECFDF5] text-[#065F46] border border-[#A7F3D0]">
                     NEW M25
                   </span>
                 )}
@@ -293,7 +293,7 @@ export default function PrototypePage({
               <p className="text-[11px] text-[#52667A] leading-relaxed">{j.desc}</p>
             </div>
 
-            <div className="mt-3 pt-3 border-t border-[#E2E8F0] text-[11px] text-[#7B8A9A] font-mono">
+            <div className="mt-3 pt-3 border-t border-[#E2E8F0] text-[11px] text-[#52667A] font-mono">
               {j.stepsCount} {isRo ? 'etape interactive' : isFa ? 'مرحله تعاملی' : 'interactive steps'}
             </div>
           </button>
@@ -311,7 +311,7 @@ export default function PrototypePage({
                 <span className="px-3 py-0.5 rounded-full bg-[#EAF8F5] text-[#0A6E62] font-mono text-xs font-bold border border-[#B2E5DF]">
                   Journey 4 / 4 • Step {currentStepIndex + 1} of {journey4Steps.length}
                 </span>
-                <span className="text-xs text-[#7B8A9A] font-mono">{currentStep.auditId}</span>
+                <span className="text-xs text-[#52667A] font-mono">{currentStep.auditId}</span>
               </div>
               <h2 className="text-2xl font-display font-extrabold text-[#102A43] mt-1">
                 {currentStep.title}
@@ -324,7 +324,7 @@ export default function PrototypePage({
                 <button
                   type="button"
                   onClick={handleTriggerProcessing}
-                  className="px-3 py-1.5 rounded-xl bg-[#EDF5FF] text-[#1E62C4] border border-[#BDD8FF] text-xs font-bold flex items-center gap-1.5 hover:bg-[#DCEBFF] transition-colors"
+                  className="px-3 py-1.5 rounded-xl bg-[#EDF5FF] text-[#1E40AF] border border-[#BDD8FF] text-xs font-bold flex items-center gap-1.5 hover:bg-[#DCEBFF] transition-colors"
                   title="Enter Deterministic Processing State"
                 >
                   <Cpu className="w-3.5 h-3.5" />
@@ -337,7 +337,7 @@ export default function PrototypePage({
                 <button
                   type="button"
                   onClick={handleTriggerError}
-                  className="px-3 py-1.5 rounded-xl bg-[#FFF7E6] text-[#D99B26] border border-[#F5B942] text-xs font-bold flex items-center gap-1.5 hover:bg-[#FFF2D6] transition-colors"
+                  className="px-3 py-1.5 rounded-xl bg-[#FFF7E6] text-[#92400E] border border-[#F5B942] text-xs font-bold flex items-center gap-1.5 hover:bg-[#FFF2D6] transition-colors"
                   title="Inject Deterministic Prototype Anomaly"
                 >
                   <AlertOctagon className="w-3.5 h-3.5" />
@@ -369,10 +369,10 @@ export default function PrototypePage({
                 }}
                 className={`py-2 px-1 rounded-xl text-center font-mono text-[11px] font-bold transition-all border ${
                   idx === currentStepIndex
-                    ? 'bg-[#0E9F8E] text-white border-[#0E9F8E] shadow-sm scale-105'
+                    ? 'bg-[#0A6E62] text-white border-[#0A6E62] shadow-sm scale-105'
                     : idx < currentStepIndex
-                    ? 'bg-[#ECFDF5] text-[#059669] border-[#A7F3D0]'
-                    : 'bg-[#F0F4F8] text-[#7B8A9A] border-[#D3DCE6] hover:text-[#102A43]'
+                    ? 'bg-[#ECFDF5] text-[#065F46] border-[#A7F3D0]'
+                    : 'bg-[#F0F4F8] text-[#52667A] border-[#D3DCE6] hover:text-[#102A43]'
                 }`}
               >
                 {s.num}
@@ -383,8 +383,8 @@ export default function PrototypePage({
           {/* Deterministic Processing State Surface */}
           {isProcessing ? (
             <div className="p-6 rounded-2xl bg-[#EDF5FF] border border-[#BDD8FF] space-y-4 animate-fadeIn">
-              <div className="flex items-center gap-3 text-[#1E62C4]">
-                <Loader2 className="w-6 h-6 text-[#1E62C4] animate-spin shrink-0" />
+              <div className="flex items-center gap-3 text-[#1E40AF]">
+                <Loader2 className="w-6 h-6 text-[#1E40AF] animate-spin shrink-0" />
                 <div>
                   <h3 className="text-base font-bold text-[#102A43]">
                     {isRo ? 'Stare de Prelucrare Prototip: Extragere OCR & Reconciliere în Curs' : isFa ? 'وضعیت پردازش پروتوتایپ: استخراج متنی و تطبیق هوشمند' : 'Deterministic Prototype State: OCR Extraction & Reconciliation'}
@@ -396,8 +396,8 @@ export default function PrototypePage({
               </div>
 
               <div className="p-4 rounded-xl bg-white border border-[#BDD8FF] text-xs font-mono space-y-1 text-[#52667A]">
-                <div>Process Token: <strong className="text-[#1E62C4]">PROC-DET-M25-9812</strong></div>
-                <div>Status: <strong className="text-[#059669]">Deterministic Extraction Complete (98% Score)</strong></div>
+                <div>Process Token: <strong className="text-[#1E40AF]">PROC-DET-M25-9812</strong></div>
+                <div>Status: <strong className="text-[#065F46]">Deterministic Extraction Complete (98% Score)</strong></div>
                 <div>Next Gateway: <strong className="text-[#102A43]">Authorized Human Verification</strong></div>
               </div>
 
@@ -412,7 +412,7 @@ export default function PrototypePage({
                 <button
                   type="button"
                   onClick={handleCompleteProcessing}
-                  className="px-5 py-2.5 rounded-xl bg-[#0E9F8E] hover:bg-[#0C8778] text-white text-xs font-bold shadow-sm flex items-center gap-2 transition-all"
+                  className="px-5 py-2.5 rounded-xl bg-[#0A6E62] hover:bg-[#08544B] text-white text-xs font-bold shadow-sm flex items-center gap-2 transition-all"
                 >
                   <Check className="w-4 h-4" />
                   <span>{isRo ? 'Finalizează Procesarea & Continuă' : isFa ? 'تکمیل پردازش و ادامه مسیر' : 'Complete Processing & Continue'}</span>
@@ -422,8 +422,8 @@ export default function PrototypePage({
           ) : isSimulatedError ? (
             /* Deterministic Error Path & Recovery Surface */
             <div className="p-6 rounded-2xl bg-[#FFF7E6] border border-[#F5B942] space-y-4 animate-shake">
-              <div className="flex items-center gap-2.5 text-[#D99B26]">
-                <AlertTriangle className="w-6 h-6 text-[#D99B26] shrink-0" />
+              <div className="flex items-center gap-2.5 text-[#92400E]">
+                <AlertTriangle className="w-6 h-6 text-[#92400E] shrink-0" />
                 <div>
                   <h3 className="text-base font-bold text-[#102A43]">
                     {isRo ? 'Eroare Simulat: Nepotrivire Index Contor & Scor Scăzut OCR' : isFa ? 'خطای شبیه‌سازی‌شده: مغایرت شاخص کنتور و اطمینان پایین' : 'Deterministic Error: Meter Index Discrepancy & Low OCR Score'}
@@ -435,16 +435,16 @@ export default function PrototypePage({
               </div>
 
               <div className="p-4 rounded-xl bg-white border border-[#F5B942] text-xs font-mono space-y-1 text-[#52667A]">
-                <div>Error Code: <strong className="text-[#F2633F]">ERR_METER_MISMATCH_05</strong></div>
+                <div>Error Code: <strong className="text-[#991B1B]">ERR_METER_MISMATCH_05</strong></div>
                 <div>Affected Field: <strong className="text-[#102A43]">startMeterReading (Extracted: 120500 vs DB: 124200)</strong></div>
-                <div>Suggested Action: <strong className="text-[#0E9F8E]">Manual Human Verification against Original Scan</strong></div>
+                <div>Suggested Action: <strong className="text-[#0A6E62]">Manual Human Verification against Original Scan</strong></div>
               </div>
 
               <div className="flex items-center justify-end gap-3 pt-2">
                 <button
                   type="button"
                   onClick={handleTriggerRecovery}
-                  className="px-5 py-2.5 rounded-xl bg-[#D99B26] hover:bg-[#B8821F] text-white text-xs font-bold shadow-sm flex items-center gap-2 transition-all"
+                  className="px-5 py-2.5 rounded-xl bg-[#92400E] hover:bg-[#78350F] text-white text-xs font-bold shadow-sm flex items-center gap-2 transition-all"
                 >
                   <Wrench className="w-4 h-4" />
                   <span>{isRo ? 'Execută Acțiunea de Recuperare (Corectare Manuală)' : isFa ? 'اجرای اقدام اصلاحی (بازیابی و تصحیح دستی)' : 'Execute Recovery Action (Manual Correction)'}</span>
@@ -460,9 +460,9 @@ export default function PrototypePage({
                     {isRo ? 'Actor & Rol Responsabil:' : isFa ? 'کاربر و نقش مجری:' : 'Responsible Actor & Role:'}
                   </span>
                   <div className="text-base font-bold text-[#102A43] mt-0.5 flex items-center gap-2">
-                    <UserCheck className="w-4 h-4 text-[#0E9F8E]" />
+                    <UserCheck className="w-4 h-4 text-[#0A6E62]" />
                     <span>{currentStep.actor}</span>
-                    <span className="text-xs font-normal text-[#7B8A9A] font-mono">({currentStep.role})</span>
+                    <span className="text-xs font-normal text-[#52667A] font-mono">({currentStep.role})</span>
                   </div>
                 </div>
 
@@ -479,9 +479,9 @@ export default function PrototypePage({
                 <div className="text-[#52667A]">
                   <strong>{isRo ? 'Mărturie / Dovadă:' : isFa ? 'مستند اعتبارسنجی:' : 'Verification Evidence:'}</strong>
                 </div>
-                <div className="text-[#1E62C4]">{currentStep.evidence}</div>
+                <div className="text-[#1E40AF]">{currentStep.evidence}</div>
                 {currentStep.journalId && (
-                  <div className="pt-2 text-[#059669] border-t border-[#E2E8F0] flex flex-wrap gap-4 font-bold">
+                  <div className="pt-2 text-[#065F46] border-t border-[#E2E8F0] flex flex-wrap gap-4 font-bold">
                     <span>Journal ID: <strong>{currentStep.journalId}</strong></span>
                     <span>Allocation ID: <strong>{currentStep.allocationId}</strong></span>
                     <span>Audit ID: <strong>{currentStep.auditId}</strong></span>
@@ -505,7 +505,7 @@ export default function PrototypePage({
 
             <div className="text-xs text-[#52667A] font-mono">
               {currentStepIndex === journey4Steps.length - 1 ? (
-                <span className="text-[#059669] font-bold">✓ {isRo ? 'Parcurs Finalizat cu Succes' : isFa ? 'مسیر با موفقیت تکمیل شد' : 'Journey Completed'}</span>
+                <span className="text-[#065F46] font-bold">✓ {isRo ? 'Parcurs Finalizat cu Succes' : isFa ? 'مسیر با موفقیت تکمیل شد' : 'Journey Completed'}</span>
               ) : (
                 <span>{journey4Steps.length - currentStepIndex - 1} {isRo ? 'pași rămași' : isFa ? 'مرحله باقی‌مانده' : 'steps remaining'}</span>
               )}
@@ -515,7 +515,7 @@ export default function PrototypePage({
               type="button"
               onClick={handleNextStep}
               disabled={currentStepIndex === journey4Steps.length - 1 || isSimulatedError}
-              className="px-5 py-2.5 rounded-xl bg-[#0E9F8E] hover:bg-[#0C8778] disabled:opacity-40 disabled:cursor-not-allowed text-white text-xs font-bold shadow-sm inline-flex items-center gap-2 transition-all"
+              className="px-5 py-2.5 rounded-xl bg-[#0A6E62] hover:bg-[#08544B] disabled:opacity-40 disabled:cursor-not-allowed text-white text-xs font-bold shadow-sm inline-flex items-center gap-2 transition-all"
             >
               <span>{isRo ? 'Următorul Pas' : isFa ? 'مرحله بعد' : 'Next Step'}</span>
               <ArrowRight className="w-4 h-4" />
@@ -530,7 +530,7 @@ export default function PrototypePage({
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
           <div className="card-proptech max-w-md w-full bg-white border-[#D3DCE6] p-6 space-y-5 rounded-2xl shadow-elevated text-start animate-fadeIn">
             <div className="flex items-center gap-3">
-              <div className="p-2.5 rounded-xl bg-[#0E9F8E] text-white shadow-sm">
+              <div className="p-2.5 rounded-xl bg-[#0A6E62] text-white shadow-sm">
                 <ShieldCheck className="w-5 h-5" />
               </div>
               <div>
@@ -560,7 +560,7 @@ export default function PrototypePage({
               <button
                 type="button"
                 onClick={handleConfirmHumanAction}
-                className="px-5 py-2.5 rounded-xl bg-[#0E9F8E] hover:bg-[#0C8778] text-white text-xs font-bold shadow-sm flex items-center gap-1.5"
+                className="px-5 py-2.5 rounded-xl bg-[#0A6E62] hover:bg-[#08544B] text-white text-xs font-bold shadow-sm flex items-center gap-1.5"
               >
                 <Check className="w-4 h-4" />
                 <span>{isRo ? 'Confirm & Aprobă Factura' : isFa ? 'تأیید و ثبت سند' : 'Confirm & Authorize'}</span>
@@ -579,7 +579,7 @@ export default function PrototypePage({
             <button
               type="button"
               onClick={() => setSelectedJourneyIndex(3)}
-              className="px-5 py-2.5 rounded-xl bg-[#0E9F8E] hover:bg-[#0C8778] text-white text-xs font-bold shadow-sm inline-flex items-center gap-2"
+              className="px-5 py-2.5 rounded-xl bg-[#0A6E62] hover:bg-[#08544B] text-white text-xs font-bold shadow-sm inline-flex items-center gap-2"
             >
               <span>{isRo ? 'Comută la Parcursul 4 (M25 Utility Bills)' : isFa ? 'تغییر به مسیر ۴ (M25 قبوض)' : 'Switch to Journey 4 (M25 Utility Bills)'}</span>
               <ArrowRight className="w-4 h-4" />

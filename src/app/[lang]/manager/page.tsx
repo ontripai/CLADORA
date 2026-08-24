@@ -44,7 +44,7 @@ export default function ManagerPage({
       {/* Header Hero */}
       <div className="text-center max-w-3xl mx-auto space-y-4">
         <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#EAF8F5] border border-[#B2E5DF] text-xs font-bold text-[#0A6E62]">
-          <Layers className="w-3.5 h-3.5 text-[#0E9F8E]" />
+          <Layers className="w-3.5 h-3.5 text-[#0A6E62]" />
           <span>Manager OS</span>
         </div>
         <h1 className="text-4xl sm:text-6xl font-display font-extrabold text-white tracking-tight">
@@ -60,7 +60,7 @@ export default function ManagerPage({
         <div className="pt-4 flex justify-center gap-4">
           <Link
             href={`/${lang}/pilot`}
-            className="px-6 py-3 rounded-xl text-sm font-bold text-white bg-[#0E9F8E] hover:bg-[#0C8778] shadow-sm flex items-center gap-2 transition-all"
+            className="px-6 py-3 rounded-xl text-sm font-bold text-white bg-[#0A6E62] hover:bg-[#08544B] shadow-sm flex items-center gap-2 transition-all"
           >
             <span>{dict.common.startPilot}</span>
             <ArrowRight className="w-4 h-4 rtl:rotate-180" />
@@ -78,7 +78,7 @@ export default function ManagerPage({
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="p-8 rounded-3xl glass-panel border border-white/10 space-y-3">
           <div className="p-3 rounded-xl bg-brand-500/10 text-brand-400 w-fit">
-            <Zap className="w-6 h-6 text-[#0E9F8E]" />
+            <Zap className="w-6 h-6 text-[#0A6E62]" />
           </div>
           <h3 className="text-xl font-bold text-white">
             {isRo
@@ -98,7 +98,7 @@ export default function ManagerPage({
 
         <div className="p-8 rounded-3xl glass-panel border border-white/10 space-y-3">
           <div className="p-3 rounded-xl bg-brand-500/10 text-brand-400 w-fit">
-            <Clock className="w-6 h-6 text-[#0E9F8E]" />
+            <Clock className="w-6 h-6 text-[#0A6E62]" />
           </div>
           <h3 className="text-xl font-bold text-white">
             {isRo
@@ -118,7 +118,7 @@ export default function ManagerPage({
 
         <div className="p-8 rounded-3xl glass-panel border border-white/10 space-y-3">
           <div className="p-3 rounded-xl bg-emerald-500/10 text-emerald-400 w-fit">
-            <Users2 className="w-6 h-6 text-[#10B981]" />
+            <Users2 className="w-6 h-6 text-[#065F46]" />
           </div>
           <h3 className="text-xl font-bold text-white">
             {isRo
@@ -166,7 +166,7 @@ export default function ManagerPage({
 
         <Link
           href={`/${lang}/ui/manager/utility-bills`}
-          className="px-6 py-3 rounded-xl bg-[#0E9F8E] hover:bg-[#0C8778] text-white text-xs font-bold inline-flex items-center gap-2 shadow-sm transition-all shrink-0"
+          className="px-6 py-3 rounded-xl bg-[#0A6E62] hover:bg-[#08544B] text-white text-xs font-bold inline-flex items-center gap-2 shadow-sm transition-all shrink-0"
         >
           <span>{isRo ? 'Deschide Spațiul de Lucru M25' : isFa ? 'ورود به پنل M25' : 'Open M25 Workspace'}</span>
           <ArrowRight className="w-4 h-4 rtl:rotate-180" />

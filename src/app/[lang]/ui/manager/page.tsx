@@ -56,7 +56,7 @@ export default function ManagerConsolePage({
         : 'Multi-channel invoice ingestion, meter reconciliation, tariff verification, and human confirmation.',
       href: `/${lang}/ui/manager/utility-bills`,
       badge: 'Active Live Workspace',
-      badgeColor: 'bg-[#ECFDF5] text-[#059669] border-[#A7F3D0]',
+      badgeColor: 'bg-[#ECFDF5] text-[#065F46] border-[#A7F3D0]',
       icon: Zap,
       isPrimary: true,
     },
@@ -71,7 +71,7 @@ export default function ManagerConsolePage({
         : 'Automated quota sheet generation per Law 196/2018 CPI rules.',
       href: `/${lang}/app/accounting/month-close`,
       badge: 'Core Financial',
-      badgeColor: 'bg-[#EDF5FF] text-[#1E62C4] border-[#BDD8FF]',
+      badgeColor: 'bg-[#EDF5FF] text-[#1E40AF] border-[#BDD8FF]',
       icon: Scale,
     },
     {
@@ -85,7 +85,7 @@ export default function ManagerConsolePage({
         : 'Radio AMR telemetry, resident photo submissions, and leakage detection.',
       href: `/${lang}/app/meters`,
       badge: 'Telemetry Core',
-      badgeColor: 'bg-[#FFF7E6] text-[#D99B26] border-[#F5B942]',
+      badgeColor: 'bg-[#FFF7E6] text-[#92400E] border-[#F5B942]',
       icon: Droplets,
     },
     {
@@ -109,7 +109,7 @@ export default function ManagerConsolePage({
       {/* Header Card */}
       <div className="card-proptech p-6 sm:p-8 bg-white border-[#E2E8F0] space-y-3 text-center max-w-4xl mx-auto">
         <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#EAF8F5] border border-[#B2E5DF] text-xs font-bold text-[#0A6E62]">
-          <Layers className="w-3.5 h-3.5 text-[#0E9F8E]" />
+          <Layers className="w-3.5 h-3.5 text-[#0A6E62]" />
           <span>Manager OS Dedicated Workspaces</span>
         </div>
         <h1 className="text-3xl sm:text-4xl font-display font-extrabold text-[#102A43] tracking-tight">
@@ -126,9 +126,9 @@ export default function ManagerConsolePage({
 
       {/* Metrics Banner */}
       <div className="card-proptech p-4 bg-white border-[#E2E8F0] flex flex-wrap items-center justify-between gap-4 text-xs font-mono text-[#52667A]">
-        <div>Manager Workspaces: <strong className="text-[#0E9F8E]">{PRODUCT_METRICS.managerWorkspaces}</strong></div>
-        <div>Total Production Modules: <strong className="text-[#1E62C4]">{PRODUCT_METRICS.productionModules}</strong></div>
-        <div>Total Base Screens: <strong className="text-[#059669]">{PRODUCT_METRICS.totalBaseScreens}</strong></div>
+        <div>Manager Workspaces: <strong className="text-[#0A6E62]">{PRODUCT_METRICS.managerWorkspaces}</strong></div>
+        <div>Total Production Modules: <strong className="text-[#1E40AF]">{PRODUCT_METRICS.productionModules}</strong></div>
+        <div>Total Base Screens: <strong className="text-[#065F46]">{PRODUCT_METRICS.totalBaseScreens}</strong></div>
       </div>
 
       {/* Workspace Cards Grid */}
@@ -139,7 +139,7 @@ export default function ManagerConsolePage({
             <div
               key={w.id}
               className={`card-proptech p-6 sm:p-8 bg-white border-[#E2E8F0] space-y-5 flex flex-col justify-between transition-all ${
-                w.isPrimary ? 'border-[#0E9F8E] ring-1 ring-[#0E9F8E]/30' : 'hover:border-[#B2E5DF]'
+                w.isPrimary ? 'border-[#0A6E62] ring-1 ring-[#0A6E62]/30' : 'hover:border-[#B2E5DF]'
               }`}
             >
               <div className="space-y-3">
@@ -153,7 +153,7 @@ export default function ManagerConsolePage({
                 </div>
 
                 <div className="flex items-center gap-3">
-                  <div className="p-3 rounded-xl bg-[#F6F9FC] border border-[#E2E8F0] text-[#0E9F8E]">
+                  <div className="p-3 rounded-xl bg-[#F6F9FC] border border-[#E2E8F0] text-[#0A6E62]">
                     <Icon className="w-6 h-6" />
                   </div>
                   <div>
@@ -170,7 +170,7 @@ export default function ManagerConsolePage({
                   href={w.href}
                   className={`w-full py-2.5 rounded-xl text-xs font-bold text-center flex items-center justify-center gap-2 transition-all shadow-sm ${
                     w.isPrimary
-                      ? 'bg-[#0E9F8E] hover:bg-[#0C8778] text-white'
+                      ? 'bg-[#0A6E62] hover:bg-[#08544B] text-white'
                       : 'bg-[#F0F4F8] hover:bg-[#E2E8F0] text-[#102A43] border border-[#D3DCE6]'
                   }`}
                 >
