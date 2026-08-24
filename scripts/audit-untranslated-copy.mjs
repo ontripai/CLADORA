@@ -56,7 +56,13 @@ export const ALL_USER_ROUTES = [
   '/app/meters',
   '/app/migration/shadow-ledger',
   '/app/portfolio',
-  '/app/settings'
+  '/app/settings',
+  '/information-architecture',
+  '/wireframes/manager',
+  '/ui/manager',
+  '/ui/manager/utility-bills',
+  '/prototype',
+  '/user-testing'
 ];
 
 export const ALLOWLISTED_TECHNICAL_TERMS = [
@@ -90,6 +96,16 @@ export const ALLOWLISTED_TECHNICAL_TERMS = [
   'Excel',
   'MT940',
   'CAMT.053',
+  'M25',
+  'CSV',
+  'e-Factura',
+  'EDI',
+  'XML',
+  'UBL',
+  'ANAF',
+  'SPV',
+  'kWh',
+  'm³',
   'C01', 'C02', 'C03', 'C04', 'C05', 'C06', 'C07', 'C08', 'C09', 'C10', 'C11', 'C12', 'C13', 'C14', 'C15', 'C16', 'C17',
   'A1', 'A2', 'A3', 'A4', 'A5', 'A6', 'A7', 'A8'
 ];
@@ -300,10 +316,10 @@ async function runAudit() {
           for (const pattern of DISALLOWED_ENGLISH_PHRASES) {
             const match = renderedText.match(pattern);
             if (match) {
-              failures.push({ 
-                route: fullPath, 
-                category: 'EnglishLeak', 
-                error: `Untranslated English copy found: "${match[0]}"` 
+              failures.push({
+                route: fullPath,
+                category: 'EnglishLeak',
+                error: `Untranslated English copy found: "${match[0]}"`
               });
             }
           }
@@ -311,10 +327,10 @@ async function runAudit() {
           for (const pattern of DISALLOWED_ROMANIAN_PHRASES) {
             const match = renderedText.match(pattern);
             if (match) {
-              failures.push({ 
-                route: fullPath, 
-                category: 'RomanianLeak', 
-                error: `Untranslated Romanian copy found: "${match[0]}"` 
+              failures.push({
+                route: fullPath,
+                category: 'RomanianLeak',
+                error: `Untranslated Romanian copy found: "${match[0]}"`
               });
             }
           }
@@ -343,7 +359,7 @@ async function runAudit() {
     failures.forEach(f => console.error(`  - [${f.route}] (${f.category || 'Error'}): ${f.error}`));
     process.exit(1);
   } else {
-    console.log('🎉 100% CLEAN: ZERO TRANSLATION LEAKS OR CURRENCY DEFECTS ACROSS ALL 123 LOCALIZED ROUTES!');
+    console.log(`🎉 100% CLEAN: ZERO TRANSLATION LEAKS OR CURRENCY DEFECTS ACROSS ALL ${totalTests} LOCALIZED ROUTES!`);
   }
 }
 
