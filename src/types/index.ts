@@ -5,8 +5,9 @@ export { localeConfig, isSupportedLocale, getLocaleDirection, isRtlLocale, getIn
 export type { SupportedCurrency, MonetaryContext, FormatMoneyOptions } from '@/config/currencies';
 export { currencyConfig, DEFAULT_OPERATIONAL_CURRENCY, DEFAULT_MARKET_CURRENCY, formatMoney, formatNumber, formatPercent, formatCompactNumber, getLocalizedCurrencyName } from '@/config/currencies';
 export { Money } from '@/components/ui/Money';
+export * from './utilityBills';
 
-export type UserRole = 
+export type UserRole =
   | 'association_admin'
   | 'president'
   | 'censor'

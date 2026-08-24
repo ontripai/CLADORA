@@ -407,6 +407,90 @@ export const ROUTE_METADATA_DEFINITIONS: Record<string, Record<Language, RouteCo
       noIndex: true,
     },
   },
+  '/ui/manager/utility-bills': {
+    ro: {
+      title: 'Facturi Utilități & Procesare Inteligentă (M25)',
+      desc: 'Procesarea inteligentă a facturilor de utilități, extracție date, reconciliere indexuri și aprobare umană.',
+    },
+    en: {
+      title: 'Utility Bills & Invoice Intelligence (M25)',
+      desc: 'Intelligent utility invoice processing, OCR extraction, meter matching, and authorized human approval.',
+    },
+    fa: {
+      title: 'قبوض آب و برق و هوش پردازش صورت‌حساب‌ها (M25)',
+      desc: 'پردازش هوشمند قبوض مصرفی و انرژی، استخراج داده‌ها، تطبیق با کنتور و تأیید نهایی انسانی.',
+    },
+  },
+  '/information-architecture': {
+    ro: {
+      title: 'Arhitectura Informațională CLADORA',
+      desc: 'Harta completă a modulelor și fluxurilor sistemului de operare CLADORA.',
+    },
+    en: {
+      title: 'CLADORA Information Architecture',
+      desc: 'Complete hierarchical blueprint and logical modules of the CLADORA operating system.',
+    },
+    fa: {
+      title: 'معماری اطلاعات و ساختار ماژول‌های کلادورا',
+      desc: 'نقشه جامع معماری اطلاعات، ماژول‌ها و پیوندهای سیستم‌عامل کلادورا.',
+    },
+  },
+  '/wireframes/manager': {
+    ro: {
+      title: 'Wireframes & Specificații UI Manager',
+      desc: 'Grile responsive și specificații vizuale pentru spațiile de lucru Manager OS.',
+    },
+    en: {
+      title: 'Manager UI Wireframes & Specifications',
+      desc: 'Responsive wireframes and layout specifications for Manager OS workspaces.',
+    },
+    fa: {
+      title: 'وایرفریم‌ها و ساختار بصری پنل مدیریت',
+      desc: 'طرح‌های سیمی واکنش‌گرا و مشخصات چیدمان فضاهای کاری مدیر.',
+    },
+  },
+  '/ui/manager': {
+    ro: {
+      title: 'Consola Centralizată Manager OS',
+      desc: 'Hub-ul operațional și financiar pentru companii de administrare imobiliară.',
+    },
+    en: {
+      title: 'Manager OS Enterprise Console',
+      desc: 'Operational and financial management hub for residential property management firms.',
+    },
+    fa: {
+      title: 'کنسول مدیریت املاک و مجتمع‌ها',
+      desc: 'مرکز کنترل عملیاتی و مالی شرکت‌های مدیریت املاک مسکونی.',
+    },
+  },
+  '/prototype': {
+    ro: {
+      title: 'Parcursuri Prototip Interactive',
+      desc: 'Simularea interactivă a fluxurilor cheie operaționale și financiare.',
+    },
+    en: {
+      title: 'Interactive Prototype Journeys',
+      desc: 'Interactive step-by-step simulations of critical operational and financial workflows.',
+    },
+    fa: {
+      title: 'مسیرهای تعاملی پروتوتایپ',
+      desc: 'شبیه‌سازی گام‌به‌گام و تعاملی گردش‌کارهای کلیدی عملیاتی و مالی.',
+    },
+  },
+  '/user-testing': {
+    ro: {
+      title: 'Sarcini de Testare & Validare UX',
+      desc: 'Scenarii de validare a experienței utilizator pentru rolurile operaționale.',
+    },
+    en: {
+      title: 'User Testing & UX Validation Tasks',
+      desc: 'User testing scenarios and validation metrics for key platform roles.',
+    },
+    fa: {
+      title: 'وظایف آزمون کاربر و سنجش تجربه کاربری',
+      desc: 'سناریوهای آزمون کاربر و معیارهای سنجش برای نقش‌های کاربری پلتفرم.',
+    },
+  },
 };
 
 /**

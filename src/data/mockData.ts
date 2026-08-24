@@ -1,8 +1,8 @@
-import { 
-  JournalEntry, 
-  ChargeBreakdownLine, 
-  WorkOrder, 
-  MeterReading, 
+import {
+  JournalEntry,
+  ChargeBreakdownLine,
+  WorkOrder,
+  MeterReading,
   PortfolioProperty,
   BuildingArchetype,
   CoreFeature,
@@ -13,7 +13,7 @@ export const DEMO_ROLES: RoleDefinition[] = [
   {
     key: 'association_admin',
     title: { ro: 'Administrator de Bloc', en: 'Association Administrator', fa: 'مدیر ساختمان' },
-    description: { 
+    description: {
       ro: 'Închidere de lună, reconciliere bancară, alocare cote cheltuieli, mentenanță și furnizori.',
       en: 'Monthly close, bank reconciliation, quota allocation, maintenance and suppliers.',
       fa: 'بستن دوره ماهانه، تطبیق بانکی، تسهیم هزینه‌های شارژ، مدیریت تعمیرات و تأمین‌کنندگان.'
@@ -25,7 +25,7 @@ export const DEMO_ROLES: RoleDefinition[] = [
   {
     key: 'president',
     title: { ro: 'Președinte de Asociație', en: 'Association President', fa: 'رئیس هیئت‌مدیره انجمن' },
-    description: { 
+    description: {
       ro: 'Avizare plăți, reprezentare juridică, convocare AG, monitorizare contracte majore.',
       en: 'Payment approvals, legal representation, AGM scheduling, contract governance.',
       fa: 'تأیید پرداخت‌ها، نمایندگی حقوقی، برگزاری مجامع عمومی و نظارت بر قراردادهای عمده.'
@@ -37,7 +37,7 @@ export const DEMO_ROLES: RoleDefinition[] = [
   {
     key: 'censor',
     title: { ro: 'Cenzor / Auditor Financiar', en: 'Censor / Financial Auditor', fa: 'بازرس / حسابرس انجمن' },
-    description: { 
+    description: {
       ro: 'Verificare balanță, jurnal operațiuni, reconciliere conturi, conformitate Legea 196/2018.',
       en: 'Trial balance audits, journal review, fund reconciliations, statutory compliance.',
       fa: 'بررسی تراز آزمایشی، کنترل اسناد دفتر روزنامه، ممیزی صندوق‌ها و انطباق با قوانین.'
@@ -49,7 +49,7 @@ export const DEMO_ROLES: RoleDefinition[] = [
   {
     key: 'owner',
     title: { ro: 'Proprietar (Rezident)', en: 'Homeowner (Resident)', fa: 'مالک ساکن' },
-    description: { 
+    description: {
       ro: 'Listă de plată transparentă, transmitere index contoare, vot adunare generală, tichete.',
       en: 'Transparent monthly statement, meter readings submission, AGM voting, tickets.',
       fa: 'صورت‌حساب شفاف ماهانه، ارسال عکس و شاخص کنتور، شرکت در رأی‌گیری مجمع و ثبت تیکت.'
@@ -61,7 +61,7 @@ export const DEMO_ROLES: RoleDefinition[] = [
   {
     key: 'tenant_resident',
     title: { ro: 'Chiriaș / Rezident', en: 'Tenant / Resident', fa: 'مستأجر' },
-    description: { 
+    description: {
       ro: 'Plată cheltuieli operaționale de consum, citire contoare, sesizări mentenanță (fără acces la datele financiare ale proprietarului).',
       en: 'Pay consumption charges, submit meters, report maintenance issues (strictly isolated from owner financial ledger).',
       fa: 'پرداخت هزینه‌های مصرفی، ثبت کنتور، درخواست تعمیرات (با جداسازی کامل از اطلاعات مالی مالک).'
@@ -73,7 +73,7 @@ export const DEMO_ROLES: RoleDefinition[] = [
   {
     key: 'portfolio_owner',
     title: { ro: 'Proprietar Portofoliu (Multi-Property)', en: 'Portfolio Landlord', fa: 'مالک سبد املاک' },
-    description: { 
+    description: {
       ro: 'Consolidare 4+ apartamente, monitorizare chirii încasate, yield net, alocare costuri proprietar vs chiriaș.',
       en: 'Consolidate multiple apartments, track rental cashflow, net yield, owner vs tenant expense separation.',
       fa: 'تجمیع مدیریت چندین ملک، پایش دریافت اجاره‌بها، محاسبه بازده خالص و تفکیک مخارج مالک و مستأجر.'
@@ -85,7 +85,7 @@ export const DEMO_ROLES: RoleDefinition[] = [
   {
     key: 'property_manager',
     title: { ro: 'Companie de Administrare (Pro)', en: 'Professional Property Manager', fa: 'شرکت مدیریت املاک' },
-    description: { 
+    description: {
       ro: 'Gestionare 8+ asociații simultan, închidere centralizată de lună, SLA echipe de mentenanță, analiză multi-bloc.',
       en: 'Manage 8+ associations concurrently, batch month-end close, staff SLA metrics, portfolio analytics.',
       fa: 'مدیریت هم‌زمان چندین مجتمع، بستن دسته‌ای دوره‌ها، پایش SLA تکنسین‌ها و تحلیل تجمیعی پروژه‌ها.'
@@ -97,7 +97,7 @@ export const DEMO_ROLES: RoleDefinition[] = [
   {
     key: 'platform_admin',
     title: { ro: 'Administrator Platformă CLADORA', en: 'Platform Administrator', fa: 'مدیر ارشد سامانه کلادورا' },
-    description: { 
+    description: {
       ro: 'Izolare multi-tenant, audit de securitate, feature flags, telemetrie sistem.',
       en: 'Multi-tenant isolation, security audit logs, feature flags, system telemetry.',
       fa: 'جداسازی چندمستأجره داده‌ها، پایش لاگ‌های امنیتی، مدیریت مجوزها و تله‌متری سامانه.'
@@ -372,3 +372,5 @@ export const MOCK_METER_READINGS: MeterReading[] = [
     validationStatus: 'ANOMALY_FLAGGED' // High consumption compared to avg 6m3
   }
 ];
+
+export * from './mockUtilityBills';
