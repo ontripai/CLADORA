@@ -87,23 +87,23 @@ export default function InformationArchitecturePage({
       {/* Verified System Metrics Banner */}
       <div className="card-proptech p-5 bg-white border-[#E2E8F0] grid grid-cols-2 sm:grid-cols-5 gap-4 text-center font-mono">
         <div className="space-y-1">
-          <span className="text-[11px] font-bold text-[#52667A] uppercase tracking-wider block">Production Modules</span>
+          <span className="text-[11px] font-bold text-[#52667A] uppercase tracking-wider block">{dict.metrics.productionModules}</span>
           <strong className="text-2xl font-extrabold text-[#0A6E62]">{PRODUCT_METRICS.productionModules}</strong>
         </div>
         <div className="space-y-1">
-          <span className="text-[11px] font-bold text-[#52667A] uppercase tracking-wider block">Base Screens</span>
+          <span className="text-[11px] font-bold text-[#52667A] uppercase tracking-wider block">{dict.metrics.totalBaseScreens}</span>
           <strong className="text-2xl font-extrabold text-[#1E40AF]">{PRODUCT_METRICS.totalBaseScreens}</strong>
         </div>
         <div className="space-y-1">
-          <span className="text-[11px] font-bold text-[#52667A] uppercase tracking-wider block">Responsive Views</span>
+          <span className="text-[11px] font-bold text-[#52667A] uppercase tracking-wider block">{dict.metrics.totalResponsiveBaseViews}</span>
           <strong className="text-2xl font-extrabold text-[#065F46]">{PRODUCT_METRICS.totalResponsiveBaseViews}</strong>
         </div>
         <div className="space-y-1">
-          <span className="text-[11px] font-bold text-[#52667A] uppercase tracking-wider block">Prototype Journeys</span>
+          <span className="text-[11px] font-bold text-[#52667A] uppercase tracking-wider block">{dict.metrics.prototypeJourneys}</span>
           <strong className="text-2xl font-extrabold text-[#92400E]">{PRODUCT_METRICS.prototypeJourneys}</strong>
         </div>
         <div className="space-y-1 col-span-2 sm:col-span-1">
-          <span className="text-[11px] font-bold text-[#52667A] uppercase tracking-wider block">User Testing Tasks</span>
+          <span className="text-[11px] font-bold text-[#52667A] uppercase tracking-wider block">{dict.metrics.userTestingTasks}</span>
           <strong className="text-2xl font-extrabold text-[#102A43]">{PRODUCT_METRICS.userTestingTasks}</strong>
         </div>
       </div>

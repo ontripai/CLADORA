@@ -35,6 +35,7 @@ export default function PrototypePage({
   params: { lang: Language };
 }) {
   const lang = params.lang;
+  const dict = getDictionary(params.lang);
   const isRo = lang === 'ro';
   const isFa = lang === 'fa';
 
@@ -254,9 +255,9 @@ export default function PrototypePage({
 
       {/* Metrics Banner */}
       <div className="card-proptech p-4 bg-white border-[#E2E8F0] flex flex-wrap items-center justify-between gap-4 text-xs font-mono text-[#52667A]">
-        <div>Total Prototype Journeys: <strong className="text-[#0A6E62]">{PRODUCT_METRICS.prototypeJourneys}</strong></div>
-        <div>Total User Testing Tasks: <strong className="text-[#1E40AF]">{PRODUCT_METRICS.userTestingTasks}</strong></div>
-        <div>Manager Workspaces: <strong className="text-[#065F46]">{PRODUCT_METRICS.managerWorkspaces}</strong></div>
+        <div>{dict.metrics.prototypeJourneys}: <strong className="text-[#0A6E62]">{PRODUCT_METRICS.prototypeJourneys}</strong></div>
+        <div>{dict.metrics.userTestingTasks}: <strong className="text-[#1E40AF]">{PRODUCT_METRICS.userTestingTasks}</strong></div>
+        <div>{dict.metrics.managerWorkspaces}: <strong className="text-[#065F46]">{PRODUCT_METRICS.managerWorkspaces}</strong></div>
       </div>
 
       {/* Journey Selector Tabs */}

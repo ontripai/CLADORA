@@ -126,9 +126,9 @@ export default function ManagerConsolePage({
 
       {/* Metrics Banner */}
       <div className="card-proptech p-4 bg-white border-[#E2E8F0] flex flex-wrap items-center justify-between gap-4 text-xs font-mono text-[#52667A]">
-        <div>Manager Workspaces: <strong className="text-[#0A6E62]">{PRODUCT_METRICS.managerWorkspaces}</strong></div>
-        <div>Total Production Modules: <strong className="text-[#1E40AF]">{PRODUCT_METRICS.productionModules}</strong></div>
-        <div>Total Base Screens: <strong className="text-[#065F46]">{PRODUCT_METRICS.totalBaseScreens}</strong></div>
+        <div>{dict.metrics.managerWorkspaces}: <strong className="text-[#0A6E62]">{PRODUCT_METRICS.managerWorkspaces}</strong></div>
+        <div>{dict.metrics.productionModules}: <strong className="text-[#1E40AF]">{PRODUCT_METRICS.productionModules}</strong></div>
+        <div>{dict.metrics.totalBaseScreens}: <strong className="text-[#065F46]">{PRODUCT_METRICS.totalBaseScreens}</strong></div>
       </div>
 
       {/* Workspace Cards Grid */}

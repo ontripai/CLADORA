@@ -377,6 +377,7 @@ export const ro = {
     },
   },
   metrics: {
+    productionModules: "Module în Producție",
     managerWorkspaces: "Spații de lucru Manager",
     totalBaseScreens: "Total ecrane de bază",
     totalResponsiveBaseViews: "Total vizualizări responsive de bază",
@@ -386,6 +387,11 @@ export const ro = {
   utilityBills: {
     title: "Facturi Utilități & Procesare Inteligentă",
     workspaceId: "M25",
+    workspaceTag: "Spațiul M25",
+    workspaceBadge: "Spațiul de Lucru M25 • Contabilitate & Facturi Utilități",
+    workspacesLabel: "Spații de Lucru Manager",
+    screensLabel: "Ecrane",
+    viewsLabel: "Vizualizări",
     role: "Manager de Proprietate",
     aiBanner: "Inteligența artificială sugerează; un utilizator uman autorizat verifică și confirmă.",
     intakeSources: {

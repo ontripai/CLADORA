@@ -401,10 +401,10 @@ export function UtilityBillsWorkspace({ lang }: UtilityBillsWorkspaceProps) {
           <div>
             <div className="flex flex-wrap items-center gap-2">
               <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-white text-[#0A6E62] border border-[#B2E5DF]">
-                Workspace M25
+                {dict.utilityBills.workspaceTag}
               </span>
               <span className="text-xs text-[#52667A] font-mono">
-                {PRODUCT_METRICS.managerWorkspaces} Manager Workspaces • {PRODUCT_METRICS.totalBaseScreens} Screens • {PRODUCT_METRICS.totalResponsiveBaseViews} Views
+                {PRODUCT_METRICS.managerWorkspaces} {dict.utilityBills.workspacesLabel} • {PRODUCT_METRICS.totalBaseScreens} {dict.utilityBills.screensLabel} • {PRODUCT_METRICS.totalResponsiveBaseViews} {dict.utilityBills.viewsLabel}
               </span>
             </div>
             <p className="text-sm font-bold text-[#0A6E62] mt-1">

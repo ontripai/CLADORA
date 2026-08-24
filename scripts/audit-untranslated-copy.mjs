@@ -163,7 +163,15 @@ export const DISALLOWED_ENGLISH_PHRASES = [
   /\bproperty_manager\b/,
   /\bplatform_admin\b/,
   /\bAp\.\s*\d+/i,
-  /\b(OCT|JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|NOV|DEC)-\d{4}\b/
+  /\b(OCT|JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|NOV|DEC)-\d{4}\b/,
+  // M25 Workspace & Metrics untranslated copy detections
+  /\bFinance & Utility Accounting\b/i,
+  /\bManager Workspaces\b/i,
+  /\bTotal Base Screens\b/i,
+  /\bTotal Responsive Base Views\b/i,
+  /\bScreens\s*•/i,
+  /•\s*Views\b/i,
+  /\bWorkspace M25\s*•/i
 ];
 
 // Disallowed Romanian phrases and keywords on Persian views

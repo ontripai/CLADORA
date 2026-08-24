@@ -377,6 +377,7 @@ export const fa = {
     },
   },
   metrics: {
+    productionModules: "ماژول‌های عملیاتی",
     managerWorkspaces: "فضاهای کاری مدیر",
     totalBaseScreens: "مجموع صفحات پایه",
     totalResponsiveBaseViews: "مجموع نماهای واکنش‌گرا",
@@ -386,6 +387,11 @@ export const fa = {
   utilityBills: {
     title: "قبوض آب و برق و هوش پردازش صورت‌حساب‌ها",
     workspaceId: "M25",
+    workspaceTag: "محیط کاری M25",
+    workspaceBadge: "محیط کاری M25 • حسابداری و قبوض انرژی",
+    workspacesLabel: "فضاهای کاری مدیر",
+    screensLabel: "صفحه پایه",
+    viewsLabel: "نمای واکنش‌گرا",
     role: "مدیر املاک و ساختمان",
     aiBanner: "هوش مصنوعی پیشنهاد می‌دهد؛ یک کاربر انسانی مجاز بررسی و تأیید نهایی را انجام می‌دهد.",
     intakeSources: {

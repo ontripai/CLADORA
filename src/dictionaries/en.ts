@@ -377,6 +377,7 @@ export const en = {
     },
   },
   metrics: {
+    productionModules: "Production Modules",
     managerWorkspaces: "Manager Workspaces",
     totalBaseScreens: "Total Base Screens",
     totalResponsiveBaseViews: "Total Responsive Base Views",
@@ -386,6 +387,11 @@ export const en = {
   utilityBills: {
     title: "Utility Bills & Invoice Intelligence",
     workspaceId: "M25",
+    workspaceTag: "Workspace M25",
+    workspaceBadge: "Workspace M25 • Finance & Utility Accounting",
+    workspacesLabel: "Manager Workspaces",
+    screensLabel: "Screens",
+    viewsLabel: "Views",
     role: "Property Manager",
     aiBanner: "AI suggests; an authorized human reviews and confirms.",
     intakeSources: {

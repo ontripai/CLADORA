@@ -51,7 +51,7 @@ export default function UtilityBillsWorkspacePage({
         <div className="space-y-2 max-w-3xl">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#EAF8F5] border border-[#B2E5DF] text-xs font-bold text-[#0A6E62]">
             <Layers className="w-3.5 h-3.5 text-[#0A6E62]" />
-            <span>Workspace M25 • Finance & Utility Accounting</span>
+            <span>{dict.utilityBills.workspaceBadge}</span>
           </div>
           <h1 className="text-3xl sm:text-4xl font-display font-extrabold text-[#102A43] tracking-tight">
             {isRo
