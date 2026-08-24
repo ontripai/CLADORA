@@ -4,6 +4,7 @@
  */
 
 export const PRODUCT_METRICS = {
+  productionModules: 25,
   managerWorkspaces: 25,
   totalBaseScreens: 55,
   totalResponsiveBaseViews: 165,

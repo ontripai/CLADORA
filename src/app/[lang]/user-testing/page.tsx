@@ -69,30 +69,30 @@ export default function UserTestingPage({
   ];
 
   return (
-    <div className="pt-28 pb-24 space-y-12 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      {/* Header */}
-      <div className="space-y-4 text-center max-w-3xl mx-auto">
-        <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full glass-panel border border-violet-500/20 text-xs font-semibold text-violet-300">
-          <CheckSquare className="w-3.5 h-3.5" />
+    <div className="pt-28 pb-24 space-y-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-start">
+      {/* Header Card */}
+      <div className="card-proptech p-6 sm:p-8 bg-white border-[#E2E8F0] space-y-3 text-center max-w-4xl mx-auto">
+        <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#EAF8F5] border border-[#B2E5DF] text-xs font-bold text-[#0A6E62]">
+          <CheckSquare className="w-3.5 h-3.5 text-[#0E9F8E]" />
           <span>UX Research & Validation Tasks</span>
         </div>
-        <h1 className="text-4xl sm:text-5xl font-display font-extrabold text-white tracking-tight">
+        <h1 className="text-3xl sm:text-4xl font-display font-extrabold text-[#102A43] tracking-tight">
           {isRo ? 'Sarcini de Testare cu Utilizatorii' : isFa ? 'سناریوهای آزمون و اعتبارسنجی کاربر' : 'User Testing & UX Validation'}
         </h1>
-        <p className="text-sm sm:text-base text-slate-400">
+        <p className="text-sm text-[#52667A] max-w-2xl mx-auto">
           {isRo
-            ? 'Scenarii cantitative și calitative de validare a ergonomiei pentru cele 4 roluri cheie (Total: 4 Sarcini).'
+            ? 'Protocoale structurate de testare calitativă și cantitativă pentru validarea fluxurilor operaționale (Total: 4 Sarcini).'
             : isFa
-            ? 'سناریوهای استاندارد سنجش سهولت کاربری برای نقش‌های اصلی سامانه (مجموع: ۴ وظیفه).'
-            : 'Quantitative UX benchmarks and task protocols across key platform roles (Total: 4 Tasks).'}
+            ? 'پروتکل‌های ساختاریافته ارزیابی تجربه کاربری جهت اعتبارسنجی گردش‌کارهای کلیدی (مجموع: ۴ وظیفه).'
+            : 'Structured usability testing protocols and live simulation sandboxes across personas (Total: 4 Tasks).'}
         </p>
       </div>
 
       {/* Metrics Banner */}
-      <div className="p-4 rounded-xl glass-panel border border-slate-800 flex flex-wrap items-center justify-between gap-4 text-xs font-mono text-slate-400">
-        <div>Total User Testing Tasks: <strong className="text-pink-300">{PRODUCT_METRICS.userTestingTasks}</strong></div>
-        <div>Prototype Journeys: <strong className="text-violet-300">{PRODUCT_METRICS.prototypeJourneys}</strong></div>
-        <div>Manager Workspaces: <strong className="text-emerald-300">{PRODUCT_METRICS.managerWorkspaces}</strong></div>
+      <div className="card-proptech p-4 bg-white border-[#E2E8F0] flex flex-wrap items-center justify-between gap-4 text-xs font-mono text-[#52667A]">
+        <div>Total User Testing Tasks: <strong className="text-[#0E9F8E]">{PRODUCT_METRICS.userTestingTasks}</strong></div>
+        <div>Total Prototype Journeys: <strong className="text-[#1E62C4]">{PRODUCT_METRICS.prototypeJourneys}</strong></div>
+        <div>Manager Workspaces: <strong className="text-[#059669]">{PRODUCT_METRICS.managerWorkspaces}</strong></div>
       </div>
 
       {/* Task Selector Grid */}
@@ -106,205 +106,218 @@ export default function UserTestingPage({
               setTaskCompleted(false);
               setSelectedException(null);
             }}
-            className={`p-5 rounded-2xl border text-left transition-all flex flex-col justify-between ${
+            className={`card-proptech p-5 text-start transition-all flex flex-col justify-between ${
               activeTaskId === t.id
-                ? 'bg-violet-950/30 border-violet-500/50 shadow-lg shadow-violet-950/30'
-                : 'bg-slate-900/40 border-slate-800 hover:border-slate-700'
+                ? 'bg-[#EAF8F5]/50 border-[#0E9F8E] ring-2 ring-[#0E9F8E] shadow-sm'
+                : 'bg-white border-[#E2E8F0] hover:border-[#B2E5DF]'
             }`}
           >
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <span className="font-mono text-xs font-semibold px-2 py-0.5 rounded bg-slate-800 text-slate-300">
+                <span className="font-mono text-xs font-bold px-2 py-0.5 rounded bg-[#F0F4F8] text-[#102A43] border border-[#D3DCE6]">
                   {t.id}
                 </span>
                 {t.isNew && (
-                  <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-[#ECFDF5] text-[#059669] border border-[#A7F3D0]">
                     NEW M25
                   </span>
                 )}
               </div>
-              <span className="text-xs text-violet-400 font-semibold">{t.role}</span>
-              <h3 className="text-xs font-bold text-white leading-snug">{t.title}</h3>
+              <span className="text-xs font-bold text-[#0E9F8E] block">{t.role}</span>
+              <h3 className="text-xs font-bold text-[#102A43] leading-snug">{t.title}</h3>
             </div>
 
-            <div className="mt-4 pt-3 border-t border-slate-800/60 flex items-center justify-between text-[11px] text-slate-400 font-mono">
-              <span>Success: <strong className="text-emerald-400">{t.targetSuccess}</strong></span>
-              <span>Time: <strong className="text-cyan-400">{t.targetTime}</strong></span>
+            <div className="mt-4 pt-3 border-t border-[#E2E8F0] grid grid-cols-2 gap-2 text-[11px] font-mono text-[#52667A]">
+              <div>Target: <strong className="text-[#102A43]">{t.targetSuccess}</strong></div>
+              <div>Time: <strong className="text-[#102A43]">{t.targetTime}</strong></div>
             </div>
           </button>
         ))}
       </div>
 
-      {/* Detailed Protocol & Simulator for M25 Manager Task (Task 4) */}
+      {/* Task 4 Active Sandbox View */}
       {activeTaskId === 'UT-04' && (
-        <div className="p-8 rounded-3xl glass-panel border border-violet-500/40 bg-gradient-to-b from-violet-950/20 to-slate-950 space-y-8 animate-fadeIn">
+        <div className="card-proptech p-6 sm:p-8 bg-white border-[#E2E8F0] space-y-8 animate-fadeIn text-start">
 
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-slate-800">
+          {/* Sandbox Header */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-[#E2E8F0]">
             <div>
               <div className="flex items-center gap-2">
-                <span className="px-3 py-1 rounded-md bg-violet-500/20 text-violet-300 font-mono text-xs font-semibold border border-violet-500/30">
-                  Manager Task Protocol • UT-04
+                <span className="px-3 py-0.5 rounded-full bg-[#EAF8F5] text-[#0A6E62] font-mono text-xs font-bold border border-[#B2E5DF]">
+                  Task 4 Sandbox • Property Manager Persona
                 </span>
-                <span className="text-xs text-slate-400">Target Role: Property Manager</span>
               </div>
-              <h2 className="text-2xl font-bold text-white mt-2">
+              <h2 className="text-2xl font-display font-extrabold text-[#102A43] mt-1">
                 {isRo
-                  ? 'Protocol de Testare M25: Verificare Factură Utilități & Decizie Contabilă'
+                  ? 'Protocol Testare: Inspecție & Reconciliere Factură Utilități'
                   : isFa
-                  ? 'دستورالعمل آزمون M25: بررسی قبض انرژی و تصمیم‌گیری حسابداری'
-                  : 'M25 Task Protocol: Utility Bill Inspection & Financial Decision'}
+                  ? 'پروتکل آزمون: بررسی و تطبیق صورت‌حساب انرژی'
+                  : 'Testing Protocol: Utility Bill Inspection & Reconciliation'}
               </h2>
             </div>
 
             <Link
               href={`/${lang}/ui/manager/utility-bills`}
-              className="px-4 py-2 rounded-xl bg-violet-600 hover:bg-violet-500 text-white text-xs font-semibold inline-flex items-center gap-1.5 shadow-lg shadow-violet-600/20 transition-all self-start md:self-auto"
+              className="px-4 py-2.5 rounded-xl bg-[#0E9F8E] hover:bg-[#0C8778] text-white text-xs font-bold shadow-sm inline-flex items-center gap-2 transition-all self-start sm:self-auto"
             >
-              <span>{isRo ? 'Deschide Spațiul Live M25' : isFa ? 'مشاهده رابط کاربری زنده' : 'Open Live Workspace'}</span>
-              <ArrowRight className="w-3.5 h-3.5" />
+              <span>{isRo ? 'Deschide Workspace-ul M25' : isFa ? 'ورود به محیط کاری M25' : 'Open M25 Workspace'}</span>
+              <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
 
-          {/* Prompt / Instruction to Participant (Section 15) */}
-          <div className="p-5 rounded-2xl bg-violet-950/40 border border-violet-500/30 space-y-2">
-            <span className="text-xs font-bold text-violet-300 uppercase tracking-wider">
-              {isRo ? 'Instrucțiune către participant:' : isFa ? 'سناریوی ارائه‌شده به کاربر آزمون:' : 'Participant Task Prompt:'}
-            </span>
-            <blockquote className="text-sm font-medium text-white italic border-l-2 border-violet-400 pl-4 py-1">
-              {isRo
-                ? '„Examinați factura de energie electrică importată, identificați discrepanța de contor sau tarif, validați datele corecte și aprobați înregistrarea documentului în contabilitate.”'
-                : isFa
-                ? '«صورت‌حساب برق واردشده را بررسی کرده، مغایرت مربوط به کنتور یا تعرفه را شناسایی نمایید، ارقام صحیح را تأیید نموده و سند را برای ثبت حسابداری نهایی آماده کنید.»'
-                : '"Review the imported electricity bill, detect the meter or tariff discrepancy, confirm the correct data, and prepare the bill for accounting posting."'}
-            </blockquote>
+          {/* Scenario & Objective Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="p-5 rounded-2xl bg-[#F6F9FC] border border-[#E2E8F0] space-y-2">
+              <span className="text-xs font-bold text-[#52667A] uppercase tracking-wider block">
+                {isRo ? '1. Scenariul de Test' : isFa ? '۱. سناریوی آزمون' : '1. Scenario'}
+              </span>
+              <p className="text-xs text-[#52667A] leading-relaxed">
+                {isRo
+                  ? 'A sosit factura Enel (3.420,50 RON) pentru Aviației Tower. Sistemul a extras automat consumul de 3.060 kWh, dar există o nepotrivire la indexul de pornire.'
+                  : isFa
+                  ? 'قبض برق ۳۴۲۰٫۵۰ لئو دریافت شده است. سیستم مصرف ۳۰۶۰ کیلووات را استخراج کرده اما در شاخص اولیه مغایرت وجود دارد.'
+                  : 'Enel invoice arrived for Aviației Tower. OCR extracted 3,060 kWh consumption with a meter discrepancy.'}
+              </p>
+            </div>
+
+            <div className="p-5 rounded-2xl bg-[#F6F9FC] border border-[#E2E8F0] space-y-2">
+              <span className="text-xs font-bold text-[#52667A] uppercase tracking-wider block">
+                {isRo ? '2. Obiectivul Utilizatorului' : isFa ? '۲. هدف کاربر' : '2. Objective'}
+              </span>
+              <p className="text-xs text-[#52667A] leading-relaxed">
+                {isRo
+                  ? 'Identificați cauza excepției, inspectați scanarea PDF originală, semnați decizia umană de aprobare și înregistrați în contabilitate.'
+                  : isFa
+                  ? 'شناسایی علت مغایرت، مشاهده اسکن اصلی، صدور تأیید نهایی انسانی و ثبت سند حسابداری.'
+                  : 'Identify exception cause, inspect PDF scan, execute authorized human sign-off, and post to ledger.'}
+              </p>
+            </div>
+
+            <div className="p-5 rounded-2xl bg-[#F6F9FC] border border-[#E2E8F0] space-y-2">
+              <span className="text-xs font-bold text-[#52667A] uppercase tracking-wider block">
+                {isRo ? '3. Criteriu de Succes' : isFa ? '۳. معیار موفقیت' : '3. Success Metric'}
+              </span>
+              <p className="text-xs text-[#52667A] leading-relaxed">
+                {isRo
+                  ? 'Zero erori critice financiare; timpul de decizie sub 240s; confirmarea obligatorie a tuturor celor 11 parametri.'
+                  : isFa
+                  ? 'عدم وجود خطای بحرانی؛ زمان بررسی زیر ۲۴۰ ثانیه؛ تأیید تمامی ۱۱ مؤلفه قانونی.'
+                  : 'Zero critical accounting defects; task duration ≤ 240s; mandatory human sign-off verified.'}
+              </p>
+            </div>
           </div>
 
-          {/* Acceptance Criteria Benchmarks (Section 15) */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 text-center">
-            <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-1">
-              <span className="text-[11px] text-slate-400">{isRo ? 'Rată Succes Țintă' : isFa ? 'نرخ موفقیت' : 'Target Success'}</span>
-              <div className="text-xl font-bold text-emerald-400 font-mono">≥ 85%</div>
-            </div>
-            <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-1">
-              <span className="text-[11px] text-slate-400">{isRo ? 'Timp Maxim Finalizare' : isFa ? 'حداکثر زمان' : 'Max Time'}</span>
-              <div className="text-xl font-bold text-cyan-400 font-mono">≤ 240 secunde</div>
-            </div>
-            <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-1">
-              <span className="text-[11px] text-slate-400">{isRo ? 'Erori Financiare Critice' : isFa ? 'خطای بحرانی مالی' : 'Critical Errors'}</span>
-              <div className="text-xl font-bold text-emerald-400 font-mono">0 Erori</div>
-            </div>
-            <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-1">
-              <span className="text-[11px] text-slate-400">{isRo ? 'Detecție Excepții' : isFa ? 'تشخیص مغایرت' : 'Exception Detection'}</span>
-              <div className="text-xl font-bold text-violet-400 font-mono">100% Valid</div>
-            </div>
-            <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-1">
-              <span className="text-[11px] text-slate-400">{isRo ? 'Înțelegere Graniță AI/Om' : isFa ? 'درک مرز هوش/انسان' : 'AI/Human Clarity'}</span>
-              <div className="text-xl font-bold text-pink-400 font-mono">Claritate Totală</div>
-            </div>
-          </div>
-
-          {/* Interactive Simulation Sandbox for Task 4 */}
-          <div className="p-6 rounded-2xl bg-slate-900/80 border border-slate-800 space-y-6">
-            <h3 className="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
-              <Sparkles className="w-4 h-4 text-violet-400" />
-              <span>{isRo ? 'Mini-Simulator Validare UX pentru Sarcina 4' : isFa ? 'شبیه‌ساز تعاملی آزمون کاربر' : 'Task 4 Interactive UX Simulator'}</span>
+          {/* Interactive Sandbox Steps */}
+          <div className="space-y-4">
+            <h3 className="text-sm font-bold text-[#102A43] uppercase tracking-wider flex items-center gap-2">
+              <Sparkles className="w-4 h-4 text-[#0E9F8E]" />
+              <span>{isRo ? 'Simulare Interactivă Pas-cu-Pas (Sandbox)' : isFa ? 'شبیه‌سازی تعاملی گام‌به‌گام' : 'Step-by-Step Interactive Sandbox'}</span>
             </h3>
 
-            <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 text-xs space-y-3">
-              <div className="text-slate-300 font-semibold">
-                {isRo ? 'Pasul 1: Selectați excepția detectată pe factura de gaz Engie (UB-2026-003):' : isFa ? 'مرحله ۱: مغایرت موجود در صورت‌حساب گاز را انتخاب کنید:' : 'Step 1: Identify the discrepancy flagged on Engie Gas Bill (UB-2026-003):'}
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
-                <button
-                  type="button"
-                  onClick={() => setSelectedException('LOW_CONFIDENCE')}
-                  className={`p-3 rounded-lg border text-left transition-all ${
-                    selectedException === 'LOW_CONFIDENCE'
-                      ? 'bg-violet-600/30 border-violet-500 text-white'
-                      : 'bg-slate-900 border-slate-800 text-slate-300 hover:bg-slate-800'
-                  }`}
-                >
-                  <div className="font-bold">1. Încredere Scăzută (55%)</div>
-                  <div className="text-[11px] text-slate-400 mt-1">Scanare neclară la tabelul de index</div>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => setSelectedException('METER_MISMATCH')}
-                  className={`p-3 rounded-lg border text-left transition-all ${
-                    selectedException === 'METER_MISMATCH'
-                      ? 'bg-violet-600/30 border-violet-500 text-white'
-                      : 'bg-slate-900 border-slate-800 text-slate-300 hover:bg-slate-800'
-                  }`}
-                >
-                  <div className="font-bold">2. Nepotrivire Serie Contor</div>
-                  <div className="text-[11px] text-slate-400 mt-1">Extras RO-GAZ-CT-8831 vs 8831-B</div>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => setSelectedException('OTHER')}
-                  className={`p-3 rounded-lg border text-left transition-all ${
-                    selectedException === 'OTHER'
-                      ? 'bg-violet-600/30 border-violet-500 text-white'
-                      : 'bg-slate-900 border-slate-800 text-slate-300 hover:bg-slate-800'
-                  }`}
-                >
-                  <div className="font-bold">3. Factură Fără Erori</div>
-                  <div className="text-[11px] text-slate-400 mt-1">Nu există nicio problemă</div>
-                </button>
-              </div>
-            </div>
-
-            {selectedException && (
-              <div className="space-y-4 animate-fadeIn">
-                <div className={`p-4 rounded-xl border text-xs ${
-                  selectedException === 'OTHER'
-                    ? 'bg-red-950/30 border-red-500/40 text-red-300'
-                    : 'bg-emerald-950/30 border-emerald-500/40 text-emerald-300'
-                }`}>
-                  {selectedException === 'OTHER' ? (
-                    <div>✗ Incorect. Factura conține atât scanare neclară (55%), cât și nepotrivire de serie contor.</div>
-                  ) : (
-                    <div>✓ Corect! Ați identificat cu succes anomalia. Următorul pas: Operatorul uman corectează sufixul contorului și confirmă manual datele.</div>
-                  )}
+            <div className="p-6 rounded-2xl bg-[#F6F9FC] border border-[#E2E8F0] space-y-5">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-[#E2E8F0]">
+                <div>
+                  <span className="text-xs font-bold text-[#0E9F8E] font-mono">STEP 1 / 3: EXCEPTION DISCOVERY</span>
+                  <div className="text-sm font-bold text-[#102A43]">
+                    {isRo ? 'Inspectați excepția detectată de sistem:' : isFa ? 'مغایرت شناسایی‌شده توسط سیستم را بررسی کنید:' : 'Inspect system-detected anomaly:'}
+                  </div>
                 </div>
 
-                {selectedException !== 'OTHER' && !taskCompleted && (
+                <span className="px-3 py-1 rounded-full text-xs font-bold bg-[#FFF7E6] text-[#D99B26] border border-[#F5B942]">
+                  EXC-UB-05 • Meter Index Discrepancy
+                </span>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                <button
+                  type="button"
+                  onClick={() => setSelectedException('CORRECT')}
+                  className={`p-4 rounded-xl border text-start transition-all space-y-1 ${
+                    selectedException === 'CORRECT'
+                      ? 'bg-[#ECFDF5] border-[#A7F3D0] text-[#059669] ring-2 ring-[#10B981]'
+                      : 'bg-white border-[#E2E8F0] text-[#52667A] hover:border-[#B2E5DF]'
+                  }`}
+                >
+                  <div className="font-bold text-[#102A43]">
+                    Option A: {isRo ? 'Corectează Indexul din Scanarea Originală' : isFa ? 'اصلاح شاخص از روی اسکن اصلی' : 'Correct Index from Original Scan'}
+                  </div>
+                  <div className="text-[11px] text-[#52667A]">
+                    {isRo ? 'Verifică PDF-ul furnizorului și actualizează indexul de pornire la 124.200 kWh.' : isFa ? 'شاخص اولیه با رقم اسکن تطبیق و اصلاح شد.' : 'Matches verified meter series from SPV e-Factura scan.'}
+                  </div>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setSelectedException('REJECT')}
+                  className={`p-4 rounded-xl border text-start transition-all space-y-1 ${
+                    selectedException === 'REJECT'
+                      ? 'bg-[#FFF0EB] border-[#FF7A59] text-[#F2633F] ring-2 ring-[#FF7A59]'
+                      : 'bg-white border-[#E2E8F0] text-[#52667A] hover:border-[#B2E5DF]'
+                  }`}
+                >
+                  <div className="font-bold text-[#102A43]">
+                    Option B: {isRo ? 'Respinge Factura & Solicită Stornare Furnizor' : isFa ? 'رد صورت‌حساب و درخواست صدور فاکتور اصلاحی' : 'Reject Bill & Request Supplier Credit Note'}
+                  </div>
+                  <div className="text-[11px] text-[#52667A]">
+                    {isRo ? 'Marchează factura ca disputată și trimite notificare automată către Enel.' : isFa ? 'صورت‌حساب در وضعیت مغایرت معلق و گزارش به تأمین‌کننده ارسال شد.' : 'Flags discrepancy to supplier billing department.'}
+                  </div>
+                </button>
+              </div>
+
+              {selectedException && !taskCompleted && (
+                <div className="pt-4 border-t border-[#E2E8F0] flex items-center justify-between">
+                  <span className="text-xs text-[#52667A]">
+                    {isRo ? 'Decizie selectată. Puteți finaliza sarcina de testare.' : isFa ? 'تصمیم ثبت شد. آماده تکمیل ارزیابی.' : 'Decision recorded. Ready to seal task verification.'}
+                  </span>
                   <button
                     type="button"
                     onClick={() => setTaskCompleted(true)}
-                    className="px-5 py-2.5 rounded-xl bg-violet-600 hover:bg-violet-500 text-white text-xs font-semibold shadow-lg shadow-violet-600/20 inline-flex items-center gap-2"
+                    className="px-5 py-2.5 rounded-xl bg-[#0E9F8E] hover:bg-[#0C8778] text-white text-xs font-bold shadow-sm transition-all flex items-center gap-2"
                   >
-                    <UserCheck className="w-4 h-4" />
-                    <span>{isRo ? 'Finalizează Sarcina cu Confirmare Umană' : isFa ? 'تکمیل سناریو با تأیید انسانی' : 'Complete Task with Human Sign-Off'}</span>
+                    <CheckCircle2 className="w-4 h-4" />
+                    <span>{isRo ? 'Finalizează Sarcina 4 & Emite Token' : isFa ? 'تکمیل وظیفه ۴ و ثبت نتیجه' : 'Complete Task 4 & Issue Token'}</span>
                   </button>
-                )}
+                </div>
+              )}
 
-                {taskCompleted && (
-                  <div className="p-4 rounded-xl bg-emerald-950/40 border border-emerald-500/40 text-emerald-300 text-xs flex items-center justify-between gap-4">
-                    <div className="flex items-center gap-2">
-                      <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0" />
-                      <span>{isRo ? 'Sarcină finalizată cu succes! Timp înregistrat: 118 secunde. Erori financiare: 0.' : isFa ? 'آزمون با موفقیت انجام شد! زمان: ۱۱۸ ثانیه. خطای مالی: ۰.' : 'Task completed successfully! Recorded time: 118s. Financial errors: 0.'}</span>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setTaskCompleted(false);
-                        setSelectedException(null);
-                      }}
-                      className="p-1 text-emerald-400 hover:text-emerald-200"
-                    >
-                      <RotateCcw className="w-4 h-4" />
-                    </button>
+              {taskCompleted && (
+                <div className="p-5 rounded-2xl bg-[#ECFDF5] border border-[#A7F3D0] space-y-2 animate-fadeIn">
+                  <div className="flex items-center gap-2 text-[#059669]">
+                    <CheckCircle2 className="w-5 h-5" />
+                    <span className="font-bold text-sm">
+                      {isRo ? 'Sarcina 4 Finalizată cu Succes — 100% Criterii de Aprobare Îndeplinite' : isFa ? 'وظیفه ۴ با موفقیت تکمیل شد — ۱۰۰٪ معیارهای اعتبارسنجی احراز گردید' : 'Task 4 Completed Successfully — 100% Acceptance Criteria Met'}
+                    </span>
                   </div>
-                )}
-              </div>
-            )}
-
+                  <div className="text-xs font-mono text-[#52667A] space-y-1">
+                    <div>Validation Token: <strong className="text-[#0E9F8E]">UT-TASK-04-VAL-88492</strong></div>
+                    <div>Recorded Time: <strong className="text-[#102A43]">42.5s (Target ≤ 240s)</strong></div>
+                    <div>Critical Defects: <strong className="text-[#059669]">0 Critical</strong></div>
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
 
+        </div>
+      )}
+
+      {/* Non-M25 Tasks Informational Box */}
+      {activeTaskId !== 'UT-04' && (
+        <div className="card-proptech p-8 bg-white border-[#E2E8F0] text-center space-y-4">
+          <h3 className="text-xl font-display font-extrabold text-[#102A43]">{tasks.find(t => t.id === activeTaskId)?.title}</h3>
+          <p className="text-sm text-[#52667A] max-w-xl mx-auto">
+            {isRo ? 'Protocol standard de cercetare UX disponibil pentru testare.' : isFa ? 'پروتکل استاندارد ارزیابی کاربر در دسترس است.' : 'Standard UX research testing sandbox ready for evaluation.'}
+          </p>
+          <div className="pt-4">
+            <button
+              type="button"
+              onClick={() => setActiveTaskId('UT-04')}
+              className="px-5 py-2.5 rounded-xl bg-[#0E9F8E] hover:bg-[#0C8778] text-white text-xs font-bold shadow-sm inline-flex items-center gap-2"
+            >
+              <span>{isRo ? 'Comută la Sarcina 4 (M25 Utility Bills)' : isFa ? 'تغییر به وظیفه ۴ (M25 قبوض)' : 'Switch to Task 4 (M25 Utility Bills)'}</span>
+              <ArrowRight className="w-4 h-4" />
+            </button>
+          </div>
         </div>
       )}
 

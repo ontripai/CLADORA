@@ -233,17 +233,17 @@ export default function PrototypePage({
   const currentStep = journey4Steps[currentStepIndex];
 
   return (
-    <div className="pt-28 pb-24 space-y-12 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      {/* Header */}
-      <div className="space-y-4 text-center max-w-3xl mx-auto">
-        <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full glass-panel border border-violet-500/20 text-xs font-semibold text-violet-300">
-          <Sparkles className="w-3.5 h-3.5" />
+    <div className="pt-28 pb-24 space-y-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-start">
+      {/* Header Card */}
+      <div className="card-proptech p-6 sm:p-8 bg-white border-[#E2E8F0] space-y-3 text-center max-w-4xl mx-auto">
+        <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#EAF8F5] border border-[#B2E5DF] text-xs font-bold text-[#0A6E62]">
+          <Sparkles className="w-3.5 h-3.5 text-[#0E9F8E]" />
           <span>Interactive Prototype Journeys</span>
         </div>
-        <h1 className="text-4xl sm:text-5xl font-display font-extrabold text-white tracking-tight">
+        <h1 className="text-3xl sm:text-4xl font-display font-extrabold text-[#102A43] tracking-tight">
           {isRo ? 'Parcursuri Prototip Interactive' : isFa ? 'مسیرهای تعاملی پروتوتایپ' : 'Interactive Prototype Journeys'}
         </h1>
-        <p className="text-sm sm:text-base text-slate-400">
+        <p className="text-sm text-[#52667A] max-w-2xl mx-auto">
           {isRo
             ? 'Simularea pas cu pas a fluxurilor cheie din sistemul CLADORA (Total: 4 Parcursuri).'
             : isFa
@@ -253,10 +253,10 @@ export default function PrototypePage({
       </div>
 
       {/* Metrics Banner */}
-      <div className="p-4 rounded-xl glass-panel border border-slate-800 flex flex-wrap items-center justify-between gap-4 text-xs font-mono text-slate-400">
-        <div>Total Prototype Journeys: <strong className="text-violet-300">{PRODUCT_METRICS.prototypeJourneys}</strong></div>
-        <div>Total User Testing Tasks: <strong className="text-cyan-300">{PRODUCT_METRICS.userTestingTasks}</strong></div>
-        <div>Manager Workspaces: <strong className="text-emerald-300">{PRODUCT_METRICS.managerWorkspaces}</strong></div>
+      <div className="card-proptech p-4 bg-white border-[#E2E8F0] flex flex-wrap items-center justify-between gap-4 text-xs font-mono text-[#52667A]">
+        <div>Total Prototype Journeys: <strong className="text-[#0E9F8E]">{PRODUCT_METRICS.prototypeJourneys}</strong></div>
+        <div>Total User Testing Tasks: <strong className="text-[#1E62C4]">{PRODUCT_METRICS.userTestingTasks}</strong></div>
+        <div>Manager Workspaces: <strong className="text-[#059669]">{PRODUCT_METRICS.managerWorkspaces}</strong></div>
       </div>
 
       {/* Journey Selector Tabs */}
@@ -272,28 +272,28 @@ export default function PrototypePage({
               setIsSimulatedError(false);
               setIsConfirmedByUser(false);
             }}
-            className={`p-4 rounded-2xl border text-left transition-all flex flex-col justify-between ${
+            className={`card-proptech p-5 text-start transition-all flex flex-col justify-between ${
               selectedJourneyIndex === idx
-                ? 'bg-violet-950/30 border-violet-500/50 shadow-lg shadow-violet-950/20'
-                : 'bg-slate-900/40 border-slate-800 hover:border-slate-700'
+                ? 'bg-[#EAF8F5]/50 border-[#0E9F8E] ring-2 ring-[#0E9F8E] shadow-sm'
+                : 'bg-white border-[#E2E8F0] hover:border-[#B2E5DF]'
             }`}
           >
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <span className="font-mono text-xs font-semibold px-2 py-0.5 rounded bg-slate-800 text-slate-300">
+                <span className="font-mono text-xs font-bold px-2 py-0.5 rounded bg-[#F0F4F8] text-[#102A43] border border-[#D3DCE6]">
                   {j.id}
                 </span>
                 {j.isNew && (
-                  <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-[#ECFDF5] text-[#059669] border border-[#A7F3D0]">
                     NEW M25
                   </span>
                 )}
               </div>
-              <h3 className="text-xs font-bold text-white leading-snug">{j.title}</h3>
-              <p className="text-[11px] text-slate-400 leading-relaxed">{j.desc}</p>
+              <h3 className="text-xs font-bold text-[#102A43] leading-snug">{j.title}</h3>
+              <p className="text-[11px] text-[#52667A] leading-relaxed">{j.desc}</p>
             </div>
 
-            <div className="mt-3 pt-3 border-t border-slate-800/60 text-[11px] text-slate-500 font-mono">
+            <div className="mt-3 pt-3 border-t border-[#E2E8F0] text-[11px] text-[#7B8A9A] font-mono">
               {j.stepsCount} {isRo ? 'etape interactive' : isFa ? 'مرحله تعاملی' : 'interactive steps'}
             </div>
           </button>
@@ -302,18 +302,18 @@ export default function PrototypePage({
 
       {/* Active Interactive Simulator for Journey 4 */}
       {selectedJourneyIndex === 3 && (
-        <div className="p-8 rounded-3xl glass-panel border border-violet-500/40 bg-gradient-to-b from-violet-950/20 to-slate-950 space-y-8 animate-fadeIn text-left">
+        <div className="card-proptech p-6 sm:p-8 bg-white border-[#E2E8F0] space-y-8 animate-fadeIn text-start">
 
           {/* Header of Simulator */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-slate-800">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-[#E2E8F0]">
             <div>
               <div className="flex items-center gap-2">
-                <span className="px-3 py-0.5 rounded-md bg-violet-500/20 text-violet-300 font-mono text-xs font-semibold border border-violet-500/30">
+                <span className="px-3 py-0.5 rounded-full bg-[#EAF8F5] text-[#0A6E62] font-mono text-xs font-bold border border-[#B2E5DF]">
                   Journey 4 / 4 • Step {currentStepIndex + 1} of {journey4Steps.length}
                 </span>
-                <span className="text-xs text-slate-400 font-mono">{currentStep.auditId}</span>
+                <span className="text-xs text-[#7B8A9A] font-mono">{currentStep.auditId}</span>
               </div>
-              <h2 className="text-2xl font-bold text-white mt-1">
+              <h2 className="text-2xl font-display font-extrabold text-[#102A43] mt-1">
                 {currentStep.title}
               </h2>
             </div>
@@ -324,7 +324,7 @@ export default function PrototypePage({
                 <button
                   type="button"
                   onClick={handleTriggerProcessing}
-                  className="px-3 py-1.5 rounded-lg bg-sky-500/20 text-sky-300 border border-sky-500/30 text-xs font-medium flex items-center gap-1.5 hover:bg-sky-500/30 transition-colors"
+                  className="px-3 py-1.5 rounded-xl bg-[#EDF5FF] text-[#1E62C4] border border-[#BDD8FF] text-xs font-bold flex items-center gap-1.5 hover:bg-[#DCEBFF] transition-colors"
                   title="Enter Deterministic Processing State"
                 >
                   <Cpu className="w-3.5 h-3.5" />
@@ -337,7 +337,7 @@ export default function PrototypePage({
                 <button
                   type="button"
                   onClick={handleTriggerError}
-                  className="px-3 py-1.5 rounded-lg bg-amber-500/20 text-amber-300 border border-amber-500/30 text-xs font-medium flex items-center gap-1.5 hover:bg-amber-500/30 transition-colors"
+                  className="px-3 py-1.5 rounded-xl bg-[#FFF7E6] text-[#D99B26] border border-[#F5B942] text-xs font-bold flex items-center gap-1.5 hover:bg-[#FFF2D6] transition-colors"
                   title="Inject Deterministic Prototype Anomaly"
                 >
                   <AlertOctagon className="w-3.5 h-3.5" />
@@ -348,7 +348,7 @@ export default function PrototypePage({
               <button
                 type="button"
                 onClick={handleReset}
-                className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs transition-colors"
+                className="p-2 rounded-xl bg-[#F0F4F8] hover:bg-[#E2E8F0] text-[#52667A] text-xs transition-colors border border-[#D3DCE6]"
                 title="Restart Simulation"
               >
                 <RotateCcw className="w-4 h-4" />
@@ -367,12 +367,12 @@ export default function PrototypePage({
                   setIsProcessing(false);
                   setIsSimulatedError(false);
                 }}
-                className={`py-2 px-1 rounded-lg text-center font-mono text-[11px] font-bold transition-all border ${
+                className={`py-2 px-1 rounded-xl text-center font-mono text-[11px] font-bold transition-all border ${
                   idx === currentStepIndex
-                    ? 'bg-violet-600 text-white border-violet-400 shadow-md shadow-violet-600/30 scale-105'
+                    ? 'bg-[#0E9F8E] text-white border-[#0E9F8E] shadow-sm scale-105'
                     : idx < currentStepIndex
-                    ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30'
-                    : 'bg-slate-900 text-slate-500 border-slate-800 hover:text-slate-300'
+                    ? 'bg-[#ECFDF5] text-[#059669] border-[#A7F3D0]'
+                    : 'bg-[#F0F4F8] text-[#7B8A9A] border-[#D3DCE6] hover:text-[#102A43]'
                 }`}
               >
                 {s.num}
@@ -382,37 +382,37 @@ export default function PrototypePage({
 
           {/* Deterministic Processing State Surface */}
           {isProcessing ? (
-            <div className="p-6 rounded-2xl bg-sky-950/40 border border-sky-500/50 space-y-4 animate-fadeIn">
-              <div className="flex items-center gap-3 text-sky-300">
-                <Loader2 className="w-6 h-6 text-sky-400 animate-spin shrink-0" />
+            <div className="p-6 rounded-2xl bg-[#EDF5FF] border border-[#BDD8FF] space-y-4 animate-fadeIn">
+              <div className="flex items-center gap-3 text-[#1E62C4]">
+                <Loader2 className="w-6 h-6 text-[#1E62C4] animate-spin shrink-0" />
                 <div>
-                  <h3 className="text-base font-bold">
+                  <h3 className="text-base font-bold text-[#102A43]">
                     {isRo ? 'Stare de Prelucrare Prototip: Extragere OCR & Reconciliere în Curs' : isFa ? 'وضعیت پردازش پروتوتایپ: استخراج متنی و تطبیق هوشمند' : 'Deterministic Prototype State: OCR Extraction & Reconciliation'}
                   </h3>
-                  <p className="text-xs text-sky-200/80 mt-0.5">
+                  <p className="text-xs text-[#52667A] mt-0.5">
                     {isRo ? 'Simulare fără operațiuni reale de backend, înregistrare sau plată.' : isFa ? 'شبیه‌سازی فرآیند بدون ارسال درخواست به سرور یا ایجاد تراکنش مالی واقعی.' : 'Deterministic simulation without backend calls, ledger posting, or payment operations.'}
                   </p>
                 </div>
               </div>
 
-              <div className="p-4 rounded-xl bg-slate-950/80 border border-sky-500/30 text-xs font-mono space-y-1 text-slate-300">
-                <div>Process Token: <strong className="text-sky-400">PROC-DET-M25-9812</strong></div>
-                <div>Status: <strong className="text-emerald-400">Deterministic Extraction Complete (98% Score)</strong></div>
-                <div>Next Gateway: <strong>Authorized Human Verification</strong></div>
+              <div className="p-4 rounded-xl bg-white border border-[#BDD8FF] text-xs font-mono space-y-1 text-[#52667A]">
+                <div>Process Token: <strong className="text-[#1E62C4]">PROC-DET-M25-9812</strong></div>
+                <div>Status: <strong className="text-[#059669]">Deterministic Extraction Complete (98% Score)</strong></div>
+                <div>Next Gateway: <strong className="text-[#102A43]">Authorized Human Verification</strong></div>
               </div>
 
               <div className="flex items-center justify-end gap-3 pt-2">
                 <button
                   type="button"
                   onClick={() => setIsProcessing(false)}
-                  className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold"
+                  className="px-4 py-2 rounded-xl bg-[#F0F4F8] hover:bg-[#E2E8F0] text-[#102A43] text-xs font-bold border border-[#D3DCE6]"
                 >
                   {isRo ? 'Înapoi la Pas' : isFa ? 'بازگشت' : 'Back to Step'}
                 </button>
                 <button
                   type="button"
                   onClick={handleCompleteProcessing}
-                  className="px-5 py-2.5 rounded-xl bg-sky-600 hover:bg-sky-500 text-white text-xs font-bold shadow-lg shadow-sky-600/30 flex items-center gap-2 transition-all"
+                  className="px-5 py-2.5 rounded-xl bg-[#0E9F8E] hover:bg-[#0C8778] text-white text-xs font-bold shadow-sm flex items-center gap-2 transition-all"
                 >
                   <Check className="w-4 h-4" />
                   <span>{isRo ? 'Finalizează Procesarea & Continuă' : isFa ? 'تکمیل پردازش و ادامه مسیر' : 'Complete Processing & Continue'}</span>
@@ -421,30 +421,30 @@ export default function PrototypePage({
             </div>
           ) : isSimulatedError ? (
             /* Deterministic Error Path & Recovery Surface */
-            <div className="p-6 rounded-2xl bg-amber-950/40 border border-amber-500/50 space-y-4 animate-shake">
-              <div className="flex items-center gap-2.5 text-amber-300">
-                <AlertTriangle className="w-6 h-6 text-amber-400 shrink-0" />
+            <div className="p-6 rounded-2xl bg-[#FFF7E6] border border-[#F5B942] space-y-4 animate-shake">
+              <div className="flex items-center gap-2.5 text-[#D99B26]">
+                <AlertTriangle className="w-6 h-6 text-[#D99B26] shrink-0" />
                 <div>
-                  <h3 className="text-base font-bold">
+                  <h3 className="text-base font-bold text-[#102A43]">
                     {isRo ? 'Eroare Simulat: Nepotrivire Index Contor & Scor Scăzut OCR' : isFa ? 'خطای شبیه‌سازی‌شده: مغایرت شاخص کنتور و اطمینان پایین' : 'Deterministic Error: Meter Index Discrepancy & Low OCR Score'}
                   </h3>
-                  <p className="text-xs text-amber-200/80 mt-0.5">
+                  <p className="text-xs text-[#52667A] mt-0.5">
                     {isRo ? 'Fluxul automat a fost oprit conform politicii de siguranță financiară.' : isFa ? 'گردش‌کار خودکار متوقف شده و نیاز به مداخله و اصلاح دستی دارد.' : 'Automated progression halted per financial safety policy.'}
                   </p>
                 </div>
               </div>
 
-              <div className="p-4 rounded-xl bg-slate-950/80 border border-amber-500/30 text-xs font-mono space-y-1 text-slate-300">
-                <div>Error Code: <strong className="text-amber-400">ERR_METER_MISMATCH_05</strong></div>
-                <div>Affected Field: <strong>startMeterReading (Extracted: 120500 vs DB: 124200)</strong></div>
-                <div>Suggested Action: <strong>Manual Human Verification against Original Scan</strong></div>
+              <div className="p-4 rounded-xl bg-white border border-[#F5B942] text-xs font-mono space-y-1 text-[#52667A]">
+                <div>Error Code: <strong className="text-[#F2633F]">ERR_METER_MISMATCH_05</strong></div>
+                <div>Affected Field: <strong className="text-[#102A43]">startMeterReading (Extracted: 120500 vs DB: 124200)</strong></div>
+                <div>Suggested Action: <strong className="text-[#0E9F8E]">Manual Human Verification against Original Scan</strong></div>
               </div>
 
               <div className="flex items-center justify-end gap-3 pt-2">
                 <button
                   type="button"
                   onClick={handleTriggerRecovery}
-                  className="px-5 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-500 text-white text-xs font-bold shadow-lg shadow-amber-600/30 flex items-center gap-2 transition-all"
+                  className="px-5 py-2.5 rounded-xl bg-[#D99B26] hover:bg-[#B8821F] text-white text-xs font-bold shadow-sm flex items-center gap-2 transition-all"
                 >
                   <Wrench className="w-4 h-4" />
                   <span>{isRo ? 'Execută Acțiunea de Recuperare (Corectare Manuală)' : isFa ? 'اجرای اقدام اصلاحی (بازیابی و تصحیح دستی)' : 'Execute Recovery Action (Manual Correction)'}</span>
@@ -453,35 +453,35 @@ export default function PrototypePage({
             </div>
           ) : (
             /* Standard Step Detail Card */
-            <div className="p-6 rounded-2xl bg-slate-900/80 border border-slate-800 space-y-6">
+            <div className="p-6 rounded-2xl bg-[#F6F9FC] border border-[#E2E8F0] space-y-6">
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
-                  <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
+                  <span className="text-xs font-bold text-[#52667A] uppercase tracking-wider">
                     {isRo ? 'Actor & Rol Responsabil:' : isFa ? 'کاربر و نقش مجری:' : 'Responsible Actor & Role:'}
                   </span>
-                  <div className="text-base font-bold text-white mt-0.5 flex items-center gap-2">
-                    <UserCheck className="w-4 h-4 text-violet-400" />
+                  <div className="text-base font-bold text-[#102A43] mt-0.5 flex items-center gap-2">
+                    <UserCheck className="w-4 h-4 text-[#0E9F8E]" />
                     <span>{currentStep.actor}</span>
-                    <span className="text-xs font-normal text-slate-400 font-mono">({currentStep.role})</span>
+                    <span className="text-xs font-normal text-[#7B8A9A] font-mono">({currentStep.role})</span>
                   </div>
                 </div>
 
-                <span className="px-3 py-1 rounded-full text-xs font-semibold bg-violet-500/20 text-violet-300 border border-violet-500/30 self-start md:self-auto">
+                <span className="px-3 py-1 rounded-full text-xs font-bold bg-[#EAF8F5] text-[#0A6E62] border border-[#B2E5DF] self-start md:self-auto">
                   {currentStep.badge}
                 </span>
               </div>
 
-              <p className="text-sm text-slate-200 leading-relaxed">
+              <p className="text-sm text-[#52667A] leading-relaxed">
                 {currentStep.desc}
               </p>
 
-              <div className="p-4 rounded-xl bg-slate-950 border border-slate-800/80 font-mono text-xs space-y-1">
-                <div className="text-slate-400">
+              <div className="p-4 rounded-xl bg-white border border-[#E2E8F0] font-mono text-xs space-y-1">
+                <div className="text-[#52667A]">
                   <strong>{isRo ? 'Mărturie / Dovadă:' : isFa ? 'مستند اعتبارسنجی:' : 'Verification Evidence:'}</strong>
                 </div>
-                <div className="text-cyan-300">{currentStep.evidence}</div>
+                <div className="text-[#1E62C4]">{currentStep.evidence}</div>
                 {currentStep.journalId && (
-                  <div className="pt-2 text-emerald-400 border-t border-slate-800/60 flex flex-wrap gap-4">
+                  <div className="pt-2 text-[#059669] border-t border-[#E2E8F0] flex flex-wrap gap-4 font-bold">
                     <span>Journal ID: <strong>{currentStep.journalId}</strong></span>
                     <span>Allocation ID: <strong>{currentStep.allocationId}</strong></span>
                     <span>Audit ID: <strong>{currentStep.auditId}</strong></span>
@@ -492,20 +492,20 @@ export default function PrototypePage({
           )}
 
           {/* Navigation Controls: Back, Next, Confirmation */}
-          <div className="flex items-center justify-between pt-4 border-t border-slate-800">
+          <div className="flex items-center justify-between pt-4 border-t border-[#E2E8F0]">
             <button
               type="button"
               onClick={handlePrevStep}
               disabled={currentStepIndex === 0}
-              className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 disabled:opacity-40 disabled:cursor-not-allowed text-slate-300 text-xs font-semibold inline-flex items-center gap-2 transition-colors"
+              className="px-4 py-2 rounded-xl bg-[#F0F4F8] hover:bg-[#E2E8F0] disabled:opacity-40 disabled:cursor-not-allowed text-[#102A43] text-xs font-bold border border-[#D3DCE6] inline-flex items-center gap-2 transition-colors"
             >
               <ArrowLeft className="w-4 h-4" />
               <span>{isRo ? 'Pasul Anterior' : isFa ? 'مرحله قبل' : 'Previous Step'}</span>
             </button>
 
-            <div className="text-xs text-slate-400 font-mono">
+            <div className="text-xs text-[#52667A] font-mono">
               {currentStepIndex === journey4Steps.length - 1 ? (
-                <span className="text-emerald-400 font-semibold">✓ {isRo ? 'Parcurs Finalizat cu Succes' : isFa ? 'مسیر با موفقیت تکمیل شد' : 'Journey Completed'}</span>
+                <span className="text-[#059669] font-bold">✓ {isRo ? 'Parcurs Finalizat cu Succes' : isFa ? 'مسیر با موفقیت تکمیل شد' : 'Journey Completed'}</span>
               ) : (
                 <span>{journey4Steps.length - currentStepIndex - 1} {isRo ? 'pași rămași' : isFa ? 'مرحله باقی‌مانده' : 'steps remaining'}</span>
               )}
@@ -515,7 +515,7 @@ export default function PrototypePage({
               type="button"
               onClick={handleNextStep}
               disabled={currentStepIndex === journey4Steps.length - 1 || isSimulatedError}
-              className="px-5 py-2.5 rounded-xl bg-violet-600 hover:bg-violet-500 disabled:opacity-40 disabled:cursor-not-allowed text-white text-xs font-semibold shadow-lg shadow-violet-600/30 inline-flex items-center gap-2 transition-all"
+              className="px-5 py-2.5 rounded-xl bg-[#0E9F8E] hover:bg-[#0C8778] disabled:opacity-40 disabled:cursor-not-allowed text-white text-xs font-bold shadow-sm inline-flex items-center gap-2 transition-all"
             >
               <span>{isRo ? 'Următorul Pas' : isFa ? 'مرحله بعد' : 'Next Step'}</span>
               <ArrowRight className="w-4 h-4" />
@@ -527,21 +527,21 @@ export default function PrototypePage({
 
       {/* Confirmation Modal for Step 6 (Human Sign-off Boundary) */}
       {isConfirmationModalOpen && (
-        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="max-w-md w-full rounded-2xl bg-slate-900 border border-violet-500/50 p-6 space-y-5 text-left animate-fadeIn">
-            <div className="flex items-center gap-2.5">
-              <div className="p-2 rounded-lg bg-violet-500/20 text-violet-300">
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="card-proptech max-w-md w-full bg-white border-[#D3DCE6] p-6 space-y-5 rounded-2xl shadow-elevated text-start animate-fadeIn">
+            <div className="flex items-center gap-3">
+              <div className="p-2.5 rounded-xl bg-[#0E9F8E] text-white shadow-sm">
                 <ShieldCheck className="w-5 h-5" />
               </div>
               <div>
-                <h3 className="text-base font-bold text-white">
+                <h3 className="text-base font-display font-extrabold text-[#102A43]">
                   {isRo ? 'Aprobare Umană Obligatorie' : isFa ? 'تأیید نهایی کاربر انسانی' : 'Mandatory Human Approval'}
                 </h3>
-                <span className="text-xs text-slate-400">Step 6 Human Sign-Off Gate</span>
+                <span className="text-xs text-[#52667A] font-mono">Step 6 Human Sign-Off Gate</span>
               </div>
             </div>
 
-            <p className="text-xs text-slate-300">
+            <p className="text-xs text-[#52667A] leading-relaxed">
               {isRo
                 ? 'Confirmați că ați verificat indexurile contorului, tariful contractului și defalcarea chiriaș/proprietar pentru factura Enel (3.420,50 RON)?'
                 : isFa
@@ -549,18 +549,18 @@ export default function PrototypePage({
                 : 'Confirm verification of meter readings, contract tariff, and owner/tenant allocation split for Enel Invoice (3,420.50 RON)?'}
             </p>
 
-            <div className="flex items-center justify-end gap-3 pt-2">
+            <div className="flex items-center justify-end gap-3 pt-3 border-t border-[#E2E8F0]">
               <button
                 type="button"
                 onClick={() => setIsConfirmationModalOpen(false)}
-                className="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 text-xs font-semibold"
+                className="px-4 py-2 rounded-xl bg-[#F0F4F8] hover:bg-[#E2E8F0] text-[#102A43] text-xs font-bold border border-[#D3DCE6]"
               >
                 {isRo ? 'Anulează' : isFa ? 'انصراف' : 'Cancel'}
               </button>
               <button
                 type="button"
                 onClick={handleConfirmHumanAction}
-                className="px-5 py-2 rounded-xl bg-violet-600 text-white text-xs font-semibold shadow-lg shadow-violet-600/30 flex items-center gap-1.5"
+                className="px-5 py-2.5 rounded-xl bg-[#0E9F8E] hover:bg-[#0C8778] text-white text-xs font-bold shadow-sm flex items-center gap-1.5"
               >
                 <Check className="w-4 h-4" />
                 <span>{isRo ? 'Confirm & Aprobă Factura' : isFa ? 'تأیید و ثبت سند' : 'Confirm & Authorize'}</span>
@@ -572,14 +572,14 @@ export default function PrototypePage({
 
       {/* Non-M25 Journeys Informational Box */}
       {selectedJourneyIndex !== 3 && (
-        <div className="p-8 rounded-3xl glass-panel border border-slate-800 bg-slate-900/40 text-center space-y-4">
-          <h3 className="text-xl font-bold text-white">{journeys[selectedJourneyIndex].title}</h3>
-          <p className="text-sm text-slate-400 max-w-xl mx-auto">{journeys[selectedJourneyIndex].desc}</p>
+        <div className="card-proptech p-8 bg-white border-[#E2E8F0] text-center space-y-4">
+          <h3 className="text-xl font-display font-extrabold text-[#102A43]">{journeys[selectedJourneyIndex].title}</h3>
+          <p className="text-sm text-[#52667A] max-w-xl mx-auto">{journeys[selectedJourneyIndex].desc}</p>
           <div className="pt-4">
             <button
               type="button"
               onClick={() => setSelectedJourneyIndex(3)}
-              className="px-4 py-2 rounded-xl bg-violet-600 hover:bg-violet-500 text-white text-xs font-semibold inline-flex items-center gap-2"
+              className="px-5 py-2.5 rounded-xl bg-[#0E9F8E] hover:bg-[#0C8778] text-white text-xs font-bold shadow-sm inline-flex items-center gap-2"
             >
               <span>{isRo ? 'Comută la Parcursul 4 (M25 Utility Bills)' : isFa ? 'تغییر به مسیر ۴ (M25 قبوض)' : 'Switch to Journey 4 (M25 Utility Bills)'}</span>
               <ArrowRight className="w-4 h-4" />

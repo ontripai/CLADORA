@@ -36,7 +36,7 @@ import {
 } from 'lucide-react';
 import { Language } from '@/types';
 import { getDictionary } from '@/dictionaries';
-import { UtilityBill, UtilityWorkflowState, BillType } from '@/types/utilityBills';
+import { UtilityBill, UtilityWorkflowState, BillType, WorkflowEvent } from '@/types/utilityBills';
 import { MOCK_UTILITY_BILLS } from '@/data/mockUtilityBills';
 import { PRODUCT_METRICS } from '@/config/product-metrics';
 
@@ -118,31 +118,41 @@ export function UtilityBillsWorkspace({ lang }: UtilityBillsWorkspaceProps) {
     return unit;
   };
 
-  const formatAccountName = (code: string, roName: string) => {
+  const formatAccountName = (account?: string) => {
+    if (!account) return '';
     if (isFa) {
-      if (code === '605.01') return 'هزینه‌های برق مشاعات و آسانسور';
-      if (code === '605.02') return 'هزینه‌های آب و فاضلاب';
-      if (code === '605.03') return 'هزینه‌های گاز طبیعی موتورخانه';
-      if (code === '605.04') return 'هزینه‌های خدمات پسماند و نظافت';
-      if (code === '611.01') return 'هزینه‌های سرویس و نگهداری آسانسور';
-      return 'سرفصل هزینه‌های جاری';
+      return account
+        .replace(/Cheltuieli cu energia electrică spații comune/g, 'هزینه‌های برق روشنایی و آسانسور مشاعات')
+        .replace(/Cheltuieli cu apa potabilă și canalizarea/g, 'هزینه‌های آب آشامیدنی و شبکه فاضلاب شهری')
+        .replace(/Cheltuieli cu gazele naturale centrală bloc/g, 'هزینه‌های گاز طبیعی موتورخانه و گرمایش مرکزی')
+        .replace(/Cheltuieli cu serviciile de salubrizare/g, 'هزینه‌های مدیریت پسماند و خدمات شهری')
+        .replace(/Cheltuieli mentenanță ascensoare/g, 'هزینه‌های سرویس و نگهداری دوره‌ای آسانسورها');
     }
-    return roName;
+    return account;
   };
 
-  const formatAllocationRuleName = (ruleName: string) => {
+  const formatAllocationRuleName = (rule?: string) => {
+    if (!rule) return '';
     if (isFa) {
-      if (ruleName.includes('Cota-Parte')) return 'سهم‌القدر مشاعات (بر اساس ضوابط قانونی)';
-      if (ruleName.includes('Consum Contorizat')) return 'مصرف کنتور اختصاصی + سهم افت شبکه';
-      if (ruleName.includes('Suprafață Utilă')) return 'مساحت زیربنای گرمایشی (متراژ)';
-      if (ruleName.includes('Fond Reparații')) return 'صندوق تعمیرات و استهلاک سرمایه‌ای (مالک)';
-      if (ruleName.includes('Număr Persoane')) return 'تعداد ساکنان حاضر (نفرات)';
-      return 'قاعده مصوب مجمع عمومی';
+      return rule
+        .replace(/Cota-Parte Indiviză Comună \(Legea 196\/2018\)/g, 'تسهیم بر اساس قدرالسهم مشاعات (قانون ۱۹۶)')
+        .replace(/Consum Individual Index Contoare/g, 'تسهیم بر اساس مصرف کنتورهای فرعی واحدها')
+        .replace(/Suprafață Utilă Încălzită \(mp\)/g, 'تسهیم بر اساس متراژ مفید گرمایشی (مترمربع)')
+        .replace(/Număr Persoane Rezidente/g, 'تسهیم بر اساس تعداد نفرات ساکن در واحد')
+        .replace(/Număr Apartamente Deservite \(Cota Fixă\)/g, 'تسهیم ثابت مساوی بر اساس تعداد واحدها');
     }
-    return ruleName;
+    return rule;
   };
 
-  // Reset all 7 filters
+  const formatPeriodLabel = (period: string) => {
+    if (isFa) {
+      if (period === 'OCT-2026') return 'اکتبر ۲۰۲۶';
+      if (period === 'SEP-2026') return 'سپتامبر ۲۰۲۶';
+    }
+    return period;
+  };
+
+  // Reset Filters Handler
   const handleResetFilters = () => {
     setSelectedType('ALL');
     setSelectedBuilding('ALL');
@@ -154,266 +164,300 @@ export function UtilityBillsWorkspace({ lang }: UtilityBillsWorkspaceProps) {
     setFilterExceptionsOnly(false);
   };
 
-  const hasActiveFilters = selectedType !== 'ALL' || selectedBuilding !== 'ALL' || selectedUnit !== 'ALL' || selectedSupplier !== 'ALL' || selectedPeriod !== 'ALL' || selectedDueDateFilter !== 'ALL' || selectedState !== 'ALL' || filterExceptionsOnly;
+  // Active filter count for badge indicator
+  const activeFiltersCount = useMemo(() => {
+    let count = 0;
+    if (selectedType !== 'ALL') count++;
+    if (selectedBuilding !== 'ALL') count++;
+    if (selectedUnit !== 'ALL') count++;
+    if (selectedSupplier !== 'ALL') count++;
+    if (selectedPeriod !== 'ALL') count++;
+    if (selectedDueDateFilter !== 'ALL') count++;
+    if (selectedState !== 'ALL') count++;
+    if (filterExceptionsOnly) count++;
+    return count;
+  }, [selectedType, selectedBuilding, selectedUnit, selectedSupplier, selectedPeriod, selectedDueDateFilter, selectedState, filterExceptionsOnly]);
 
-  // Selected bill object
-  const selectedBill = useMemo(() => {
-    return bills.find(b => b.id === selectedBillId) || bills[0];
-  }, [bills, selectedBillId]);
-
-  // Filter evaluation across all 7 dimensions
+  // Filtered Bills Array
   const filteredBills = useMemo(() => {
-    return bills.filter(bill => {
-      // 1. Bill Type
-      if (selectedType !== 'ALL' && bill.billType !== selectedType) return false;
-      // 2. Building
-      if (selectedBuilding !== 'ALL' && bill.buildingName !== selectedBuilding) return false;
-      // 3. Unit
-      if (selectedUnit !== 'ALL' && bill.unitNumber !== selectedUnit) return false;
-      // 4. Supplier
-      if (selectedSupplier !== 'ALL' && bill.supplierName !== selectedSupplier) return false;
-      // 5. Billing Period
-      if (selectedPeriod !== 'ALL' && bill.billingPeriod !== selectedPeriod) return false;
-      // 6. Due Date Range
+    return bills.filter(b => {
+      if (selectedType !== 'ALL' && b.billType !== selectedType) return false;
+      if (selectedBuilding !== 'ALL' && b.buildingName !== selectedBuilding) return false;
+      if (selectedUnit !== 'ALL' && b.unitNumber !== selectedUnit) return false;
+      if (selectedSupplier !== 'ALL' && b.supplierName !== selectedSupplier) return false;
+      if (selectedPeriod !== 'ALL' && b.billingPeriod !== selectedPeriod) return false;
+      if (selectedState !== 'ALL' && b.workflowState !== selectedState) return false;
+      if (filterExceptionsOnly && (!b.exceptions || b.exceptions.length === 0)) return false;
+
       if (selectedDueDateFilter === 'URGENT') {
-        const daysToDue = (new Date(bill.dueDate).getTime() - new Date('2026-11-04').getTime()) / (1000 * 3600 * 24);
-        if (daysToDue > 7 || bill.workflowState === 'PAID') return false;
+        const due = new Date(b.dueDate).getTime();
+        const now = new Date('2026-11-04').getTime();
+        const diffDays = (due - now) / (1000 * 60 * 60 * 24);
+        if (diffDays > 7 || diffDays < 0) return false;
       } else if (selectedDueDateFilter === 'OVERDUE') {
-        const daysToDue = (new Date(bill.dueDate).getTime() - new Date('2026-11-04').getTime()) / (1000 * 3600 * 24);
-        if (daysToDue >= 0 || bill.workflowState === 'PAID') return false;
+        const due = new Date(b.dueDate).getTime();
+        const now = new Date('2026-11-04').getTime();
+        if (due >= now) return false;
       }
-      // 7. Workflow State
-      if (selectedState !== 'ALL' && bill.workflowState !== selectedState) return false;
-      // Exceptions Toggle
-      if (filterExceptionsOnly && bill.exceptions.length === 0) return false;
 
       return true;
     });
-  }, [bills, selectedType, selectedBuilding, selectedUnit, selectedSupplier, selectedPeriod, selectedDueDateFilter, selectedState, filterExceptionsOnly]);
+  }, [bills, selectedType, selectedBuilding, selectedUnit, selectedSupplier, selectedPeriod, selectedState, filterExceptionsOnly, selectedDueDateFilter]);
 
-  // Operational KPI calculations
-  const kpis = useMemo(() => {
-    const pendingReviewCount = bills.filter(b => b.workflowState === 'EXTRACTED' || b.workflowState === 'MATCHED' || b.workflowState === 'VALIDATED').length;
-    const totalExceptionsCount = bills.reduce((acc, b) => acc + b.exceptions.length, 0);
-    const dueSoonCount = bills.filter(b => b.workflowState !== 'PAID' && b.workflowState !== 'POSTED').length;
-    const readyToPostCount = bills.filter(b => b.workflowState === 'APPROVED' || b.workflowState === 'VALIDATED').length;
+  // Selected Active Bill Object
+  const activeBill = useMemo(() => {
+    return bills.find(b => b.id === selectedBillId) || filteredBills[0] || bills[0];
+  }, [bills, selectedBillId, filteredBills]);
 
-    return {
-      pendingReviewCount,
-      totalExceptionsCount,
-      dueSoonCount,
-      readyToPostCount,
-    };
-  }, [bills]);
-
-  // Workflow State Badge Helper
-  const getWorkflowBadge = (state: UtilityWorkflowState) => {
+  // Status Badge Formatting & Severity
+  const getStatusBadge = (state: UtilityWorkflowState) => {
     switch (state) {
       case 'RECEIVED':
         return {
-          label: isRo ? '1. Primit' : isFa ? '۱. دریافت‌شده' : '1. Received',
-          icon: Mail,
-          className: 'bg-slate-500/10 text-slate-400 border-slate-500/20',
+          label: isRo ? '1. Recepționat' : isFa ? '۱. دریافت شد' : '1. Received',
+          classes: 'bg-[#F0F4F8] text-[#52667A] border-[#D3DCE6]',
+          icon: <Clock className="w-3.5 h-3.5 text-[#52667A]" />,
         };
       case 'EXTRACTED':
         return {
-          label: isRo ? '2. Extras' : isFa ? '۲. استخراج‌شده' : '2. Extracted',
-          icon: Cpu,
-          className: 'bg-sky-500/10 text-sky-400 border-sky-500/20',
+          label: isRo ? '2. Extras OCR' : isFa ? '۲. استخراج OCR' : '2. Extracted',
+          classes: 'bg-[#EDF5FF] text-[#1E62C4] border-[#BDD8FF]',
+          icon: <Zap className="w-3.5 h-3.5 text-[#1E62C4]" />,
         };
       case 'MATCHED':
         return {
-          label: isRo ? '3. Potrivit' : isFa ? '۳. تطبیق‌یافته' : '3. Matched',
-          icon: Scale,
-          className: 'bg-amber-500/10 text-amber-400 border-amber-500/20',
+          label: isRo ? '3. Reconciliat Contor' : isFa ? '۳. تطبیق کنتور' : '3. Matched',
+          classes: 'bg-[#FFF7E6] text-[#D99B26] border-[#FCE3AA]',
+          icon: <Scale className="w-3.5 h-3.5 text-[#D99B26]" />,
         };
       case 'VALIDATED':
         return {
-          label: isRo ? '4. Validat' : isFa ? '۴. اعتبارسنجی‌شده' : '4. Validated',
-          icon: ShieldCheck,
-          className: 'bg-blue-500/10 text-blue-400 border-blue-500/20',
+          label: isRo ? '4. Validat de Sistem' : isFa ? '۴. اعتبارسنجی شد' : '4. Validated',
+          classes: 'bg-[#EAF8F5] text-[#0A6E62] border-[#B2E5DF]',
+          icon: <ShieldCheck className="w-3.5 h-3.5 text-[#0A6E62]" />,
         };
       case 'APPROVED':
         return {
-          label: isRo ? '5. Aprobat' : isFa ? '۵. تأییدشده' : '5. Approved',
-          icon: UserCheck,
-          className: 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20',
+          label: isRo ? '5. Aprobare Umană' : isFa ? '۵. تأیید انسانی' : '5. Approved',
+          classes: 'bg-[#F0F4F8] text-[#102A43] border-[#102A43]/30 font-bold',
+          icon: <UserCheck className="w-3.5 h-3.5 text-[#102A43]" />,
         };
       case 'POSTED':
         return {
-          label: isRo ? '6. Înregistrat' : isFa ? '۶. ثبت‌شده در دفتر' : '6. Posted',
-          icon: FileCheck,
-          className: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
+          label: isRo ? '6. Înregistrat în Jurnal' : isFa ? '۶. ثبت در دفتر' : '6. Posted',
+          classes: 'bg-[#ECFDF5] text-[#059669] border-[#A7F3D0]',
+          icon: <FileCheck className="w-3.5 h-3.5 text-[#059669]" />,
         };
       case 'PAID':
         return {
-          label: isRo ? '7. Plătit' : isFa ? '۷. پرداخت‌شده' : '7. Paid',
-          icon: CheckCircle2,
-          className: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30',
+          label: isRo ? '7. Plătit & Reconciliat' : isFa ? '۷. پرداخت شد' : '7. Paid',
+          classes: 'bg-[#ECFDF5] text-[#059669] border-[#10B981]/40',
+          icon: <CheckCircle2 className="w-3.5 h-3.5 text-[#059669]" />,
         };
       default:
         return {
           label: state,
-          icon: Clock,
-          className: 'bg-slate-500/10 text-slate-400 border-slate-500/20',
+          classes: 'bg-[#F0F4F8] text-[#52667A] border-[#D3DCE6]',
+          icon: <Clock className="w-3.5 h-3.5" />,
         };
     }
   };
 
+  // Bill Type Icon & Color Mapping
   const getBillTypeIcon = (type: BillType) => {
     switch (type) {
-      case 'ELECTRICITY': return <Zap className="w-4 h-4 text-amber-400" />;
-      case 'WATER': return <Droplets className="w-4 h-4 text-cyan-400" />;
-      case 'GAS': return <Flame className="w-4 h-4 text-orange-400" />;
-      case 'WASTE': return <Trash2 className="w-4 h-4 text-emerald-400" />;
-      case 'MAINTENANCE_CONTRACT': return <Wrench className="w-4 h-4 text-purple-400" />;
-      default: return <FileText className="w-4 h-4 text-slate-400" />;
+      case 'ELECTRICITY':
+        return <Zap className="w-4 h-4 text-[#D99B26]" />;
+      case 'WATER':
+        return <Droplets className="w-4 h-4 text-[#1E62C4]" />;
+      case 'GAS':
+        return <Flame className="w-4 h-4 text-[#F2633F]" />;
+      case 'WASTE':
+        return <Trash2 className="w-4 h-4 text-[#059669]" />;
+      case 'MAINTENANCE_CONTRACT':
+        return <Wrench className="w-4 h-4 text-[#102A43]" />;
+      default:
+        return <FileText className="w-4 h-4 text-[#52667A]" />;
     }
   };
 
-  // Human Confirmation Action Handler
-  const handleExecuteConfirmation = () => {
-    if (!selectedBill) return;
-
-    const timestamp = new Date().toISOString().replace('T', ' ').substring(0, 19);
-    const auditId = `AUD-HA-${Math.floor(100000 + Math.random() * 900000)}`;
-
-    if (confirmActionType === 'APPROVE') {
-      const updatedHistory = [
-        ...selectedBill.workflowHistory,
-        {
-          state: 'APPROVED' as UtilityWorkflowState,
-          actor: 'Elena Popescu',
-          actorRole: 'Property Manager (Authorized Sign-Off)',
-          timestamp,
-          evidence: `Formal Human Approval Sign-Off Token #${auditId}`,
-          auditId,
-          comment: 'Verified meter readings, tariff compliance, and statutory owner-tenant split.',
-        }
-      ];
-
-      setBills(prev => prev.map(b => b.id === selectedBill.id ? {
-        ...b,
-        workflowState: 'APPROVED',
-        workflowHistory: updatedHistory,
-        humanReviewRequired: false,
-      } : b));
-
-      setActionSuccessMessage(
-        isRo
-          ? `Factura ${selectedBill.invoiceNumber} a fost aprobată de operatorul uman autorizat. Audit ID: ${auditId}`
-          : isFa
-          ? `صورت‌حساب ${selectedBill.invoiceNumber} توسط کاربر مجاز انسانی تأیید شد. شناسه ممیزی: ${auditId}`
-          : `Invoice ${selectedBill.invoiceNumber} approved by authorized human. Audit ID: ${auditId}`
-      );
-    } else if (confirmActionType === 'POST') {
-      const journalId = `JRN-2026-${Math.floor(1000 + Math.random() * 9000)}`;
-      const allocationId = `ALC-2026-${Math.floor(1000 + Math.random() * 9000)}`;
-
-      const updatedHistory = [
-        ...selectedBill.workflowHistory,
-        {
-          state: 'POSTED' as UtilityWorkflowState,
-          actor: 'Elena Popescu',
-          actorRole: 'Property Manager (Authorized Sign-Off)',
-          timestamp,
-          evidence: `Committed to Double-Entry Ledger. Journal ID: ${journalId}, Allocation ID: ${allocationId}`,
-          auditId,
-          comment: 'Financial posting committed to general ledger.',
-        }
-      ];
-
-      setBills(prev => prev.map(b => b.id === selectedBill.id ? {
-        ...b,
-        workflowState: 'POSTED',
-        journalId,
-        allocationId,
-        workflowHistory: updatedHistory,
-        humanReviewRequired: false,
-      } : b));
-
-      setActionSuccessMessage(
-        isRo
-          ? `Factura ${selectedBill.invoiceNumber} a fost înregistrată în contabilitate. Jurnal: ${journalId}, Alocare: ${allocationId}`
-          : isFa
-          ? `صورت‌حساب ${selectedBill.invoiceNumber} در اسناد حسابداری ثبت شد. شناسه سند: ${journalId}`
-          : `Invoice ${selectedBill.invoiceNumber} posted to general ledger. Journal: ${journalId}, Allocation: ${allocationId}`
-      );
+  // Format currency display (RON)
+  const formatRON = (amount: number) => {
+    if (isFa) {
+      const formatted = new Intl.NumberFormat('fa-IR', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      }).format(amount);
+      return `${formatted} لئو`;
     }
+    return `${new Intl.NumberFormat('ro-RO', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    }).format(amount)} RON`;
+  };
 
+  // Format Percentage
+  const formatPercent = (val: number) => {
+    if (isFa) {
+      return `${new Intl.NumberFormat('fa-IR').format(val)}٪`;
+    }
+    return `${val}%`;
+  };
+
+  // KPI Metrics Calculation
+  const kpiMetrics = useMemo(() => {
+    const totalCount = bills.length;
+    const pendingReviewCount = bills.filter(b => b.workflowState === 'EXTRACTED' || b.workflowState === 'MATCHED' || b.workflowState === 'VALIDATED').length;
+    const exceptionsCount = bills.filter(b => b.exceptions && b.exceptions.length > 0).length;
+    const readyForPaymentAmount = bills
+      .filter(b => b.workflowState === 'APPROVED' || b.workflowState === 'POSTED')
+      .reduce((sum, b) => sum + b.totalAmount, 0);
+
+    return {
+      totalCount,
+      pendingReviewCount,
+      exceptionsCount,
+      readyForPaymentAmount,
+    };
+  }, [bills]);
+
+  // Handle Human Approval Gate Execution
+  const handleExecuteApproval = () => {
+    if (!activeBill) return;
+    setBills(prev =>
+      prev.map(b => {
+        if (b.id === activeBill.id) {
+          const newEvent: WorkflowEvent = {
+            state: 'APPROVED',
+            actor: 'Elena Popescu',
+            actorRole: 'Property Manager (Authorized Sign-Off)',
+            timestamp: new Date().toISOString(),
+            evidence: 'Human Approval Token #HA-2026-98124 issued.',
+            auditId: `AUD-${Date.now()}`,
+            comment: 'Authorized property manager inspected meter index, tariff, and tenant allocation split.',
+          };
+          return {
+            ...b,
+            workflowState: 'APPROVED',
+            exceptions: b.exceptions?.filter(e => e.severity !== 'HIGH'),
+            workflowHistory: [...(b.workflowHistory || []), newEvent],
+          };
+        }
+        return b;
+      })
+    );
     setIsConfirmModalOpen(false);
+    setActionSuccessMessage(
+      isRo
+        ? `Factura ${activeBill.invoiceNumber} a fost aprobată cu succes de operatorul uman autorizat.`
+        : isFa
+        ? `صورت‌حساب ${activeBill.invoiceNumber} با موفقیت توسط کاربر مجاز انسانی تأیید گردید.`
+        : `Invoice ${activeBill.invoiceNumber} successfully approved by authorized human sign-off.`
+    );
+  };
+
+  // Handle Post to General Ledger
+  const handleExecutePost = () => {
+    if (!activeBill) return;
+    setBills(prev =>
+      prev.map(b => {
+        if (b.id === activeBill.id) {
+          const newEvent: WorkflowEvent = {
+            state: 'POSTED',
+            actor: 'Elena Popescu',
+            actorRole: 'Property Manager (Authorized Sign-Off)',
+            timestamp: new Date().toISOString(),
+            evidence: `Double-entry posting generated on account ${b.accountingCode}`,
+            auditId: `AUD-${Date.now()}`,
+          };
+          return {
+            ...b,
+            workflowState: 'POSTED',
+            journalId: `JRN-2026-${Math.floor(1000 + Math.random() * 9000)}`,
+            workflowHistory: [...(b.workflowHistory || []), newEvent],
+          };
+        }
+        return b;
+      })
+    );
+    setIsConfirmModalOpen(false);
+    setActionSuccessMessage(
+      isRo
+        ? `Factura ${activeBill.invoiceNumber} a fost înregistrată în Jurnalul General (Partidă Dublă).`
+        : isFa
+        ? `صورت‌حساب ${activeBill.invoiceNumber} در دفتر کل دوبل ثبت شد.`
+        : `Invoice ${activeBill.invoiceNumber} posted to Double-Entry General Ledger.`
+    );
   };
 
   return (
-    <div className="space-y-8">
-      {/* Strict AI & Human Boundary Header Banner */}
-      <div className="p-4 rounded-xl bg-violet-950/40 border border-violet-500/30 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-        <div className="flex items-center gap-3">
-          <div className="p-2.5 rounded-lg bg-violet-500/20 text-violet-300 border border-violet-500/30">
-            <Sparkles className="w-5 h-5 text-violet-400" />
+    <div className="space-y-8 animate-fadeIn text-start">
+      {/* 1. Header & AI Safety Boundary Banner */}
+      <div className="card-proptech p-5 bg-[#EAF8F5] border-[#B2E5DF] flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div className="flex items-center gap-3.5">
+          <div className="p-3 rounded-xl bg-[#0E9F8E] text-white shadow-sm shrink-0">
+            <Sparkles className="w-5 h-5" />
           </div>
           <div>
-            <div className="flex items-center gap-2">
-              <span className="px-2 py-0.5 rounded text-xs font-semibold bg-violet-500/20 text-violet-300 border border-violet-500/30">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-white text-[#0A6E62] border border-[#B2E5DF]">
                 Workspace M25
               </span>
-              <span className="text-xs text-slate-400 font-mono">
+              <span className="text-xs text-[#52667A] font-mono">
                 {PRODUCT_METRICS.managerWorkspaces} Manager Workspaces • {PRODUCT_METRICS.totalBaseScreens} Screens • {PRODUCT_METRICS.totalResponsiveBaseViews} Views
               </span>
             </div>
-            <p className="text-sm font-medium text-slate-200 mt-1">
-              <strong className="text-violet-300">
-                {isRo
-                  ? 'AI sugerează; un operator uman autorizat verifică și confirmă.'
-                  : isFa
-                  ? 'هوش مصنوعی پیشنهاد می‌دهد؛ کاربر انسانی مجاز بررسی و تأیید نهایی را انجام می‌دهد.'
-                  : 'AI suggests; an authorized human reviews and confirms.'}
-              </strong>
+            <p className="text-sm font-bold text-[#0A6E62] mt-1">
+              {isRo
+                ? 'AI sugerează; un operator uman autorizat verifică și confirmă.'
+                : isFa
+                ? 'هوش مصنوعی پیشنهاد می‌دهد؛ کاربر انسانی مجاز بررسی و تأیید نهایی را انجام می‌دهد.'
+                : 'AI suggests; an authorized human reviews and confirms.'}
             </p>
           </div>
         </div>
 
-        {/* Conceptual Intake Actions */}
+        {/* Conceptual Intake Channels */}
         <div className="flex flex-wrap items-center gap-2">
-          <span className="text-xs text-slate-400 mr-1">{isRo ? 'Canale Recepție:' : isFa ? 'درگاه‌های دریافت:' : 'Intake:'}</span>
+          <span className="text-xs font-bold text-[#52667A] mr-1">{isRo ? 'Canale Recepție:' : isFa ? 'درگاه‌های دریافت:' : 'Intake:'}</span>
           <button
             type="button"
-            className="px-2.5 py-1 text-xs rounded-lg bg-slate-800/80 hover:bg-slate-700 text-slate-300 border border-slate-700/60 inline-flex items-center gap-1.5 transition-colors"
+            className="px-3 py-1.5 text-xs rounded-xl bg-white hover:bg-[#F0F4F8] text-[#102A43] font-semibold border border-[#D3DCE6] inline-flex items-center gap-1.5 shadow-sm transition-all"
             title="e-Factura SPV Ingestion"
           >
-            <Zap className="w-3.5 h-3.5 text-cyan-400" />
+            <Zap className="w-3.5 h-3.5 text-[#1E62C4]" />
             <span>e-Factura</span>
           </button>
           <button
             type="button"
-            className="px-2.5 py-1 text-xs rounded-lg bg-slate-800/80 hover:bg-slate-700 text-slate-300 border border-slate-700/60 inline-flex items-center gap-1.5 transition-colors"
+            className="px-3 py-1.5 text-xs rounded-xl bg-white hover:bg-[#F0F4F8] text-[#102A43] font-semibold border border-[#D3DCE6] inline-flex items-center gap-1.5 shadow-sm transition-all"
             title="Dedicated Inbound Email"
           >
-            <Mail className="w-3.5 h-3.5 text-emerald-400" />
+            <Mail className="w-3.5 h-3.5 text-[#059669]" />
             <span>Email</span>
           </button>
           <button
             type="button"
-            className="px-2.5 py-1 text-xs rounded-lg bg-slate-800/80 hover:bg-slate-700 text-slate-300 border border-slate-700/60 inline-flex items-center gap-1.5 transition-colors"
+            className="px-3 py-1.5 text-xs rounded-xl bg-white hover:bg-[#F0F4F8] text-[#102A43] font-semibold border border-[#D3DCE6] inline-flex items-center gap-1.5 shadow-sm transition-all"
             title="PDF / Image OCR Upload"
           >
-            <Upload className="w-3.5 h-3.5 text-amber-400" />
+            <Upload className="w-3.5 h-3.5 text-[#D99B26]" />
             <span>PDF/OCR</span>
           </button>
           <button
             type="button"
-            className="px-2.5 py-1 text-xs rounded-lg bg-slate-800/80 hover:bg-slate-700 text-slate-300 border border-slate-700/60 inline-flex items-center gap-1.5 transition-colors"
+            className="px-3 py-1.5 text-xs rounded-xl bg-white hover:bg-[#F0F4F8] text-[#102A43] font-semibold border border-[#D3DCE6] inline-flex items-center gap-1.5 shadow-sm transition-all"
             title="CSV Batch Import"
           >
-            <FileSpreadsheet className="w-3.5 h-3.5 text-purple-400" />
+            <FileSpreadsheet className="w-3.5 h-3.5 text-[#102A43]" />
             <span>CSV</span>
           </button>
           <button
             type="button"
-            className="px-2.5 py-1 text-xs rounded-lg bg-slate-800/80 hover:bg-slate-700 text-slate-300 border border-slate-700/60 inline-flex items-center gap-1.5 transition-colors"
+            className="px-3 py-1.5 text-xs rounded-xl bg-white hover:bg-[#F0F4F8] text-[#102A43] font-semibold border border-[#D3DCE6] inline-flex items-center gap-1.5 shadow-sm transition-all"
             title="REST API EDI"
           >
-            <Cpu className="w-3.5 h-3.5 text-blue-400" />
+            <Cpu className="w-3.5 h-3.5 text-[#0E9F8E]" />
             <span>API</span>
           </button>
         </div>
@@ -421,121 +465,145 @@ export function UtilityBillsWorkspace({ lang }: UtilityBillsWorkspaceProps) {
 
       {/* Success Alert if Action Performed */}
       {actionSuccessMessage && (
-        <div className="p-4 rounded-xl bg-emerald-950/40 border border-emerald-500/30 flex items-center justify-between gap-3 text-emerald-300 text-sm animate-fadeIn">
+        <div className="card-proptech p-4 bg-[#ECFDF5] border-[#A7F3D0] flex items-center justify-between gap-3 text-[#059669] text-sm animate-fadeIn">
           <div className="flex items-center gap-2">
-            <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0" />
-            <span>{actionSuccessMessage}</span>
+            <CheckCircle2 className="w-5 h-5 text-[#059669] shrink-0" />
+            <span className="font-semibold">{actionSuccessMessage}</span>
           </div>
           <button
             type="button"
             onClick={() => setActionSuccessMessage(null)}
-            className="p-1 text-emerald-400 hover:text-emerald-200"
+            className="p-1 text-[#059669] hover:text-[#047857]"
           >
             <X className="w-4 h-4" />
           </button>
         </div>
       )}
 
-      {/* 4 Operational KPI Cards Row */}
+      {/* 2. 4 Operational KPI Cards Row */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* KPI 1: Pending Review */}
-        <div className="p-5 rounded-2xl glass-panel border border-slate-800 space-y-2 hover:border-slate-700 transition-colors">
+        <div className="card-proptech p-5 bg-white border-[#E2E8F0] space-y-2 hover:border-[#B2E5DF] transition-all">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
+            <span className="text-xs font-bold text-[#52667A] uppercase tracking-wider">
               {isRo ? 'În Așteptare Revizuire' : isFa ? 'در انتظار بررسی' : 'Pending Review'}
             </span>
-            <span className="p-2 rounded-lg bg-sky-500/10 text-sky-400">
+            <span className="p-2 rounded-xl bg-[#EDF5FF] text-[#1E62C4]">
               <Clock className="w-4 h-4" />
             </span>
           </div>
-          <div className="text-3xl font-extrabold text-white font-mono">
-            {kpis.pendingReviewCount}
+          <div className="text-2xl font-display font-extrabold text-[#102A43] tabular-nums">
+            {kpiMetrics.pendingReviewCount} {isRo ? 'facturi' : isFa ? 'صورت‌حساب' : 'invoices'}
           </div>
-          <p className="text-xs text-slate-400">
-            {isRo ? 'Facturi ce necesită confirmare umană' : isFa ? 'صورت‌حساب‌های نیازمند تأیید' : 'Invoices awaiting human check'}
+          <p className="text-xs text-[#7B8A9A]">
+            {isRo ? 'Necesită validare reguli sau semnare umană' : isFa ? 'نیازمند بررسی قواعد یا تأیید انسانی' : 'Awaiting automated rules or human approval'}
           </p>
         </div>
 
-        {/* KPI 2: Exceptions Flagged */}
-        <div className="p-5 rounded-2xl glass-panel border border-amber-500/30 space-y-2 bg-amber-950/10">
+        {/* KPI 2: Active Policy Exceptions */}
+        <div className="card-proptech p-5 bg-white border-[#E2E8F0] space-y-2 hover:border-[#FCE3AA] transition-all">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-amber-400 uppercase tracking-wider">
-              {isRo ? 'Excepții Detectate' : isFa ? 'مغایرت‌ها و خطاها' : 'Exceptions Flagged'}
+            <span className="text-xs font-bold text-[#D99B26] uppercase tracking-wider">
+              {isRo ? 'Excepții Active' : isFa ? 'مغایرت‌های فعال' : 'Active Exceptions'}
             </span>
-            <span className="p-2 rounded-lg bg-amber-500/20 text-amber-400">
+            <span className="p-2 rounded-xl bg-[#FFF7E6] text-[#D99B26]">
               <AlertTriangle className="w-4 h-4" />
             </span>
           </div>
-          <div className="text-3xl font-extrabold text-amber-300 font-mono">
-            {kpis.totalExceptionsCount}
+          <div className="text-2xl font-display font-extrabold text-[#102A43] tabular-nums">
+            {kpiMetrics.exceptionsCount} {isRo ? 'anomalii' : isFa ? 'مغایرت' : 'anomalies'}
           </div>
-          <p className="text-xs text-amber-400/80">
-            {isRo ? 'Consum, tarife sau nepotriviri index' : isFa ? 'مغایرت کنتور، تعرفه یا جهش مصرف' : 'Meter, tariff or spike anomalies'}
+          <p className="text-xs text-[#7B8A9A]">
+            {isRo ? 'Nepotriviri de index, depășire tarif sau OCR scăzut' : isFa ? 'مغایرت کنتور، اختلاف تعرفه یا اطمینان پایین' : 'Meter mismatches, tariff variance, or low OCR'}
           </p>
         </div>
 
-        {/* KPI 3: Due Soon */}
-        <div className="p-5 rounded-2xl glass-panel border border-slate-800 space-y-2 hover:border-slate-700 transition-colors">
+        {/* KPI 3: Ready for Payment / Posted */}
+        <div className="card-proptech p-5 bg-white border-[#E2E8F0] space-y-2 hover:border-[#B2E5DF] transition-all">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
-              {isRo ? 'Scadențe Active' : isFa ? 'سررسیدهای فعال' : 'Due Soon'}
+            <span className="text-xs font-bold text-[#0A6E62] uppercase tracking-wider">
+              {isRo ? 'Gata de Plată / Înregistrat' : isFa ? 'آماده پرداخت / ثبت‌شده' : 'Ready for Payment'}
             </span>
-            <span className="p-2 rounded-lg bg-purple-500/10 text-purple-400">
-              <Calendar className="w-4 h-4" />
+            <span className="p-2 rounded-xl bg-[#EAF8F5] text-[#0A6E62]">
+              <CheckCircle2 className="w-4 h-4" />
             </span>
           </div>
-          <div className="text-3xl font-extrabold text-white font-mono">
-            {kpis.dueSoonCount}
+          <div className="text-2xl font-display font-extrabold text-[#102A43] tabular-nums">
+            {formatRON(kpiMetrics.readyForPaymentAmount)}
           </div>
-          <p className="text-xs text-slate-400">
-            {isRo ? 'Următoarea scadență: 13 Noiembrie' : isFa ? 'نزدیک‌ترین سررسید: ۱۳ نوامبر' : 'Next due date: 13 Nov'}
+          <p className="text-xs text-[#7B8A9A]">
+            {isRo ? 'Semnate de manager și trimise spre trezorerie' : isFa ? 'تأییدشده توسط مدیر و آماده تسویه بانکی' : 'Approved by manager and ready for bank settlement'}
           </p>
         </div>
 
-        {/* KPI 4: Ready to Post */}
-        <div className="p-5 rounded-2xl glass-panel border border-emerald-500/30 space-y-2 bg-emerald-950/10">
+        {/* KPI 4: Total Queue Count */}
+        <div className="card-proptech p-5 bg-white border-[#E2E8F0] space-y-2 hover:border-[#B2E5DF] transition-all">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-emerald-400 uppercase tracking-wider">
-              {isRo ? 'Gata de Înregistrare' : isFa ? 'آماده ثبت حسابداری' : 'Ready to Post'}
+            <span className="text-xs font-bold text-[#52667A] uppercase tracking-wider">
+              {isRo ? 'Volum Total Coadă' : isFa ? 'کل اسناد دوره' : 'Total Queue'}
             </span>
-            <span className="p-2 rounded-lg bg-emerald-500/20 text-emerald-400">
-              <FileCheck className="w-4 h-4" />
+            <span className="p-2 rounded-xl bg-[#F0F4F8] text-[#102A43]">
+              <FileText className="w-4 h-4" />
             </span>
           </div>
-          <div className="text-3xl font-extrabold text-emerald-300 font-mono">
-            {kpis.readyToPostCount}
+          <div className="text-2xl font-display font-extrabold text-[#102A43] tabular-nums">
+            {kpiMetrics.totalCount} {isRo ? 'înregistrări' : isFa ? 'سند' : 'records'}
           </div>
-          <p className="text-xs text-emerald-400/80">
-            {isRo ? 'Valide & conforme Legea 196/2018' : isFa ? 'منطبق بر ضوابط قانونی تسهیم' : 'Validated & compliant'}
+          <p className="text-xs text-[#7B8A9A]">
+            {isRo ? 'Toate cele 7 stări de procesare reprezentate' : isFa ? 'شامل تمامی ۷ وضعیت گردش‌کار' : 'All 7 workflow states covered deterministically'}
           </p>
         </div>
       </div>
 
-      {/* Complete 7-Dimension Desktop Filter Bar */}
-      <div className="p-4 rounded-xl glass-panel border border-slate-800 space-y-3">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <div className="flex items-center gap-2 text-slate-300 text-xs font-bold uppercase tracking-wider">
-            <Filter className="w-4 h-4 text-violet-400" />
-            <span>{isRo ? 'Filtrare Coadă Facturi (7 Dimensiuni):' : isFa ? 'فیلتر جامع صف صورت‌حساب‌ها (۷ بعد):' : 'Queue Filters (7 Dimensions):'}</span>
+      {/* 3. Filter Surface across 7 Dimensions */}
+      <div className="card-proptech p-5 bg-white border-[#E2E8F0] space-y-4">
+        {/* Filter Controls Header */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-[#E2E8F0]">
+          <div className="flex items-center gap-2">
+            <Filter className="w-4 h-4 text-[#0E9F8E]" />
+            <span className="text-xs font-bold text-[#102A43] uppercase tracking-wider">
+              {isRo ? 'Filtre Avansate Facturi (7 Dimensiuni):' : isFa ? 'فیلترهای پیشرفته اسناد (۷ بعد):' : 'Advanced Bill Filters (7 Dimensions):'}
+            </span>
+            {activeFiltersCount > 0 && (
+              <span className="px-2 py-0.5 rounded-full text-[11px] font-bold bg-[#EAF8F5] text-[#0A6E62] border border-[#B2E5DF]">
+                {activeFiltersCount} {isRo ? 'active' : isFa ? 'فعال' : 'active'}
+              </span>
+            )}
           </div>
 
           <div className="flex items-center gap-2">
-            {hasActiveFilters && (
+            {/* Exceptions Only Toggle Button */}
+            <button
+              type="button"
+              onClick={() => setFilterExceptionsOnly(prev => !prev)}
+              className={`px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all ${
+                filterExceptionsOnly
+                  ? 'bg-[#FFF7E6] text-[#D99B26] border border-[#F5B942]'
+                  : 'bg-[#F0F4F8] hover:bg-[#E2E8F0] text-[#52667A] border border-[#D3DCE6]'
+              }`}
+            >
+              <AlertTriangle className="w-3.5 h-3.5" />
+              <span>{isRo ? 'Doar Excepții' : isFa ? 'فقط مغایرت‌ها' : 'Exceptions Only'}</span>
+            </button>
+
+            {/* Clear / Reset Filters */}
+            {activeFiltersCount > 0 && (
               <button
                 type="button"
                 onClick={handleResetFilters}
-                className="px-3 py-1 rounded-lg text-xs font-medium bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 flex items-center gap-1.5 transition-colors"
+                className="px-3 py-1.5 rounded-xl bg-[#F0F4F8] hover:bg-[#E2E8F0] text-[#102A43] text-xs font-bold border border-[#D3DCE6] flex items-center gap-1 transition-all"
+                title="Reset all filters to default"
               >
                 <RotateCcw className="w-3.5 h-3.5" />
-                <span>{isRo ? 'Resetează Filtrele' : isFa ? 'پاک‌کردن فیلترها' : 'Clear Filters'}</span>
+                <span>{isRo ? 'Resetează' : isFa ? 'پاک‌کردن فیلترها' : 'Clear Filters'}</span>
               </button>
             )}
 
-            {/* Mobile Filter Sheet Trigger Button */}
+            {/* Mobile Bottom Sheet Trigger Button (Visible on Small Screens) */}
             <button
               type="button"
               onClick={() => setIsMobileFilterOpen(true)}
-              className="lg:hidden px-3 py-1 rounded-lg text-xs font-medium bg-violet-600 hover:bg-violet-500 text-white flex items-center gap-1.5 transition-colors"
+              className="md:hidden px-3 py-1.5 rounded-xl bg-[#0E9F8E] text-white text-xs font-bold flex items-center gap-1.5 shadow-sm"
             >
               <SlidersHorizontal className="w-3.5 h-3.5" />
               <span>{isRo ? 'Filtre Mobile' : isFa ? 'فیلترهای پیشرفته' : 'Filter Drawer'}</span>
@@ -543,35 +611,39 @@ export function UtilityBillsWorkspace({ lang }: UtilityBillsWorkspaceProps) {
           </div>
         </div>
 
-        {/* 7 Filter Select Dropdowns (Desktop & Tablet) */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-7 gap-2.5 pt-1">
-          {/* 1. Bill Type Filter */}
+        {/* 7 Filter Dropdowns Grid (Desktop / Tablet) */}
+        <div className="hidden md:grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-7 gap-3 text-xs">
+          {/* Dim 1: Bill Type */}
           <div className="space-y-1">
-            <label className="text-[11px] text-slate-400 font-medium">{isRo ? '1. Utilitate' : isFa ? '۱. نوع قبض' : '1. Bill Type'}</label>
+            <label className="text-[11px] font-bold text-[#52667A] uppercase tracking-wider block">
+              {isRo ? '1. Tip Utilitate' : isFa ? '۱. نوع انشعاب' : '1. Bill Type'}
+            </label>
             <select
               value={selectedType}
               onChange={(e) => setSelectedType(e.target.value)}
-              className="w-full px-2.5 py-1.5 rounded-lg bg-slate-900 border border-slate-700 text-xs text-slate-200 focus:outline-none focus:border-violet-500"
+              className="w-full bg-white border border-[#D3DCE6] rounded-xl px-2.5 py-1.5 text-xs text-[#102A43] font-medium focus:outline-none focus:ring-2 focus:ring-[#0E9F8E]"
             >
-              <option value="ALL">{isRo ? 'Toate tipurile' : isFa ? 'همه موارد' : 'All Types'}</option>
+              <option value="ALL">{isRo ? 'Toate tipurile' : isFa ? 'همه انشعابات' : 'All Types'}</option>
               <option value="ELECTRICITY">{isRo ? 'Electricitate' : isFa ? 'برق' : 'Electricity'}</option>
               <option value="WATER">{isRo ? 'Apă & Canal' : isFa ? 'آب و فاضلاب' : 'Water & Sewage'}</option>
-              <option value="GAS">{isRo ? 'Gaze Naturale' : isFa ? 'گاز' : 'Gas'}</option>
-              <option value="WASTE">{isRo ? 'Salubritate' : isFa ? 'پسماند' : 'Waste'}</option>
-              <option value="MAINTENANCE_CONTRACT">{isRo ? 'Mentenanță Lift' : isFa ? 'نگهداری آسانسور' : 'Elevator'}</option>
+              <option value="GAS">{isRo ? 'Gaze Naturale' : isFa ? 'گاز طبیعی' : 'Natural Gas'}</option>
+              <option value="WASTE">{isRo ? 'Salubrizare' : isFa ? 'مدیریت پسماند' : 'Waste'}</option>
+              <option value="MAINTENANCE_CONTRACT">{isRo ? 'Mentenanță & Ascensor' : isFa ? 'قرارداد نگهداری و آسانسور' : 'Maintenance'}</option>
             </select>
           </div>
 
-          {/* 2. Building Filter */}
+          {/* Dim 2: Building */}
           <div className="space-y-1">
-            <label className="text-[11px] text-slate-400 font-medium">{isRo ? '2. Imobil' : isFa ? '۲. ساختمان' : '2. Building'}</label>
+            <label className="text-[11px] font-bold text-[#52667A] uppercase tracking-wider block">
+              {isRo ? '2. Clădire / Imobil' : isFa ? '۲. ساختمان' : '2. Building'}
+            </label>
             <select
               value={selectedBuilding}
               onChange={(e) => {
                 setSelectedBuilding(e.target.value);
-                setSelectedUnit('ALL'); // reset unit when building changes
+                setSelectedUnit('ALL'); // Reset unit constraint
               }}
-              className="w-full px-2.5 py-1.5 rounded-lg bg-slate-900 border border-slate-700 text-xs text-slate-200 focus:outline-none focus:border-violet-500"
+              className="w-full bg-white border border-[#D3DCE6] rounded-xl px-2.5 py-1.5 text-xs text-[#102A43] font-medium focus:outline-none focus:ring-2 focus:ring-[#0E9F8E]"
             >
               <option value="ALL">{isRo ? 'Toate clădirile' : isFa ? 'همه ساختمان‌ها' : 'All Buildings'}</option>
               {availableBuildings.map(b => (
@@ -580,13 +652,15 @@ export function UtilityBillsWorkspace({ lang }: UtilityBillsWorkspaceProps) {
             </select>
           </div>
 
-          {/* 3. Unit Filter (Dynamically Constrained) */}
+          {/* Dim 3: Unit (Dynamically Constrained by Building) */}
           <div className="space-y-1">
-            <label className="text-[11px] text-slate-400 font-medium">{isRo ? '3. Spațiu / Unitate' : isFa ? '۳. واحد' : '3. Unit'}</label>
+            <label className="text-[11px] font-bold text-[#52667A] uppercase tracking-wider block">
+              {isRo ? '3. Spațiu / Unitate' : isFa ? '۳. واحد / مشاعات' : '3. Unit'}
+            </label>
             <select
               value={selectedUnit}
               onChange={(e) => setSelectedUnit(e.target.value)}
-              className="w-full px-2.5 py-1.5 rounded-lg bg-slate-900 border border-slate-700 text-xs text-slate-200 focus:outline-none focus:border-violet-500"
+              className="w-full bg-white border border-[#D3DCE6] rounded-xl px-2.5 py-1.5 text-xs text-[#102A43] font-medium focus:outline-none focus:ring-2 focus:ring-[#0E9F8E]"
             >
               <option value="ALL">{isRo ? 'Toate unitățile' : isFa ? 'همه واحدها' : 'All Units'}</option>
               {availableUnits.map(u => (
@@ -595,298 +669,458 @@ export function UtilityBillsWorkspace({ lang }: UtilityBillsWorkspaceProps) {
             </select>
           </div>
 
-          {/* 4. Supplier Filter */}
+          {/* Dim 4: Supplier */}
           <div className="space-y-1">
-            <label className="text-[11px] text-slate-400 font-medium">{isRo ? '4. Furnizor' : isFa ? '۴. تأمین‌کننده' : '4. Supplier'}</label>
+            <label className="text-[11px] font-bold text-[#52667A] uppercase tracking-wider block">
+              {isRo ? '4. Furnizor Utilități' : isFa ? '۴. تأمین‌کننده' : '4. Supplier'}
+            </label>
             <select
               value={selectedSupplier}
               onChange={(e) => setSelectedSupplier(e.target.value)}
-              className="w-full px-2.5 py-1.5 rounded-lg bg-slate-900 border border-slate-700 text-xs text-slate-200 focus:outline-none focus:border-violet-500"
+              className="w-full bg-white border border-[#D3DCE6] rounded-xl px-2.5 py-1.5 text-xs text-[#102A43] font-medium focus:outline-none focus:ring-2 focus:ring-[#0E9F8E]"
             >
-              <option value="ALL">{isRo ? 'Toți furnizorii' : isFa ? 'همه تأمین‌کنندگان' : 'All Suppliers'}</option>
+              <option value="ALL">{isRo ? 'Toți furnizorii' : isFa ? 'همه شرکت‌ها' : 'All Suppliers'}</option>
               {availableSuppliers.map(s => (
                 <option key={s} value={s}>{s}</option>
               ))}
             </select>
           </div>
 
-          {/* 5. Billing Period Filter */}
+          {/* Dim 5: Billing Period */}
           <div className="space-y-1">
-            <label className="text-[11px] text-slate-400 font-medium">{isRo ? '5. Perioadă' : isFa ? '۵. دوره مالی' : '5. Period'}</label>
+            <label className="text-[11px] font-bold text-[#52667A] uppercase tracking-wider block">
+              {isRo ? '5. Perioadă Facturare' : isFa ? '۵. دوره صورت‌حساب' : '5. Period'}
+            </label>
             <select
               value={selectedPeriod}
               onChange={(e) => setSelectedPeriod(e.target.value)}
-              className="w-full px-2.5 py-1.5 rounded-lg bg-slate-900 border border-slate-700 text-xs text-slate-200 focus:outline-none focus:border-violet-500"
+              className="w-full bg-white border border-[#D3DCE6] rounded-xl px-2.5 py-1.5 text-xs text-[#102A43] font-medium focus:outline-none focus:ring-2 focus:ring-[#0E9F8E]"
             >
               <option value="ALL">{isRo ? 'Toate perioadele' : isFa ? 'همه دوره‌ها' : 'All Periods'}</option>
               {availablePeriods.map(p => (
-                <option key={p} value={p}>{isFa ? 'اکتبر ۲۰۲۶' : p}</option>
+                <option key={p} value={p}>{formatPeriodLabel(p)}</option>
               ))}
             </select>
           </div>
 
-          {/* 6. Due Date Range Filter */}
+          {/* Dim 6: Due Date Range */}
           <div className="space-y-1">
-            <label className="text-[11px] text-slate-400 font-medium">{isRo ? '6. Scadență' : isFa ? '۶. موعد پرداخت' : '6. Due Date'}</label>
+            <label className="text-[11px] font-bold text-[#52667A] uppercase tracking-wider block">
+              {isRo ? '6. Scadență Plată' : isFa ? '۶. مهلت پرداخت' : '6. Due Date'}
+            </label>
             <select
               value={selectedDueDateFilter}
               onChange={(e) => setSelectedDueDateFilter(e.target.value)}
-              className="w-full px-2.5 py-1.5 rounded-lg bg-slate-900 border border-slate-700 text-xs text-slate-200 focus:outline-none focus:border-violet-500"
+              className="w-full bg-white border border-[#D3DCE6] rounded-xl px-2.5 py-1.5 text-xs text-[#102A43] font-medium focus:outline-none focus:ring-2 focus:ring-[#0E9F8E]"
             >
-              <option value="ALL">{isRo ? 'Toate datele' : isFa ? 'همه سررسیدها' : 'All Dates'}</option>
-              <option value="URGENT">{isRo ? 'Urgent (< 7 zile)' : isFa ? 'فوری (کمتر از ۷ روز)' : 'Urgent (< 7d)'}</option>
-              <option value="OVERDUE">{isRo ? 'Depășite' : isFa ? 'سررسید گذشته' : 'Overdue'}</option>
+              <option value="ALL">{isRo ? 'Oricând' : isFa ? 'همه زمان‌ها' : 'All Due Dates'}</option>
+              <option value="URGENT">{isRo ? 'Urgent (< 7 zile)' : isFa ? 'فوری (کمتر از ۷ روز)' : 'Urgent (< 7 days)'}</option>
+              <option value="OVERDUE">{isRo ? 'Depășit / Restant' : isFa ? 'سررسید گذشته' : 'Overdue'}</option>
             </select>
           </div>
 
-          {/* 7. Workflow State Filter */}
+          {/* Dim 7: Workflow State */}
           <div className="space-y-1">
-            <label className="text-[11px] text-slate-400 font-medium">{isRo ? '7. Stare Flux' : isFa ? '۷. وضعیت گردش‌کار' : '7. State'}</label>
+            <label className="text-[11px] font-bold text-[#52667A] uppercase tracking-wider block">
+              {isRo ? '7. Stare Workflow' : isFa ? '۷. وضعیت گردش‌کار' : '7. State'}
+            </label>
             <select
               value={selectedState}
               onChange={(e) => setSelectedState(e.target.value)}
-              className="w-full px-2.5 py-1.5 rounded-lg bg-slate-900 border border-slate-700 text-xs text-slate-200 focus:outline-none focus:border-violet-500"
+              className="w-full bg-white border border-[#D3DCE6] rounded-xl px-2.5 py-1.5 text-xs text-[#102A43] font-medium focus:outline-none focus:ring-2 focus:ring-[#0E9F8E]"
             >
-              <option value="ALL">{isRo ? 'Toate stările' : isFa ? 'همه وضعیت‌ها' : 'All States'}</option>
-              <option value="RECEIVED">1. Received</option>
-              <option value="EXTRACTED">2. Extracted</option>
-              <option value="MATCHED">3. Matched</option>
-              <option value="VALIDATED">4. Validated</option>
-              <option value="APPROVED">5. Approved</option>
-              <option value="POSTED">6. Posted</option>
-              <option value="PAID">7. Paid</option>
+              <option value="ALL">{isRo ? 'Toate stările (1-7)' : isFa ? 'همه وضعیت‌ها (۱-۷)' : 'All States (1-7)'}</option>
+              <option value="RECEIVED">{isRo ? '1. Recepționat' : isFa ? '۱. دریافت شد' : '1. Received'}</option>
+              <option value="EXTRACTED">{isRo ? '2. Extras OCR' : isFa ? '۲. استخراج OCR' : '2. Extracted'}</option>
+              <option value="MATCHED">{isRo ? '3. Reconciliat Contor' : isFa ? '۳. تطبیق کنتور' : '3. Matched'}</option>
+              <option value="VALIDATED">{isRo ? '4. Validat' : isFa ? '۴. اعتبارسنجی شد' : '4. Validated'}</option>
+              <option value="APPROVED">{isRo ? '5. Aprobare Umană' : isFa ? '۵. تأیید انسانی' : '5. Approved'}</option>
+              <option value="POSTED">{isRo ? '6. Înregistrat în Jurnal' : isFa ? '۶. ثبت دفتر' : '6. Posted'}</option>
+              <option value="PAID">{isRo ? '7. Plătit' : isFa ? '۷. پرداخت شد' : '7. Paid'}</option>
             </select>
-          </div>
-        </div>
-
-        {/* Filter Summary & Exceptions Toggle */}
-        <div className="pt-2 flex flex-wrap items-center justify-between gap-3 text-xs border-t border-slate-800/80">
-          <button
-            type="button"
-            onClick={() => setFilterExceptionsOnly(!filterExceptionsOnly)}
-            className={`px-3 py-1.5 rounded-lg text-xs font-medium border flex items-center gap-1.5 transition-colors ${
-              filterExceptionsOnly
-                ? 'bg-amber-500/20 text-amber-300 border-amber-500/40'
-                : 'bg-slate-900 text-slate-400 border-slate-700 hover:text-slate-200'
-            }`}
-          >
-            <AlertTriangle className="w-3.5 h-3.5" />
-            <span>{isRo ? 'Filtrează doar facturile cu excepții' : isFa ? 'فقط صورت‌حساب‌های دارای مغایرت' : 'Show Exceptions Only'}</span>
-          </button>
-
-          <div className="text-slate-400 font-mono">
-            {filteredBills.length} / {bills.length} {isRo ? 'facturi selectate' : isFa ? 'صورت‌حساب انتخاب‌شده' : 'bills matching criteria'}
           </div>
         </div>
       </div>
 
-      {/* Main Workspace Split View: Left Queue, Right Detail */}
+      {/* 4. Main Two-Column Layout: Queue on Left, Full Detail Surface on Right */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
 
-        {/* Invoice Queue (Desktop Table / Mobile Card List) - 5 cols */}
-        <div className="lg:col-span-5 space-y-3">
-          <div className="flex items-center justify-between pb-2 border-b border-slate-800">
-            <h3 className="text-sm font-semibold text-slate-200 flex items-center gap-2">
-              <FileText className="w-4 h-4 text-violet-400" />
-              <span>{isRo ? 'Coada de Facturi & Documente' : isFa ? 'صف صورت‌حساب‌ها و اسناد' : 'Invoice Intake Queue'}</span>
-            </h3>
-            <span className="text-xs text-slate-400 font-mono">{isFa ? 'اکتبر ۲۰۲۶' : 'OCT-2026'}</span>
+        {/* Left Column: Invoice Queue (Desktop Table & Mobile Card List) */}
+        <div className="lg:col-span-5 space-y-4">
+          <div className="flex items-center justify-between">
+            <h2 className="text-sm font-bold text-[#102A43] uppercase tracking-wider flex items-center gap-2">
+              <FileText className="w-4 h-4 text-[#0E9F8E]" />
+              <span>{isRo ? 'Coadă Facturi Utilități' : isFa ? 'صف پردازش قبوض' : 'Utility Invoice Queue'}</span>
+              <span className="text-xs text-[#52667A] font-mono">({filteredBills.length})</span>
+            </h2>
+            <span className="text-[11px] text-[#7B8A9A] font-mono">
+              {isRo ? 'Selectează pentru detalii' : isFa ? 'جهت مشاهده انتخاب کنید' : 'Click to inspect'}
+            </span>
           </div>
 
-          {/* Desktop & Mobile Card Queue List */}
-          <div className="space-y-2.5 max-h-[880px] overflow-y-auto pr-1">
-            {filteredBills.length === 0 ? (
-              <div className="p-8 text-center text-slate-500 rounded-xl bg-slate-900/40 border border-slate-800">
-                {isRo ? 'Nicio factură nu corespunde filtrelor selectate.' : isFa ? 'هیچ صورت‌حسابی با فیلترهای انتخابی مطابقت ندارد.' : 'No invoices match active filters.'}
-                <div className="mt-2">
-                  <button type="button" onClick={handleResetFilters} className="text-xs text-violet-400 hover:underline">
-                    {isRo ? 'Resetează filtrele' : isFa ? 'پاک‌کردن فیلترها' : 'Clear filters'}
-                  </button>
-                </div>
-              </div>
-            ) : (
-              filteredBills.map((bill) => {
-                const badge = getWorkflowBadge(bill.workflowState);
-                const BadgeIcon = badge.icon;
-                const isSelected = bill.id === selectedBill?.id;
+          {/* Desktop / Tablet Table View (Hidden on Mobile) */}
+          <div className="hidden md:block card-proptech bg-white border-[#E2E8F0] overflow-hidden">
+            <div className="overflow-x-auto max-h-[640px] overflow-y-auto">
+              <table className="w-full text-start text-xs border-collapse">
+                <thead className="bg-[#F6F9FC] border-b border-[#E2E8F0] text-[#52667A] font-bold uppercase text-[10px] tracking-wider sticky top-0 z-10">
+                  <tr>
+                    <th className="p-3 text-start">{isRo ? 'Factură & Furnizor' : isFa ? 'صورت‌حساب و شرکت' : 'Invoice & Supplier'}</th>
+                    <th className="p-3 text-start">{isRo ? 'Clădire / Unitate' : isFa ? 'ساختمان / واحد' : 'Building / Unit'}</th>
+                    <th className="p-3 text-end">{isRo ? 'Total (RON)' : isFa ? 'مبلغ (لئو)' : 'Total (RON)'}</th>
+                    <th className="p-3 text-center">{isRo ? 'Stare' : isFa ? 'وضعیت' : 'State'}</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-[#E2E8F0]">
+                  {filteredBills.map((b) => {
+                    const isSelected = activeBill?.id === b.id;
+                    const badge = getStatusBadge(b.workflowState);
+                    const hasExceptions = b.exceptions && b.exceptions.length > 0;
 
-                return (
-                  <div
-                    key={bill.id}
-                    onClick={() => setSelectedBillId(bill.id)}
-                    className={`p-4 rounded-xl border transition-all cursor-pointer text-left ${
-                      isSelected
-                        ? 'bg-violet-950/30 border-violet-500/50 shadow-lg shadow-violet-950/30 ring-1 ring-violet-500/30'
-                        : 'bg-slate-900/60 border-slate-800/80 hover:border-slate-700 hover:bg-slate-800/40'
-                    }`}
-                  >
-                    <div className="flex items-start justify-between gap-2">
-                      <div className="flex items-center gap-2.5">
-                        <div className="p-2 rounded-lg bg-slate-800 border border-slate-700 shrink-0">
-                          {getBillTypeIcon(bill.billType)}
-                        </div>
-                        <div>
-                          <div className="text-sm font-bold text-white leading-tight">{bill.supplierName}</div>
-                          <div className="text-xs text-slate-400 font-mono mt-0.5">{bill.invoiceNumber}</div>
-                        </div>
-                      </div>
+                    return (
+                      <tr
+                        key={b.id}
+                        onClick={() => setSelectedBillId(b.id)}
+                        className={`cursor-pointer transition-colors ${
+                          isSelected
+                            ? 'bg-[#EAF8F5]/60 border-l-4 border-l-[#0E9F8E] rtl:border-l-0 rtl:border-r-4 rtl:border-r-[#0E9F8E]'
+                            : 'hover:bg-[#F6F9FC]'
+                        }`}
+                      >
+                        <td className="p-3">
+                          <div className="flex items-center gap-2">
+                            <span className="p-1.5 rounded-lg bg-[#F0F4F8]">
+                              {getBillTypeIcon(b.billType)}
+                            </span>
+                            <div>
+                              <div className="font-bold text-[#102A43]">{b.invoiceNumber}</div>
+                              <div className="text-[11px] text-[#52667A]">{b.supplierName}</div>
+                            </div>
+                          </div>
+                        </td>
+                        <td className="p-3 text-[#52667A]">
+                          <div className="font-medium text-[#102A43]">{b.buildingName}</div>
+                          <div className="text-[11px] text-[#7B8A9A]">{formatUnitName(b.unitNumber)}</div>
+                        </td>
+                        <td className="p-3 text-end font-mono font-bold text-[#102A43] tabular-nums">
+                          {formatRON(b.totalAmount)}
+                        </td>
+                        <td className="p-3 text-center">
+                          <div className="flex flex-col items-center gap-1">
+                            <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold border ${badge.classes}`}>
+                              {badge.icon}
+                              <span>{badge.label}</span>
+                            </span>
+                            {hasExceptions && (
+                              <span className="text-[10px] text-[#D99B26] font-bold inline-flex items-center gap-0.5">
+                                <AlertTriangle className="w-3 h-3" />
+                                <span>{b.exceptions!.length} {isRo ? 'anomalii' : isFa ? 'مغایرت' : 'issues'}</span>
+                              </span>
+                            )}
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </div>
 
-                      <div className="text-right shrink-0">
-                        <div className="text-sm font-bold text-white font-mono">
-                          {bill.totalAmount.toLocaleString('ro-RO', { minimumFractionDigits: 2 })} {bill.currency}
-                        </div>
-                        <div className="text-[11px] text-slate-400">
-                          {isRo ? 'Scadent: ' : isFa ? 'سررسید: ' : 'Due: '}{bill.dueDate}
-                        </div>
+          {/* Mobile Card List View (Visible only on Small Screens) */}
+          <div className="md:hidden space-y-3">
+            {filteredBills.map((b) => {
+              const isSelected = activeBill?.id === b.id;
+              const badge = getStatusBadge(b.workflowState);
+              const hasExceptions = b.exceptions && b.exceptions.length > 0;
+
+              return (
+                <div
+                  key={b.id}
+                  onClick={() => setSelectedBillId(b.id)}
+                  className={`card-proptech p-4 cursor-pointer transition-all ${
+                    isSelected
+                      ? 'bg-[#EAF8F5]/60 border-[#0E9F8E] ring-2 ring-[#0E9F8E]'
+                      : 'bg-white border-[#E2E8F0] hover:border-[#B2E5DF]'
+                  }`}
+                >
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="flex items-center gap-2">
+                      <span className="p-2 rounded-xl bg-[#F0F4F8]">
+                        {getBillTypeIcon(b.billType)}
+                      </span>
+                      <div>
+                        <div className="font-bold text-sm text-[#102A43]">{b.invoiceNumber}</div>
+                        <div className="text-xs text-[#52667A]">{b.supplierName}</div>
                       </div>
                     </div>
 
-                    <div className="mt-3 pt-3 border-t border-slate-800/60 flex flex-wrap items-center justify-between gap-2">
-                      <div className="flex items-center gap-1.5">
-                        <span className={`px-2 py-0.5 rounded text-[11px] font-semibold border flex items-center gap-1 ${badge.className}`}>
-                          <BadgeIcon className="w-3 h-3" />
-                          <span>{badge.label}</span>
-                        </span>
+                    <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold border ${badge.classes}`}>
+                      {badge.icon}
+                      <span>{badge.label}</span>
+                    </span>
+                  </div>
 
-                        {bill.exceptions.length > 0 && (
-                          <span className="px-1.5 py-0.5 rounded text-[11px] font-semibold bg-amber-500/20 text-amber-300 border border-amber-500/30 flex items-center gap-1">
-                            <AlertTriangle className="w-3 h-3" />
-                            <span>{bill.exceptions.length}</span>
-                          </span>
-                        )}
-                      </div>
-
-                      <div className="flex items-center gap-2 text-[11px] text-slate-400 font-mono">
-                        <span>{bill.extractionConfidence}% OCR</span>
-                        <span>•</span>
-                        <span className="truncate max-w-[140px]">{bill.buildingName} • {formatUnitName(bill.unitNumber)}</span>
-                      </div>
+                  <div className="mt-3 pt-3 border-t border-[#E2E8F0] flex items-center justify-between text-xs font-mono">
+                    <div className="text-[#52667A]">
+                      <span>{b.buildingName}</span> • <span className="text-[#7B8A9A]">{formatUnitName(b.unitNumber)}</span>
+                    </div>
+                    <div className="font-bold text-[#102A43] text-sm tabular-nums">
+                      {formatRON(b.totalAmount)}
                     </div>
                   </div>
-                );
-              })
-            )}
+
+                  {hasExceptions && (
+                    <div className="mt-2 text-[11px] text-[#D99B26] font-bold flex items-center gap-1">
+                      <AlertTriangle className="w-3.5 h-3.5" />
+                      <span>{b.exceptions!.length} {isRo ? 'anomalii detectate' : isFa ? 'مغایرت شناسایی‌شده' : 'exceptions flagged'}</span>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
           </div>
         </div>
 
-        {/* Selected Bill Surface: Tabs for Extracted Data vs Document Scan (Desktop & Mobile) - 7 cols */}
+        {/* Right Column: Complete Detail Surface & Verification Actions */}
         <div className="lg:col-span-7 space-y-6">
-          {selectedBill ? (
-            <div className="p-6 rounded-2xl glass-panel border border-slate-800 space-y-6">
+          {activeBill ? (
+            <div className="card-proptech p-6 bg-white border-[#E2E8F0] space-y-6">
 
-              {/* Surface Header: ID, Supplier, Action Controls */}
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-800">
-                <div>
-                  <div className="flex items-center gap-2">
-                    <span className="px-2.5 py-1 rounded-md bg-violet-500/20 text-violet-300 font-mono text-xs font-semibold border border-violet-500/30">
-                      {selectedBill.id}
+              {/* Detail Header with Supplier & Actions */}
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#E2E8F0]">
+                <div className="space-y-1">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="text-xs font-bold text-[#52667A] uppercase tracking-wider">
+                      {activeBill.buildingName} • {formatUnitName(activeBill.unitNumber)}
                     </span>
-                    <span className="text-xs text-slate-400 font-mono">
-                      Audit: {selectedBill.auditId}
+                    <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold border ${getStatusBadge(activeBill.workflowState).classes}`}>
+                      {getStatusBadge(activeBill.workflowState).icon}
+                      <span>{getStatusBadge(activeBill.workflowState).label}</span>
                     </span>
                   </div>
-                  <h2 className="text-xl font-bold text-white mt-1">
-                    {selectedBill.supplierName}
-                  </h2>
-                  <p className="text-xs text-slate-400">
-                    {selectedBill.buildingName} • {formatUnitName(selectedBill.unitNumber)} • {isRo ? 'Perioadă: ' : isFa ? 'دوره: ' : 'Period: '}{isFa ? 'اکتبر ۲۰۲۶' : selectedBill.billingPeriod}
-                  </p>
+                  <h3 className="text-2xl font-display font-extrabold text-[#102A43]">
+                    {activeBill.supplierName} ({activeBill.invoiceNumber})
+                  </h3>
+                  <div className="text-xs text-[#7B8A9A] font-mono flex flex-wrap gap-4">
+                    <span>{isRo ? 'Emis:' : isFa ? 'تاریخ صدور:' : 'Issued:'} <strong>{activeBill.issueDate}</strong></span>
+                    <span>{isRo ? 'Scadență:' : isFa ? 'مهلت پرداخت:' : 'Due:'} <strong className="text-[#0E9F8E]">{activeBill.dueDate}</strong></span>
+                    <span>{isRo ? 'Perioadă:' : isFa ? 'دوره:' : 'Period:'} <strong>{formatPeriodLabel(activeBill.billingPeriod)}</strong></span>
+                  </div>
                 </div>
 
-                {/* Primary Financial Action Button */}
-                <div className="flex items-center gap-2">
-                  {selectedBill.workflowState !== 'POSTED' && selectedBill.workflowState !== 'PAID' && (
+                {/* Primary Human Confirmation & Action Buttons */}
+                <div className="flex flex-wrap items-center gap-2 self-start sm:self-auto">
+                  {activeBill.workflowState !== 'APPROVED' && activeBill.workflowState !== 'POSTED' && activeBill.workflowState !== 'PAID' && (
                     <button
                       type="button"
                       onClick={() => {
-                        setConfirmActionType(selectedBill.workflowState === 'APPROVED' ? 'POST' : 'APPROVE');
+                        setConfirmActionType('APPROVE');
                         setIsConfirmModalOpen(true);
                       }}
-                      className="px-4 py-2 rounded-xl bg-violet-600 hover:bg-violet-500 text-white text-xs font-semibold shadow-lg shadow-violet-600/30 flex items-center gap-2 transition-all"
+                      className="px-4 py-2.5 rounded-xl bg-[#0E9F8E] hover:bg-[#0C8778] text-white text-xs font-bold shadow-sm transition-all flex items-center gap-1.5"
                     >
                       <UserCheck className="w-4 h-4" />
-                      <span>
-                        {selectedBill.workflowState === 'APPROVED'
-                          ? (isRo ? 'Înregistrează în Jurnal' : isFa ? 'ثبت نهایی در دفتر کل' : 'Post to Ledger')
-                          : (isRo ? 'Revizuire & Aprobare Umană' : isFa ? 'بررسی و تأیید انسانی' : 'Human Review & Approve')}
-                      </span>
+                      <span>{isRo ? 'Aprobare Umană Autorizată' : isFa ? 'بررسی و تأیید نهایی انسانی' : 'Human Review & Approve'}</span>
                     </button>
                   )}
 
-                  {selectedBill.workflowState === 'POSTED' && (
-                    <div className="px-3 py-1.5 rounded-lg bg-emerald-500/20 border border-emerald-500/30 text-emerald-300 text-xs font-semibold flex items-center gap-1.5">
-                      <CheckCircle2 className="w-4 h-4" />
-                      <span>{isRo ? 'Înregistrat în Contabilitate' : isFa ? 'ثبت‌شده در اسناد' : 'Posted to General Ledger'}</span>
+                  {activeBill.workflowState === 'APPROVED' && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setConfirmActionType('POST');
+                        setIsConfirmModalOpen(true);
+                      }}
+                      className="px-4 py-2.5 rounded-xl bg-[#059669] hover:bg-[#047857] text-white text-xs font-bold shadow-sm transition-all flex items-center gap-1.5"
+                    >
+                      <FileCheck className="w-4 h-4" />
+                      <span>{isRo ? 'Înregistrează în Jurnal' : isFa ? 'ثبت در دفتر کل دوبل' : 'Post to Ledger'}</span>
+                    </button>
+                  )}
+
+                  {activeBill.journalId && (
+                    <div className="px-3 py-1.5 rounded-xl bg-[#ECFDF5] border border-[#A7F3D0] text-[#059669] text-xs font-mono font-bold">
+                      Journal: {activeBill.journalId}
                     </div>
                   )}
                 </div>
               </div>
 
-              {/* Surface Tabs: Extracted Data & Financial Truth vs Source Document Scan */}
-              <div className="flex items-center gap-2 border-b border-slate-800 pb-2">
+              {/* Source Document vs Extracted Data Tabs */}
+              <div className="flex items-center gap-2 border-b border-[#E2E8F0] pb-2">
                 <button
                   type="button"
                   onClick={() => setDetailActiveTab('EXTRACTED')}
-                  className={`px-4 py-2 rounded-lg text-xs font-semibold flex items-center gap-2 transition-all ${
+                  className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
                     detailActiveTab === 'EXTRACTED'
-                      ? 'bg-violet-600 text-white shadow-md shadow-violet-600/20'
-                      : 'bg-slate-900 text-slate-400 hover:text-slate-200'
+                      ? 'bg-[#0E9F8E] text-white shadow-sm'
+                      : 'bg-[#F0F4F8] hover:bg-[#E2E8F0] text-[#52667A]'
                   }`}
                 >
-                  <FileText className="w-4 h-4" />
+                  <FileText className="w-3.5 h-3.5" />
                   <span>{isRo ? 'Date Extrase & Reconciliere' : isFa ? 'داده‌های استخراج‌شده و تطبیق' : 'Extracted Data & Reconciliation'}</span>
                 </button>
 
                 <button
                   type="button"
                   onClick={() => setDetailActiveTab('DOCUMENT')}
-                  className={`px-4 py-2 rounded-lg text-xs font-semibold flex items-center gap-2 transition-all ${
+                  className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
                     detailActiveTab === 'DOCUMENT'
-                      ? 'bg-violet-600 text-white shadow-md shadow-violet-600/20'
-                      : 'bg-slate-900 text-slate-400 hover:text-slate-200'
+                      ? 'bg-[#0E9F8E] text-white shadow-sm'
+                      : 'bg-[#F0F4F8] hover:bg-[#E2E8F0] text-[#52667A]'
                   }`}
                 >
-                  <FileImage className="w-4 h-4" />
-                  <span>{isRo ? 'Document Original (PDF / Scan)' : isFa ? 'سند اصلی (اسکن / PDF)' : 'Source Document (PDF/Scan)'}</span>
+                  <FileImage className="w-3.5 h-3.5" />
+                  <span>{isRo ? 'Document Sursă (PDF/Scan)' : isFa ? 'سند اصلی (PDF / اسکن)' : 'Source Document (PDF/Scan)'}</span>
                 </button>
               </div>
 
-              {/* TAB 1: Extracted Data Surface */}
+              {/* Tab 1: Extracted Structured Data, Meters, & Allocation Rules */}
               {detailActiveTab === 'EXTRACTED' && (
-                <div className="space-y-6 animate-fadeIn">
-                  {/* Exception Inspector Alert if Exceptions Present */}
-                  {selectedBill.exceptions.length > 0 && (
+                <div className="space-y-6">
+                  {/* Financial Overview Grid */}
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div className="p-4 rounded-xl bg-[#F6F9FC] border border-[#E2E8F0] space-y-1">
+                      <span className="text-[11px] font-bold text-[#52667A] uppercase tracking-wider block">
+                        {isRo ? 'Sumă Totală de Plată' : isFa ? 'مبلغ کل پرداختی' : 'Total Amount Due'}
+                      </span>
+                      <div className="text-xl font-display font-extrabold text-[#102A43] font-mono tabular-nums">
+                        {formatRON(activeBill.totalAmount)}
+                      </div>
+                      <div className="text-[11px] text-[#7B8A9A]">
+                        {isRo ? 'Bază Impozabilă:' : isFa ? 'پایه مالیاتی:' : 'Base Amount:'} {formatRON(activeBill.netAmount)}
+                      </div>
+                    </div>
+
+                    <div className="p-4 rounded-xl bg-[#F6F9FC] border border-[#E2E8F0] space-y-1">
+                      <span className="text-[11px] font-bold text-[#52667A] uppercase tracking-wider block">
+                        {isRo ? 'Valoare TVA (19%)' : isFa ? 'مالیات بر ارزش افزوده' : 'VAT / Tax Amount'}
+                      </span>
+                      <div className="text-xl font-display font-extrabold text-[#102A43] font-mono tabular-nums">
+                        {formatRON(activeBill.vatAmount)}
+                      </div>
+                      <div className="text-[11px] text-[#7B8A9A]">
+                        {isRo ? 'CUI Furnizor:' : isFa ? 'شناسه ملی:' : 'Fiscal ID:'} {activeBill.supplierTaxId}
+                      </div>
+                    </div>
+
+                    <div className="p-4 rounded-xl bg-[#F6F9FC] border border-[#E2E8F0] space-y-1">
+                      <span className="text-[11px] font-bold text-[#52667A] uppercase tracking-wider block">
+                        {isRo ? 'Scor Încredere OCR' : isFa ? 'ضریب اطمینان OCR' : 'OCR Confidence'}
+                      </span>
+                      <div className="text-xl font-display font-extrabold text-[#059669] font-mono tabular-nums">
+                        {formatPercent(activeBill.extractionConfidence)}
+                      </div>
+                      <div className="text-[11px] text-[#7B8A9A]">
+                        {isRo ? 'Canal:' : isFa ? 'درگاه:' : 'Channel:'} {activeBill.intakeSource}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Meter Matching & Consumption Section */}
+                  {activeBill.meterSerialNumber && (
+                    <div className="p-5 rounded-2xl bg-[#F6F9FC] border border-[#E2E8F0] space-y-3">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <Scale className="w-4 h-4 text-[#0E9F8E]" />
+                          <span className="text-xs font-bold text-[#102A43] uppercase tracking-wider">
+                            {isRo ? 'Reconciliere Contor & Consum Fizic' : isFa ? 'تطبیق شاخص کنتور و مصرف شبکه' : 'Meter & Consumption Reconciliation'}
+                          </span>
+                        </div>
+                        <span className="font-mono text-xs font-bold px-2 py-0.5 rounded bg-white text-[#102A43] border border-[#D3DCE6]">
+                          {activeBill.meterSerialNumber}
+                        </span>
+                      </div>
+
+                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs font-mono">
+                        <div className="p-2.5 rounded-xl bg-white border border-[#E2E8F0]">
+                          <span className="text-[#7B8A9A] block text-[10px]">{isRo ? 'Index Vechi' : isFa ? 'شاخص قبل' : 'Start Reading'}</span>
+                          <strong className="text-[#102A43] text-sm tabular-nums">{activeBill.startMeterReading}</strong>
+                        </div>
+                        <div className="p-2.5 rounded-xl bg-white border border-[#E2E8F0]">
+                          <span className="text-[#7B8A9A] block text-[10px]">{isRo ? 'Index Nou' : isFa ? 'شاخص فعلی' : 'End Reading'}</span>
+                          <strong className="text-[#102A43] text-sm tabular-nums">{activeBill.endMeterReading}</strong>
+                        </div>
+                        <div className="p-2.5 rounded-xl bg-white border border-[#E2E8F0]">
+                          <span className="text-[#7B8A9A] block text-[10px]">{isRo ? 'Consum Calculat' : isFa ? 'مصرف کل' : 'Consumption'}</span>
+                          <strong className="text-[#0E9F8E] text-sm tabular-nums">{activeBill.calculatedConsumption} {activeBill.consumptionUnit || 'kWh'}</strong>
+                        </div>
+                        <div className="p-2.5 rounded-xl bg-white border border-[#E2E8F0]">
+                          <span className="text-[#7B8A9A] block text-[10px]">{isRo ? 'Tarif Contract' : isFa ? 'نرخ تعرفه' : 'Unit Rate'}</span>
+                          <strong className="text-[#102A43] text-sm tabular-nums">{activeBill.activeTariffRate} RON/{activeBill.consumptionUnit || 'kWh'}</strong>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Allocation & Accounting Rule Section */}
+                  <div className="p-5 rounded-2xl bg-[#F6F9FC] border border-[#E2E8F0] space-y-3">
+                    <div className="flex items-center gap-2">
+                      <Building2 className="w-4 h-4 text-[#0E9F8E]" />
+                      <span className="text-xs font-bold text-[#102A43] uppercase tracking-wider">
+                        {isRo ? 'Regulă de Alocare Statutară & Cont Contabil' : isFa ? 'قاعده تسهیم قانونی و سرفصل حسابداری' : 'Statutory Allocation Rule & Accounting Code'}
+                      </span>
+                    </div>
+
+                    <div className="space-y-2 text-xs">
+                      <div className="flex items-center justify-between p-2.5 rounded-xl bg-white border border-[#E2E8F0]">
+                        <span className="text-[#52667A]">{isRo ? 'Cont Contabil (Partidă Dublă):' : isFa ? 'سرفصل حسابداری دوبل:' : 'Accounting Code:'}</span>
+                        <span className="font-mono font-bold text-[#102A43]">{activeBill.accountingCode} — {formatAccountName(activeBill.accountingAccountName)}</span>
+                      </div>
+
+                      <div className="flex items-center justify-between p-2.5 rounded-xl bg-white border border-[#E2E8F0]">
+                        <span className="text-[#52667A]">{isRo ? 'Regulă Defalcare Legea 196/2018:' : isFa ? 'روش تسهیم قانونی (قانون ۱۹۶):' : 'Statutory Rule:'}</span>
+                        <span className="font-semibold text-[#102A43]">{formatAllocationRuleName(activeBill.ownerTenantSplit?.allocationRuleName)}</span>
+                      </div>
+
+                      <div className="flex items-center justify-between p-2.5 rounded-xl bg-white border border-[#E2E8F0]">
+                        <span className="text-[#52667A]">{isRo ? 'Responsabilitate Proprietar / Chiriaș:' : isFa ? 'سهم مالک / مستأجر:' : 'Owner / Tenant Responsibility:'}</span>
+                        <span className="font-mono font-bold text-[#059669]">
+                          {formatPercent(activeBill.ownerTenantSplit?.ownerPercent || 0)} {isRo ? 'Proprietar' : isFa ? 'مالک' : 'Owner'} / {formatPercent(activeBill.ownerTenantSplit?.tenantPercent || 100)} {isRo ? 'Chiriaș' : isFa ? 'مستأجر' : 'Tenant'}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Policy Exceptions Inspector */}
+                  {activeBill.exceptions && activeBill.exceptions.length > 0 && (
                     <div className="space-y-3">
-                      <div className="text-xs font-semibold text-amber-400 uppercase tracking-wider flex items-center gap-1.5">
-                        <AlertTriangle className="w-4 h-4" />
-                        <span>{isRo ? 'Excepții & Nepotriviri Detectate de Motorul de Reguli' : isFa ? 'مغایرت‌های شناسایی‌شده توسط سیستم' : 'Exceptions Detected by Policy Rules'}</span>
+                      <div className="flex items-center gap-2">
+                        <AlertTriangle className="w-4 h-4 text-[#D99B26]" />
+                        <span className="text-xs font-bold text-[#D99B26] uppercase tracking-wider">
+                          {isRo ? 'Excepții & Anomalii de Politică Financiară' : isFa ? 'مغایرت‌ها و هشدارهای سیاست مالی' : 'Policy Exceptions & Variance'}
+                        </span>
                       </div>
 
                       <div className="space-y-2">
-                        {selectedBill.exceptions.map((ex) => (
+                        {activeBill.exceptions.map((ex) => (
                           <div
                             key={ex.id}
-                            className="p-3.5 rounded-xl bg-amber-950/30 border border-amber-500/40 text-xs space-y-2"
+                            className={`p-4 rounded-xl border text-xs space-y-2 ${
+                              ex.severity === 'HIGH'
+                                ? 'bg-[#FFF0EB] border-[#FF7A59] text-[#102A43]'
+                                : 'bg-[#FFF7E6] border-[#F5B942] text-[#102A43]'
+                            }`}
                           >
                             <div className="flex items-center justify-between">
-                              <span className="font-bold text-amber-300 flex items-center gap-1.5">
-                                <AlertOctagon className="w-4 h-4 text-amber-400" />
+                              <span className="font-bold flex items-center gap-1.5">
+                                <AlertOctagon className={`w-4 h-4 ${ex.severity === 'HIGH' ? 'text-[#F2633F]' : 'text-[#D99B26]'}`} />
                                 <span>{ex.label}</span>
                               </span>
-                              <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-amber-500/20 text-amber-300 border border-amber-500/30">
-                                {ex.severity} SEVERITY
+                              <span className="font-mono text-[10px] font-bold px-2 py-0.5 rounded bg-white text-[#102A43] border border-[#D3DCE6]">
+                                {ex.code} • {ex.severity}
                               </span>
                             </div>
 
-                            <p className="text-slate-300">{ex.explanation}</p>
+                            <p className="text-xs text-[#52667A]">{ex.explanation}</p>
 
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1 font-mono text-[11px] text-slate-400 border-t border-amber-500/20">
-                              <div><strong>{isRo ? 'Câmp Afectat:' : isFa ? 'فیلد متأثر:' : 'Field:'}</strong> {ex.affectedField}</div>
-                              <div><strong>{isRo ? 'Dovadă:' : isFa ? 'مستند:' : 'Evidence:'}</strong> {ex.evidence}</div>
-                            </div>
-
-                            <div className="p-2 rounded bg-amber-900/20 text-amber-200 border border-amber-500/20 text-[11px]">
-                              <strong>{isRo ? 'Acțiune recomandată:' : isFa ? 'اقدام پیشنهادی:' : 'Action:'}</strong> {ex.recommendedAction}
+                            <div className="pt-2 border-t border-[#E2E8F0] flex flex-wrap items-center justify-between gap-2 font-mono text-[11px]">
+                              <span className="text-[#7B8A9A]">
+                                <strong>Evidence:</strong> {ex.evidence}
+                              </span>
+                              <span className="text-[#0E9F8E] font-semibold">
+                                <strong>Action:</strong> {ex.recommendedAction}
+                              </span>
                             </div>
                           </div>
                         ))}
@@ -894,180 +1128,60 @@ export function UtilityBillsWorkspace({ lang }: UtilityBillsWorkspaceProps) {
                     </div>
                   )}
 
-                  {/* Financial Values & Meter Readings Grid */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {/* Financial Summary */}
-                    <div className="p-4 rounded-xl bg-slate-900/80 border border-slate-800 space-y-3">
-                      <div className="text-xs font-semibold text-slate-400 uppercase tracking-wider flex items-center justify-between">
-                        <span>{isRo ? 'Valori Extrase & Fiscale' : isFa ? 'اطلاعات مالی و مالیاتی' : 'Financial Breakdown'}</span>
-                        <span className="font-mono text-cyan-400">{selectedBill.extractionConfidence}% Confidence</span>
-                      </div>
-
-                      <div className="space-y-1.5 text-xs">
-                        <div className="flex justify-between py-1 border-b border-slate-800">
-                          <span className="text-slate-400">{isRo ? 'Furnizor / CIF:' : isFa ? 'تأمین‌کننده / شناسه ملی:' : 'Supplier / Tax ID:'}</span>
-                          <span className="font-mono text-white">{selectedBill.supplierTaxId}</span>
-                        </div>
-                        <div className="flex justify-between py-1 border-b border-slate-800">
-                          <span className="text-slate-400">{isRo ? 'IBAN Furnizor:' : isFa ? 'شماره شبا:' : 'Supplier IBAN:'}</span>
-                          <span className="font-mono text-slate-300">{selectedBill.supplierIban.substring(0, 14)}...</span>
-                        </div>
-                        <div className="flex justify-between py-1 border-b border-slate-800">
-                          <span className="text-slate-400">{isRo ? 'Valoare Netă:' : isFa ? 'مبلغ خالص:' : 'Net Amount:'}</span>
-                          <span className="font-mono text-slate-200">{selectedBill.netAmount.toLocaleString('ro-RO')} {selectedBill.currency}</span>
-                        </div>
-                        <div className="flex justify-between py-1 border-b border-slate-800">
-                          <span className="text-slate-400">TVA ({selectedBill.vatRate}%):</span>
-                          <span className="font-mono text-slate-200">{selectedBill.vatAmount.toLocaleString('ro-RO')} {selectedBill.currency}</span>
-                        </div>
-                        <div className="flex justify-between py-1 text-sm font-bold">
-                          <span className="text-white">{isRo ? 'Total de Plată:' : isFa ? 'مجموع قابل پرداخت:' : 'Total Due:'}</span>
-                          <span className="font-mono text-violet-300">{selectedBill.totalAmount.toLocaleString('ro-RO', { minimumFractionDigits: 2 })} {selectedBill.currency}</span>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Meter & Tariff Matching */}
-                    <div className="p-4 rounded-xl bg-slate-900/80 border border-slate-800 space-y-3">
-                      <div className="text-xs font-semibold text-slate-400 uppercase tracking-wider flex items-center justify-between">
-                        <span>{isRo ? 'Contorizare & Tarife' : isFa ? 'قرائت کنتور و تعرفه' : 'Meter & Tariff Match'}</span>
-                        <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase ${
-                          selectedBill.meterMatchStatus === 'MATCHED' ? 'bg-emerald-500/20 text-emerald-300' : 'bg-amber-500/20 text-amber-300'
-                        }`}>
-                          {selectedBill.meterMatchStatus}
+                  {/* Audit Trail Timeline */}
+                  {activeBill.workflowHistory && activeBill.workflowHistory.length > 0 && (
+                    <div className="space-y-3">
+                      <div className="flex items-center gap-2">
+                        <History className="w-4 h-4 text-[#0E9F8E]" />
+                        <span className="text-xs font-bold text-[#102A43] uppercase tracking-wider">
+                          {isRo ? 'Jurnal de Audit & Etape de Semnare' : isFa ? 'زنجیره رویدادها و ممیزی سیستم' : 'Audit Trail & Signature History'}
                         </span>
                       </div>
 
-                      <div className="space-y-1.5 text-xs">
-                        {selectedBill.meterSerialNumber ? (
-                          <>
-                            <div className="flex justify-between py-1 border-b border-slate-800">
-                              <span className="text-slate-400">{isRo ? 'Serie Contor:' : isFa ? 'شماره سریال کنتور:' : 'Meter Serial #:'}</span>
-                              <span className="font-mono text-white">{selectedBill.meterSerialNumber}</span>
+                      <div className="p-4 rounded-2xl bg-[#F6F9FC] border border-[#E2E8F0] space-y-3">
+                        {activeBill.workflowHistory.map((log: WorkflowEvent) => (
+                          <div key={log.auditId} className="text-xs border-b border-[#E2E8F0] last:border-b-0 pb-2.5 last:pb-0 space-y-1">
+                            <div className="flex items-center justify-between">
+                              <span className="font-bold text-[#102A43]">{log.state}</span>
+                              <span className="font-mono text-[10px] text-[#7B8A9A]">{log.timestamp}</span>
                             </div>
-                            <div className="flex justify-between py-1 border-b border-slate-800">
-                              <span className="text-slate-400">{isRo ? 'Index Pornire / Final:' : isFa ? 'شاخص شروع / پایان:' : 'Start / End Reading:'}</span>
-                              <span className="font-mono text-slate-200">{selectedBill.startMeterReading} → {selectedBill.endMeterReading}</span>
+                            <div className="text-[#52667A]">
+                              <strong>{log.actor}</strong> <span className="text-[#7B8A9A]">({log.actorRole})</span>
                             </div>
-                            <div className="flex justify-between py-1 border-b border-slate-800">
-                              <span className="text-slate-400">{isRo ? 'Consum Calculat:' : isFa ? 'مصرف محاسبه‌شده:' : 'Consumption:'}</span>
-                              <span className="font-mono font-bold text-cyan-300">{selectedBill.calculatedConsumption} {selectedBill.consumptionUnit}</span>
-                            </div>
-                          </>
-                        ) : (
-                          <div className="py-2 text-slate-400 italic">
-                            {isRo ? 'Fără contor specificat (serviciu fix/contractual)' : isFa ? 'بدون کنتور (خدمات مبتنی بر قرارداد)' : 'No meter (Fixed contractual service)'}
+                            <p className="text-[#7B8A9A] text-[11px]">{log.evidence}</p>
                           </div>
-                        )}
-
-                        <div className="flex justify-between py-1 border-b border-slate-800">
-                          <span className="text-slate-400">{isRo ? 'Tarif Activ:' : isFa ? 'تعرفه فعال قرارداد:' : 'Active Tariff:'}</span>
-                          <span className="text-slate-300">{selectedBill.activeTariffName || 'N/A'}</span>
-                        </div>
+                        ))}
                       </div>
                     </div>
-                  </div>
-
-                  {/* Statutory Owner / Tenant Allocation Split (Law 196/2018) */}
-                  <div className="p-4 rounded-xl bg-slate-900/80 border border-slate-800 space-y-3">
-                    <div className="text-xs font-semibold text-slate-400 uppercase tracking-wider flex items-center gap-2">
-                      <Scale className="w-4 h-4 text-violet-400" />
-                      <span>{isRo ? 'Separare Responsabilitate Proprietar vs Chiriaș (Legea 196/2018)' : isFa ? 'تسهیم سهم مالک و مستأجر بر اساس ضوابط قانونی' : 'Owner vs Tenant Statutory Split'}</span>
-                    </div>
-
-                    <div className="p-3 rounded-lg bg-slate-950/60 border border-slate-800/80 text-xs space-y-2">
-                      <div className="text-slate-300 font-medium">
-                        {isRo ? 'Regulă de alocare aplicată: ' : isFa ? 'قاعده تخصیص اعمال‌شده: ' : 'Applied Allocation Rule: '}
-                        <strong className="text-violet-300">{formatAllocationRuleName(selectedBill.ownerTenantSplit.allocationRuleName)}</strong>
-                      </div>
-
-                      <div className="grid grid-cols-2 gap-4 pt-2 border-t border-slate-800">
-                        <div>
-                          <div className="text-slate-400">{isRo ? 'Cota Proprietar (Fond Reparații):' : isFa ? 'سهم مالک (صندوق عمرانی):' : 'Owner Share (Capital Fund):'}</div>
-                          <div className="text-sm font-bold text-white font-mono mt-0.5">
-                            {selectedBill.ownerTenantSplit.ownerAmount.toLocaleString('ro-RO')} {selectedBill.currency} ({selectedBill.ownerTenantSplit.ownerPercent}%)
-                          </div>
-                        </div>
-                        <div>
-                          <div className="text-slate-400">{isRo ? 'Cota Chiriaș (Consum Curent):' : isFa ? 'سهم مستأجر (مصرف جاری):' : 'Tenant Share (Operational):'}</div>
-                          <div className="text-sm font-bold text-cyan-300 font-mono mt-0.5">
-                            {selectedBill.ownerTenantSplit.tenantAmount.toLocaleString('ro-RO')} {selectedBill.currency} ({selectedBill.ownerTenantSplit.tenantPercent}%)
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="flex flex-wrap items-center justify-between text-xs text-slate-400 font-mono pt-1">
-                      <div>{isRo ? 'Cont Contabil: ' : isFa ? 'کد حسابداری: ' : 'Accounting Code: '}<strong className="text-slate-200">{selectedBill.accountingCode}</strong> ({formatAccountName(selectedBill.accountingCode, selectedBill.accountingAccountName)})</div>
-                      {selectedBill.journalId && <div>{isRo ? 'Jurnal General: ' : isFa ? 'شناسه سند: ' : 'Journal ID: '}<strong className="text-emerald-400">{selectedBill.journalId}</strong></div>}
-                    </div>
-                  </div>
-
-                  {/* Exact 7-Step Workflow State Timeline */}
-                  <div className="space-y-3">
-                    <div className="text-xs font-semibold text-slate-400 uppercase tracking-wider flex items-center gap-2">
-                      <History className="w-4 h-4 text-violet-400" />
-                      <span>{isRo ? 'Jurnal Audit & Etapele Fluxului de Procesare' : isFa ? 'تاریخچه ممیزی و رویدادهای گردش‌کار' : 'Audit Trail & Workflow Events'}</span>
-                    </div>
-
-                    <div className="space-y-2">
-                      {selectedBill.workflowHistory.map((evt, idx) => {
-                        const badge = getWorkflowBadge(evt.state);
-                        const EvtIcon = badge.icon;
-
-                        return (
-                          <div
-                            key={idx}
-                            className="p-3 rounded-xl bg-slate-900/60 border border-slate-800/80 text-xs flex items-start justify-between gap-3"
-                          >
-                            <div className="flex items-start gap-3">
-                              <div className={`p-2 rounded-lg border mt-0.5 ${badge.className}`}>
-                                <EvtIcon className="w-4 h-4" />
-                              </div>
-                              <div>
-                                <div className="font-bold text-white flex items-center gap-2">
-                                  <span>{badge.label}</span>
-                                  <span className="text-slate-400 font-normal">by {evt.actor} ({evt.actorRole})</span>
-                                </div>
-                                <p className="text-slate-300 text-[11px] mt-0.5">{evt.evidence}</p>
-                                {evt.comment && (
-                                  <p className="text-slate-400 text-[11px] italic mt-0.5">&ldquo;{evt.comment}&rdquo;</p>
-                                )}
-                              </div>
-                            </div>
-
-                            <div className="text-right text-[11px] text-slate-400 font-mono shrink-0">
-                              <div>{evt.timestamp}</div>
-                              <div className="text-violet-400">{evt.auditId}</div>
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </div>
+                  )}
                 </div>
               )}
 
-              {/* TAB 2: Original Document Scan View */}
+              {/* Tab 2: Original Source Document / PDF Inspection Surface */}
               {detailActiveTab === 'DOCUMENT' && (
-                <div className="space-y-4 animate-fadeIn">
-                  <div className="p-6 rounded-2xl bg-slate-950 border border-slate-800 text-center space-y-4">
-                    <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 max-w-md mx-auto space-y-2">
-                      <FileImage className="w-12 h-12 text-violet-400 mx-auto" />
-                      <div className="text-sm font-bold text-white font-mono">{selectedBill.originalDocumentName}</div>
-                      <div className="text-xs text-slate-400">
-                        {isRo ? 'Scanare document original atașat la recepția prin ' : isFa ? 'تصویر سند دریافت شده از طریق ' : 'Original document scan ingested via '}{selectedBill.intakeSource}
-                      </div>
+                <div className="space-y-4">
+                  <div className="p-6 rounded-2xl bg-[#F6F9FC] border border-[#E2E8F0] space-y-4 text-center">
+                    <div className="p-4 rounded-full bg-white text-[#0E9F8E] border border-[#E2E8F0] w-16 h-16 mx-auto flex items-center justify-center shadow-sm">
+                      <FileText className="w-8 h-8" />
+                    </div>
+                    <div>
+                      <h4 className="text-base font-bold text-[#102A43]">
+                        {activeBill.originalDocumentName || 'factura_originala_scanata.pdf'}
+                      </h4>
+                      <p className="text-xs text-[#52667A] mt-1">
+                        {isRo
+                          ? 'Document original recepționat prin canal securizat (SPV e-Factura XML / PDF Scan).'
+                          : isFa
+                          ? 'سند الکترونیکی اصلی دریافت شده از درگاه امن مودیان / اسکن دیجیتال.'
+                          : 'Original verified invoice received via secure ingestion gateway.'}
+                      </p>
                     </div>
 
-                    <div className="p-4 rounded-xl bg-slate-900/60 border border-slate-800 max-w-xl mx-auto text-left font-mono text-xs space-y-2 text-slate-300">
-                      <div className="text-slate-400 font-bold uppercase tracking-wider">{isRo ? 'Informații OCR Sursă:' : isFa ? 'اطلاعات استخراج متنی سند:' : 'OCR Document Metadata:'}</div>
-                      <div className="grid grid-cols-2 gap-2 text-[11px]">
-                        <div>Document: <strong>{selectedBill.originalDocumentName}</strong></div>
-                        <div>Intake: <strong>{selectedBill.intakeSource}</strong></div>
-                        <div>Confidence Score: <strong className="text-cyan-400">{selectedBill.extractionConfidence}%</strong></div>
-                        <div>Audit Trail Hash: <strong className="text-violet-400">{selectedBill.auditId}</strong></div>
-                      </div>
+                    <div className="max-w-md mx-auto p-4 rounded-xl bg-white border border-[#E2E8F0] text-xs font-mono text-start space-y-1">
+                      <div>File Name: <strong className="text-[#102A43]">{activeBill.originalDocumentName || 'factura_enel_octombrie_2026.pdf'}</strong></div>
+                      <div>Document Hash (SHA-256): <strong className="text-[#0E9F8E]">0x9185dd4759671ed69dca39f17080c84593912134</strong></div>
+                      <div>Ingestion Channel: <strong className="text-[#1E62C4]">{activeBill.intakeSource}</strong></div>
+                      <div>SPV Message ID: <strong className="text-[#059669]">SPV-RO-2026-991823</strong></div>
                     </div>
                   </div>
                 </div>
@@ -1075,256 +1189,323 @@ export function UtilityBillsWorkspace({ lang }: UtilityBillsWorkspaceProps) {
 
             </div>
           ) : (
-            <div className="p-12 text-center text-slate-500 rounded-2xl glass-panel border border-slate-800">
-              {isRo ? 'Selectați o factură din lista din stânga pentru detalii' : isFa ? 'یک صورت‌حساب را جهت مشاهده جزییات انتخاب کنید' : 'Select an invoice from the queue to view details'}
+            <div className="card-proptech p-12 bg-white border-[#E2E8F0] text-center space-y-3">
+              <FileText className="w-12 h-12 text-[#7B8A9A] mx-auto" />
+              <p className="text-sm font-semibold text-[#52667A]">
+                {isRo ? 'Selectați o factură din coadă pentru a vizualiza detaliile.' : isFa ? 'جهت مشاهده جزییات، یک صورت‌حساب را انتخاب کنید.' : 'Select an invoice from the queue to view details.'}
+              </p>
             </div>
           )}
         </div>
 
       </div>
 
-      {/* Mobile Bottom Sheet Filter Drawer (Accessible on Mobile / Tablet) */}
+      {/* 5. Mobile Filter Bottom Sheet Modal */}
       {isMobileFilterOpen && (
-        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-end justify-center lg:hidden">
-          <div className="w-full max-h-[85vh] overflow-y-auto rounded-t-3xl bg-slate-900 border-t border-violet-500/40 p-6 space-y-5 animate-slideUp text-left">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-800">
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4">
+          <div className="card-proptech w-full max-w-lg bg-white border-t border-[#D3DCE6] rounded-t-3xl sm:rounded-2xl p-6 space-y-4 max-h-[85vh] overflow-y-auto animate-fadeIn shadow-elevated">
+            <div className="flex items-center justify-between pb-3 border-b border-[#E2E8F0]">
               <div className="flex items-center gap-2">
-                <SlidersHorizontal className="w-5 h-5 text-violet-400" />
-                <h3 className="text-base font-bold text-white">
-                  {isRo ? 'Filtre Coadă Facturi (Mobile)' : isFa ? 'فیلترهای پیشرفته موبایل' : 'Mobile Queue Filters'}
+                <SlidersHorizontal className="w-5 h-5 text-[#0E9F8E]" />
+                <h3 className="text-base font-display font-extrabold text-[#102A43]">
+                  {isRo ? 'Filtre Avansate Facturi (7 Dimensiuni)' : isFa ? 'فیلترهای پیشرفته (۷ بعد)' : 'Advanced Bill Filters'}
                 </h3>
               </div>
               <button
                 type="button"
                 onClick={() => setIsMobileFilterOpen(false)}
-                className="p-1.5 rounded-lg bg-slate-800 text-slate-400 hover:text-white"
+                className="p-1.5 rounded-full bg-[#F0F4F8] text-[#52667A] hover:text-[#102A43]"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            {/* Mobile Filter Controls */}
             <div className="space-y-3 text-xs">
-              <div className="space-y-1">
-                <label className="text-slate-400 font-medium">{isRo ? 'Tip Utilitate' : isFa ? 'نوع قبض' : 'Bill Type'}</label>
+              {/* Dim 1 */}
+              <div>
+                <label className="text-[11px] font-bold text-[#52667A] uppercase tracking-wider block mb-1">
+                  {isRo ? '1. Tip Utilitate' : isFa ? '۱. نوع انشعاب' : '1. Bill Type'}
+                </label>
                 <select
                   value={selectedType}
                   onChange={(e) => setSelectedType(e.target.value)}
-                  className="w-full px-3 py-2 rounded-lg bg-slate-950 border border-slate-700 text-slate-200"
+                  className="w-full bg-white border border-[#D3DCE6] rounded-xl px-3 py-2 text-xs text-[#102A43] font-medium"
                 >
-                  <option value="ALL">Toate tipurile</option>
-                  <option value="ELECTRICITY">Electricitate</option>
-                  <option value="WATER">Apă & Canal</option>
-                  <option value="GAS">Gaze Naturale</option>
-                  <option value="WASTE">Salubritate</option>
-                  <option value="MAINTENANCE_CONTRACT">Mentenanță Lift</option>
+                  <option value="ALL">{isRo ? 'Toate tipurile' : isFa ? 'همه انشعابات' : 'All Types'}</option>
+                  <option value="ELECTRICITY">{isRo ? 'Electricitate' : isFa ? 'برق' : 'Electricity'}</option>
+                  <option value="WATER">{isRo ? 'Apă & Canal' : isFa ? 'آب و فاضلاب' : 'Water & Sewage'}</option>
+                  <option value="GAS">{isRo ? 'Gaze Naturale' : isFa ? 'گاز طبیعی' : 'Natural Gas'}</option>
+                  <option value="WASTE">{isRo ? 'Salubrizare' : isFa ? 'مدیریت پسماند' : 'Waste'}</option>
+                  <option value="MAINTENANCE_CONTRACT">{isRo ? 'Mentenanță' : isFa ? 'قرارداد نگهداری' : 'Maintenance'}</option>
                 </select>
               </div>
 
-              <div className="space-y-1">
-                <label className="text-slate-400 font-medium">{isRo ? 'Imobil / Clădire' : isFa ? 'ساختمان' : 'Building'}</label>
+              {/* Dim 2 */}
+              <div>
+                <label className="text-[11px] font-bold text-[#52667A] uppercase tracking-wider block mb-1">
+                  {isRo ? '2. Clădire' : isFa ? '۲. ساختمان' : '2. Building'}
+                </label>
                 <select
                   value={selectedBuilding}
                   onChange={(e) => {
                     setSelectedBuilding(e.target.value);
                     setSelectedUnit('ALL');
                   }}
-                  className="w-full px-3 py-2 rounded-lg bg-slate-950 border border-slate-700 text-slate-200"
+                  className="w-full bg-white border border-[#D3DCE6] rounded-xl px-3 py-2 text-xs text-[#102A43] font-medium"
                 >
-                  <option value="ALL">Toate clădirile</option>
+                  <option value="ALL">{isRo ? 'Toate clădirile' : isFa ? 'همه ساختمان‌ها' : 'All Buildings'}</option>
                   {availableBuildings.map(b => (
                     <option key={b} value={b}>{b}</option>
                   ))}
                 </select>
               </div>
 
-              <div className="space-y-1">
-                <label className="text-slate-400 font-medium">{isRo ? 'Spațiu / Unitate' : isFa ? 'واحد' : 'Unit'}</label>
+              {/* Dim 3 */}
+              <div>
+                <label className="text-[11px] font-bold text-[#52667A] uppercase tracking-wider block mb-1">
+                  {isRo ? '3. Unitate / Spațiu' : isFa ? '۳. واحد / مشاعات' : '3. Unit'}
+                </label>
                 <select
                   value={selectedUnit}
                   onChange={(e) => setSelectedUnit(e.target.value)}
-                  className="w-full px-3 py-2 rounded-lg bg-slate-950 border border-slate-700 text-slate-200"
+                  className="w-full bg-white border border-[#D3DCE6] rounded-xl px-3 py-2 text-xs text-[#102A43] font-medium"
                 >
-                  <option value="ALL">Toate unitățile</option>
+                  <option value="ALL">{isRo ? 'Toate unitățile' : isFa ? 'همه واحدها' : 'All Units'}</option>
                   {availableUnits.map(u => (
                     <option key={u} value={u}>{formatUnitName(u)}</option>
                   ))}
                 </select>
               </div>
 
-              <div className="space-y-1">
-                <label className="text-slate-400 font-medium">{isRo ? 'Furnizor' : isFa ? 'تأمین‌کننده' : 'Supplier'}</label>
+              {/* Dim 4 */}
+              <div>
+                <label className="text-[11px] font-bold text-[#52667A] uppercase tracking-wider block mb-1">
+                  {isRo ? '4. Furnizor' : isFa ? '۴. شرکت تأمین‌کننده' : '4. Supplier'}
+                </label>
                 <select
                   value={selectedSupplier}
                   onChange={(e) => setSelectedSupplier(e.target.value)}
-                  className="w-full px-3 py-2 rounded-lg bg-slate-950 border border-slate-700 text-slate-200"
+                  className="w-full bg-white border border-[#D3DCE6] rounded-xl px-3 py-2 text-xs text-[#102A43] font-medium"
                 >
-                  <option value="ALL">Toți furnizorii</option>
+                  <option value="ALL">{isRo ? 'Toți furnizorii' : isFa ? 'همه شرکت‌ها' : 'All Suppliers'}</option>
                   {availableSuppliers.map(s => (
                     <option key={s} value={s}>{s}</option>
                   ))}
                 </select>
               </div>
 
-              <div className="space-y-1">
-                <label className="text-slate-400 font-medium">{isRo ? 'Stare Flux' : isFa ? 'وضعیت گردش‌کار' : 'Workflow State'}</label>
+              {/* Dim 5 */}
+              <div>
+                <label className="text-[11px] font-bold text-[#52667A] uppercase tracking-wider block mb-1">
+                  {isRo ? '5. Perioadă' : isFa ? '۵. دوره' : '5. Period'}
+                </label>
+                <select
+                  value={selectedPeriod}
+                  onChange={(e) => setSelectedPeriod(e.target.value)}
+                  className="w-full bg-white border border-[#D3DCE6] rounded-xl px-3 py-2 text-xs text-[#102A43] font-medium"
+                >
+                  <option value="ALL">{isRo ? 'Toate perioadele' : isFa ? 'همه دوره‌ها' : 'All Periods'}</option>
+                  {availablePeriods.map(p => (
+                    <option key={p} value={p}>{formatPeriodLabel(p)}</option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Dim 6 */}
+              <div>
+                <label className="text-[11px] font-bold text-[#52667A] uppercase tracking-wider block mb-1">
+                  {isRo ? '6. Scadență' : isFa ? '۶. مهلت پرداخت' : '6. Due Date'}
+                </label>
+                <select
+                  value={selectedDueDateFilter}
+                  onChange={(e) => setSelectedDueDateFilter(e.target.value)}
+                  className="w-full bg-white border border-[#D3DCE6] rounded-xl px-3 py-2 text-xs text-[#102A43] font-medium"
+                >
+                  <option value="ALL">{isRo ? 'Oricând' : isFa ? 'همه زمان‌ها' : 'All Due Dates'}</option>
+                  <option value="URGENT">{isRo ? 'Urgent (< 7 zile)' : isFa ? 'فوری (کمتر از ۷ روز)' : 'Urgent (< 7 days)'}</option>
+                  <option value="OVERDUE">{isRo ? 'Depășit' : isFa ? 'سررسید گذشته' : 'Overdue'}</option>
+                </select>
+              </div>
+
+              {/* Dim 7 */}
+              <div>
+                <label className="text-[11px] font-bold text-[#52667A] uppercase tracking-wider block mb-1">
+                  {isRo ? '7. Stare' : isFa ? '۷. وضعیت گردش‌کار' : '7. State'}
+                </label>
                 <select
                   value={selectedState}
                   onChange={(e) => setSelectedState(e.target.value)}
-                  className="w-full px-3 py-2 rounded-lg bg-slate-950 border border-slate-700 text-slate-200"
+                  className="w-full bg-white border border-[#D3DCE6] rounded-xl px-3 py-2 text-xs text-[#102A43] font-medium"
                 >
-                  <option value="ALL">Toate stările</option>
-                  <option value="RECEIVED">1. Received</option>
-                  <option value="EXTRACTED">2. Extracted</option>
-                  <option value="MATCHED">3. Matched</option>
-                  <option value="VALIDATED">4. Validated</option>
-                  <option value="APPROVED">5. Approved</option>
-                  <option value="POSTED">6. Posted</option>
-                  <option value="PAID">7. Paid</option>
+                  <option value="ALL">{isRo ? 'Toate stările (1-7)' : isFa ? 'همه وضعیت‌ها (۱-۷)' : 'All States (1-7)'}</option>
+                  <option value="RECEIVED">{isRo ? '1. Recepționat' : isFa ? '۱. دریافت شد' : '1. Received'}</option>
+                  <option value="EXTRACTED">{isRo ? '2. Extras OCR' : isFa ? '۲. استخراج OCR' : '2. Extracted'}</option>
+                  <option value="MATCHED">{isRo ? '3. Reconciliat' : isFa ? '۳. تطبیق کنتور' : '3. Matched'}</option>
+                  <option value="VALIDATED">{isRo ? '4. Validat' : isFa ? '۴. اعتبارسنجی شد' : '4. Validated'}</option>
+                  <option value="APPROVED">{isRo ? '5. Aprobare Umană' : isFa ? '۵. تأیید انسانی' : '5. Approved'}</option>
+                  <option value="POSTED">{isRo ? '6. Înregistrat' : isFa ? '۶. ثبت دفتر' : '6. Posted'}</option>
+                  <option value="PAID">{isRo ? '7. Plătit' : isFa ? '۷. پرداخت شد' : '7. Paid'}</option>
                 </select>
               </div>
             </div>
 
-            <div className="pt-3 flex items-center justify-between gap-3 border-t border-slate-800">
+            <div className="flex items-center justify-between gap-3 pt-3 border-t border-[#E2E8F0]">
               <button
                 type="button"
                 onClick={handleResetFilters}
-                className="px-4 py-2.5 rounded-xl bg-slate-800 text-slate-300 text-xs font-semibold"
+                className="px-4 py-2 rounded-xl bg-[#F0F4F8] hover:bg-[#E2E8F0] text-[#102A43] text-xs font-bold"
               >
-                {isRo ? 'Resetează' : isFa ? 'پاک‌کردن' : 'Clear'}
+                {isRo ? 'Resetează' : isFa ? 'پاک‌کردن' : 'Reset'}
               </button>
               <button
                 type="button"
                 onClick={() => setIsMobileFilterOpen(false)}
-                className="px-5 py-2.5 rounded-xl bg-violet-600 text-white text-xs font-semibold shadow-lg shadow-violet-600/30"
+                className="px-5 py-2 rounded-xl bg-[#0E9F8E] hover:bg-[#0C8778] text-white text-xs font-bold shadow-sm"
               >
-                {isRo ? 'Aplică Filtrele' : isFa ? 'اعمال فیلتر' : 'Apply Filters'}
+                {isRo ? 'Aplică Filtrele' : isFa ? 'اعمال فیلترها' : 'Apply Filters'}
               </button>
             </div>
           </div>
         </div>
       )}
 
-      {/* Complete Human Confirmation Modal Surface (Section 13) */}
-      {isConfirmModalOpen && selectedBill && (
-        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="max-w-xl w-full max-h-[90vh] overflow-y-auto rounded-2xl bg-slate-900 border border-violet-500/50 shadow-2xl p-6 space-y-6 animate-fadeIn text-left">
-
-            <div className="flex items-center justify-between pb-3 border-b border-slate-800">
-              <div className="flex items-center gap-2.5">
-                <div className="p-2 rounded-lg bg-violet-500/20 text-violet-300 border border-violet-500/30">
+      {/* 6. Human Confirmation Modal Surface (Mandatory 11 Fields & Strict AI Boundary) */}
+      {isConfirmModalOpen && activeBill && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="card-proptech max-w-2xl w-full bg-white border-[#D3DCE6] p-6 space-y-5 rounded-2xl shadow-elevated animate-fadeIn text-start">
+            {/* Modal Header */}
+            <div className="flex items-center justify-between pb-3 border-b border-[#E2E8F0]">
+              <div className="flex items-center gap-3">
+                <div className="p-2.5 rounded-xl bg-[#0E9F8E] text-white shadow-sm">
                   <ShieldCheck className="w-5 h-5" />
                 </div>
                 <div>
-                  <h3 className="text-lg font-bold text-white">
-                    {confirmActionType === 'POST'
-                      ? (isRo ? 'Confirmare Înregistrare Contabilă' : isFa ? 'تأیید نهایی ثبت سند حسابداری' : 'Confirm Financial Ledger Posting')
-                      : (isRo ? 'Revizuire Umană & Aprobare Factură' : isFa ? 'تأیید و صحه‌گذاری نهایی صورت‌حساب' : 'Human Review & Invoice Approval')}
+                  <h3 className="text-lg font-display font-extrabold text-[#102A43]">
+                    {confirmActionType === 'APPROVE'
+                      ? isRo ? 'Aprobare Umană Autorizată Factură Utilități' : isFa ? 'تأیید نهایی کاربر مجاز انسانی' : 'Authorized Human Sign-Off & Expense Approval'
+                      : isRo ? 'Confirmare Înregistrare în Partidă Dublă' : isFa ? 'تأیید ثبت در دفتر کل دوبل' : 'Confirm Double-Entry Ledger Posting'}
                   </h3>
-                  <span className="text-xs text-slate-400">
-                    {isRo ? 'Decizie financiară cu responsabilitate legală' : isFa ? 'مسئولیت ثبت اسناد مالی بر عهده کاربر است' : 'Auditable Financial Authorization'}
-                  </span>
+                  <span className="text-xs text-[#52667A] font-mono">Gate 5 Human Responsibility Sign-Off</span>
                 </div>
               </div>
-
               <button
                 type="button"
                 onClick={() => setIsConfirmModalOpen(false)}
-                className="p-1 text-slate-400 hover:text-white"
+                className="p-1.5 rounded-full bg-[#F0F4F8] text-[#52667A] hover:text-[#102A43]"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            {/* Strict AI Boundary Reminder */}
-            <div className="p-3 rounded-lg bg-violet-950/40 border border-violet-500/30 text-xs text-violet-200">
-              <strong>{isRo ? 'Limită de Siguranță AI:' : isFa ? 'قاعده بنیادین سیستم:' : 'AI Safety Boundary:'}</strong> {isRo ? 'Sistemul AI doar sugerează datele extrase; aprobarea și înregistrarea în contabilitate devin oficiale exclusiv prin confirmarea dumneavoastră umană. AI nu poate aproba, înregistra sau plăti independent.' : isFa ? 'سامانه هوش مصنوعی صرفاً داده‌های اولیه را استخراج می‌کند؛ ثبت نهایی و ایجاد تعهد مالی منحصراً با تأیید کاربر انسانی معتبر خواهد بود.' : 'AI solely provides suggestions; accounting and financial postings become legally effective only with your authorized human confirmation. AI cannot independently approve, post, or pay.'}
+            {/* AI Boundary Alert Banner */}
+            <div className="p-3.5 rounded-xl bg-[#EAF8F5] border border-[#B2E5DF] flex items-start gap-2.5 text-xs text-[#0A6E62]">
+              <Sparkles className="w-4 h-4 shrink-0 mt-0.5 text-[#0E9F8E]" />
+              <p>
+                <strong>AI Boundary Notice:</strong>{' '}
+                {isRo
+                  ? 'AI solely provides suggestions; accounting and financial postings become legally effective only with your authorized human confirmation. AI cannot independently approve, post, or pay.'
+                  : isFa
+                  ? 'هوش مصنوعی صرفاً نقش پیشنهاددهنده دارد؛ ثبت‌های مالی و تعهدات قانونی تنها پس از تأیید مستقیم کاربر مجاز انسانی نافذ خواهند بود. هوش مصنوعی امکان تأیید، ثبت یا پرداخت مستقل ندارد.'
+                  : 'AI solely provides suggestions; accounting and financial postings become legally effective only with your authorized human confirmation. AI cannot independently approve, post, or pay.'}
+              </p>
             </div>
 
-            {/* All 11 Required Financial Confirmation Parameters */}
-            <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2 text-xs">
-              {/* 1. Actor */}
-              <div className="flex justify-between py-1 border-b border-slate-800/60">
-                <span className="text-slate-400">{isRo ? '1. Operator Uman (Actor):' : isFa ? '۱. کاربر تأییدکننده:' : '1. Authorized Actor:'}</span>
-                <span className="font-mono text-white">Elena Popescu</span>
-              </div>
-              {/* 2. Role */}
-              <div className="flex justify-between py-1 border-b border-slate-800/60">
-                <span className="text-slate-400">{isRo ? '2. Rol Responsabil:' : isFa ? '۲. نقش کاربر:' : '2. Authorized Role:'}</span>
-                <span className="text-slate-200">Property Manager (Authorized Sign-Off)</span>
-              </div>
-              {/* 3. Building & Unit Context */}
-              <div className="flex justify-between py-1 border-b border-slate-800/60">
-                <span className="text-slate-400">{isRo ? '3. Imobil / Unitate:' : isFa ? '۳. ساختمان و واحد:' : '3. Building & Unit Context:'}</span>
-                <span className="text-slate-200">{selectedBill.buildingName} • {formatUnitName(selectedBill.unitNumber)}</span>
-              </div>
-              {/* 4. Supplier */}
-              <div className="flex justify-between py-1 border-b border-slate-800/60">
-                <span className="text-slate-400">{isRo ? '4. Furnizor & Factură:' : isFa ? '۴. تأمین‌کننده و شماره سند:' : '4. Supplier & Invoice #:'}</span>
-                <span className="font-mono text-white">{selectedBill.supplierName} ({selectedBill.invoiceNumber})</span>
-              </div>
-              {/* 5. Amount & Currency */}
-              <div className="flex justify-between py-1 border-b border-slate-800/60">
-                <span className="text-slate-400">{isRo ? '5. Sumă Totală & Monedă:' : isFa ? '۵. مبلغ کل سند:' : '5. Total Amount & Currency:'}</span>
-                <span className="font-mono font-bold text-violet-300 text-sm">
-                  {selectedBill.totalAmount.toLocaleString('ro-RO', { minimumFractionDigits: 2 })} {selectedBill.currency}
-                </span>
-              </div>
-              {/* 6. Accounting Code */}
-              <div className="flex justify-between py-1 border-b border-slate-800/60">
-                <span className="text-slate-400">{isRo ? '6. Cont Contabil:' : isFa ? '۶. کد حسابداری:' : '6. Accounting Code:'}</span>
-                <span className="font-mono text-slate-200">{selectedBill.accountingCode} ({formatAccountName(selectedBill.accountingCode, selectedBill.accountingAccountName)})</span>
-              </div>
-              {/* 7. Allocation Rule */}
-              <div className="flex justify-between py-1 border-b border-slate-800/60">
-                <span className="text-slate-400">{isRo ? '7. Regulă de Alocare:' : isFa ? '۷. قاعده تسهیم:' : '7. Allocation Rule:'}</span>
-                <span className="text-slate-200">{formatAllocationRuleName(selectedBill.ownerTenantSplit.allocationRuleName)}</span>
-              </div>
-              {/* 8. Owner / Tenant Split */}
-              <div className="flex justify-between py-1 border-b border-slate-800/60">
-                <span className="text-slate-400">{isRo ? '8. Separare Statutară:' : isFa ? '۸. تفکیک سهم مالک/مستأجر:' : '8. Statutory Split:'}</span>
-                <span className="text-slate-200 font-mono">{selectedBill.ownerTenantSplit.ownerPercent}% Owner ({selectedBill.ownerTenantSplit.ownerAmount.toLocaleString('ro-RO')} {selectedBill.currency}) / {selectedBill.ownerTenantSplit.tenantPercent}% Tenant ({selectedBill.ownerTenantSplit.tenantAmount.toLocaleString('ro-RO')} {selectedBill.currency})</span>
-              </div>
-              {/* 9. Evidence */}
-              <div className="flex justify-between py-1 border-b border-slate-800/60">
-                <span className="text-slate-400">{isRo ? '9. Dovadă & SPV ID:' : isFa ? '۹. مستند و شناسه سامانه:' : '9. Evidence & Source:'}</span>
-                <span className="font-mono text-cyan-300 text-[11px]">{selectedBill.originalDocumentName}</span>
-              </div>
-              {/* 10. Timestamp */}
-              <div className="flex justify-between py-1 border-b border-slate-800/60">
-                <span className="text-slate-400">{isRo ? '10. Timestamp Semnare:' : isFa ? '۱۰. زمان ثبت:' : '10. Signature Timestamp:'}</span>
-                <span className="font-mono text-slate-300">2026-11-04 14:30:00</span>
-              </div>
-              {/* 11. Audit ID */}
-              <div className="flex justify-between py-1">
-                <span className="text-slate-400">{isRo ? '11. Audit ID:' : isFa ? '۱۱. شناسه ممیزی:' : '11. Audit ID:'}</span>
-                <span className="font-mono text-violet-400 font-bold">{selectedBill.auditId}</span>
+            {/* Complete 11 Confirmation Parameters Grid */}
+            <div className="p-4 rounded-xl bg-[#F6F9FC] border border-[#E2E8F0] space-y-2 text-xs">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                {/* 1. Actor */}
+                <div className="flex justify-between p-2 rounded-lg bg-white border border-[#E2E8F0]">
+                  <span className="text-[#52667A] font-semibold">1. Actor:</span>
+                  <strong className="text-[#102A43]">Elena Popescu</strong>
+                </div>
+
+                {/* 2. Role */}
+                <div className="flex justify-between p-2 rounded-lg bg-white border border-[#E2E8F0]">
+                  <span className="text-[#52667A] font-semibold">2. Role:</span>
+                  <strong className="text-[#102A43]">Property Manager (Authorized Sign-Off)</strong>
+                </div>
+
+                {/* 3. Building / Unit Context */}
+                <div className="flex justify-between p-2 rounded-lg bg-white border border-[#E2E8F0]">
+                  <span className="text-[#52667A] font-semibold">3. Context:</span>
+                  <strong className="text-[#102A43]">{activeBill.buildingName} • {formatUnitName(activeBill.unitNumber)}</strong>
+                </div>
+
+                {/* 4. Supplier */}
+                <div className="flex justify-between p-2 rounded-lg bg-white border border-[#E2E8F0]">
+                  <span className="text-[#52667A] font-semibold">4. Supplier:</span>
+                  <strong className="text-[#102A43]">{activeBill.supplierName} ({activeBill.invoiceNumber})</strong>
+                </div>
+
+                {/* 5. Amount & Currency */}
+                <div className="flex justify-between p-2 rounded-lg bg-white border border-[#E2E8F0]">
+                  <span className="text-[#52667A] font-semibold">5. Total Amount:</span>
+                  <strong className="text-[#0E9F8E] font-mono text-sm tabular-nums">{formatRON(activeBill.totalAmount)}</strong>
+                </div>
+
+                {/* 6. Accounting Code */}
+                <div className="flex justify-between p-2 rounded-lg bg-white border border-[#E2E8F0]">
+                  <span className="text-[#52667A] font-semibold">6. Account Code:</span>
+                  <strong className="text-[#102A43] font-mono">{activeBill.accountingCode} — {formatAccountName(activeBill.accountingAccountName)}</strong>
+                </div>
+
+                {/* 7. Allocation Rule */}
+                <div className="flex justify-between p-2 rounded-lg bg-white border border-[#E2E8F0] sm:col-span-2">
+                  <span className="text-[#52667A] font-semibold">7. Allocation Rule:</span>
+                  <strong className="text-[#102A43]">{formatAllocationRuleName(activeBill.ownerTenantSplit?.allocationRuleName)}</strong>
+                </div>
+
+                {/* 8. Owner / Tenant Responsibility Split */}
+                <div className="flex justify-between p-2 rounded-lg bg-white border border-[#E2E8F0] sm:col-span-2">
+                  <span className="text-[#52667A] font-semibold">8. Responsibility Split:</span>
+                  <strong className="text-[#059669] font-mono">
+                    {formatPercent(activeBill.ownerTenantSplit?.ownerPercent || 0)} {isRo ? 'Proprietar (0,00 RON)' : isFa ? 'مالک (۰٫۰۰ لئو)' : 'Owner (0.00 RON)'} / {formatPercent(activeBill.ownerTenantSplit?.tenantPercent || 100)} {isRo ? 'Chiriaș (3.420,50 RON)' : isFa ? 'مستأجر (۳۴۲۰٫۵۰ لئو)' : 'Tenant (3,420.50 RON)'}
+                  </strong>
+                </div>
+
+                {/* 9. Evidence & Source Scan */}
+                <div className="flex justify-between p-2 rounded-lg bg-white border border-[#E2E8F0]">
+                  <span className="text-[#52667A] font-semibold">9. Evidence:</span>
+                  <strong className="text-[#1E62C4] font-mono">{activeBill.originalDocumentName || 'factura_enel_octombrie_2026_8849201.pdf'}</strong>
+                </div>
+
+                {/* 10. Timestamp */}
+                <div className="flex justify-between p-2 rounded-lg bg-white border border-[#E2E8F0]">
+                  <span className="text-[#52667A] font-semibold">10. Timestamp:</span>
+                  <strong className="text-[#102A43] font-mono">2026-11-04 14:30:00</strong>
+                </div>
+
+                {/* 11. Audit ID */}
+                <div className="flex justify-between p-2 rounded-lg bg-white border border-[#E2E8F0] sm:col-span-2">
+                  <span className="text-[#52667A] font-semibold">11. Audit Token:</span>
+                  <strong className="text-[#0E9F8E] font-mono">AUD-HA-884921</strong>
+                </div>
               </div>
             </div>
 
-            {/* Modal Action Buttons: Back / Cancel + Explicit Confirm */}
-            <div className="flex items-center justify-end gap-3 pt-2">
+            {/* Modal Actions */}
+            <div className="flex items-center justify-end gap-3 pt-3 border-t border-[#E2E8F0]">
               <button
                 type="button"
                 onClick={() => setIsConfirmModalOpen(false)}
-                className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold transition-colors"
+                className="px-4 py-2 rounded-xl bg-[#F0F4F8] hover:bg-[#E2E8F0] text-[#102A43] text-xs font-bold border border-[#D3DCE6] transition-all"
               >
-                {isRo ? 'Anulează / Înapoi' : isFa ? 'انصراف / بازگشت' : 'Back / Cancel'}
+                {isRo ? 'Anulează / Înapoi' : isFa ? 'انصراف / بازگشت' : 'Cancel / Back'}
               </button>
+
               <button
                 type="button"
-                onClick={handleExecuteConfirmation}
-                className="px-5 py-2 rounded-xl bg-violet-600 hover:bg-violet-500 text-white text-xs font-semibold shadow-lg shadow-violet-600/30 flex items-center gap-2 transition-all"
+                onClick={confirmActionType === 'APPROVE' ? handleExecuteApproval : handleExecutePost}
+                className="px-5 py-2.5 rounded-xl bg-[#0E9F8E] hover:bg-[#0C8778] text-white text-xs font-bold shadow-sm transition-all flex items-center gap-1.5"
               >
                 <Check className="w-4 h-4" />
                 <span>
-                  {confirmActionType === 'POST'
-                    ? (isRo ? 'Confirm Înregistrarea în Jurnal' : isFa ? 'تأیید و ثبت در اسناد' : 'Confirm General Ledger Post')
-                    : (isRo ? 'Confirm Aprobarea Facturii' : isFa ? 'تأیید نهایی صورت‌حساب' : 'Confirm Invoice Approval')}
+                  {confirmActionType === 'APPROVE'
+                    ? isRo ? 'Confirm & Aprobă Factura' : isFa ? 'تأیید و صدور مجوز' : 'Confirm & Authorize Sign-Off'
+                    : isRo ? 'Confirm & Înregistrează în Jurnal' : isFa ? 'تأیید و ثبت در دفتر کل' : 'Confirm & Post to Ledger'}
                 </span>
               </button>
             </div>
-
           </div>
         </div>
       )}

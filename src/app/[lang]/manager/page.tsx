@@ -16,10 +16,6 @@ import {
   Clock
 } from 'lucide-react';
 
-
-
-
-
 export async function generateStaticParams() {
   return [{ lang: 'en' }, { lang: 'ro' }, { lang: 'fa' }];
 }
@@ -47,8 +43,8 @@ export default function ManagerPage({
 
       {/* Header Hero */}
       <div className="text-center max-w-3xl mx-auto space-y-4">
-        <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full glass-panel border border-violet-500/20 text-xs font-semibold text-violet-300">
-          <Layers className="w-3.5 h-3.5" />
+        <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#EAF8F5] border border-[#B2E5DF] text-xs font-bold text-[#0A6E62]">
+          <Layers className="w-3.5 h-3.5 text-[#0E9F8E]" />
           <span>Manager OS</span>
         </div>
         <h1 className="text-4xl sm:text-6xl font-display font-extrabold text-white tracking-tight">
@@ -64,7 +60,7 @@ export default function ManagerPage({
         <div className="pt-4 flex justify-center gap-4">
           <Link
             href={`/${lang}/pilot`}
-            className="px-6 py-3 rounded-xl text-sm font-bold text-white bg-gradient-to-r from-violet-600 to-brand-500 shadow-lg flex items-center gap-2"
+            className="px-6 py-3 rounded-xl text-sm font-bold text-white bg-[#0E9F8E] hover:bg-[#0C8778] shadow-sm flex items-center gap-2 transition-all"
           >
             <span>{dict.common.startPilot}</span>
             <ArrowRight className="w-4 h-4 rtl:rotate-180" />
@@ -81,8 +77,8 @@ export default function ManagerPage({
       {/* Enterprise Features Grid */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="p-8 rounded-3xl glass-panel border border-white/10 space-y-3">
-          <div className="p-3 rounded-xl bg-violet-500/10 text-violet-400 w-fit">
-            <Zap className="w-6 h-6" />
+          <div className="p-3 rounded-xl bg-brand-500/10 text-brand-400 w-fit">
+            <Zap className="w-6 h-6 text-[#0E9F8E]" />
           </div>
           <h3 className="text-xl font-bold text-white">
             {isRo
@@ -102,7 +98,7 @@ export default function ManagerPage({
 
         <div className="p-8 rounded-3xl glass-panel border border-white/10 space-y-3">
           <div className="p-3 rounded-xl bg-brand-500/10 text-brand-400 w-fit">
-            <Clock className="w-6 h-6" />
+            <Clock className="w-6 h-6 text-[#0E9F8E]" />
           </div>
           <h3 className="text-xl font-bold text-white">
             {isRo
@@ -122,7 +118,7 @@ export default function ManagerPage({
 
         <div className="p-8 rounded-3xl glass-panel border border-white/10 space-y-3">
           <div className="p-3 rounded-xl bg-emerald-500/10 text-emerald-400 w-fit">
-            <Users2 className="w-6 h-6" />
+            <Users2 className="w-6 h-6 text-[#10B981]" />
           </div>
           <h3 className="text-xl font-bold text-white">
             {isRo
@@ -142,24 +138,24 @@ export default function ManagerPage({
       </div>
 
       {/* M25 Utility Bills & Invoice Intelligence Spotlight */}
-      <div className="p-8 rounded-3xl glass-panel border border-violet-500/40 bg-gradient-to-b from-violet-950/20 to-slate-950/80 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+      <div className="card-proptech p-6 sm:p-8 bg-white border-[#E2E8F0] shadow-card flex flex-col md:flex-row items-start md:items-center justify-between gap-6 text-start">
         <div className="space-y-2">
           <div className="flex items-center gap-2">
-            <span className="px-3 py-1 rounded-md bg-violet-500/20 text-violet-300 font-mono text-xs font-semibold border border-violet-500/30">
+            <span className="px-3 py-1 rounded-full bg-[#EAF8F5] text-[#0A6E62] font-mono text-xs font-bold border border-[#B2E5DF]">
               Workspace M25
             </span>
-            <span className="text-xs text-slate-400">
+            <span className="text-xs text-[#52667A]">
               {isRo ? 'Inteligență Financiară & Facturi' : isFa ? 'هوش پردازش قبوض و اسناد' : 'Invoice Intelligence'}
             </span>
           </div>
-          <h2 className="text-2xl font-bold text-white">
+          <h2 className="text-2xl font-display font-extrabold text-[#102A43]">
             {isRo
               ? 'Facturi Utilități & OCR Asistat'
               : isFa
               ? 'قبوض آب و برق و هوش استخراج صورت‌حساب‌ها'
               : 'Utility Bills & Invoice Intelligence'}
           </h2>
-          <p className="text-sm text-slate-300 max-w-2xl leading-relaxed">
+          <p className="text-sm text-[#52667A] max-w-2xl leading-relaxed">
             {isRo
               ? 'Ingestie multi-canal (e-Factura, Email, OCR, CSV, API), reconciliere automată indexuri contoare, verificare tarife și aprobare umană obligatorie conform Legii 196/2018.'
               : isFa
@@ -170,7 +166,7 @@ export default function ManagerPage({
 
         <Link
           href={`/${lang}/ui/manager/utility-bills`}
-          className="px-6 py-3 rounded-xl bg-violet-600 hover:bg-violet-500 text-white text-xs font-semibold inline-flex items-center gap-2 shadow-lg shadow-violet-600/30 transition-all shrink-0"
+          className="px-6 py-3 rounded-xl bg-[#0E9F8E] hover:bg-[#0C8778] text-white text-xs font-bold inline-flex items-center gap-2 shadow-sm transition-all shrink-0"
         >
           <span>{isRo ? 'Deschide Spațiul de Lucru M25' : isFa ? 'ورود به پنل M25' : 'Open M25 Workspace'}</span>
           <ArrowRight className="w-4 h-4 rtl:rotate-180" />
