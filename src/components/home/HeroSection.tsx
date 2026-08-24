@@ -34,7 +34,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ lang }) => {
         <div className="text-center max-w-4xl mx-auto mt-6 space-y-5">
           <h1 className="text-4xl sm:text-6xl font-display font-extrabold text-[#102A43] tracking-tight leading-[1.15]">
             {dict.hero.titleLine1}{' '}
-            <span className="text-[#087A6E] bg-clip-text text-transparent bg-gradient-to-r from-[#0E9F8E] to-[#10B981]">{dict.hero.titleLine2}</span>
+            <span className="gradient-text-teal">{dict.hero.titleLine2}</span>
           </h1>
 
           <p className="text-lg sm:text-xl text-[#52667A] max-w-3xl mx-auto leading-relaxed font-normal">
