@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { use } from 'react';
 import { Language } from '@/types';
 import { 
   TrendingUp, 
@@ -15,7 +15,8 @@ import { Money } from '@/components/ui/Money';
 import { formatPercent } from '@/config/currencies';
 import { formatPropertyUnitDetails, formatTenantDisplay, formatGregorianDate, formatAddress } from '@/config/formatters';
 
-export default function PortfolioPage({ params }: { params: { lang: Language } }) {
+export default function PortfolioPage(props: { params: Promise<{ lang: Language }> }) {
+  const params = use(props.params);
   const { lang } = params;
   const { portfolioProperties } = useDemoStore();
 

@@ -1,28 +1,39 @@
 import { redirect } from 'next/navigation';
-import type { Language } from '@/types';
+import { isSupportedLocale } from '@/types';
 import { AppShell } from '@/components/app/AppShell';
 import { isSupabaseConfigured } from '@/lib/supabase/env';
 import { createClient } from '@/lib/supabase/server';
 
 export const dynamic = 'force-dynamic';
 
-export default async function AppLayout({
-  children,
-  params,
-}: {
-  children: React.ReactNode;
-  params: { lang: Language };
-}) {
-  if (!isSupabaseConfigured()) {
-    redirect(`/${params.lang}/login?reason=configuration`);
+export default async function AppLayout(
+  props: {
+    children: React.ReactNode;
+    params: Promise<{ lang: string }>;
+  }
+) {
+  const params = await props.params;
+
+  const { lang } = params;
+
+  if (!isSupportedLocale(lang)) {
+    redirect('/ro/login');
   }
 
-  const supabase = createClient();
+  const {
+    children
+  } = props;
+
+  if (!isSupabaseConfigured()) {
+    redirect(`/${lang}/login?reason=configuration`);
+  }
+
+  const supabase = await createClient();
   const { data, error } = await supabase.auth.getClaims();
 
   if (error || !data?.claims) {
-    redirect(`/${params.lang}/login`);
+    redirect(`/${lang}/login`);
   }
 
-  return <AppShell params={params}>{children}</AppShell>;
+  return <AppShell params={{ lang }}>{children}</AppShell>;
 }

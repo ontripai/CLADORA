@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { use } from 'react';
 import Link from 'next/link';
 import { Language } from '@/types';
 import { Scale, Receipt, ArrowRight, ShieldCheck } from 'lucide-react';
@@ -11,7 +11,8 @@ import { formatPercent } from '@/config/currencies';
 import { formatExpenseCategory, formatAllocationMethod } from '@/config/formatters';
 import { MOCK_CHARGE_BREAKDOWN } from '@/data/mockData';
 
-export default function AllocationsPage({ params }: { params: { lang: Language } }) {
+export default function AllocationsPage(props: { params: Promise<{ lang: Language }> }) {
+  const params = use(props.params);
   const { lang } = params;
   const { chargeBreakdown } = useDemoStore();
 

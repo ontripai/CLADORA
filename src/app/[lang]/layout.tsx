@@ -1,7 +1,8 @@
 import React from 'react';
 import type { Metadata } from 'next';
 import { Inter, Manrope, Vazirmatn } from 'next/font/google';
-import { Language, SUPPORTED_LOCALES, getLocaleConfig, getIntlLocale } from '@/types';
+import { SUPPORTED_LOCALES, getLocaleConfig, getIntlLocale, isSupportedLocale } from '@/types';
+import { notFound } from 'next/navigation';
 import { AppOrMarketingLayout } from '@/components/layout/AppOrMarketingLayout';
 import { getSiteUrl } from '@/config/site';
 
@@ -30,11 +31,12 @@ export async function generateStaticParams() {
   return SUPPORTED_LOCALES.map((lang) => ({ lang }));
 }
 
-export async function generateMetadata({
-  params,
-}: {
-  params: { lang: Language };
-}): Promise<Metadata> {
+export async function generateMetadata(
+  props: {
+    params: Promise<{ lang: string }>;
+  }
+): Promise<Metadata> {
+  const params = await props.params;
   const isRo = params.lang === 'ro';
   const isFa = params.lang === 'fa';
 
@@ -116,13 +118,22 @@ export async function generateMetadata({
   };
 }
 
-export default function LangLayout({
-  children,
-  params,
-}: {
-  children: React.ReactNode;
-  params: { lang: Language };
-}) {
+export default async function LangLayout(
+  props: {
+    children: React.ReactNode;
+    params: Promise<{ lang: string }>;
+  }
+) {
+  const params = await props.params;
+
+  if (!isSupportedLocale(params.lang)) {
+    notFound();
+  }
+
+  const {
+    children
+  } = props;
+
   const locale = getLocaleConfig(params.lang);
   const baseUrl = getSiteUrl();
   const isRo = params.lang === 'ro';

@@ -1,11 +1,12 @@
 'use client';
 
-import React from 'react';
+import React, { use } from 'react';
 import { Language } from '@/types';
 import { FolderArchive, FileText, Download, ShieldCheck } from 'lucide-react';
 import { getActionLabel } from '@/config/actions';
 
-export default function DocumentsPage({ params }: { params: { lang: Language } }) {
+export default function DocumentsPage(props: { params: Promise<{ lang: Language }> }) {
+  const params = use(props.params);
   const { lang } = params;
 
   const docs = [

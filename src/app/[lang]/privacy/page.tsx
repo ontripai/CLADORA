@@ -13,15 +13,17 @@ export async function generateStaticParams() {
 }
 
 
-export async function generateMetadata({
-  params,
-}: {
-  params: { lang: Language };
-}): Promise<Metadata> {
+export async function generateMetadata(
+  props: {
+    params: Promise<{ lang: Language }>;
+  }
+): Promise<Metadata> {
+  const params = await props.params;
   return getRouteMetadata('/privacy', params.lang);
 }
 
-export default function PrivacyPage({ params }: { params: { lang: Language } }) {
+export default async function PrivacyPage(props: { params: Promise<{ lang: Language }> }) {
+  const params = await props.params;
   const { lang } = params;
 
   return (

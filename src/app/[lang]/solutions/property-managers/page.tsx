@@ -24,19 +24,21 @@ export async function generateStaticParams() {
   return [{ lang: 'en' }, { lang: 'ro' }, { lang: 'fa' }];
 }
 
-export async function generateMetadata({
-  params,
-}: {
-  params: { lang: Language };
-}): Promise<Metadata> {
+export async function generateMetadata(
+  props: {
+    params: Promise<{ lang: Language }>;
+  }
+): Promise<Metadata> {
+  const params = await props.params;
   return getRouteMetadata('/solutions/property-managers', params.lang);
 }
 
-export default function PropertyManagersSolutionPage({
-  params,
-}: {
-  params: { lang: Language };
-}) {
+export default async function PropertyManagersSolutionPage(
+  props: {
+    params: Promise<{ lang: Language }>;
+  }
+) {
+  const params = await props.params;
   const lang = params.lang;
 
   return (

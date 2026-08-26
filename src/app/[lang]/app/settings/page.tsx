@@ -1,13 +1,14 @@
 'use client';
 
-import React from 'react';
+import React, { use } from 'react';
 import { Language } from '@/types';
 import { Settings, ShieldCheck, User, Building, Bell } from 'lucide-react';
 import { useDemoStore } from '@/data/demoStore';
 
 import { formatRoleTitle, formatUnitLabel } from '@/config/formatters';
 
-export default function SettingsPage({ params }: { params: { lang: Language } }) {
+export default function SettingsPage(props: { params: Promise<{ lang: Language }> }) {
+  const params = use(props.params);
   const { lang } = params;
   const { activeRole, context } = useDemoStore();
 
