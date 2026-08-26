@@ -4,28 +4,51 @@ set local search_path = public, extensions;
 select plan(4);
 
 select ok(
-  to_regprocedure('public.rls_auto_enable()') is not null,
-  'RLS auto-enable event trigger function exists'
+  coalesce((
+    select p.prosecdef
+    from pg_catalog.pg_proc p
+    join pg_catalog.pg_namespace n on n.oid = p.pronamespace
+    where n.nspname = 'public'
+      and p.proname = 'rls_auto_enable'
+      and pg_catalog.pg_get_function_identity_arguments(p.oid) = ''
+  ), true),
+  'hosted RLS auto-enable function remains SECURITY DEFINER when present'
 );
 
 select ok(
-  (select p.prosecdef
-   from pg_catalog.pg_proc p
-   join pg_catalog.pg_namespace n on n.oid = p.pronamespace
-   where n.nspname = 'public'
-     and p.proname = 'rls_auto_enable'
-     and pg_catalog.pg_get_function_identity_arguments(p.oid) = ''),
-  'RLS auto-enable function remains SECURITY DEFINER for event-trigger execution'
+  coalesce((
+    select not has_function_privilege('anon', p.oid, 'EXECUTE')
+    from pg_catalog.pg_proc p
+    join pg_catalog.pg_namespace n on n.oid = p.pronamespace
+    where n.nspname = 'public'
+      and p.proname = 'rls_auto_enable'
+      and pg_catalog.pg_get_function_identity_arguments(p.oid) = ''
+  ), true),
+  'anon cannot execute the hosted SECURITY DEFINER function directly'
 );
 
 select ok(
-  not has_function_privilege('anon', 'public.rls_auto_enable()', 'EXECUTE'),
-  'anon cannot execute the SECURITY DEFINER function directly'
+  coalesce((
+    select not has_function_privilege('authenticated', p.oid, 'EXECUTE')
+    from pg_catalog.pg_proc p
+    join pg_catalog.pg_namespace n on n.oid = p.pronamespace
+    where n.nspname = 'public'
+      and p.proname = 'rls_auto_enable'
+      and pg_catalog.pg_get_function_identity_arguments(p.oid) = ''
+  ), true),
+  'authenticated cannot execute the hosted SECURITY DEFINER function directly'
 );
 
 select ok(
-  not has_function_privilege('authenticated', 'public.rls_auto_enable()', 'EXECUTE'),
-  'authenticated cannot execute the SECURITY DEFINER function directly'
+  coalesce((
+    select not has_function_privilege('service_role', p.oid, 'EXECUTE')
+    from pg_catalog.pg_proc p
+    join pg_catalog.pg_namespace n on n.oid = p.pronamespace
+    where n.nspname = 'public'
+      and p.proname = 'rls_auto_enable'
+      and pg_catalog.pg_get_function_identity_arguments(p.oid) = ''
+  ), true),
+  'service_role cannot execute the hosted SECURITY DEFINER function directly'
 );
 
 select * from finish();
