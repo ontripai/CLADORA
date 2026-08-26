@@ -40,3 +40,28 @@ npm run lint
 # Production Build
 npm run build
 ```
+
+## Database Foundation
+
+The complete CLADORA Supabase blueprint is included under `supabase/`:
+
+- migrations `000–020`
+- 112 tables and 115 RLS policies
+- 10 pgTAP files with 230 assertions
+- deterministic synthetic seed data
+
+Run the dependency-free contract check with:
+
+```bash
+npm run test:db:static
+```
+
+With Docker and Supabase CLI available:
+
+```bash
+npm run db:start
+npm run db:reset
+npm run db:test
+```
+
+Read `docs/database/RUNTIME_VALIDATION_RUNBOOK_FA.md` before linking a remote project.
