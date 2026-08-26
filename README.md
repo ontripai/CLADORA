@@ -45,9 +45,9 @@ npm run build
 
 The complete CLADORA Supabase blueprint is included under `supabase/`:
 
-- migrations `000–020`
+- migrations `000–021`
 - 112 tables and 115 RLS policies
-- 10 pgTAP files with 230 assertions
+- 11 pgTAP files with 234 assertions
 - deterministic synthetic seed data
 
 Run the dependency-free contract check with:
