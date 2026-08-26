@@ -13,14 +13,17 @@
     "test:unit": "node scripts/test-currency-unit.mjs",
     "test:i18n": "node scripts/audit-untranslated-copy.mjs",
     "test:db:static": "node scripts/check-database-package.mjs",
-    "test": "npm run test:unit && npm run test:i18n && npm run test:db:static",
+    "test:app-foundation": "node scripts/test-supabase-foundation.mjs",
+    "test": "npm run test:unit && npm run test:i18n && npm run test:db:static && npm run test:app-foundation",
     "db:start": "supabase start",
     "db:reset": "supabase db reset",
     "db:test": "supabase test db",
     "db:stop": "supabase stop",
-    "db:types": "supabase gen types typescript --local --schema public,platform,identity,portfolio,occupancy,finance,billing,payments,utilities,assets,maintenance,governance,communications,documents,migration_hub,audit"
+    "db:types": "supabase gen types typescript --local --schema public,platform,identity,portfolio,occupancy,finance,billing,payments,utilities,assets,maintenance,governance,communications,documents,migration_hub,audit > src/types/database.generated.ts"
   },
   "dependencies": {
+    "@supabase/ssr": "0.12.5",
+    "@supabase/supabase-js": "2.112.4",
     "clsx": "^2.1.1",
     "lucide-react": "^0.453.0",
     "next": "^14.2.15",
