@@ -4,7 +4,9 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Language } from '@/types';
-import { ArrowRight, Lock, Mail, PlayCircle } from 'lucide-react';
+import { ArrowRight, Loader2, Lock, Mail, PlayCircle } from 'lucide-react';
+import { createClient } from '@/lib/supabase/client';
+import { isSupabaseConfigured } from '@/lib/supabase/env';
 
 interface LoginFormProps {
   lang: Language;
@@ -14,10 +16,46 @@ export const LoginForm: React.FC<LoginFormProps> = ({ lang }) => {
   const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const configured = isSupabaseConfigured();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    router.push(`/${lang}/app/dashboard`);
+    setError(null);
+
+    if (!configured) {
+      setError(
+        lang === 'ro'
+          ? 'Conexiunea securizată nu este configurată încă.'
+          : lang === 'fa'
+            ? 'اتصال امن Supabase هنوز پیکربندی نشده است.'
+            : 'The secure Supabase connection is not configured yet.',
+      );
+      return;
+    }
+
+    setIsSubmitting(true);
+    const supabase = createClient();
+    const { error: signInError } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+    if (signInError) {
+      setError(
+        lang === 'ro'
+          ? 'Emailul sau parola nu sunt corecte.'
+          : lang === 'fa'
+            ? 'ایمیل یا رمز عبور صحیح نیست.'
+            : 'The email or password is incorrect.',
+      );
+      setIsSubmitting(false);
+      return;
+    }
+
+    router.replace(`/${lang}/app/dashboard`);
+    router.refresh();
   };
 
   return (
@@ -86,11 +124,17 @@ export const LoginForm: React.FC<LoginFormProps> = ({ lang }) => {
 
         <button
           type="submit"
-          className="w-full py-3 px-4 rounded-xl bg-[#087A6E] hover:bg-[#065F55] text-white text-xs font-extrabold shadow-sm transition-all flex items-center justify-center gap-2"
+          disabled={isSubmitting}
+          className="w-full py-3 px-4 rounded-xl bg-[#087A6E] hover:bg-[#065F55] disabled:cursor-not-allowed disabled:opacity-60 text-white text-xs font-extrabold shadow-sm transition-all flex items-center justify-center gap-2"
         >
-          <span>{lang === 'ro' ? 'Intră în Cont' : lang === 'fa' ? 'ورود به حساب کاربری' : 'Sign in to Account'}</span>
-          <ArrowRight className="w-4 h-4 rtl:rotate-180" />
+          <span>{isSubmitting ? (lang === 'ro' ? 'Se verifică…' : lang === 'fa' ? 'در حال بررسی…' : 'Signing in…') : (lang === 'ro' ? 'Intră în Cont' : lang === 'fa' ? 'ورود به حساب کاربری' : 'Sign in to Account')}</span>
+          {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <ArrowRight className="w-4 h-4 rtl:rotate-180" />}
         </button>
+        {error && (
+          <p role="alert" className="rounded-xl border border-[#F5B7B1] bg-[#FFF1F0] px-3 py-2 text-xs font-semibold text-[#B42318]">
+            {error}
+          </p>
+        )}
       </form>
 
       {/* Demo Sandbox Fast Access */}
