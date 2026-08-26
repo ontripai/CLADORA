@@ -12,15 +12,17 @@ export async function generateStaticParams() {
 }
 
 
-export async function generateMetadata({
-  params,
-}: {
-  params: { lang: Language };
-}): Promise<Metadata> {
+export async function generateMetadata(
+  props: {
+    params: Promise<{ lang: Language }>;
+  }
+): Promise<Metadata> {
+  const params = await props.params;
   return getRouteMetadata('/login', params.lang);
 }
 
-export default function LoginPage({ params }: { params: { lang: Language } }) {
+export default async function LoginPage(props: { params: Promise<{ lang: Language }> }) {
+  const params = await props.params;
   return (
     <main className="min-h-screen pt-32 pb-24 bg-[#F6F9FC] flex items-center justify-center">
       <div className="max-w-md w-full mx-auto px-4">

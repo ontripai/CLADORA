@@ -24,12 +24,13 @@ export async function generateStaticParams() {
 
 
 interface PageProps {
-  params: {
+  params: Promise<{
     lang: Language;
-  };
+  }>;
 }
 
-export default function HomePage({ params }: PageProps) {
+export default async function HomePage(props: PageProps) {
+  const params = await props.params;
   const { lang } = params;
 
   return (

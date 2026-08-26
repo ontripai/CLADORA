@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, use } from 'react';
 import { Language } from '@/types';
 import { 
   Gauge, 
@@ -15,7 +15,8 @@ import { formatNumber } from '@/config/currencies';
 import { getActionLabel } from '@/config/actions';
 import { formatUnitLabel } from '@/config/formatters';
 
-export default function MetersPage({ params }: { params: { lang: Language } }) {
+export default function MetersPage(props: { params: Promise<{ lang: Language }> }) {
+  const params = use(props.params);
   const { lang } = params;
   const { meterReadings, addMeterReading } = useDemoStore();
 

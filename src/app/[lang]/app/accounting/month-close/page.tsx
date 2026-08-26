@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, use } from 'react';
 import Link from 'next/link';
 import { Language } from '@/types';
 import { 
@@ -19,7 +19,8 @@ import { getActionLabel } from '@/config/actions';
 import { getStatusLabel } from '@/config/statuses';
 import { formatAccountingPeriod } from '@/config/formatters';
 
-export default function MonthClosePage({ params }: { params: { lang: Language } }) {
+export default function MonthClosePage(props: { params: Promise<{ lang: Language }> }) {
+  const params = use(props.params);
   const { lang } = params;
   const { monthCloseState, updateMonthCloseChecklist, sealMonthClose } = useDemoStore();
 

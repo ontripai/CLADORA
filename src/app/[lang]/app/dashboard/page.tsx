@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { use } from 'react';
 import Link from 'next/link';
 import { Language } from '@/types';
 import { 
@@ -34,7 +34,8 @@ import {
 } from '@/config/formatters';
 import { formatStatusBadge } from '@/config/statuses';
 
-export default function DashboardPage({ params }: { params: { lang: Language } }) {
+export default function DashboardPage(props: { params: Promise<{ lang: Language }> }) {
+  const params = use(props.params);
   const { lang } = params;
   const { 
     activeRole, 

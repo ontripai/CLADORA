@@ -65,3 +65,21 @@ npm run db:test
 ```
 
 Read `docs/database/RUNTIME_VALIDATION_RUNBOOK_FA.md` before linking a remote project.
+
+## Supabase application foundation
+
+The application uses request-scoped `@supabase/ssr` clients and signed JWT claim
+verification for localized `/ro|en|fa/app/**` routes. Copy `.env.example` to
+`.env.local` and provide only the browser-safe project URL and publishable key:
+
+```bash
+NEXT_PUBLIC_SUPABASE_URL=https://YOUR_PROJECT_REF.supabase.co
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=YOUR_PUBLISHABLE_KEY
+```
+
+Never expose a Supabase secret or `service_role` key to the browser. Run the
+application security contract with:
+
+```bash
+npm run test:app-foundation
+```

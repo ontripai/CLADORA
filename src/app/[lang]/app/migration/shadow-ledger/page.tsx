@@ -1,11 +1,12 @@
 'use client';
 
-import React from 'react';
+import React, { use } from 'react';
 import { Language } from '@/types';
 import { Database, ShieldCheck, RefreshCw } from 'lucide-react';
 import { ShadowLedgerDemo } from '@/components/interactive/ShadowLedgerDemo';
 
-export default function ShadowLedgerAppPage({ params }: { params: { lang: Language } }) {
+export default function ShadowLedgerAppPage(props: { params: Promise<{ lang: Language }> }) {
+  const params = use(props.params);
   const { lang } = params;
 
   return (
