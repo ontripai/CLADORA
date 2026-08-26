@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, use } from 'react';
 import Link from 'next/link';
 import { Language } from '@/types';
 import { getDictionary } from '@/dictionaries';
@@ -19,11 +19,12 @@ import {
   RotateCcw
 } from 'lucide-react';
 
-export default function UserTestingPage({
-  params,
-}: {
-  params: { lang: Language };
-}) {
+export default function UserTestingPage(
+  props: {
+    params: Promise<{ lang: Language }>;
+  }
+) {
+  const params = use(props.params);
   const lang = params.lang;
   const dict = getDictionary(params.lang);
   const isRo = lang === 'ro';

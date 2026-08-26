@@ -12,15 +12,17 @@ export async function generateStaticParams() {
 }
 
 
-export async function generateMetadata({
-  params,
-}: {
-  params: { lang: Language };
-}): Promise<Metadata> {
+export async function generateMetadata(
+  props: {
+    params: Promise<{ lang: Language }>;
+  }
+): Promise<Metadata> {
+  const params = await props.params;
   return getRouteMetadata('/demo', params.lang);
 }
 
-export default function DemoEntryPage({ params }: { params: { lang: Language } }) {
+export default async function DemoEntryPage(props: { params: Promise<{ lang: Language }> }) {
+  const params = await props.params;
   return (
     <main className="min-h-screen pt-32 pb-24 bg-[#F6F9FC]">
       <DemoRoleSelector lang={params.lang} />

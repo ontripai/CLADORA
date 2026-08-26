@@ -1,11 +1,12 @@
 'use client';
 
-import React from 'react';
+import React, { use } from 'react';
 import { Language } from '@/types';
 import { FileCheck2, ShieldCheck, Lock, Search } from 'lucide-react';
 import { formatMoney } from '@/config/currencies';
 
-export default function AuditTrailPage({ params }: { params: { lang: Language } }) {
+export default function AuditTrailPage(props: { params: Promise<{ lang: Language }> }) {
+  const params = use(props.params);
   const { lang } = params;
 
   const logs = [

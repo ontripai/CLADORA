@@ -1,11 +1,12 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, use } from 'react';
 import { Language } from '@/types';
 import { Megaphone, Plus, CheckCircle2, Clock, Users, Send } from 'lucide-react';
 import { formatNumber } from '@/config/currencies';
 
-export default function CommunicationsPage({ params }: { params: { lang: Language } }) {
+export default function CommunicationsPage(props: { params: Promise<{ lang: Language }> }) {
+  const params = use(props.params);
   const { lang } = params;
 
   const announcements = [

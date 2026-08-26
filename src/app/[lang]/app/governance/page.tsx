@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, use } from 'react';
 import { Language } from '@/types';
 import { 
   Vote, 
@@ -13,7 +13,8 @@ import {
 } from 'lucide-react';
 import { Money } from '@/components/ui/Money';
 
-export default function GovernancePage({ params }: { params: { lang: Language } }) {
+export default function GovernancePage(props: { params: Promise<{ lang: Language }> }) {
+  const params = use(props.params);
   const { lang } = params;
   const [userVote, setUserVote] = useState<'FOR' | 'AGAINST' | 'ABSTAIN' | null>('FOR');
 

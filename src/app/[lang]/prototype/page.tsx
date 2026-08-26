@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, use } from 'react';
 import Link from 'next/link';
 import { Language } from '@/types';
 import { getDictionary } from '@/dictionaries';
@@ -29,11 +29,12 @@ import {
   Loader2
 } from 'lucide-react';
 
-export default function PrototypePage({
-  params,
-}: {
-  params: { lang: Language };
-}) {
+export default function PrototypePage(
+  props: {
+    params: Promise<{ lang: Language }>;
+  }
+) {
+  const params = use(props.params);
   const lang = params.lang;
   const dict = getDictionary(params.lang);
   const isRo = lang === 'ro';

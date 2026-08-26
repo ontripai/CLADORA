@@ -13,15 +13,17 @@ export async function generateStaticParams() {
 }
 
 
-export async function generateMetadata({
-  params,
-}: {
-  params: { lang: Language };
-}): Promise<Metadata> {
+export async function generateMetadata(
+  props: {
+    params: Promise<{ lang: Language }>;
+  }
+): Promise<Metadata> {
+  const params = await props.params;
   return getRouteMetadata('/accessibility', params.lang);
 }
 
-export default function AccessibilityPage({ params }: { params: { lang: Language } }) {
+export default async function AccessibilityPage(props: { params: Promise<{ lang: Language }> }) {
+  const params = await props.params;
   const { lang } = params;
 
   return (

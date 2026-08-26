@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, use } from 'react';
 import Link from 'next/link';
 import { Language } from '@/types';
 import { 
@@ -17,7 +17,8 @@ import { Money } from '@/components/ui/Money';
 import { formatNumber } from '@/config/currencies';
 import { getStatusLabel, EntityStatus } from '@/config/statuses';
 
-export default function AccountingPage({ params }: { params: { lang: Language } }) {
+export default function AccountingPage(props: { params: Promise<{ lang: Language }> }) {
+  const params = use(props.params);
   const { lang } = params;
   const { journalEntries } = useDemoStore();
   const [searchTerm, setSearchTerm] = useState('');

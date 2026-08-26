@@ -14,19 +14,21 @@ export async function generateStaticParams() {
   return [{ lang: 'en' }, { lang: 'ro' }, { lang: 'fa' }];
 }
 
-export async function generateMetadata({
-  params,
-}: {
-  params: { lang: Language };
-}): Promise<Metadata> {
+export async function generateMetadata(
+  props: {
+    params: Promise<{ lang: Language }>;
+  }
+): Promise<Metadata> {
+  const params = await props.params;
   return getRouteMetadata('/building-dna', params.lang);
 }
 
-export default function BuildingDnaPage({
-  params,
-}: {
-  params: { lang: Language };
-}) {
+export default async function BuildingDnaPage(
+  props: {
+    params: Promise<{ lang: Language }>;
+  }
+) {
+  const params = await props.params;
   const dict = getDictionary(params.lang);
   const lang = params.lang;
   const isRo = lang === 'ro';

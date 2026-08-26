@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, use } from 'react';
 import { Language } from '@/types';
 import { 
   Wrench, 
@@ -17,7 +17,8 @@ import { getStatusLabel, formatStatusBadge } from '@/config/statuses';
 import { getActionLabel } from '@/config/actions';
 import { getLocalizedWorkOrder } from '@/config/formatters';
 
-export default function MaintenancePage({ params }: { params: { lang: Language } }) {
+export default function MaintenancePage(props: { params: Promise<{ lang: Language }> }) {
+  const params = use(props.params);
   const { lang } = params;
   const { workOrders, addWorkOrder } = useDemoStore();
 
