@@ -38,9 +38,9 @@ begin
     (v_plat_supp, 'PLATFORM_SUPPORT', 'active', 'Fixture Supp');
 
   -- Workspaces
-  insert into platform.tenants (id, name, slug) values
-    (v_tenant_a, 'Tenant A', 'tenant-a'),
-    (v_tenant_b, 'Tenant B', 'tenant-b');
+  insert into platform.tenants (id, legal_name, registration_number) values
+    (v_tenant_a, 'Tenant A SRL', 'RO-TENANT-A'),
+    (v_tenant_b, 'Tenant B SRL', 'RO-TENANT-B');
 
   insert into platform.customer_workspaces (id, tenant_id, workspace_type, lifecycle_status, commercial_owner, environment) values
     (v_ws_a, v_tenant_a, 'ASSOCIATION', 'ACTIVE', 'Owner A', 'PILOT'),

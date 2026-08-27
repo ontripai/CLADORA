@@ -25,16 +25,16 @@ begin
   values (v_plat_user_id, 'PLATFORM_SUPER_ADMIN', 'active', 'Test fixture');
 
   -- 2. Create mock tenants and workspaces
-  insert into platform.tenants (id, name, slug)
-  values ('c0000000-0000-0000-0000-000000000001'::uuid, 'Test Tenant Pilot', 'test-tenant-pilot')
+  insert into platform.tenants (id, legal_name, registration_number)
+  values ('c0000000-0000-0000-0000-000000000001'::uuid, 'Test Tenant Pilot SRL', 'RO-PILOT-001')
   returning id into v_tenant_id;
 
   insert into platform.customer_workspaces (id, tenant_id, workspace_type, lifecycle_status, commercial_owner, environment, version)
   values ('d0000000-0000-0000-0000-000000000001'::uuid, v_tenant_id, 'ASSOCIATION', 'LEAD', 'Test Association Owner', 'PILOT', 1)
   returning id into v_ws_id;
 
-  insert into platform.tenants (id, name, slug)
-  values ('c0000000-0000-0000-0000-000000000002'::uuid, 'Test Tenant Prod', 'test-tenant-prod')
+  insert into platform.tenants (id, legal_name, registration_number)
+  values ('c0000000-0000-0000-0000-000000000002'::uuid, 'Test Tenant Prod SRL', 'RO-PROD-002')
   returning id into v_prod_tenant_id;
 
   insert into platform.customer_workspaces (id, tenant_id, workspace_type, lifecycle_status, commercial_owner, environment, version)
