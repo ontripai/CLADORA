@@ -68,6 +68,8 @@ check(callback.includes('httpOnly: true'), 'callback stores invitation token in 
 check(callback.includes("destination.searchParams.delete('token')"), 'callback removes invitation token from the browser URL');
 check(acceptanceApi.includes("request.headers.get('origin')"), 'acceptance POST enforces same-origin requests');
 check(acceptanceApi.includes('supabase.auth.getClaims()'), 'acceptance endpoint verifies signed claims');
+check(acceptanceApi.includes("'get_my_primary_admin_onboarding'"), 'acceptance resolves onboarding state through an actor-scoped RPC');
+check(!acceptanceApi.includes("from('customer_workspaces')"), 'customer acceptance never bypasses platform workspace RLS with a direct read');
 check(acceptancePage.includes("get('cladora-invitation')"), 'acceptance page reads the server-only invitation cookie');
 check(example.includes('YOUR_PUBLISHABLE_KEY'), 'example contains placeholders only');
 check(!example.includes('SERVICE_ROLE'), 'example does not request service-role credentials');
