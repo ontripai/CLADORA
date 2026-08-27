@@ -188,6 +188,14 @@ export type Database = {
           onboarding_required: boolean;
         }>;
       };
+      complete_primary_admin_onboarding: {
+        Args: { p_workspace_id: string; p_expected_version: number; p_reason: string };
+        Returns: Database['platform']['Tables']['customer_workspaces']['Row'];
+      };
+      get_my_primary_admin_onboarding: {
+        Args: { p_workspace_id: string };
+        Returns: Array<{ customer_workspace_id: string; workspace_version: number; onboarding_completed: boolean }>;
+      };
       [key: string]: {
         Args: Record<string, unknown>;
         Returns: unknown;
@@ -295,6 +303,11 @@ export type Database = {
           suspended_at: string | null;
           terminated_at: string | null;
           archived_at: string | null;
+          primary_admin_user_id: string | null;
+          primary_admin_membership_id: string | null;
+          primary_admin_accepted_at: string | null;
+          onboarding_completed_at: string | null;
+          onboarding_completed_by: string | null;
         };
         Insert: {
           id?: string;
@@ -310,6 +323,11 @@ export type Database = {
           suspended_at?: string | null;
           terminated_at?: string | null;
           archived_at?: string | null;
+          primary_admin_user_id?: string | null;
+          primary_admin_membership_id?: string | null;
+          primary_admin_accepted_at?: string | null;
+          onboarding_completed_at?: string | null;
+          onboarding_completed_by?: string | null;
         };
         Update: {
           id?: string;
@@ -325,6 +343,11 @@ export type Database = {
           suspended_at?: string | null;
           terminated_at?: string | null;
           archived_at?: string | null;
+          primary_admin_user_id?: string | null;
+          primary_admin_membership_id?: string | null;
+          primary_admin_accepted_at?: string | null;
+          onboarding_completed_at?: string | null;
+          onboarding_completed_by?: string | null;
         };
         Relationships: [];
       };
@@ -887,6 +910,14 @@ export type Database = {
           membership_id: string;
           onboarding_required: boolean;
         }>;
+      };
+      complete_primary_admin_onboarding: {
+        Args: { p_workspace_id: string; p_expected_version: number; p_reason: string };
+        Returns: Database['platform']['Tables']['customer_workspaces']['Row'];
+      };
+      get_my_primary_admin_onboarding: {
+        Args: { p_workspace_id: string };
+        Returns: Array<{ customer_workspace_id: string; workspace_version: number; onboarding_completed: boolean }>;
       };
     };
     Enums: {

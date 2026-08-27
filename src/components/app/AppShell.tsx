@@ -37,10 +37,12 @@ import { formatUnitLabel, formatAccountingPeriod } from '@/config/formatters';
 
 export function AppShell({
   children,
-  params
+  params,
+  demoMode = false,
 }: {
   children: React.ReactNode;
   params: { lang: Language };
+  demoMode?: boolean;
 }) {
   const { lang } = params;
   const pathname = usePathname();
@@ -56,21 +58,22 @@ export function AppShell({
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
   const [roleDropdownOpen, setRoleDropdownOpen] = useState(false);
+  const appBase = `/${lang}/${demoMode ? 'demo/app' : 'app'}`;
 
   const navItems = [
-    { label: lang === 'ro' ? 'Tablou Principal' : lang === 'fa' ? 'داشبورد اصلی' : 'Dashboard', href: `/${lang}/app/dashboard`, icon: Home },
-    { label: lang === 'ro' ? 'Contabilitate & Partidă Dublă' : lang === 'fa' ? 'حسابداری و دفتر کل' : 'Accounting & Ledger', href: `/${lang}/app/accounting`, icon: FileSpreadsheet },
-    { label: lang === 'ro' ? 'Închidere Lunară' : lang === 'fa' ? 'بستن دوره ماهانه' : 'Month-End Close', href: `/${lang}/app/accounting/month-close`, icon: CheckCircle2 },
-    { label: lang === 'ro' ? 'Cote & Alocare (CPI)' : lang === 'fa' ? 'تخصیص سهم مشاع (CPI)' : 'Allocations & Rights', href: `/${lang}/app/accounting/allocations`, icon: Receipt },
-    { label: lang === 'ro' ? 'Contoare & Consum' : lang === 'fa' ? 'کنتورها و مصارف' : 'Utilities & Meters', href: `/${lang}/app/meters`, icon: Gauge },
-    { label: lang === 'ro' ? 'Mentenanță & Tichete' : lang === 'fa' ? 'تعمیرات و تیکت‌ها' : 'Maintenance & Tickets', href: `/${lang}/app/maintenance`, icon: Wrench },
-    { label: lang === 'ro' ? 'Adunare Generală & Vot' : lang === 'fa' ? 'مجمع عمومی و رأی‌گیری' : 'Governance & Voting', href: `/${lang}/app/governance`, icon: Vote },
-    { label: lang === 'ro' ? 'Avizier & Comunicare' : lang === 'fa' ? 'تابلو اعلانات و پیام‌ها' : 'Noticeboard & Comms', href: `/${lang}/app/communications`, icon: Megaphone },
-    { label: lang === 'ro' ? 'Documente & Registru' : lang === 'fa' ? 'اسناد و مدارک' : 'Documents & Registry', href: `/${lang}/app/documents`, icon: FolderArchive },
-    { label: lang === 'ro' ? 'Portofoliu Proprietar' : lang === 'fa' ? 'سبد املاک سرمایه‌گذار' : 'Portfolio OS', href: `/${lang}/app/portfolio`, icon: TrendingUp },
-    { label: lang === 'ro' ? 'Migrare Shadow Ledger' : lang === 'fa' ? 'مهاجرت Shadow Ledger' : 'Shadow Ledger Migration', href: `/${lang}/app/migration/shadow-ledger`, icon: Database },
-    { label: lang === 'ro' ? 'Jurnal de Audit' : lang === 'fa' ? 'ردپای حسابرسی' : 'Audit Trail', href: `/${lang}/app/audit`, icon: FileCheck2 },
-    { label: lang === 'ro' ? 'Setări & Permisiuni' : lang === 'fa' ? 'تنظیمات و دسترسی‌ها' : 'Settings & Roles', href: `/${lang}/app/settings`, icon: Settings },
+    { label: lang === 'ro' ? 'Tablou Principal' : lang === 'fa' ? 'داشبورد اصلی' : 'Dashboard', href: `${appBase}/dashboard`, icon: Home },
+    { label: lang === 'ro' ? 'Contabilitate & Partidă Dublă' : lang === 'fa' ? 'حسابداری و دفتر کل' : 'Accounting & Ledger', href: `${appBase}/accounting`, icon: FileSpreadsheet },
+    { label: lang === 'ro' ? 'Închidere Lunară' : lang === 'fa' ? 'بستن دوره ماهانه' : 'Month-End Close', href: `${appBase}/accounting/month-close`, icon: CheckCircle2 },
+    { label: lang === 'ro' ? 'Cote & Alocare (CPI)' : lang === 'fa' ? 'تخصیص سهم مشاع (CPI)' : 'Allocations & Rights', href: `${appBase}/accounting/allocations`, icon: Receipt },
+    { label: lang === 'ro' ? 'Contoare & Consum' : lang === 'fa' ? 'کنتورها و مصارف' : 'Utilities & Meters', href: `${appBase}/meters`, icon: Gauge },
+    { label: lang === 'ro' ? 'Mentenanță & Tichete' : lang === 'fa' ? 'تعمیرات و تیکت‌ها' : 'Maintenance & Tickets', href: `${appBase}/maintenance`, icon: Wrench },
+    { label: lang === 'ro' ? 'Adunare Generală & Vot' : lang === 'fa' ? 'مجمع عمومی و رأی‌گیری' : 'Governance & Voting', href: `${appBase}/governance`, icon: Vote },
+    { label: lang === 'ro' ? 'Avizier & Comunicare' : lang === 'fa' ? 'تابلو اعلانات و پیام‌ها' : 'Noticeboard & Comms', href: `${appBase}/communications`, icon: Megaphone },
+    { label: lang === 'ro' ? 'Documente & Registru' : lang === 'fa' ? 'اسناد و مدارک' : 'Documents & Registry', href: `${appBase}/documents`, icon: FolderArchive },
+    { label: lang === 'ro' ? 'Portofoliu Proprietar' : lang === 'fa' ? 'سبد املاک سرمایه‌گذار' : 'Portfolio OS', href: `${appBase}/portfolio`, icon: TrendingUp },
+    { label: lang === 'ro' ? 'Migrare Shadow Ledger' : lang === 'fa' ? 'مهاجرت Shadow Ledger' : 'Shadow Ledger Migration', href: `${appBase}/migration/shadow-ledger`, icon: Database },
+    { label: lang === 'ro' ? 'Jurnal de Audit' : lang === 'fa' ? 'ردپای حسابرسی' : 'Audit Trail', href: `${appBase}/audit`, icon: FileCheck2 },
+    { label: lang === 'ro' ? 'Setări & Permisiuni' : lang === 'fa' ? 'تنظیمات و دسترسی‌ها' : 'Settings & Roles', href: `${appBase}/settings`, icon: Settings },
   ];
 
   const currentRoleDef = DEMO_ROLES.find(r => r.key === activeRole) || DEMO_ROLES[0];
@@ -207,7 +210,7 @@ export function AppShell({
           <nav className="flex-1 p-3 space-y-1 overflow-y-auto">
             {navItems.map((item) => {
               const Icon = item.icon;
-              const isActive = pathname === item.href || (item.href !== `/${lang}/app/dashboard` && pathname?.startsWith(item.href));
+              const isActive = pathname === item.href || (item.href !== `${appBase}/dashboard` && pathname?.startsWith(item.href));
               return (
                 <Link
                   key={item.href}
@@ -256,9 +259,9 @@ export function AppShell({
       {/* Mobile Bottom Navigation Bar (5 Primary Actions) */}
       <div className="md:hidden fixed bottom-0 inset-x-0 bg-white border-t border-[#E2E8F0] h-16 px-4 flex items-center justify-around z-40 shadow-lg">
         <Link
-          href={`/${lang}/app/dashboard`}
+          href={`${appBase}/dashboard`}
           className={`flex flex-col items-center gap-1 text-[10px] font-bold ${
-            pathname === `/${lang}/app/dashboard` ? 'text-[#0E9F8E]' : 'text-[#7B8A9A]'
+            pathname === `${appBase}/dashboard` ? 'text-[#0E9F8E]' : 'text-[#7B8A9A]'
           }`}
         >
           <Home className="w-5 h-5" />
@@ -266,7 +269,7 @@ export function AppShell({
         </Link>
 
         <Link
-          href={`/${lang}/app/accounting/allocations`}
+          href={`${appBase}/accounting/allocations`}
           className={`flex flex-col items-center gap-1 text-[10px] font-bold ${
             pathname?.includes('allocations') ? 'text-[#0E9F8E]' : 'text-[#7B8A9A]'
           }`}
@@ -276,7 +279,7 @@ export function AppShell({
         </Link>
 
         <Link
-          href={`/${lang}/app/meters`}
+          href={`${appBase}/meters`}
           className={`flex flex-col items-center gap-1 text-[10px] font-bold ${
             pathname?.includes('meters') ? 'text-[#0E9F8E]' : 'text-[#7B8A9A]'
           }`}
@@ -286,7 +289,7 @@ export function AppShell({
         </Link>
 
         <Link
-          href={`/${lang}/app/maintenance`}
+          href={`${appBase}/maintenance`}
           className={`flex flex-col items-center gap-1 text-[10px] font-bold ${
             pathname?.includes('maintenance') ? 'text-[#0E9F8E]' : 'text-[#7B8A9A]'
           }`}

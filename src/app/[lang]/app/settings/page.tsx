@@ -6,6 +6,7 @@ import { Settings, ShieldCheck, User, Building, Bell } from 'lucide-react';
 import { useDemoStore } from '@/data/demoStore';
 
 import { formatRoleTitle, formatUnitLabel } from '@/config/formatters';
+import { AccountSecurityPanel } from '@/components/auth/AccountSecurityPanel';
 
 export default function SettingsPage(props: { params: Promise<{ lang: Language }> }) {
   const params = use(props.params);
@@ -88,7 +89,7 @@ export default function SettingsPage(props: { params: Promise<{ lang: Language }
           <div className="space-y-2 pt-2 border-t border-[#F0F4F8] text-xs">
             <div className="flex justify-between p-2.5 rounded-lg bg-[#F6F9FC]">
               <span className="text-[#52667A]">{lang === 'ro' ? 'Autentificare în doi pași (2FA):' : lang === 'fa' ? 'احراز هویت دو مرحله‌ای (2FA):' : 'Two-factor authentication:'}</span>
-              <span className="font-bold text-[#10B981]">{lang === 'ro' ? 'Activată' : lang === 'fa' ? 'فعال' : 'Enabled'}</span>
+              <span className="font-bold text-[#52667A]">{lang === 'ro' ? 'Vezi starea reală mai jos' : lang === 'fa' ? 'وضعیت واقعی در پایین' : 'See live status below'}</span>
             </div>
             <div className="flex justify-between p-2.5 rounded-lg bg-[#F6F9FC]">
               <span className="text-[#52667A]">{lang === 'ro' ? 'Notificări avizier pe email:' : lang === 'fa' ? 'ارسال اعلانات تابلو به ایمیل:' : 'Email noticeboard alerts:'}</span>
@@ -100,6 +101,8 @@ export default function SettingsPage(props: { params: Promise<{ lang: Language }
             </div>
           </div>
         </div>
+
+        <AccountSecurityPanel lang={lang} />
 
       </div>
 

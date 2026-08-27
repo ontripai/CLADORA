@@ -73,8 +73,25 @@ export async function POST(request: NextRequest) {
     );
   }
 
+  const accepted = Array.isArray(data) ? data[0] : data;
+  const workspaceId = accepted?.customer_workspace_id;
+  let workspaceVersion: number | undefined;
+  if (workspaceId) {
+    const { data: onboarding, error: onboardingError } = await supabase.schema('platform').rpc(
+      'get_my_primary_admin_onboarding',
+      { p_workspace_id: workspaceId },
+    );
+    const state = Array.isArray(onboarding) ? onboarding[0] : onboarding;
+    workspaceVersion = state?.workspace_version;
+    if (onboardingError || !workspaceVersion) {
+      return NextResponse.json(
+        { error: { code: 'ONBOARDING_STATE_UNAVAILABLE', message: 'Onboarding state could not be resolved.' } },
+        { status: 409, headers: NO_CACHE_HEADERS },
+      );
+    }
+  }
   const response = NextResponse.json(
-    { accepted: true, onboarding_required: true },
+    { accepted: true, onboarding_required: true, workspace_id: workspaceId, workspace_version: workspaceVersion },
     { status: 200, headers: NO_CACHE_HEADERS },
   );
   response.cookies.set(INVITATION_COOKIE, '', {

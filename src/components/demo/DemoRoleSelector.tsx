@@ -21,7 +21,7 @@ export const DemoRoleSelector: React.FC<DemoRoleSelectorProps> = ({ lang }) => {
 
   const handleSelectRole = (role: UserRole) => {
     setActiveRole(role);
-    router.push(`/${lang}/app/dashboard`);
+    router.push(`/${lang}/demo/app/dashboard`);
   };
 
   return (

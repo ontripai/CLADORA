@@ -7,6 +7,7 @@ import { Language } from '@/types';
 import { ArrowRight, Loader2, Lock, Mail, PlayCircle } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import { isSupabaseConfigured } from '@/lib/supabase/env';
+import { TurnstileWidget } from '@/components/auth/TurnstileWidget';
 
 interface LoginFormProps {
   lang: Language;
@@ -18,7 +19,9 @@ export const LoginForm: React.FC<LoginFormProps> = ({ lang }) => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
   const configured = isSupabaseConfigured();
+  const captchaSiteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -40,6 +43,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ lang }) => {
     const { error: signInError } = await supabase.auth.signInWithPassword({
       email,
       password,
+      options: captchaToken ? { captchaToken } : undefined,
     });
 
     if (signInError) {
@@ -51,6 +55,26 @@ export const LoginForm: React.FC<LoginFormProps> = ({ lang }) => {
             : 'The email or password is incorrect.',
       );
       setIsSubmitting(false);
+      return;
+    }
+
+    const { data: assurance, error: assuranceError } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
+    if (assuranceError) {
+      await supabase.auth.signOut();
+      setError(
+        lang === 'ro'
+          ? 'Starea de securitate a contului nu a putut fi verificată.'
+          : lang === 'fa'
+            ? 'وضعیت امنیتی حساب قابل بررسی نبود.'
+            : 'The account security state could not be verified.',
+      );
+      setIsSubmitting(false);
+      return;
+    }
+
+    if (assurance.nextLevel === 'aal2' && assurance.currentLevel !== 'aal2') {
+      router.replace(`/${lang}/mfa`);
+      router.refresh();
       return;
     }
 
@@ -122,6 +146,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ lang }) => {
           </div>
         </div>
 
+        {captchaSiteKey && <TurnstileWidget siteKey={captchaSiteKey} lang={lang} onToken={setCaptchaToken} />}
         <button
           type="submit"
           disabled={isSubmitting}
