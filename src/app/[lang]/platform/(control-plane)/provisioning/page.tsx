@@ -1,6 +1,7 @@
 import React from 'react';
-import { Terminal, CheckCircle2, Clock, RotateCcw, AlertTriangle } from 'lucide-react';
+import { Terminal } from 'lucide-react';
 import type { ProvisioningRun, ProvisioningTask } from '@/types/platform';
+import { DemoEnvironmentBanner } from '@/components/platform/DemoEnvironmentBanner';
 
 export const dynamic = 'force-dynamic';
 
@@ -137,6 +138,9 @@ export default async function PlatformProvisioningPage(props: {
           </p>
         </div>
       </div>
+
+      {/* Demo Banner */}
+      <DemoEnvironmentBanner lang={lang} />
 
       {/* Provisioning Runs List */}
       <div className="space-y-4">

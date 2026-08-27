@@ -1,6 +1,6 @@
 import React from 'react';
-import { LifeBuoy, ShieldAlert, CheckCircle, Lock, AlertTriangle } from 'lucide-react';
-import type { SupportAccessRequest, SupportAccessGrant } from '@/types/platform';
+import { LifeBuoy, ShieldAlert, Lock } from 'lucide-react';
+import { DemoEnvironmentBanner } from '@/components/platform/DemoEnvironmentBanner';
 
 export const dynamic = 'force-dynamic';
 
@@ -42,6 +42,9 @@ export default async function PlatformSupportPage(props: {
           </span>
         </div>
       </div>
+
+      {/* Demo Banner */}
+      <DemoEnvironmentBanner lang={lang} />
 
       {/* Safety Directive Card */}
       <div className="p-6 bg-[#0F2236] rounded-xl border border-[#1E3A5A] space-y-4">

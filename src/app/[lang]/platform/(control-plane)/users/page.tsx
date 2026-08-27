@@ -1,6 +1,7 @@
 import React from 'react';
-import { Users2, Shield, UserCheck, Lock } from 'lucide-react';
-import type { PlatformUser, PlatformRoleAssignment } from '@/types/platform';
+import { Users2 } from 'lucide-react';
+import type { PlatformUser } from '@/types/platform';
+import { DemoEnvironmentBanner } from '@/components/platform/DemoEnvironmentBanner';
 
 export const dynamic = 'force-dynamic';
 
@@ -82,6 +83,9 @@ export default async function PlatformUsersPage(props: {
           </p>
         </div>
       </div>
+
+      {/* Demo Banner */}
+      <DemoEnvironmentBanner lang={lang} />
 
       {/* Users Table */}
       <div className="bg-[#0F2236] rounded-xl border border-[#1E3A5A] overflow-hidden shadow-sm">

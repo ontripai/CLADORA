@@ -43,6 +43,49 @@ export type Database = {
         };
         Returns: Database['platform']['Tables']['provisioning_runs']['Row'];
       };
+      grant_customer_assignment: {
+        Args: {
+          p_platform_user_id: string;
+          p_customer_workspace_id: string;
+          p_scope_type?: string;
+          p_scope_id?: string | null;
+          p_valid_until?: string | null;
+          p_reason?: string;
+        };
+        Returns: Database['platform']['Tables']['platform_customer_assignments']['Row'];
+      };
+      revoke_customer_assignment: {
+        Args: {
+          p_assignment_id: string;
+          p_reason: string;
+        };
+        Returns: Database['platform']['Tables']['platform_customer_assignments']['Row'];
+      };
+      request_support_access: {
+        Args: {
+          p_workspace_id: string;
+          p_ticket_ref: string;
+          p_purpose: string;
+          p_requested_scope?: string;
+          p_sensitivity_level?: string;
+        };
+        Returns: Database['platform']['Tables']['support_access_requests']['Row'];
+      };
+      approve_support_access: {
+        Args: {
+          p_request_id: string;
+          p_duration_interval?: string;
+          p_evidence?: Json;
+        };
+        Returns: Database['platform']['Tables']['support_access_grants']['Row'];
+      };
+      revoke_support_access: {
+        Args: {
+          p_grant_id: string;
+          p_reason: string;
+        };
+        Returns: Database['platform']['Tables']['support_access_grants']['Row'];
+      };
       enforce_entitlement_quota: {
         Args: {
           p_workspace_id: string;
@@ -52,14 +95,6 @@ export type Database = {
           p_reason?: string;
         };
         Returns: boolean;
-      };
-      approve_support_access: {
-        Args: {
-          p_request_id: string;
-          p_duration_interval?: string;
-          p_evidence?: Json;
-        };
-        Returns: Database['platform']['Tables']['support_access_grants']['Row'];
       };
       [key: string]: {
         Args: Record<string, unknown>;
@@ -583,6 +618,49 @@ export type Database = {
         };
         Returns: Database['platform']['Tables']['provisioning_runs']['Row'];
       };
+      grant_customer_assignment: {
+        Args: {
+          p_platform_user_id: string;
+          p_customer_workspace_id: string;
+          p_scope_type?: string;
+          p_scope_id?: string | null;
+          p_valid_until?: string | null;
+          p_reason?: string;
+        };
+        Returns: Database['platform']['Tables']['platform_customer_assignments']['Row'];
+      };
+      revoke_customer_assignment: {
+        Args: {
+          p_assignment_id: string;
+          p_reason: string;
+        };
+        Returns: Database['platform']['Tables']['platform_customer_assignments']['Row'];
+      };
+      request_support_access: {
+        Args: {
+          p_workspace_id: string;
+          p_ticket_ref: string;
+          p_purpose: string;
+          p_requested_scope?: string;
+          p_sensitivity_level?: string;
+        };
+        Returns: Database['platform']['Tables']['support_access_requests']['Row'];
+      };
+      approve_support_access: {
+        Args: {
+          p_request_id: string;
+          p_duration_interval?: string;
+          p_evidence?: Json;
+        };
+        Returns: Database['platform']['Tables']['support_access_grants']['Row'];
+      };
+      revoke_support_access: {
+        Args: {
+          p_grant_id: string;
+          p_reason: string;
+        };
+        Returns: Database['platform']['Tables']['support_access_grants']['Row'];
+      };
       enforce_entitlement_quota: {
         Args: {
           p_workspace_id: string;
@@ -592,14 +670,6 @@ export type Database = {
           p_reason?: string;
         };
         Returns: boolean;
-      };
-      approve_support_access: {
-        Args: {
-          p_request_id: string;
-          p_duration_interval?: string;
-          p_evidence?: Json;
-        };
-        Returns: Database['platform']['Tables']['support_access_grants']['Row'];
       };
     };
     Enums: {

@@ -1,6 +1,7 @@
 import React from 'react';
-import { Layers, ShieldCheck, Check, Sparkles } from 'lucide-react';
+import { Layers, Check } from 'lucide-react';
 import type { SubscriptionPlan } from '@/types/platform';
+import { DemoEnvironmentBanner } from '@/components/platform/DemoEnvironmentBanner';
 
 export const dynamic = 'force-dynamic';
 
@@ -106,6 +107,9 @@ export default async function PlatformPlansPage(props: {
           </p>
         </div>
       </div>
+
+      {/* Demo Banner */}
+      <DemoEnvironmentBanner lang={lang} />
 
       {/* Plans Grid */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

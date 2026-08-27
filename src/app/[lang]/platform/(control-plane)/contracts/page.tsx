@@ -1,6 +1,7 @@
 import React from 'react';
-import { FileCheck2, FileText, CheckCircle, Clock } from 'lucide-react';
+import { FileCheck2 } from 'lucide-react';
 import type { WorkspaceContract } from '@/types/platform';
+import { DemoEnvironmentBanner } from '@/components/platform/DemoEnvironmentBanner';
 
 export const dynamic = 'force-dynamic';
 
@@ -76,6 +77,9 @@ export default async function PlatformContractsPage(props: {
           </p>
         </div>
       </div>
+
+      {/* Demo Banner */}
+      <DemoEnvironmentBanner lang={lang} />
 
       {/* Contracts Table */}
       <div className="bg-[#0F2236] rounded-xl border border-[#1E3A5A] overflow-hidden shadow-sm">

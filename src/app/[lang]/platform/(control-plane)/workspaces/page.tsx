@@ -1,6 +1,7 @@
 import React from 'react';
-import { Building2, Plus, ArrowRight, ShieldCheck, AlertCircle } from 'lucide-react';
+import { Building2, Plus, AlertCircle } from 'lucide-react';
 import type { CustomerWorkspace, WorkspaceLifecycleStatus } from '@/types/platform';
+import { DemoEnvironmentBanner } from '@/components/platform/DemoEnvironmentBanner';
 
 export const dynamic = 'force-dynamic';
 
@@ -114,6 +115,9 @@ export default async function PlatformWorkspacesPage(props: {
           <span>{isRo ? 'Nou Spațiu de Lucru' : isFa ? 'ایجاد محیط کاری جدید' : 'New Workspace'}</span>
         </button>
       </div>
+
+      {/* Demo Banner */}
+      <DemoEnvironmentBanner lang={lang} />
 
       {/* Notice on ENG-010 Dependency */}
       <div className="p-4 bg-[#0F2236] rounded-xl border border-[#1E3A5A] flex items-start gap-3 text-xs text-slate-300">

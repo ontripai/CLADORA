@@ -1,6 +1,7 @@
 import React from 'react';
-import { KeyRound, ShieldCheck, UserCheck, Calendar } from 'lucide-react';
+import { KeyRound } from 'lucide-react';
 import type { PlatformCustomerAssignment } from '@/types/platform';
+import { DemoEnvironmentBanner } from '@/components/platform/DemoEnvironmentBanner';
 
 export const dynamic = 'force-dynamic';
 
@@ -86,6 +87,9 @@ export default async function PlatformAssignmentsPage(props: {
           </p>
         </div>
       </div>
+
+      {/* Demo Banner */}
+      <DemoEnvironmentBanner lang={lang} />
 
       {/* Assignments Table */}
       <div className="bg-[#0F2236] rounded-xl border border-[#1E3A5A] overflow-hidden shadow-sm">

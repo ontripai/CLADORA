@@ -2,33 +2,66 @@ import { NextResponse } from 'next/server';
 import { getPlatformAuthContext, hasPlatformRole } from '@/lib/platform/auth';
 import { createClient } from '@/lib/supabase/server';
 
+const NO_CACHE_HEADERS = {
+  'Cache-Control': 'no-store, private',
+};
+
 export async function GET(request: Request) {
   const authCtx = await getPlatformAuthContext();
   if (!authCtx.isAuthorized || !authCtx.platformUser) {
-    return NextResponse.json({ error: 'unauthorized_platform_access' }, { status: 401 });
+    return NextResponse.json(
+      { error: { code: 'UNAUTHORIZED_PLATFORM_ACCESS', message: 'Authentication as a platform user is required' } },
+      { status: 401, headers: NO_CACHE_HEADERS }
+    );
   }
 
+  const { searchParams } = new URL(request.url);
+  const limit = Math.min(Math.max(Number(searchParams.get('limit')) || 20, 1), 50);
+  const offset = Math.max(Number(searchParams.get('offset')) || 0, 0);
+
   const supabase = await createClient();
-  let query = supabase.schema('platform').from('customer_workspaces').select('*');
+  let query = supabase
+    .schema('platform')
+    .from('customer_workspaces')
+    .select('*', { count: 'exact' });
 
   if (!hasPlatformRole(authCtx, ['PLATFORM_SUPER_ADMIN', 'PLATFORM_AUDITOR'])) {
     const assignedIds = authCtx.assignments.map((a) => a.customer_workspace_id);
     query = query.in('id', assignedIds.length > 0 ? assignedIds : ['00000000-0000-0000-0000-000000000000']);
   }
 
-  const { data, error } = await query.order('created_at', { ascending: false });
+  const { data, count, error } = await query
+    .order('created_at', { ascending: false })
+    .range(offset, offset + limit - 1);
 
   if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json(
+      { error: { code: 'DATABASE_QUERY_FAILED', message: 'Failed to retrieve workspaces' } },
+      { status: 500, headers: NO_CACHE_HEADERS }
+    );
   }
 
-  return NextResponse.json({ workspaces: data });
+  return NextResponse.json(
+    {
+      workspaces: data,
+      pagination: {
+        total: count ?? 0,
+        limit,
+        offset,
+        hasMore: (offset + limit) < (count ?? 0),
+      },
+    },
+    { status: 200, headers: NO_CACHE_HEADERS }
+  );
 }
 
 export async function POST(request: Request) {
   const authCtx = await getPlatformAuthContext();
   if (!hasPlatformRole(authCtx, ['PLATFORM_SUPER_ADMIN', 'PLATFORM_OPERATIONS'])) {
-    return NextResponse.json({ error: 'insufficient_role_privileges' }, { status: 403 });
+    return NextResponse.json(
+      { error: { code: 'INSUFFICIENT_ROLE_PRIVILEGES', message: 'Operations or Super Admin role required' } },
+      { status: 403, headers: NO_CACHE_HEADERS }
+    );
   }
 
   try {
@@ -36,7 +69,18 @@ export async function POST(request: Request) {
     const { tenant_id, workspace_type, commercial_owner, environment } = body;
 
     if (!tenant_id || !workspace_type || !commercial_owner) {
-      return NextResponse.json({ error: 'missing_required_fields' }, { status: 400 });
+      return NextResponse.json(
+        { error: { code: 'INVALID_REQUEST_PAYLOAD', message: 'tenant_id, workspace_type, and commercial_owner are required' } },
+        { status: 400, headers: NO_CACHE_HEADERS }
+      );
+    }
+
+    const validTypes = ['ASSOCIATION', 'PROPERTY_MANAGER', 'OWNER_PORTFOLIO', 'HYBRID'];
+    if (!validTypes.includes(workspace_type)) {
+      return NextResponse.json(
+        { error: { code: 'INVALID_WORKSPACE_TYPE', message: `workspace_type must be one of: ${validTypes.join(', ')}` } },
+        { status: 400, headers: NO_CACHE_HEADERS }
+      );
     }
 
     const supabase = await createClient();
@@ -47,18 +91,24 @@ export async function POST(request: Request) {
         tenant_id,
         workspace_type,
         commercial_owner,
-        environment: environment || 'PILOT',
+        environment: environment === 'PRODUCTION' ? 'PRODUCTION' : 'PILOT',
         lifecycle_status: 'LEAD',
       })
       .select()
       .single();
 
     if (error) {
-      return NextResponse.json({ error: error.message }, { status: 500 });
+      return NextResponse.json(
+        { error: { code: 'WORKSPACE_CREATION_FAILED', message: 'Failed to create customer workspace' } },
+        { status: 500, headers: NO_CACHE_HEADERS }
+      );
     }
 
-    return NextResponse.json({ workspace: data }, { status: 201 });
-  } catch (err: unknown) {
-    return NextResponse.json({ error: (err as Error).message || 'invalid_request' }, { status: 400 });
+    return NextResponse.json({ workspace: data }, { status: 201, headers: NO_CACHE_HEADERS });
+  } catch {
+    return NextResponse.json(
+      { error: { code: 'MALFORMED_JSON', message: 'Invalid JSON request body' } },
+      { status: 400, headers: NO_CACHE_HEADERS }
+    );
   }
 }
