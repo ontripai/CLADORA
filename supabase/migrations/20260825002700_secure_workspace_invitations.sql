@@ -251,6 +251,7 @@ as $$
 $$;
 
 revoke all on function platform.validate_workspace_invitation(text) from public;
+grant usage on schema platform to anon;
 grant execute on function platform.validate_workspace_invitation(text)
   to anon, authenticated, service_role;
 
