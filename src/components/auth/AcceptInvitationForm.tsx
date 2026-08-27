@@ -3,51 +3,38 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Loader2, Lock, UserRound } from 'lucide-react';
-import { createClient } from '@/lib/supabase/client';
 import type { Language } from '@/types';
 
-type Props = { lang: Language; token: string };
+type Props = { lang: Language };
 
 const copy = {
   ro: {
     title: 'Activează contul de administrator',
     intro: 'Alege parola și confirmă profilul pentru spațiul de lucru CLADORA.',
-    name: 'Nume complet',
-    password: 'Parolă nouă',
-    confirm: 'Confirmă parola',
-    submit: 'Activează contul',
-    working: 'Se activează…',
-    mismatch: 'Parolele nu coincid.',
-    weak: 'Parola trebuie să aibă cel puțin 12 caractere.',
+    name: 'Nume complet', password: 'Parolă nouă', confirm: 'Confirmă parola',
+    submit: 'Activează contul', working: 'Se activează…',
+    mismatch: 'Parolele nu coincid.', weak: 'Parola trebuie să aibă cel puțin 12 caractere.',
     failed: 'Invitația nu a putut fi acceptată. Verifică dacă linkul este încă valabil.',
   },
   en: {
     title: 'Activate administrator account',
     intro: 'Choose a password and confirm your profile for the CLADORA workspace.',
-    name: 'Full name',
-    password: 'New password',
-    confirm: 'Confirm password',
-    submit: 'Activate account',
-    working: 'Activating…',
-    mismatch: 'Passwords do not match.',
-    weak: 'Password must contain at least 12 characters.',
+    name: 'Full name', password: 'New password', confirm: 'Confirm password',
+    submit: 'Activate account', working: 'Activating…',
+    mismatch: 'Passwords do not match.', weak: 'Password must contain at least 12 characters.',
     failed: 'The invitation could not be accepted. Check that the link is still valid.',
   },
   fa: {
     title: 'فعال‌سازی حساب مدیر',
     intro: 'رمز عبور و مشخصات خود را برای فضای کاری کلادورا تأیید کنید.',
-    name: 'نام و نام خانوادگی',
-    password: 'رمز عبور جدید',
-    confirm: 'تکرار رمز عبور',
-    submit: 'فعال‌سازی حساب',
-    working: 'در حال فعال‌سازی…',
-    mismatch: 'رمزهای عبور یکسان نیستند.',
-    weak: 'رمز عبور باید حداقل ۱۲ نویسه داشته باشد.',
+    name: 'نام و نام خانوادگی', password: 'رمز عبور جدید', confirm: 'تکرار رمز عبور',
+    submit: 'فعال‌سازی حساب', working: 'در حال فعال‌سازی…',
+    mismatch: 'رمزهای عبور یکسان نیستند.', weak: 'رمز عبور باید حداقل ۱۲ نویسه داشته باشد.',
     failed: 'پذیرش دعوت انجام نشد. اعتبار لینک دعوت را بررسی کنید.',
   },
 } as const;
 
-export function AcceptInvitationForm({ lang, token }: Props) {
+export function AcceptInvitationForm({ lang }: Props) {
   const t = copy[lang];
   const router = useRouter();
   const [displayName, setDisplayName] = useState('');
@@ -63,31 +50,19 @@ export function AcceptInvitationForm({ lang, token }: Props) {
     if (password !== confirmation) return setError(t.mismatch);
 
     setBusy(true);
-    const supabase = createClient();
-    const claims = await supabase.auth.getClaims();
-    if (claims.error || !claims.data?.claims?.sub) {
-      setBusy(false);
-      return setError(t.failed);
-    }
+    const response = await fetch('/api/auth/accept-invitation', {
+      method: 'POST',
+      cache: 'no-store',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        display_name: displayName,
+        password,
+        locale: lang,
+        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || 'Europe/Bucharest',
+      }),
+    });
 
-    const passwordResult = await supabase.auth.updateUser({ password });
-    if (passwordResult.error) {
-      setBusy(false);
-      return setError(t.failed);
-    }
-
-    const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || 'Europe/Bucharest';
-    const { data, error: acceptanceError } = await supabase.schema('platform').rpc(
-      'accept_primary_admin_invitation',
-      {
-        p_token: token,
-        p_display_name: displayName,
-        p_locale: lang,
-        p_timezone: timezone,
-      },
-    );
-
-    if (acceptanceError || !data) {
+    if (!response.ok) {
       setBusy(false);
       return setError(t.failed);
     }
