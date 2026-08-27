@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { AcceptInvitationForm } from '@/components/auth/AcceptInvitationForm';
 import { createClient } from '@/lib/supabase/server';
@@ -13,11 +14,12 @@ export const metadata: Metadata = {
 
 export default async function AcceptInvitationPage(props: {
   params: Promise<{ lang: Language }>;
-  searchParams: Promise<{ token?: string }>;
 }) {
   const { lang } = await props.params;
-  const { token } = await props.searchParams;
-  if (!token || token.length < 40) redirect(`/${lang}/login?reason=invalid_invitation`);
+  const token = (await cookies()).get('cladora-invitation')?.value;
+  if (!token || token.length < 40 || token.length > 128) {
+    redirect(`/${lang}/login?reason=invalid_invitation`);
+  }
 
   const supabase = await createClient();
   const { data: claims, error: claimsError } = await supabase.auth.getClaims();
@@ -35,7 +37,7 @@ export default async function AcceptInvitationPage(props: {
   return (
     <main className="flex min-h-screen items-center justify-center bg-[#F6F9FC] px-4 pb-24 pt-32">
       <div className="w-full max-w-md">
-        <AcceptInvitationForm lang={lang} token={token} />
+        <AcceptInvitationForm lang={lang} />
       </div>
     </main>
   );
