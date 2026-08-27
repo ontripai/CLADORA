@@ -35,5 +35,11 @@ export default async function AppLayout(
     redirect(`/${lang}/login`);
   }
 
+  const { data: assurance, error: assuranceError } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
+  if (assuranceError) redirect(`/${lang}/login?reason=security`);
+  if (assurance.nextLevel === 'aal2' && assurance.currentLevel !== 'aal2') {
+    redirect(`/${lang}/mfa`);
+  }
+
   return <AppShell params={{ lang }}>{children}</AppShell>;
 }
