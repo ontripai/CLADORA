@@ -9,6 +9,7 @@ create temporary table invitation_test_tokens (
   token text,
   expires_at timestamptz
 );
+grant all on invitation_test_tokens to authenticated;
 
 do $$
 declare
