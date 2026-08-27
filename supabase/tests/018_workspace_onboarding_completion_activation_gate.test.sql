@@ -59,8 +59,8 @@ select throws_like($$select platform.complete_primary_admin_onboarding('c5000000
 select throws_like($$select platform.complete_primary_admin_onboarding('c5000000-0000-0000-0000-000000000001',1,'Completing secure onboarding')$$,'%mfa_not_enrolled%','completion requires a verified MFA factor');
 
 reset role;
-insert into auth.mfa_factors (id,user_id,friendly_name,factor_type,status,secret)
-values ('c7000000-0000-0000-0000-000000000001','c1000000-0000-0000-0000-000000000001','CLADORA Test TOTP','totp','verified','TEST-SECRET-NOT-REAL');
+insert into auth.mfa_factors (id,user_id,friendly_name,factor_type,status,secret,created_at,updated_at)
+values ('c7000000-0000-0000-0000-000000000001','c1000000-0000-0000-0000-000000000001','CLADORA Test TOTP','totp','verified','TEST-SECRET-NOT-REAL',statement_timestamp(),statement_timestamp());
 
 set local role authenticated;
 select set_config('request.jwt.claims','{"sub":"c1000000-0000-0000-0000-000000000001","role":"authenticated","aal":"aal2"}',true);
