@@ -177,7 +177,7 @@ begin
   into v_definition;
   v_definition := replace(
     v_definition,
-    E'  IF v_ws.environment = \'PRODUCTION\'::platform.workspace_environment AND p_target_status = \'ACTIVE\'::platform.workspace_lifecycle_status THEN\n    RAISE EXCEPTION \'activation_blocked: ENG-010 invitation prerequisite must be completed for PRODUCTION activation\' USING ERRCODE = \'55000\';\n  END IF;',
+    E'  if v_ws.environment = \'PRODUCTION\' and p_target_status = \'ACTIVE\' then\n    raise exception \'activation_blocked: ENG-010 invitation prerequisite must be completed for PRODUCTION activation\'\n      using errcode = \'55000\';\n  end if;',
     E'  -- Production activation is enforced by customer_workspaces_activation_gate.'
   );
   if position('ENG-010 invitation prerequisite' in v_definition) > 0 then
