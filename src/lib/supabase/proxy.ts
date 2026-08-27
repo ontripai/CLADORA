@@ -4,6 +4,7 @@ import type { Database } from '@/types/database.generated';
 import { getPublicSupabaseEnv, isSupabaseConfigured } from './env';
 
 const APP_PATH = /^\/(ro|en|fa)\/app(?:\/|$)/;
+const PLATFORM_PATH = /^\/(ro|en|fa)\/platform\/(overview|workspaces|contracts|plans|users|assignments|provisioning|audit|support)(?:\/|$)/;
 
 function loginUrl(request: NextRequest, reason?: string) {
   const locale = request.nextUrl.pathname.split('/')[1] || 'ro';
@@ -16,7 +17,7 @@ function loginUrl(request: NextRequest, reason?: string) {
 }
 
 export async function updateSession(request: NextRequest) {
-  const isProtectedRoute = APP_PATH.test(request.nextUrl.pathname);
+  const isProtectedRoute = APP_PATH.test(request.nextUrl.pathname) || PLATFORM_PATH.test(request.nextUrl.pathname);
 
   if (!isSupabaseConfigured()) {
     return isProtectedRoute
