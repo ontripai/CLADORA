@@ -192,6 +192,10 @@ export type Database = {
         Args: { p_workspace_id: string; p_expected_version: number; p_reason: string };
         Returns: Database['platform']['Tables']['customer_workspaces']['Row'];
       };
+      get_my_primary_admin_onboarding: {
+        Args: { p_workspace_id: string };
+        Returns: Array<{ customer_workspace_id: string; workspace_version: number; onboarding_completed: boolean }>;
+      };
       [key: string]: {
         Args: Record<string, unknown>;
         Returns: unknown;
@@ -910,6 +914,10 @@ export type Database = {
       complete_primary_admin_onboarding: {
         Args: { p_workspace_id: string; p_expected_version: number; p_reason: string };
         Returns: Database['platform']['Tables']['customer_workspaces']['Row'];
+      };
+      get_my_primary_admin_onboarding: {
+        Args: { p_workspace_id: string };
+        Returns: Array<{ customer_workspace_id: string; workspace_version: number; onboarding_completed: boolean }>;
       };
     };
     Enums: {
