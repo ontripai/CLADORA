@@ -1,15 +1,13 @@
+import 'server-only';
+
 import { createClient } from '@supabase/supabase-js';
 import type { Database } from '@/types/database.generated';
 import { getPublicSupabaseEnv } from './env';
+import { getServerSupabaseSecret } from './server-env';
 
 export function createAdminClient() {
-  const secretKey = process.env.SUPABASE_SECRET_KEY;
-  if (!secretKey || !secretKey.startsWith('sb_secret_')) {
-    throw new Error('SUPABASE_SECRET_KEY is missing or invalid.');
-  }
-
   const { url } = getPublicSupabaseEnv();
-  return createClient<Database>(url, secretKey, {
+  return createClient<Database>(url, getServerSupabaseSecret(), {
     auth: {
       autoRefreshToken: false,
       detectSessionInUrl: false,
