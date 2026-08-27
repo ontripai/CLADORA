@@ -13,5 +13,5 @@ export function TurnstileWidget({ siteKey, lang, onToken }: { siteKey: string; l
     widget.current=api.render(container.current,{sitekey:siteKey,language:lang==='fa'?'fa':lang,callback:(token:string)=>onToken(token),'expired-callback':()=>onToken(null),'error-callback':()=>onToken(null)});
   }
   useEffect(()=>()=>{const api=(window as typeof window & {turnstile?:TurnstileApi}).turnstile;if(api&&widget.current)api.remove(widget.current);},[]);
-  return <><Script id={`turnstile-${id}`} src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" strategy="afterInteractive" onLoad={render}/><div ref={container} className="min-h-[65px]" /></>;
+  return <><Script id={`turnstile-${id}`} src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" strategy="afterInteractive" onLoad={render} onReady={render}/><div ref={container} className="min-h-[65px]" /></>;
 }
