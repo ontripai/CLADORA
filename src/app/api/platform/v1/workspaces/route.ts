@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getPlatformAuthContext, hasPlatformRole } from '@/lib/platform/auth';
 import { createClient } from '@/lib/supabase/server';
+import type { Database } from '@/types/database.generated';
 
 const NO_CACHE_HEADERS = {
   'Cache-Control': 'no-store, private',
@@ -75,7 +76,12 @@ export async function POST(request: Request) {
       );
     }
 
-    const validTypes = ['ASSOCIATION', 'PROPERTY_MANAGER', 'OWNER_PORTFOLIO', 'HYBRID'];
+    const validTypes: Database['platform']['Enums']['workspace_type'][] = [
+      'ASSOCIATION',
+      'PROPERTY_MANAGER',
+      'OWNER_PORTFOLIO',
+      'HYBRID',
+    ];
     if (!validTypes.includes(workspace_type)) {
       return NextResponse.json(
         { error: { code: 'INVALID_WORKSPACE_TYPE', message: `workspace_type must be one of: ${validTypes.join(', ')}` } },
@@ -84,20 +90,20 @@ export async function POST(request: Request) {
     }
 
     const supabase = await createClient();
-    const { data, error } = await supabase
-      .schema('platform')
-      .from('customer_workspaces')
-      .insert({
-        tenant_id,
-        workspace_type,
-        commercial_owner,
-        environment: environment === 'PRODUCTION' ? 'PRODUCTION' : 'PILOT',
-        lifecycle_status: 'LEAD',
-      })
-      .select()
-      .single();
+    const { data, error } = await supabase.rpc('create_customer_workspace', {
+      p_tenant_id: tenant_id,
+      p_workspace_type: workspace_type,
+      p_commercial_owner: commercial_owner,
+      p_environment: environment === 'PRODUCTION' ? 'PRODUCTION' : 'PILOT',
+    });
 
     if (error) {
+      if (error.message.includes('access_denied')) {
+        return NextResponse.json(
+          { error: { code: 'FORBIDDEN_WORKSPACE_CREATION', message: 'Insufficient privileges to create workspace.' } },
+          { status: 403, headers: NO_CACHE_HEADERS }
+        );
+      }
       return NextResponse.json(
         { error: { code: 'WORKSPACE_CREATION_FAILED', message: 'Failed to create customer workspace' } },
         { status: 500, headers: NO_CACHE_HEADERS }

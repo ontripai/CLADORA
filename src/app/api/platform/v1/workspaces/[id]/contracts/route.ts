@@ -55,23 +55,23 @@ export async function POST(
     }
 
     const supabase = await createClient();
-    const { data, error } = await supabase
-      .schema('platform')
-      .from('workspace_contracts')
-      .insert({
-        customer_workspace_id: workspaceId,
-        plan_id: plan_id || null,
-        contract_ref: contract_ref.trim(),
-        currency: selectedCurrency,
-        start_date,
-        end_date: end_date || null,
-        commercial_terms: commercial_terms || {},
-        status: 'draft',
-      })
-      .select()
-      .single();
+    const { data, error } = await supabase.rpc('create_workspace_contract', {
+      p_workspace_id: workspaceId,
+      p_contract_ref: contract_ref.trim(),
+      p_plan_id: plan_id || null,
+      p_currency: selectedCurrency,
+      p_start_date: start_date,
+      p_end_date: end_date || null,
+      p_commercial_terms: commercial_terms || {},
+    });
 
     if (error) {
+      if (error.message.includes('access_denied')) {
+        return NextResponse.json(
+          { error: { code: 'FORBIDDEN_CONTRACT_CREATION', message: 'Insufficient commercial privileges for workspace.' } },
+          { status: 403, headers: NO_CACHE_HEADERS }
+        );
+      }
       return NextResponse.json(
         { error: { code: 'CONTRACT_CREATION_FAILED', message: 'Failed to create commercial contract record' } },
         { status: 500, headers: NO_CACHE_HEADERS }

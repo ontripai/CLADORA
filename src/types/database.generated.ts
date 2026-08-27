@@ -26,6 +26,23 @@ export type Database = {
       };
     };
     Functions: {
+      create_customer_workspace: {
+        Args: {
+          p_tenant_id: string;
+          p_workspace_type: string;
+          p_commercial_owner: string;
+          p_environment?: string;
+        };
+        Returns: Database['platform']['Tables']['customer_workspaces']['Row'];
+      };
+      update_workspace_metadata: {
+        Args: {
+          p_workspace_id: string;
+          p_commercial_owner: string;
+          p_reason: string;
+        };
+        Returns: Database['platform']['Tables']['customer_workspaces']['Row'];
+      };
       transition_workspace_lifecycle: {
         Args: {
           p_workspace_id: string;
@@ -60,6 +77,40 @@ export type Database = {
           p_reason: string;
         };
         Returns: Database['platform']['Tables']['platform_customer_assignments']['Row'];
+      };
+      create_workspace_contract: {
+        Args: {
+          p_workspace_id: string;
+          p_contract_ref: string;
+          p_plan_id?: string | null;
+          p_currency?: string;
+          p_start_date?: string;
+          p_end_date?: string | null;
+          p_commercial_terms?: Json;
+        };
+        Returns: Database['platform']['Tables']['workspace_contracts']['Row'];
+      };
+      activate_workspace_contract: {
+        Args: {
+          p_contract_id: string;
+          p_reason?: string;
+        };
+        Returns: Database['platform']['Tables']['workspace_contracts']['Row'];
+      };
+      set_workspace_entitlement: {
+        Args: {
+          p_workspace_id: string;
+          p_entitlement_key: string;
+          p_value_type: string;
+          p_numeric_value?: number | null;
+          p_boolean_value?: boolean | null;
+          p_text_value?: string | null;
+          p_json_value?: Json | null;
+          p_override_value_json?: Json | null;
+          p_override_reason?: string | null;
+          p_override_expires_at?: string | null;
+        };
+        Returns: Database['platform']['Tables']['workspace_entitlements']['Row'];
       };
       request_support_access: {
         Args: {
@@ -434,6 +485,39 @@ export type Database = {
         };
         Relationships: [];
       };
+      entitlement_usage_ledger: {
+        Row: {
+          id: string;
+          customer_workspace_id: string;
+          entitlement_key: string;
+          delta: number;
+          idempotency_key: string | null;
+          reason: string;
+          recorded_by: string | null;
+          recorded_at: string;
+        };
+        Insert: {
+          id?: string;
+          customer_workspace_id: string;
+          entitlement_key: string;
+          delta: number;
+          idempotency_key?: string | null;
+          reason: string;
+          recorded_by?: string | null;
+          recorded_at?: string;
+        };
+        Update: {
+          id?: string;
+          customer_workspace_id?: string;
+          entitlement_key?: string;
+          delta?: number;
+          idempotency_key?: string | null;
+          reason?: string;
+          recorded_by?: string | null;
+          recorded_at?: string;
+        };
+        Relationships: [];
+      };
       provisioning_runs: {
         Row: {
           id: string;
@@ -601,6 +685,23 @@ export type Database = {
       };
     };
     Functions: {
+      create_customer_workspace: {
+        Args: {
+          p_tenant_id: string;
+          p_workspace_type: string;
+          p_commercial_owner: string;
+          p_environment?: string;
+        };
+        Returns: Database['platform']['Tables']['customer_workspaces']['Row'];
+      };
+      update_workspace_metadata: {
+        Args: {
+          p_workspace_id: string;
+          p_commercial_owner: string;
+          p_reason: string;
+        };
+        Returns: Database['platform']['Tables']['customer_workspaces']['Row'];
+      };
       transition_workspace_lifecycle: {
         Args: {
           p_workspace_id: string;
@@ -635,6 +736,40 @@ export type Database = {
           p_reason: string;
         };
         Returns: Database['platform']['Tables']['platform_customer_assignments']['Row'];
+      };
+      create_workspace_contract: {
+        Args: {
+          p_workspace_id: string;
+          p_contract_ref: string;
+          p_plan_id?: string | null;
+          p_currency?: string;
+          p_start_date?: string;
+          p_end_date?: string | null;
+          p_commercial_terms?: Json;
+        };
+        Returns: Database['platform']['Tables']['workspace_contracts']['Row'];
+      };
+      activate_workspace_contract: {
+        Args: {
+          p_contract_id: string;
+          p_reason?: string;
+        };
+        Returns: Database['platform']['Tables']['workspace_contracts']['Row'];
+      };
+      set_workspace_entitlement: {
+        Args: {
+          p_workspace_id: string;
+          p_entitlement_key: string;
+          p_value_type: string;
+          p_numeric_value?: number | null;
+          p_boolean_value?: boolean | null;
+          p_text_value?: string | null;
+          p_json_value?: Json | null;
+          p_override_value_json?: Json | null;
+          p_override_reason?: string | null;
+          p_override_expires_at?: string | null;
+        };
+        Returns: Database['platform']['Tables']['workspace_entitlements']['Row'];
       };
       request_support_access: {
         Args: {

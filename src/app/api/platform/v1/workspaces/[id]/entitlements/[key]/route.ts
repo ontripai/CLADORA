@@ -47,26 +47,26 @@ export async function PUT(
     }
 
     const supabase = await createClient();
-    const { data, error } = await supabase
-      .schema('platform')
-      .from('workspace_entitlements')
-      .upsert({
-        customer_workspace_id: workspaceId,
-        entitlement_key: entitlementKey,
-        value_type,
-        numeric_value: numeric_value ?? null,
-        boolean_value: boolean_value ?? null,
-        text_value: text_value ?? null,
-        json_value: json_value ?? null,
-        override_value_json: override_value_json ?? null,
-        override_reason: override_reason ?? null,
-        override_expires_at: override_expires_at ?? null,
-        override_approved_by: override_value_json ? authCtx.userId : null,
-      })
-      .select()
-      .single();
+    const { data, error } = await supabase.rpc('set_workspace_entitlement', {
+      p_workspace_id: workspaceId,
+      p_entitlement_key: entitlementKey,
+      p_value_type: value_type,
+      p_numeric_value: numeric_value ?? null,
+      p_boolean_value: boolean_value ?? null,
+      p_text_value: text_value ?? null,
+      p_json_value: json_value ?? null,
+      p_override_value_json: override_value_json ?? null,
+      p_override_reason: override_reason ?? null,
+      p_override_expires_at: override_expires_at ?? null,
+    });
 
     if (error) {
+      if (error.message.includes('access_denied')) {
+        return NextResponse.json(
+          { error: { code: 'FORBIDDEN_ENTITLEMENT_CONFIGURATION', message: 'Insufficient privileges to configure entitlement.' } },
+          { status: 403, headers: NO_CACHE_HEADERS }
+        );
+      }
       return NextResponse.json(
         { error: { code: 'ENTITLEMENT_UPDATE_FAILED', message: 'Failed to configure entitlement' } },
         { status: 500, headers: NO_CACHE_HEADERS }
