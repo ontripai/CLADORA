@@ -113,6 +113,46 @@ $$;
 revoke all on function platform.complete_primary_admin_onboarding(uuid, integer, text) from public;
 grant execute on function platform.complete_primary_admin_onboarding(uuid, integer, text) to authenticated, service_role;
 
+create or replace function platform.get_my_primary_admin_onboarding(p_workspace_id uuid)
+returns table (
+  customer_workspace_id uuid,
+  workspace_version integer,
+  onboarding_completed boolean
+)
+language plpgsql
+security definer
+stable
+set search_path = pg_catalog, platform, identity, auth
+as $$
+declare
+  v_actor uuid := auth.uid();
+begin
+  if v_actor is null then
+    raise exception 'authentication_required: authenticated primary administrator required' using errcode = '42501';
+  end if;
+
+  return query
+  select cw.id, cw.version, cw.onboarding_completed_at is not null
+  from platform.customer_workspaces cw
+  join identity.memberships m on m.id = cw.primary_admin_membership_id
+  where cw.id = p_workspace_id
+    and cw.primary_admin_user_id = v_actor
+    and cw.primary_admin_accepted_at is not null
+    and m.user_id = v_actor
+    and m.tenant_id = cw.tenant_id
+    and m.status = 'active'
+    and m.starts_at <= statement_timestamp()
+    and (m.ends_at is null or m.ends_at > statement_timestamp());
+
+  if not found then
+    raise exception 'access_denied: caller is not the active primary administrator' using errcode = '42501';
+  end if;
+end;
+$$;
+
+revoke all on function platform.get_my_primary_admin_onboarding(uuid) from public;
+grant execute on function platform.get_my_primary_admin_onboarding(uuid) to authenticated, service_role;
+
 create or replace function platform.assert_workspace_activation_ready(p_workspace_id uuid)
 returns boolean
 language plpgsql
