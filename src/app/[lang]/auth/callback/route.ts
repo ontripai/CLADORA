@@ -11,6 +11,7 @@ const OTP_TYPES = new Set<EmailOtpType>([
   'signup',
   'email_change',
 ]);
+const INVITATION_COOKIE = 'cladora-invitation';
 
 function safeNext(value: string | null, lang: string): string {
   const fallback = `/${lang}/login`;
@@ -51,5 +52,23 @@ export async function GET(
     return NextResponse.redirect(new URL(`/${lang}/login?reason=invalid_callback`, request.url));
   }
 
-  return NextResponse.redirect(new URL(next, request.url));
+  const destination = new URL(next, request.url);
+  const invitationToken = destination.searchParams.get('token');
+  if (destination.pathname === `/${lang}/accept-invitation` && invitationToken) {
+    if (invitationToken.length < 40 || invitationToken.length > 128) {
+      return NextResponse.redirect(new URL(`/${lang}/login?reason=invalid_invitation`, request.url));
+    }
+    destination.searchParams.delete('token');
+    const response = NextResponse.redirect(destination);
+    response.cookies.set(INVITATION_COOKIE, invitationToken, {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'lax',
+      maxAge: 60 * 60 * 72,
+      path: '/',
+    });
+    return response;
+  }
+
+  return NextResponse.redirect(destination);
 }
