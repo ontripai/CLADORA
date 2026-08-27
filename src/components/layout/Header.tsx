@@ -24,6 +24,7 @@ import {
   Database
 } from 'lucide-react';
 import { LanguageSwitcher } from '@/components/ui/LanguageSwitcher';
+import { CladoraBrand } from '@/components/brand/CladoraBrand';
 
 interface HeaderProps {
   lang: Language;
@@ -129,18 +130,12 @@ export const Header: React.FC<HeaderProps> = ({ lang }) => {
         <div className="flex items-center justify-between">
           
           {/* Logo */}
-          <Link href={`/${lang}`} className="flex items-center gap-2.5 group focus:outline-none focus:ring-2 focus:ring-[#0E9F8E] rounded-lg">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#102A43] to-[#0E9F8E] flex items-center justify-center text-white font-display font-extrabold text-xl shadow-md group-hover:scale-105 transition-transform">
-              C
-            </div>
-            <div>
-              <span className="text-2xl font-display font-extrabold tracking-tight text-[#102A43]">
-                CLADORA
-              </span>
-              <span className="block text-[10px] font-semibold text-[#0E9F8E] uppercase tracking-wider -mt-1">
-                Asset OS
-              </span>
-            </div>
+          <Link href={`/${lang}`} aria-label="CLADORA" className="group rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0E9F8E]">
+            <CladoraBrand
+              variant="primary"
+              className="h-8 w-auto transition-transform group-hover:scale-[1.02] sm:h-10"
+              priority
+            />
           </Link>
 
           {/* Desktop Navigation Links */}

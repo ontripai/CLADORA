@@ -34,6 +34,7 @@ import { useDemoStore } from '@/data/demoStore';
 import { DEMO_ROLES } from '@/data/mockData';
 import { LanguageSwitcher } from '@/components/ui/LanguageSwitcher';
 import { formatUnitLabel, formatAccountingPeriod } from '@/config/formatters';
+import { CladoraBrand } from '@/components/brand/CladoraBrand';
 
 export function AppShell({
   children,
@@ -86,13 +87,9 @@ export function AppShell({
         
         {/* Left / Start: Brand + Context Switcher */}
         <div className="flex items-center gap-3 sm:gap-4">
-          <Link href={`/${lang}`} className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-[#102A43] flex items-center justify-center text-white font-display font-extrabold text-sm shadow-sm">
-              C
-            </div>
-            <span className="text-lg font-display font-extrabold text-[#102A43] hidden sm:inline">
-              CLADORA
-            </span>
+          <Link href={`/${lang}`} aria-label="CLADORA" className="flex items-center">
+            <CladoraBrand variant="symbol" className="h-8 w-8 sm:hidden" />
+            <CladoraBrand variant="primary" className="hidden h-8 w-auto sm:block" />
           </Link>
 
           <div className="h-5 w-[1px] bg-[#E2E8F0] hidden sm:block" />

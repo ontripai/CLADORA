@@ -20,6 +20,7 @@ import {
 } from 'lucide-react';
 import type { PlatformAuthContext, PlatformRole } from '@/types/platform';
 import { isRtlLocale } from '@/types';
+import { CladoraBrand } from '@/components/brand/CladoraBrand';
 
 interface PlatformShellProps {
   children: React.ReactNode;
@@ -105,14 +106,9 @@ export function PlatformShell({ children, lang, authCtx }: PlatformShellProps) {
         <div>
           {/* Logo & Platform Badge */}
           <div className="p-5 border-b border-[#1B324D] flex items-center justify-between">
-            <Link href={`/${lang}/platform/overview`} className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded bg-gradient-to-br from-emerald-500 to-teal-700 flex items-center justify-center font-bold text-white tracking-wider text-sm shadow">
-                CL
-              </div>
+            <Link href={`/${lang}/platform/overview`} aria-label="CLADORA Control Plane" className="flex items-center gap-2">
+              <CladoraBrand variant="symbol" className="h-8 w-8" />
               <div>
-                <span className="font-extrabold tracking-tight text-white block text-sm leading-none">
-                  CLADORA
-                </span>
                 <span className="text-[10px] font-semibold text-emerald-400 tracking-wider uppercase block mt-0.5">
                   CONTROL PLANE
                 </span>
