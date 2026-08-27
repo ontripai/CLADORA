@@ -1,7 +1,7 @@
 begin;
 set local search_path = public, extensions;
 
-select plan(21);
+select plan(24);
 
 do $$
 declare
@@ -39,6 +39,8 @@ select ok((select count(*)=2 from information_schema.columns where table_schema=
 select ok(to_regclass('platform.customer_workspaces_onboarding_completed_by_idx') is not null,'onboarding actor foreign key is indexed');
 select ok(not has_function_privilege('public','platform.complete_primary_admin_onboarding(uuid,integer,text)','execute'),'PUBLIC cannot complete onboarding');
 select ok(has_function_privilege('authenticated','platform.complete_primary_admin_onboarding(uuid,integer,text)','execute'),'authenticated caller can invoke guarded completion RPC');
+select ok(not has_function_privilege('public','platform.get_my_primary_admin_onboarding(uuid)','execute'),'PUBLIC cannot read primary admin onboarding state');
+select ok(has_function_privilege('authenticated','platform.get_my_primary_admin_onboarding(uuid)','execute'),'authenticated caller can invoke guarded onboarding state RPC');
 select ok(not has_function_privilege('authenticated','platform.assert_workspace_activation_ready(uuid)','execute'),'activation readiness helper is not exposed to authenticated clients');
 select ok((select p.prosecdef and coalesce(array_to_string(p.proconfig,','),'') like '%search_path=%' from pg_proc p join pg_namespace n on n.oid=p.pronamespace where n.nspname='platform' and p.proname='complete_primary_admin_onboarding'),'completion RPC is security definer with fixed search path');
 select ok(exists(select 1 from pg_trigger where tgname='customer_workspaces_activation_gate' and not tgisinternal),'activation gate trigger exists');
@@ -52,6 +54,7 @@ select throws_like($$select platform.complete_primary_admin_onboarding('c5000000
 
 select set_config('request.jwt.claims','{"sub":"c1000000-0000-0000-0000-000000000002","role":"authenticated","aal":"aal2"}',true);
 select throws_like($$select platform.complete_primary_admin_onboarding('c5000000-0000-0000-0000-000000000001',1,'Completing secure onboarding')$$,'%access_denied%','a different AAL2 user cannot complete onboarding');
+select throws_like($$select * from platform.get_my_primary_admin_onboarding('c5000000-0000-0000-0000-000000000001')$$,'%access_denied%','a different user cannot read primary admin onboarding state');
 
 select set_config('request.jwt.claims','{"sub":"c1000000-0000-0000-0000-000000000001","role":"authenticated","aal":"aal2"}',true);
 select throws_like($$select platform.complete_primary_admin_onboarding('c5000000-0000-0000-0000-000000000001',2,'Completing secure onboarding')$$,'%concurrency_conflict%','stale workspace version is denied');
