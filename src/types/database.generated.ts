@@ -147,6 +147,47 @@ export type Database = {
         };
         Returns: boolean;
       };
+      create_workspace_invitation: {
+        Args: {
+          p_workspace_id: string;
+          p_email: string;
+          p_role_id: string;
+          p_scope_type?: string;
+          p_expires_in?: string;
+          p_reason?: string | null;
+        };
+        Returns: Array<{
+          invitation_id: string;
+          invitation_token: string;
+          invitation_expires_at: string;
+        }>;
+      };
+      validate_workspace_invitation: {
+        Args: { p_token: string };
+        Returns: Array<{
+          invitation_id: string;
+          customer_workspace_id: string;
+          invitation_status: string;
+          invitation_expires_at: string;
+        }>;
+      };
+      revoke_workspace_invitation: {
+        Args: { p_invitation_id: string; p_reason: string };
+        Returns: Record<string, unknown>;
+      };
+      accept_primary_admin_invitation: {
+        Args: {
+          p_token: string;
+          p_display_name: string;
+          p_locale?: string;
+          p_timezone?: string;
+        };
+        Returns: Array<{
+          customer_workspace_id: string;
+          membership_id: string;
+          onboarding_required: boolean;
+        }>;
+      };
       [key: string]: {
         Args: Record<string, unknown>;
         Returns: unknown;
@@ -805,6 +846,47 @@ export type Database = {
           p_reason?: string;
         };
         Returns: boolean;
+      };
+      create_workspace_invitation: {
+        Args: {
+          p_workspace_id: string;
+          p_email: string;
+          p_role_id: string;
+          p_scope_type?: string;
+          p_expires_in?: string;
+          p_reason?: string | null;
+        };
+        Returns: Array<{
+          invitation_id: string;
+          invitation_token: string;
+          invitation_expires_at: string;
+        }>;
+      };
+      validate_workspace_invitation: {
+        Args: { p_token: string };
+        Returns: Array<{
+          invitation_id: string;
+          customer_workspace_id: string;
+          invitation_status: string;
+          invitation_expires_at: string;
+        }>;
+      };
+      revoke_workspace_invitation: {
+        Args: { p_invitation_id: string; p_reason: string };
+        Returns: Record<string, unknown>;
+      };
+      accept_primary_admin_invitation: {
+        Args: {
+          p_token: string;
+          p_display_name: string;
+          p_locale?: string;
+          p_timezone?: string;
+        };
+        Returns: Array<{
+          customer_workspace_id: string;
+          membership_id: string;
+          onboarding_required: boolean;
+        }>;
       };
     };
     Enums: {
