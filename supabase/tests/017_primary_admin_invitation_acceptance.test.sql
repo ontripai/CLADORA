@@ -5,7 +5,8 @@ select plan(30);
 
 create temporary table acceptance_tokens (
   token text primary key,
-  invitation_id uuid
+  invitation_id uuid,
+  fixture text not null unique
 );
 grant all on acceptance_tokens to authenticated;
 
@@ -60,8 +61,8 @@ select ok((select p.prosecdef and coalesce(array_to_string(p.proconfig,','),'') 
 set local role authenticated;
 select set_config('request.jwt.claims','{"sub":"b1000000-0000-0000-0000-000000000001","role":"authenticated"}',true);
 
-insert into acceptance_tokens(token,invitation_id)
-select invitation_token,invitation_id
+insert into acceptance_tokens(token,invitation_id,fixture)
+select invitation_token,invitation_id,'primary_admin'
 from platform.create_workspace_invitation(
   'b4000000-0000-0000-0000-000000000001',
   'primary.admin@cladora.test',
@@ -101,8 +102,8 @@ select throws_like(
   '%email_not_confirmed%','unconfirmed email cannot accept invitation');
 
 select set_config('request.jwt.claims','{"sub":"b1000000-0000-0000-0000-000000000001","role":"authenticated"}',true);
-insert into acceptance_tokens(token,invitation_id)
-select invitation_token,invitation_id
+insert into acceptance_tokens(token,invitation_id,fixture)
+select invitation_token,invitation_id,'invalid_role'
 from platform.create_workspace_invitation(
   'b4000000-0000-0000-0000-000000000001',
   'other.person@cladora.test',
@@ -114,14 +115,14 @@ from platform.create_workspace_invitation(
 
 select set_config('request.jwt.claims','{"sub":"b1000000-0000-0000-0000-000000000003","role":"authenticated"}',true);
 select throws_like(
-  $$select * from platform.accept_primary_admin_invitation((select token from acceptance_tokens where invitation_id=(select id from platform.workspace_invitations where normalized_email='other.person@cladora.test')),'Other Person','en','Europe/Bucharest')$$,
+  $$select * from platform.accept_primary_admin_invitation((select token from acceptance_tokens where fixture='invalid_role'),'Other Person','en','Europe/Bucharest')$$,
   '%invalid_primary_admin_role%','non-admin role cannot become primary administrator');
 
 select set_config('request.jwt.claims','{"sub":"b1000000-0000-0000-0000-000000000002","role":"authenticated"}',true);
 select ok((
   select count(*)=1
   from platform.accept_primary_admin_invitation(
-    (select token from acceptance_tokens where invitation_id=(select id from platform.workspace_invitations where normalized_email='primary.admin@cladora.test')),
+    (select token from acceptance_tokens where fixture='primary_admin'),
     'Primary Administrator','ro','Europe/Bucharest'
   )
 ),'matching confirmed user accepts primary admin invitation');
@@ -136,14 +137,14 @@ select ok((select primary_admin_user_id='b1000000-0000-0000-0000-000000000002' a
 select ok((select onboarding_completed_at is null from platform.customer_workspaces where id='b4000000-0000-0000-0000-000000000001'),'onboarding remains incomplete after invitation acceptance');
 select ok((select count(*)=1 from audit.events where action='PRIMARY_ADMIN_INVITATION_ACCEPTED'),'acceptance is recorded in audit events');
 select ok((select count(*)=1 from identity.memberships where tenant_id='b3000000-0000-0000-0000-000000000001' and user_id='b1000000-0000-0000-0000-000000000002' and role_id='b5000000-0000-0000-0000-000000000001'),'primary administrator receives the invited role');
-select ok((select count(*)=1 from audit.events where action='PRIMARY_ADMIN_INVITATION_ACCEPTED' and coalesce(reason,'') not like '%'||(select token from acceptance_tokens where invitation_id=(select id from platform.workspace_invitations where normalized_email='primary.admin@cladora.test'))||'%' and before_snapshot::text not like '%'||(select token from acceptance_tokens where invitation_id=(select id from platform.workspace_invitations where normalized_email='primary.admin@cladora.test'))||'%' and after_snapshot::text not like '%'||(select token from acceptance_tokens where invitation_id=(select id from platform.workspace_invitations where normalized_email='primary.admin@cladora.test'))||'%'),'raw invitation token is never written to audit data');
+select ok((select count(*)=1 from audit.events where action='PRIMARY_ADMIN_INVITATION_ACCEPTED' and coalesce(reason,'') not like '%'||(select token from acceptance_tokens where fixture='primary_admin')||'%' and before_snapshot::text not like '%'||(select token from acceptance_tokens where fixture='primary_admin')||'%' and after_snapshot::text not like '%'||(select token from acceptance_tokens where fixture='primary_admin')||'%'),'raw invitation token is never written to audit data');
 
 set local role authenticated;
 select set_config('request.jwt.claims','{"sub":"b1000000-0000-0000-0000-000000000002","role":"authenticated"}',true);
 select ok((
   select count(*)=1
   from platform.accept_primary_admin_invitation(
-    (select token from acceptance_tokens where invitation_id=(select id from platform.workspace_invitations where normalized_email='primary.admin@cladora.test')),
+    (select token from acceptance_tokens where fixture='primary_admin'),
     'Primary Administrator','ro','Europe/Bucharest'
   )
 ),'same actor retry is idempotent');
