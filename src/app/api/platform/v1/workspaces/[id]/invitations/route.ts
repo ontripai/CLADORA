@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { z } from 'zod';
 import { getPlatformAuthContext, hasPlatformRole, hasWorkspaceAssignment } from '@/lib/platform/auth';
 import { createAdminClient } from '@/lib/supabase/admin';
-import { getApplicationOrigin } from '@/lib/supabase/env';
+import { getApplicationOrigin } from '@/lib/supabase/server-env';
 import { createClient } from '@/lib/supabase/server';
 
 const NO_CACHE_HEADERS = { 'Cache-Control': 'no-store, private' };
