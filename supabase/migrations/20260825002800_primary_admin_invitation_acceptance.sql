@@ -114,7 +114,9 @@ begin
     return query
     select v_invitation.customer_workspace_id,
            v_invitation.accepted_membership_id,
-           true;
+           cw.onboarding_completed_at is null
+    from platform.customer_workspaces as cw
+    where cw.id = v_invitation.customer_workspace_id;
     return;
   end if;
 
@@ -124,9 +126,6 @@ begin
   end if;
 
   if v_invitation.expires_at <= statement_timestamp() then
-    update platform.workspace_invitations
-    set status = 'expired'
-    where id = v_invitation.id;
     raise exception 'invitation_expired: invitation has expired'
       using errcode = '55000';
   end if;
@@ -222,15 +221,15 @@ begin
   end if;
 
   select id into v_existing_context
-  from identity.context_grants
-  where membership_id = v_membership.id
-    and tenant_id = v_workspace.tenant_id
-    and scope_type = 'tenant'
-    and property_id is null
-    and building_id is null
-    and unit_id is null
-    and starts_at <= statement_timestamp()
-    and (ends_at is null or ends_at > statement_timestamp())
+  from identity.context_grants as cg
+  where cg.membership_id = v_membership.id
+    and cg.tenant_id = v_workspace.tenant_id
+    and cg.scope_type = 'tenant'
+    and cg.property_id is null
+    and cg.building_id is null
+    and cg.unit_id is null
+    and cg.starts_at <= statement_timestamp()
+    and (cg.ends_at is null or cg.ends_at > statement_timestamp())
   limit 1;
 
   if not found then
