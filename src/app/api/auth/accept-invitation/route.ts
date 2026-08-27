@@ -73,8 +73,15 @@ export async function POST(request: NextRequest) {
     );
   }
 
+  const accepted = Array.isArray(data) ? data[0] : data;
+  const workspaceId = accepted?.customer_workspace_id;
+  let workspaceVersion: number | undefined;
+  if (workspaceId) {
+    const { data: workspace } = await supabase.schema('platform').from('customer_workspaces').select('version').eq('id', workspaceId).maybeSingle();
+    workspaceVersion = workspace?.version;
+  }
   const response = NextResponse.json(
-    { accepted: true, onboarding_required: true },
+    { accepted: true, onboarding_required: true, workspace_id: workspaceId, workspace_version: workspaceVersion },
     { status: 200, headers: NO_CACHE_HEADERS },
   );
   response.cookies.set(INVITATION_COOKIE, '', {
