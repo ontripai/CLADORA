@@ -1,7 +1,7 @@
 begin;
 set local search_path = public, extensions;
 
-select plan(24);
+select plan(28);
 
 select has_table('platform','platform_users','platform_users table exists');
 select has_table('platform','platform_role_assignments','platform_role_assignments table exists');
@@ -28,6 +28,26 @@ select ok((select c.relrowsecurity from pg_catalog.pg_class c join pg_catalog.pg
 select ok((select c.relrowsecurity from pg_catalog.pg_class c join pg_catalog.pg_namespace n on n.oid=c.relnamespace where n.nspname='platform' and c.relname='provisioning_tasks'),'provisioning_tasks RLS enabled');
 select ok((select c.relrowsecurity from pg_catalog.pg_class c join pg_catalog.pg_namespace n on n.oid=c.relnamespace where n.nspname='platform' and c.relname='support_access_requests'),'support_access_requests RLS enabled');
 select ok((select c.relrowsecurity from pg_catalog.pg_class c join pg_catalog.pg_namespace n on n.oid=c.relnamespace where n.nspname='platform' and c.relname='support_access_grants'),'support_access_grants RLS enabled');
+
+select ok(
+  (select not app_private.is_platform_user()),
+  'anonymous/unauthenticated caller is not a platform user'
+);
+
+select ok(
+  (select app_private.current_platform_user_id() is null),
+  'current platform user ID is null for unauthenticated session'
+);
+
+select ok(
+  (select not app_private.has_platform_role('PLATFORM_SUPER_ADMIN')),
+  'unauthenticated session does not possess PLATFORM_SUPER_ADMIN role'
+);
+
+select ok(
+  (select not app_private.has_platform_role('PLATFORM_AUDITOR')),
+  'unauthenticated session does not possess PLATFORM_AUDITOR role'
+);
 
 select * from finish();
 rollback;
