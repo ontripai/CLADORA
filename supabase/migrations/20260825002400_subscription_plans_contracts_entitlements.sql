@@ -1,7 +1,7 @@
 begin;
 
 create table platform.subscription_plans (
-  id text primary key,
+  id uuid primary key default gen_random_uuid(),
   plan_code text not null,
   version integer not null default 1 check (version > 0),
   display_name text not null,
@@ -17,11 +17,11 @@ create table platform.subscription_plans (
 create table platform.workspace_contracts (
   id uuid primary key default gen_random_uuid(),
   customer_workspace_id uuid not null references platform.customer_workspaces(id) on delete cascade,
-  plan_id text references platform.subscription_plans(id) on delete restrict,
+  plan_id uuid references platform.subscription_plans(id) on delete restrict,
   contract_ref text not null,
   version integer not null default 1 check (version > 0),
   currency text not null default 'EUR' check (currency in ('EUR', 'RON', 'USD')),
-  status text not null default 'draft' check (status in ('draft', 'signed', 'active', 'suspended', 'expired', 'terminated')),
+  status text not null default 'draft' check (status in ('draft', 'pending_signature', 'signed', 'active', 'suspended', 'expired', 'terminated', 'superseded')),
   start_date date not null,
   end_date date,
   signed_at timestamptz,
@@ -200,7 +200,7 @@ grant execute on function platform.enforce_entitlement_quota(uuid, text, numeric
 create or replace function platform.create_workspace_contract(
   p_workspace_id uuid,
   p_contract_ref text,
-  p_plan_id text,
+  p_plan_id uuid default null,
   p_currency text default 'EUR',
   p_start_date date default current_date,
   p_end_date date default null,
@@ -277,6 +277,7 @@ begin
     v_contract.id,
     jsonb_build_object(
       'customer_workspace_id', v_contract.customer_workspace_id,
+      'plan_id', v_contract.plan_id,
       'contract_ref', v_contract.contract_ref,
       'status', v_contract.status,
       'currency', v_contract.currency
@@ -288,8 +289,8 @@ begin
   return v_contract;
 end;
 $$;
-revoke all on function platform.create_workspace_contract(uuid, text, text, text, date, date, jsonb) from public;
-grant execute on function platform.create_workspace_contract(uuid, text, text, text, date, date, jsonb) to authenticated, service_role;
+revoke all on function platform.create_workspace_contract(uuid, text, uuid, text, date, date, jsonb) from public;
+grant execute on function platform.create_workspace_contract(uuid, text, uuid, text, date, date, jsonb) to authenticated, service_role;
 
 create or replace function platform.activate_workspace_contract(
   p_contract_id uuid,
@@ -324,6 +325,21 @@ begin
   if length(trim(coalesce(p_reason, ''))) = 0 then
     raise exception 'invalid_reason: activation reason must not be empty'
       using errcode = '22023';
+  end if;
+
+  if v_contract.status = 'active' then
+    raise exception 'already_active: contract % is already active', p_contract_id
+      using errcode = '22000';
+  end if;
+
+  if v_contract.status not in ('draft', 'pending_signature', 'signed') then
+    raise exception 'invalid_state_transition: cannot activate contract with status %', v_contract.status
+      using errcode = '22000';
+  end if;
+
+  if v_contract.end_date is not null and v_contract.end_date < current_date then
+    raise exception 'contract_expired: contract past end_date cannot be activated'
+      using errcode = '22000';
   end if;
 
   v_before_status := v_contract.status;
@@ -377,7 +393,7 @@ create or replace function platform.set_workspace_entitlement(
 )
 returns platform.workspace_entitlements
 language plpgsql security definer
-set search_path = pg_catalog, platform, audit
+set search_path = pg_catalog, platform, audit, app_private
 as $$
 declare
   v_ent platform.workspace_entitlements;
@@ -409,7 +425,12 @@ begin
         using errcode = '22023';
     end if;
 
-    if p_override_expires_at is not null and p_override_expires_at <= statement_timestamp() then
+    if p_override_expires_at is null then
+      raise exception 'invalid_override: override expiry must be provided when override is set'
+        using errcode = '22023';
+    end if;
+
+    if p_override_expires_at <= statement_timestamp() then
       raise exception 'invalid_override: override expiry must be in the future'
         using errcode = '22023';
     end if;
@@ -481,7 +502,9 @@ begin
       'key', v_ent.entitlement_key,
       'value_type', v_ent.value_type,
       'numeric_value', v_ent.numeric_value,
-      'override', v_ent.override_value_json
+      'override', v_ent.override_value_json,
+      'override_expires_at', v_ent.override_expires_at,
+      'override_approved_by', v_ent.override_approved_by
     ),
     coalesce(p_override_reason, 'Configured workspace entitlement'),
     statement_timestamp()
