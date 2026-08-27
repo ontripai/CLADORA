@@ -105,17 +105,15 @@ begin
       using errcode = '22023';
   end if;
 
-  if auth.role() = 'authenticated' then
-    if not (
-      app_private.has_platform_role('PLATFORM_SUPER_ADMIN')
-      or (
-        app_private.has_platform_role('PLATFORM_OPERATIONS')
-        and app_private.has_customer_assignment(p_workspace_id, 'workspace')
-      )
-    ) then
-      raise exception 'access_denied: caller lacks platform operations or super admin assignment for workspace %', p_workspace_id
-        using errcode = '42501';
-    end if;
+  if not (
+    app_private.has_platform_role('PLATFORM_SUPER_ADMIN')
+    or (
+      app_private.has_platform_role('PLATFORM_OPERATIONS')
+      and app_private.has_customer_assignment(p_workspace_id, 'workspace')
+    )
+  ) then
+    raise exception 'access_denied: caller lacks platform operations or super admin assignment for workspace %', p_workspace_id
+      using errcode = '42501';
   end if;
 
   select lifecycle_status into v_ws_status from platform.customer_workspaces
