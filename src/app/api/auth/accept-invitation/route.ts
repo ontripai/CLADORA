@@ -77,8 +77,18 @@ export async function POST(request: NextRequest) {
   const workspaceId = accepted?.customer_workspace_id;
   let workspaceVersion: number | undefined;
   if (workspaceId) {
-    const { data: workspace } = await supabase.schema('platform').from('customer_workspaces').select('version').eq('id', workspaceId).maybeSingle();
-    workspaceVersion = workspace?.version;
+    const { data: onboarding, error: onboardingError } = await supabase.schema('platform').rpc(
+      'get_my_primary_admin_onboarding',
+      { p_workspace_id: workspaceId },
+    );
+    const state = Array.isArray(onboarding) ? onboarding[0] : onboarding;
+    workspaceVersion = state?.workspace_version;
+    if (onboardingError || !workspaceVersion) {
+      return NextResponse.json(
+        { error: { code: 'ONBOARDING_STATE_UNAVAILABLE', message: 'Onboarding state could not be resolved.' } },
+        { status: 409, headers: NO_CACHE_HEADERS },
+      );
+    }
   }
   const response = NextResponse.json(
     { accepted: true, onboarding_required: true, workspace_id: workspaceId, workspace_version: workspaceVersion },
