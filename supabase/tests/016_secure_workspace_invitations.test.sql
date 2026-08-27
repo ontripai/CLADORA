@@ -1,7 +1,7 @@
 begin;
 set local search_path = public, extensions;
 
-select plan(35);
+select plan(36);
 
 create temporary table invitation_test_tokens (
   label text primary key,
@@ -80,6 +80,7 @@ select throws_like($$delete from platform.workspace_invitations where id is not 
 
 set local role anon;
 select ok((select count(*)=0 from platform.validate_workspace_invitation('invalid-token-value-that-is-long-enough-for-validation')),'invalid anonymous token reveals no invitation');
+select ok(not has_table_privilege('anon','platform.workspace_invitations','select'),'anon has no direct invitation table access');
 
 set local role authenticated;
 select set_config('request.jwt.claims','{"role":"authenticated"}',true);
