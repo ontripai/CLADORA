@@ -67,7 +67,11 @@ export function AcceptInvitationForm({ lang }: Props) {
       return setError(t.failed);
     }
 
-    router.replace(`/${lang}/app/dashboard?onboarding=required`);
+    const result = await response.json() as { workspace_id?: string; workspace_version?: number };
+    const query = result.workspace_id && result.workspace_version
+      ? `?workspace=${encodeURIComponent(result.workspace_id)}&version=${result.workspace_version}`
+      : '';
+    router.replace(`/${lang}/app/onboarding${query}`);
     router.refresh();
   }
 
