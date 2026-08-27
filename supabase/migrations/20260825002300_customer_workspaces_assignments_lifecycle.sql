@@ -120,6 +120,177 @@ $$;
 revoke all on function app_private.can_access_platform_workspace(uuid, platform.platform_role_type) from public;
 grant execute on function app_private.can_access_platform_workspace(uuid, platform.platform_role_type) to authenticated, service_role;
 
+create or replace function platform.grant_customer_assignment(
+  p_platform_user_id uuid,
+  p_customer_workspace_id uuid,
+  p_scope_type text default 'workspace',
+  p_scope_id uuid default null,
+  p_valid_until timestamptz default null,
+  p_reason text default 'standard assignment'
+)
+returns platform.platform_customer_assignments
+language plpgsql security definer
+set search_path = pg_catalog, platform, audit
+as $$
+declare
+  v_actor_id uuid := auth.uid();
+  v_assignment platform.platform_customer_assignments;
+  v_target_user platform.platform_users;
+begin
+  if not (
+    app_private.has_platform_role('PLATFORM_SUPER_ADMIN')
+    or (app_private.has_platform_role('PLATFORM_OPERATIONS') and app_private.has_customer_assignment(p_customer_workspace_id, 'workspace'))
+  ) then
+    raise exception 'access_denied: insufficient privileges to grant customer assignment'
+      using errcode = '42501';
+  end if;
+
+  if length(trim(coalesce(p_reason, ''))) = 0 then
+    raise exception 'invalid_reason: assignment reason must not be empty'
+      using errcode = '22023';
+  end if;
+
+  if p_valid_until is not null and p_valid_until <= statement_timestamp() then
+    raise exception 'invalid_validity: valid_until must be in the future'
+      using errcode = '22023';
+  end if;
+
+  select * into v_target_user from platform.platform_users
+  where id = p_platform_user_id and status = 'active' and deactivated_at is null;
+
+  if not found then
+    raise exception 'target_user_not_found_or_inactive: %', p_platform_user_id
+      using errcode = 'P0002';
+  end if;
+
+  if not exists (select 1 from platform.customer_workspaces where id = p_customer_workspace_id) then
+    raise exception 'workspace_not_found: %', p_customer_workspace_id
+      using errcode = 'P0002';
+  end if;
+
+  insert into platform.platform_customer_assignments (
+    platform_user_id,
+    customer_workspace_id,
+    scope_type,
+    scope_id,
+    valid_from,
+    valid_until,
+    status,
+    assigned_by,
+    assignment_reason
+  ) values (
+    p_platform_user_id,
+    p_customer_workspace_id,
+    p_scope_type,
+    p_scope_id,
+    statement_timestamp(),
+    p_valid_until,
+    'active',
+    v_actor_id,
+    p_reason
+  )
+  returning * into v_assignment;
+
+  insert into audit.events (
+    actor_id,
+    actor_role,
+    action,
+    entity_type,
+    entity_id,
+    after_snapshot,
+    reason,
+    occurred_at
+  ) values (
+    v_actor_id,
+    'PLATFORM_CONTROL_PLANE',
+    'CUSTOMER_ASSIGNMENT_GRANTED',
+    'platform_customer_assignment',
+    v_assignment.id,
+    jsonb_build_object(
+      'platform_user_id', p_platform_user_id,
+      'customer_workspace_id', p_customer_workspace_id,
+      'scope_type', p_scope_type
+    ),
+    p_reason,
+    statement_timestamp()
+  );
+
+  return v_assignment;
+end;
+$$;
+revoke all on function platform.grant_customer_assignment(uuid, uuid, text, uuid, timestamptz, text) from public;
+grant execute on function platform.grant_customer_assignment(uuid, uuid, text, uuid, timestamptz, text) to authenticated, service_role;
+
+create or replace function platform.revoke_customer_assignment(
+  p_assignment_id uuid,
+  p_reason text
+)
+returns platform.platform_customer_assignments
+language plpgsql security definer
+set search_path = pg_catalog, platform, audit
+as $$
+declare
+  v_actor_id uuid := auth.uid();
+  v_assignment platform.platform_customer_assignments;
+begin
+  select * into v_assignment from platform.platform_customer_assignments
+  where id = p_assignment_id
+  for update;
+
+  if not found then
+    raise exception 'assignment_not_found: %', p_assignment_id
+      using errcode = 'P0002';
+  end if;
+
+  if not (
+    app_private.has_platform_role('PLATFORM_SUPER_ADMIN')
+    or (app_private.has_platform_role('PLATFORM_OPERATIONS') and app_private.has_customer_assignment(v_assignment.customer_workspace_id, 'workspace'))
+  ) then
+    raise exception 'access_denied: insufficient privileges to revoke customer assignment'
+      using errcode = '42501';
+  end if;
+
+  if length(trim(coalesce(p_reason, ''))) = 0 then
+    raise exception 'invalid_reason: revoke reason must not be empty'
+      using errcode = '22023';
+  end if;
+
+  update platform.platform_customer_assignments
+  set status = 'revoked',
+      revoked_at = statement_timestamp(),
+      revoked_by = v_actor_id,
+      revoke_reason = p_reason
+  where id = p_assignment_id
+  returning * into v_assignment;
+
+  insert into audit.events (
+    actor_id,
+    actor_role,
+    action,
+    entity_type,
+    entity_id,
+    before_snapshot,
+    after_snapshot,
+    reason,
+    occurred_at
+  ) values (
+    v_actor_id,
+    'PLATFORM_CONTROL_PLANE',
+    'CUSTOMER_ASSIGNMENT_REVOKED',
+    'platform_customer_assignment',
+    v_assignment.id,
+    jsonb_build_object('status', 'active'),
+    jsonb_build_object('status', 'revoked'),
+    p_reason,
+    statement_timestamp()
+  );
+
+  return v_assignment;
+end;
+$$;
+revoke all on function platform.revoke_customer_assignment(uuid, text) from public;
+grant execute on function platform.revoke_customer_assignment(uuid, text) to authenticated, service_role;
+
 create or replace function platform.transition_workspace_lifecycle(
   p_workspace_id uuid,
   p_target_status platform.workspace_lifecycle_status,
@@ -133,18 +304,32 @@ as $$
 declare
   v_actor_id uuid := auth.uid();
   v_ws platform.customer_workspaces;
+  v_before_status platform.workspace_lifecycle_status;
+  v_before_version integer;
   v_valid_transition boolean := false;
   v_activated timestamptz;
   v_suspended timestamptz;
   v_terminated timestamptz;
   v_archived timestamptz;
 begin
-  if not (
-    app_private.has_platform_role('PLATFORM_SUPER_ADMIN')
-    or (app_private.has_platform_role('PLATFORM_OPERATIONS') and app_private.has_customer_assignment(p_workspace_id, 'workspace'))
-  ) then
-    raise exception 'access_denied: insufficient privileges to transition workspace lifecycle'
-      using errcode = '42501';
+  if length(trim(coalesce(p_reason, ''))) = 0 then
+    raise exception 'invalid_reason: lifecycle transition reason must not be empty'
+      using errcode = '22023';
+  end if;
+
+  if p_target_status = 'ARCHIVED' then
+    if not app_private.has_platform_role('PLATFORM_SUPER_ADMIN') then
+      raise exception 'access_denied: only PLATFORM_SUPER_ADMIN can archive a workspace'
+        using errcode = '42501';
+    end if;
+  else
+    if not (
+      app_private.has_platform_role('PLATFORM_SUPER_ADMIN')
+      or (app_private.has_platform_role('PLATFORM_OPERATIONS') and app_private.has_customer_assignment(p_workspace_id, 'workspace'))
+    ) then
+      raise exception 'access_denied: insufficient privileges to transition workspace lifecycle'
+        using errcode = '42501';
+    end if;
   end if;
 
   select * into v_ws from platform.customer_workspaces
@@ -173,23 +358,23 @@ begin
 
   case v_ws.lifecycle_status
     when 'LEAD' then
-      v_valid_transition := p_target_status in ('UNDER_REVIEW', 'TERMINATED', 'ARCHIVED');
+      v_valid_transition := p_target_status in ('UNDER_REVIEW', 'TERMINATED');
     when 'UNDER_REVIEW' then
-      v_valid_transition := p_target_status in ('APPROVED', 'LEAD', 'TERMINATED', 'ARCHIVED');
+      v_valid_transition := p_target_status in ('APPROVED', 'LEAD', 'TERMINATED');
     when 'APPROVED' then
-      v_valid_transition := p_target_status in ('CONTRACT_PENDING', 'TERMINATED', 'ARCHIVED');
+      v_valid_transition := p_target_status in ('CONTRACT_PENDING', 'TERMINATED');
     when 'CONTRACT_PENDING' then
-      v_valid_transition := p_target_status in ('PAYMENT_PENDING', 'APPROVED', 'TERMINATED', 'ARCHIVED');
+      v_valid_transition := p_target_status in ('PAYMENT_PENDING', 'APPROVED', 'TERMINATED');
     when 'PAYMENT_PENDING' then
-      v_valid_transition := p_target_status in ('PROVISIONING', 'CONTRACT_PENDING', 'TERMINATED', 'ARCHIVED');
+      v_valid_transition := p_target_status in ('PROVISIONING', 'CONTRACT_PENDING', 'TERMINATED');
     when 'PROVISIONING' then
-      v_valid_transition := p_target_status in ('ACTIVE', 'PAYMENT_PENDING', 'SUSPENDED', 'TERMINATED', 'ARCHIVED');
+      v_valid_transition := p_target_status in ('ACTIVE', 'PAYMENT_PENDING', 'SUSPENDED', 'TERMINATED');
     when 'ACTIVE' then
-      v_valid_transition := p_target_status in ('PAST_DUE', 'SUSPENDED', 'TERMINATED', 'ARCHIVED');
+      v_valid_transition := p_target_status in ('PAST_DUE', 'SUSPENDED', 'TERMINATED');
     when 'PAST_DUE' then
-      v_valid_transition := p_target_status in ('ACTIVE', 'SUSPENDED', 'TERMINATED', 'ARCHIVED');
+      v_valid_transition := p_target_status in ('ACTIVE', 'SUSPENDED', 'TERMINATED');
     when 'SUSPENDED' then
-      v_valid_transition := p_target_status in ('ACTIVE', 'PAST_DUE', 'TERMINATED', 'ARCHIVED');
+      v_valid_transition := p_target_status in ('ACTIVE', 'PAST_DUE', 'TERMINATED');
     when 'TERMINATED' then
       v_valid_transition := p_target_status = 'ARCHIVED';
     else
@@ -207,6 +392,9 @@ begin
         using errcode = '55000';
     end if;
   end if;
+
+  v_before_status := v_ws.lifecycle_status;
+  v_before_version := v_ws.version;
 
   v_activated := case when p_target_status = 'ACTIVE' and v_ws.activated_at is null then statement_timestamp() else v_ws.activated_at end;
   v_suspended := case when p_target_status = 'SUSPENDED' then statement_timestamp() else v_ws.suspended_at end;
@@ -242,7 +430,7 @@ begin
     'WORKSPACE_LIFECYCLE_TRANSITION',
     'customer_workspace',
     v_ws.id,
-    jsonb_build_object('status', v_ws.lifecycle_status, 'version', p_expected_version),
+    jsonb_build_object('status', v_before_status, 'version', v_before_version),
     jsonb_build_object('status', p_target_status, 'version', v_ws.version),
     p_reason,
     statement_timestamp()
@@ -289,24 +477,17 @@ using (
   platform_user_id = app_private.current_platform_user_id()
   or app_private.has_platform_role('PLATFORM_SUPER_ADMIN')
   or app_private.has_platform_role('PLATFORM_AUDITOR')
-  or app_private.has_platform_role('PLATFORM_OPERATIONS')
-);
-
-create policy platform_customer_assignments_manage on platform.platform_customer_assignments for all to authenticated
-using (
-  app_private.has_platform_role('PLATFORM_SUPER_ADMIN')
-  or app_private.has_platform_role('PLATFORM_OPERATIONS')
-)
-with check (
-  app_private.has_platform_role('PLATFORM_SUPER_ADMIN')
-  or app_private.has_platform_role('PLATFORM_OPERATIONS')
+  or (
+    app_private.has_platform_role('PLATFORM_OPERATIONS')
+    and app_private.has_customer_assignment(customer_workspace_id, 'workspace')
+  )
 );
 
 create policy service_customer_workspaces_all on platform.customer_workspaces for all to service_role using (true) with check (true);
 create policy service_customer_assignments_all on platform.platform_customer_assignments for all to service_role using (true) with check (true);
 
 grant select on platform.customer_workspaces, platform.platform_customer_assignments to authenticated;
-grant insert, update on platform.customer_workspaces, platform.platform_customer_assignments to authenticated;
+grant insert, update on platform.customer_workspaces to authenticated;
 grant all on platform.customer_workspaces, platform.platform_customer_assignments to service_role;
 
 commit;

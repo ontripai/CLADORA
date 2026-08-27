@@ -116,7 +116,7 @@ begin
   for update;
 
   if not found then
-    raise exception 'entitlement_not_found: key % not configured for workspace %', p_entitlement_key, p_workspace_id
+    raise exception 'entitlement_not_found: key % not configured or expired for workspace %', p_entitlement_key, p_workspace_id
       using errcode = 'P0002';
   end if;
 
@@ -239,7 +239,7 @@ create policy service_entitlements_all on platform.workspace_entitlements for al
 create policy service_usage_all on platform.entitlement_usage_ledger for all to service_role using (true) with check (true);
 
 grant select on platform.subscription_plans, platform.workspace_contracts, platform.workspace_entitlements, platform.entitlement_usage_ledger to authenticated;
-grant insert, update on platform.subscription_plans, platform.workspace_contracts, platform.workspace_entitlements, platform.entitlement_usage_ledger to authenticated;
+grant insert, update on platform.subscription_plans, platform.workspace_contracts, platform.workspace_entitlements to authenticated;
 grant all on platform.subscription_plans, platform.workspace_contracts, platform.workspace_entitlements, platform.entitlement_usage_ledger to service_role;
 
 commit;

@@ -70,12 +70,13 @@ create or replace function platform.create_provisioning_run(
 )
 returns platform.provisioning_runs
 language plpgsql security definer
-set search_path = pg_catalog, platform
+set search_path = pg_catalog, platform, audit
 as $$
 declare
   v_run platform.provisioning_runs;
   v_task_type text;
   v_order integer := 0;
+  v_actor_id uuid := auth.uid();
 begin
   if not (
     app_private.has_platform_role('PLATFORM_SUPER_ADMIN')
@@ -102,7 +103,7 @@ begin
     p_workspace_id,
     p_idempotency_key,
     'pending',
-    auth.uid(),
+    v_actor_id,
     statement_timestamp()
   )
   returning * into v_run;
@@ -122,11 +123,111 @@ begin
     v_order := v_order + 1;
   end loop;
 
+  insert into audit.events (
+    actor_id,
+    actor_role,
+    action,
+    entity_type,
+    entity_id,
+    reason,
+    occurred_at
+  ) values (
+    v_actor_id,
+    'PLATFORM_CONTROL_PLANE',
+    'PROVISIONING_RUN_CREATED',
+    'provisioning_run',
+    v_run.id,
+    format('Created provisioning run with idempotency key %s and %s tasks', p_idempotency_key, array_length(p_task_types, 1)),
+    statement_timestamp()
+  );
+
   return v_run;
 end;
 $$;
 revoke all on function platform.create_provisioning_run(uuid, text, text[]) from public;
 grant execute on function platform.create_provisioning_run(uuid, text, text[]) to authenticated, service_role;
+
+create or replace function platform.request_support_access(
+  p_workspace_id uuid,
+  p_ticket_ref text,
+  p_purpose text,
+  p_requested_scope text default 'technical',
+  p_sensitivity_level text default 'standard'
+)
+returns platform.support_access_requests
+language plpgsql security definer
+set search_path = pg_catalog, platform, audit
+as $$
+declare
+  v_req platform.support_access_requests;
+  v_actor_id uuid := auth.uid();
+begin
+  if not (
+    app_private.has_platform_role('PLATFORM_SUPER_ADMIN')
+    or (
+      app_private.has_platform_role('PLATFORM_SUPPORT')
+      and (
+        app_private.has_customer_assignment(p_workspace_id, 'support')
+        or app_private.has_customer_assignment(p_workspace_id, 'workspace')
+      )
+    )
+  ) then
+    raise exception 'access_denied: insufficient privileges or unassigned support user'
+      using errcode = '42501';
+  end if;
+
+  if length(trim(coalesce(p_ticket_ref, ''))) = 0 then
+    raise exception 'invalid_ticket: ticket reference must not be empty'
+      using errcode = '22023';
+  end if;
+
+  if length(trim(coalesce(p_purpose, ''))) = 0 then
+    raise exception 'invalid_purpose: support access purpose must not be empty'
+      using errcode = '22023';
+  end if;
+
+  insert into platform.support_access_requests (
+    customer_workspace_id,
+    ticket_ref,
+    purpose,
+    requested_scope,
+    sensitivity_level,
+    requester_id,
+    status
+  ) values (
+    p_workspace_id,
+    p_ticket_ref,
+    p_purpose,
+    p_requested_scope,
+    p_sensitivity_level,
+    v_actor_id,
+    'requested'
+  )
+  returning * into v_req;
+
+  insert into audit.events (
+    actor_id,
+    actor_role,
+    action,
+    entity_type,
+    entity_id,
+    reason,
+    occurred_at
+  ) values (
+    v_actor_id,
+    'PLATFORM_CONTROL_PLANE',
+    'SUPPORT_ACCESS_REQUESTED',
+    'support_access_request',
+    v_req.id,
+    p_purpose,
+    statement_timestamp()
+  );
+
+  return v_req;
+end;
+$$;
+revoke all on function platform.request_support_access(uuid, text, text, text, text) from public;
+grant execute on function platform.request_support_access(uuid, text, text, text, text) to authenticated, service_role;
 
 create or replace function platform.approve_support_access(
   p_request_id uuid,
@@ -142,14 +243,6 @@ declare
   v_grant platform.support_access_grants;
   v_actor uuid := auth.uid();
 begin
-  if not (
-    app_private.has_platform_role('PLATFORM_SUPER_ADMIN')
-    or app_private.has_platform_role('PLATFORM_OPERATIONS')
-  ) then
-    raise exception 'access_denied: insufficient privileges to approve support access'
-      using errcode = '42501';
-  end if;
-
   select * into v_req from platform.support_access_requests
   where id = p_request_id and status = 'requested'
   for update;
@@ -159,9 +252,25 @@ begin
       using errcode = 'P0002';
   end if;
 
-  if v_req.requester_id = v_actor and not app_private.has_platform_role('PLATFORM_SUPER_ADMIN') then
+  if not (
+    app_private.has_platform_role('PLATFORM_SUPER_ADMIN')
+    or (
+      app_private.has_platform_role('PLATFORM_OPERATIONS')
+      and app_private.has_customer_assignment(v_req.customer_workspace_id, 'workspace')
+    )
+  ) then
+    raise exception 'access_denied: insufficient privileges to approve support access'
+      using errcode = '42501';
+  end if;
+
+  if v_req.requester_id = v_actor then
     raise exception 'dual_control_violation: requester cannot approve their own support access grant'
       using errcode = '42501';
+  end if;
+
+  if p_duration_interval <= interval '0' or p_duration_interval > interval '4 hours' then
+    raise exception 'invalid_duration: grant duration must be greater than 0 and no more than 4 hours'
+      using errcode = '22023';
   end if;
 
   update platform.support_access_requests
@@ -199,7 +308,7 @@ begin
     'SUPPORT_ACCESS_GRANT_APPROVED',
     'support_access_grant',
     v_grant.id,
-    v_req.purpose,
+    format('Approved support access for ticket %s (expires in %s)', v_req.ticket_ref, p_duration_interval),
     statement_timestamp()
   );
 
@@ -208,6 +317,74 @@ end;
 $$;
 revoke all on function platform.approve_support_access(uuid, interval, jsonb) from public;
 grant execute on function platform.approve_support_access(uuid, interval, jsonb) to authenticated, service_role;
+
+create or replace function platform.revoke_support_access(
+  p_grant_id uuid,
+  p_reason text
+)
+returns platform.support_access_grants
+language plpgsql security definer
+set search_path = pg_catalog, platform, audit
+as $$
+declare
+  v_grant platform.support_access_grants;
+  v_actor uuid := auth.uid();
+begin
+  select * into v_grant from platform.support_access_grants
+  where id = p_grant_id and revoked_at is null and expires_at > statement_timestamp()
+  for update;
+
+  if not found then
+    raise exception 'grant_not_found_or_expired: %', p_grant_id
+      using errcode = 'P0002';
+  end if;
+
+  if not (
+    app_private.has_platform_role('PLATFORM_SUPER_ADMIN')
+    or (
+      app_private.has_platform_role('PLATFORM_OPERATIONS')
+      and app_private.has_customer_assignment(v_grant.customer_workspace_id, 'workspace')
+    )
+  ) then
+    raise exception 'access_denied: insufficient privileges to revoke support access'
+      using errcode = '42501';
+  end if;
+
+  if length(trim(coalesce(p_reason, ''))) = 0 then
+    raise exception 'invalid_reason: revoke reason must not be empty'
+      using errcode = '22023';
+  end if;
+
+  update platform.support_access_grants
+  set revoked_at = statement_timestamp(),
+      revoked_by = v_actor,
+      revoke_reason = p_reason
+  where id = p_grant_id
+  returning * into v_grant;
+
+  insert into audit.events (
+    actor_id,
+    actor_role,
+    action,
+    entity_type,
+    entity_id,
+    reason,
+    occurred_at
+  ) values (
+    v_actor,
+    'PLATFORM_CONTROL_PLANE',
+    'SUPPORT_ACCESS_GRANT_REVOKED',
+    'support_access_grant',
+    v_grant.id,
+    p_reason,
+    statement_timestamp()
+  );
+
+  return v_grant;
+end;
+$$;
+revoke all on function platform.revoke_support_access(uuid, text) from public;
+grant execute on function platform.revoke_support_access(uuid, text) to authenticated, service_role;
 
 alter table platform.provisioning_runs enable row level security;
 alter table platform.provisioning_tasks enable row level security;
@@ -218,16 +395,6 @@ create policy provisioning_runs_select on platform.provisioning_runs for select 
 using (
   app_private.has_platform_role('PLATFORM_SUPER_ADMIN')
   or app_private.has_platform_role('PLATFORM_AUDITOR')
-  or (app_private.has_platform_role('PLATFORM_OPERATIONS') and app_private.has_customer_assignment(customer_workspace_id, 'workspace'))
-);
-
-create policy provisioning_runs_manage on platform.provisioning_runs for all to authenticated
-using (
-  app_private.has_platform_role('PLATFORM_SUPER_ADMIN')
-  or (app_private.has_platform_role('PLATFORM_OPERATIONS') and app_private.has_customer_assignment(customer_workspace_id, 'workspace'))
-)
-with check (
-  app_private.has_platform_role('PLATFORM_SUPER_ADMIN')
   or (app_private.has_platform_role('PLATFORM_OPERATIONS') and app_private.has_customer_assignment(customer_workspace_id, 'workspace'))
 );
 
@@ -244,62 +411,38 @@ using (
   )
 );
 
-create policy provisioning_tasks_manage on platform.provisioning_tasks for all to authenticated
-using (
-  exists (
-    select 1 from platform.provisioning_runs r
-    where r.id = run_id
-      and (
-        app_private.has_platform_role('PLATFORM_SUPER_ADMIN')
-        or (app_private.has_platform_role('PLATFORM_OPERATIONS') and app_private.has_customer_assignment(r.customer_workspace_id, 'workspace'))
-      )
-  )
-)
-with check (
-  exists (
-    select 1 from platform.provisioning_runs r
-    where r.id = run_id
-      and (
-        app_private.has_platform_role('PLATFORM_SUPER_ADMIN')
-        or (app_private.has_platform_role('PLATFORM_OPERATIONS') and app_private.has_customer_assignment(r.customer_workspace_id, 'workspace'))
-      )
-  )
-);
-
 create policy support_requests_select on platform.support_access_requests for select to authenticated
 using (
   app_private.has_platform_role('PLATFORM_SUPER_ADMIN')
   or app_private.has_platform_role('PLATFORM_AUDITOR')
-  or app_private.has_platform_role('PLATFORM_SUPPORT')
-  or app_private.has_platform_role('PLATFORM_OPERATIONS')
-);
-
-create policy support_requests_manage on platform.support_access_requests for all to authenticated
-using (
-  app_private.has_platform_role('PLATFORM_SUPER_ADMIN')
-  or app_private.has_platform_role('PLATFORM_SUPPORT')
-)
-with check (
-  app_private.has_platform_role('PLATFORM_SUPER_ADMIN')
-  or app_private.has_platform_role('PLATFORM_SUPPORT')
+  or (
+    app_private.has_platform_role('PLATFORM_SUPPORT')
+    and (
+      app_private.has_customer_assignment(customer_workspace_id, 'support')
+      or app_private.has_customer_assignment(customer_workspace_id, 'workspace')
+    )
+  )
+  or (
+    app_private.has_platform_role('PLATFORM_OPERATIONS')
+    and app_private.has_customer_assignment(customer_workspace_id, 'workspace')
+  )
 );
 
 create policy support_grants_select on platform.support_access_grants for select to authenticated
 using (
   app_private.has_platform_role('PLATFORM_SUPER_ADMIN')
   or app_private.has_platform_role('PLATFORM_AUDITOR')
-  or app_private.has_platform_role('PLATFORM_SUPPORT')
-  or app_private.has_platform_role('PLATFORM_OPERATIONS')
-);
-
-create policy support_grants_manage on platform.support_access_grants for all to authenticated
-using (
-  app_private.has_platform_role('PLATFORM_SUPER_ADMIN')
-  or app_private.has_platform_role('PLATFORM_OPERATIONS')
-)
-with check (
-  app_private.has_platform_role('PLATFORM_SUPER_ADMIN')
-  or app_private.has_platform_role('PLATFORM_OPERATIONS')
+  or (
+    app_private.has_platform_role('PLATFORM_SUPPORT')
+    and (
+      app_private.has_customer_assignment(customer_workspace_id, 'support')
+      or app_private.has_customer_assignment(customer_workspace_id, 'workspace')
+    )
+  )
+  or (
+    app_private.has_platform_role('PLATFORM_OPERATIONS')
+    and app_private.has_customer_assignment(customer_workspace_id, 'workspace')
+  )
 );
 
 create policy audit_events_platform_read on audit.events for select to authenticated
@@ -314,7 +457,6 @@ create policy service_support_req_all on platform.support_access_requests for al
 create policy service_support_grants_all on platform.support_access_grants for all to service_role using (true) with check (true);
 
 grant select on platform.provisioning_runs, platform.provisioning_tasks, platform.support_access_requests, platform.support_access_grants to authenticated;
-grant insert, update on platform.provisioning_runs, platform.provisioning_tasks, platform.support_access_requests, platform.support_access_grants to authenticated;
 grant all on platform.provisioning_runs, platform.provisioning_tasks, platform.support_access_requests, platform.support_access_grants to service_role;
 
 commit;
