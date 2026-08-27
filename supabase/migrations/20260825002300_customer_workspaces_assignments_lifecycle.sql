@@ -343,7 +343,7 @@ begin
 
   if v_ws.version <> p_expected_version then
     raise exception 'concurrency_conflict: expected version % does not match actual %', p_expected_version, v_ws.version
-      using errcode = 'P0004';
+      using errcode = 'P0001';
   end if;
 
   if v_ws.lifecycle_status = 'ARCHIVED' then
