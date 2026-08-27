@@ -3,14 +3,9 @@ set local search_path = public, extensions;
 
 select plan(26);
 
--- Test fixture setup
+-- Test fixture setup (as superuser)
 do $$
 declare
-  v_tenant_id uuid;
-  v_prod_tenant_id uuid;
-  v_ws_id uuid;
-  v_prod_ws_id uuid;
-  v_ws_other_id uuid;
   v_admin_uid uuid := 'a0000000-0000-0000-0000-000000000001'::uuid;
   v_ops_uid uuid := 'a0000000-0000-0000-0000-000000000002'::uuid;
   v_aud_uid uuid := 'a0000000-0000-0000-0000-000000000003'::uuid;
@@ -59,7 +54,12 @@ begin
 end;
 $$;
 
+-- Switch to authenticated role for all subsequent client tests
+set local role authenticated;
+
 -- Assertion 1: Unauthenticated direct UPDATE on customer_workspaces is denied
+select set_config('request.jwt.claims', '{}', true);
+
 select throws_like(
   $$ update platform.customer_workspaces set lifecycle_status = 'ARCHIVED' where id = 'd0000000-0000-0000-0000-000000000001'::uuid $$,
   '%permission denied%',

@@ -64,7 +64,7 @@ begin
   on conflict (id) do nothing;
 
   insert into platform.platform_users (id, auth_user_id, employee_ref, display_name, status, deactivated_at)
-  values (v_plat_inact, v_inact_uid, 'EMP-INACT-01', 'Inactive User', 'inactive', statement_timestamp());
+  values (v_plat_inact, v_inact_uid, 'EMP-INACT-01', 'Inactive User', 'suspended', statement_timestamp());
 
   insert into platform.platform_role_assignments (platform_user_id, role, status, grant_reason)
   values (v_plat_inact, 'PLATFORM_SUPER_ADMIN', 'active', 'Fixture');

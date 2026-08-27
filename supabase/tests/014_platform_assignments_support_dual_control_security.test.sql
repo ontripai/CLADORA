@@ -1,9 +1,9 @@
 begin;
 set local search_path = public, extensions;
 
-select plan(31);
+select plan(32);
 
--- Fixture setup
+-- Fixture setup (as superuser)
 do $$
 declare
   v_admin_uid uuid := 'e0000000-0000-0000-0000-000000000001'::uuid;
@@ -59,6 +59,9 @@ begin
 end;
 $$;
 
+-- Switch to authenticated role for all subsequent tests
+set local role authenticated;
+
 -- 1. Direct INSERT/UPDATE/DELETE on platform_customer_assignments is denied
 select set_config('request.jwt.claims', '{"sub": "e0000000-0000-0000-0000-000000000002"}', true);
 
@@ -75,7 +78,7 @@ select throws_like(
   'unassigned operations user cannot self-assign to customer workspace B'
 );
 
--- 3. Super Admin grants assignment on Workspace A to Operations, Support, and Finance
+-- 3, 4, 5. Super Admin grants assignment on Workspace A to Operations, Support, and Finance
 select set_config('request.jwt.claims', '{"sub": "e0000000-0000-0000-0000-000000000001"}', true);
 
 select ok(
@@ -93,7 +96,7 @@ select ok(
   'super admin can grant commercial assignment on Workspace A to finance'
 );
 
--- 4. Operations user can delegate sub-assignment on Workspace A
+-- 6. Operations user can delegate sub-assignment on Workspace A
 select set_config('request.jwt.claims', '{"sub": "e0000000-0000-0000-0000-000000000002"}', true);
 
 select ok(
@@ -101,7 +104,7 @@ select ok(
   'assigned operations user can delegate sub-assignment on assigned Workspace A'
 );
 
--- 5. Revocation of customer assignment succeeds and is recorded
+-- 7. Revocation of customer assignment succeeds and is recorded
 select ok(
   (select (platform.revoke_customer_assignment(
     (select id from platform.platform_customer_assignments where customer_workspace_id = '20000000-0000-0000-0000-000000000001'::uuid and scope_type = 'technical' limit 1),
@@ -110,21 +113,27 @@ select ok(
   'revocation of customer assignment succeeds'
 );
 
--- 6. Direct INSERT/UPDATE/DELETE on support_access_grants is denied
+-- 8. Revocation is audited
+select ok(
+  (select count(*) > 0 from audit.events where action = 'CUSTOMER_ASSIGNMENT_REVOKED'),
+  'customer assignment revocation is recorded in audit.events'
+);
+
+-- 9. Direct INSERT on support_access_grants is denied
 select throws_like(
   $$ insert into platform.support_access_grants (request_id, customer_workspace_id, approver_id, expires_at) values (gen_random_uuid(), '20000000-0000-0000-0000-000000000001'::uuid, 'e0000000-0000-0000-0000-000000000002'::uuid, statement_timestamp() + interval '1 hour') $$,
   '%permission denied%',
   'direct INSERT into support_access_grants is denied'
 );
 
--- 7. Direct INSERT/UPDATE/DELETE on support_access_requests is denied
+-- 10. Direct INSERT on support_access_requests is denied
 select throws_like(
   $$ insert into platform.support_access_requests (customer_workspace_id, ticket_ref, purpose, requester_id) values ('20000000-0000-0000-0000-000000000001'::uuid, 'TCK-BYPASS', 'Bypass test', 'e0000000-0000-0000-0000-000000000002'::uuid) $$,
   '%permission denied%',
   'direct INSERT into support_access_requests is denied'
 );
 
--- 8. Support Access: Support user requests access for assigned Workspace A
+-- 11. Support Access: Support user requests access for assigned Workspace A
 select set_config('request.jwt.claims', '{"sub": "e0000000-0000-0000-0000-000000000003"}', true);
 
 select ok(
@@ -132,21 +141,21 @@ select ok(
   'assigned support user creates support access request TCK-2026-DUR'
 );
 
--- 9. Unassigned Support user request on Workspace B is rejected
+-- 12. Unassigned Support user request on Workspace B is rejected
 select throws_like(
   $$ select platform.request_support_access('20000000-0000-0000-0000-000000000002'::uuid, 'TCK-2026-002', 'Investigating B', 'technical', 'standard') $$,
   '%access_denied%',
   'unassigned support user cannot create support access request on unassigned Workspace B'
 );
 
--- 10. Dual-control: Requester (Support user) cannot approve own request
+-- 13. Dual-control: Requester (Support user) cannot approve own request
 select throws_like(
   $$ select platform.approve_support_access((select id from platform.support_access_requests where ticket_ref = 'TCK-2026-DUR' limit 1)) $$,
   '%access_denied%',
   'support user cannot approve support request'
 );
 
--- 11. Dual-control: Super Admin who creates request cannot approve own request
+-- 14. Dual-control: Super Admin who creates request cannot approve own request
 select set_config('request.jwt.claims', '{"sub": "e0000000-0000-0000-0000-000000000001"}', true);
 
 do $$
@@ -163,7 +172,7 @@ select throws_like(
   'super admin cannot approve own support access request (dual-control enforced)'
 );
 
--- 12. Support Duration Test: Independent authorized Operations approver with 5 hours duration fails with invalid_duration
+-- 15. Support Duration Test: Independent authorized Operations approver with 5 hours duration fails with invalid_duration
 select set_config('request.jwt.claims', '{"sub": "e0000000-0000-0000-0000-000000000002"}', true);
 
 select throws_like(
@@ -172,21 +181,21 @@ select throws_like(
   'independent approver with > 4 hours duration fails with invalid_duration'
 );
 
--- 13. Support Duration Test: Zero duration fails with invalid_duration
+-- 16. Support Duration Test: Zero duration fails with invalid_duration
 select throws_like(
   $$ select platform.approve_support_access((select id from platform.support_access_requests where ticket_ref = 'TCK-2026-DUR' limit 1), interval '0 hours') $$,
   '%invalid_duration%',
   'zero duration fails with invalid_duration'
 );
 
--- 14. Support Duration Test: Negative duration fails with invalid_duration
+-- 17. Support Duration Test: Negative duration fails with invalid_duration
 select throws_like(
   $$ select platform.approve_support_access((select id from platform.support_access_requests where ticket_ref = 'TCK-2026-DUR' limit 1), interval '-1 hours') $$,
   '%invalid_duration%',
   'negative duration fails with invalid_duration'
 );
 
--- 15. After failed duration attempts, request remains in 'requested' state and no grant exists
+-- 18 & 19. After failed duration attempts, request remains in 'requested' state and no grant exists
 select ok(
   (select status = 'requested' from platform.support_access_requests where ticket_ref = 'TCK-2026-DUR' limit 1),
   'request remains in requested state after failed duration validation'
@@ -197,7 +206,7 @@ select ok(
   'no grant row created after failed duration validation'
 );
 
--- 16. Valid independent approval with 2 hours duration succeeds
+-- 20. Valid independent approval with 2 hours duration succeeds
 select ok(
   (select (platform.approve_support_access(
     (select id from platform.support_access_requests where ticket_ref = 'TCK-2026-DUR' limit 1),
@@ -207,13 +216,13 @@ select ok(
   'assigned operations user independently approves support access request with 2 hours duration'
 );
 
--- 17. Support access approval is audited
+-- 21. Support access approval is audited
 select ok(
   (select count(*) > 0 from audit.events where action = 'SUPPORT_ACCESS_GRANT_APPROVED'),
   'support access approval is recorded in audit.events'
 );
 
--- 18. Support access revocation terminates active grant
+-- 22. Support access revocation terminates active grant
 select ok(
   (select (platform.revoke_support_access(
     (select id from platform.support_access_grants where customer_workspace_id = '20000000-0000-0000-0000-000000000001'::uuid and revoked_at is null limit 1),
@@ -222,27 +231,27 @@ select ok(
   'support access revocation terminates active grant'
 );
 
--- 19. Support access revocation is audited
+-- 23. Support access revocation is audited
 select ok(
   (select count(*) > 0 from audit.events where action = 'SUPPORT_ACCESS_GRANT_REVOKED'),
   'support access grant revocation is recorded in audit.events'
 );
 
--- 20. Direct INSERT on workspace_contracts is denied
+-- 24. Direct INSERT on workspace_contracts is denied
 select throws_like(
   $$ insert into platform.workspace_contracts (customer_workspace_id, contract_ref, start_date) values ('20000000-0000-0000-0000-000000000001'::uuid, 'CTR-BYPASS', current_date) $$,
   '%permission denied%',
   'direct INSERT on workspace_contracts is denied'
 );
 
--- 21. Direct INSERT on workspace_entitlements is denied
+-- 25. Direct INSERT on workspace_entitlements is denied
 select throws_like(
   $$ insert into platform.workspace_entitlements (customer_workspace_id, entitlement_key, value_type) values ('20000000-0000-0000-0000-000000000001'::uuid, 'bypass_key', 'numeric') $$,
   '%permission denied%',
   'direct INSERT on workspace_entitlements is denied'
 );
 
--- 22. Direct INSERT on entitlement_usage_ledger is denied
+-- 26. Direct INSERT on entitlement_usage_ledger is denied
 select throws_like(
   $$ insert into platform.entitlement_usage_ledger (customer_workspace_id, entitlement_key, delta, reason) values ('20000000-0000-0000-0000-000000000001'::uuid, 'ocr', 10, 'bypass') $$,
   '%permission denied%',
@@ -252,7 +261,7 @@ select throws_like(
 -- Switch to Finance user (assigned to Workspace A)
 select set_config('request.jwt.claims', '{"sub": "e0000000-0000-0000-0000-000000000004"}', true);
 
--- 23. Contract creation via RPC succeeds by Finance with commercial assignment
+-- 27. Contract creation via RPC succeeds by Finance with commercial assignment
 select ok(
   (select (platform.create_workspace_contract(
     '20000000-0000-0000-0000-000000000001'::uuid,
@@ -266,7 +275,7 @@ select ok(
   'finance user can create draft workspace contract via RPC'
 );
 
--- 24. Contract activation via RPC succeeds and is audited
+-- 28. Contract activation via RPC succeeds and is audited
 select ok(
   (select (platform.activate_workspace_contract(
     (select id from platform.workspace_contracts where contract_ref = 'CTR-2026-AUT-01' limit 1),
@@ -275,14 +284,14 @@ select ok(
   'finance user can activate workspace contract via RPC'
 );
 
--- 25. Entitlement configuration with invalid override (empty reason) is rejected
+-- 29. Entitlement configuration with invalid override (empty reason) is rejected
 select throws_like(
   $$ select platform.set_workspace_entitlement('20000000-0000-0000-0000-000000000001'::uuid, 'ocr_limit', 'numeric', 100, null, null, null, '{"numeric_value": 200}'::jsonb, '   ', statement_timestamp() + interval '1 day') $$,
   '%invalid_override%',
   'entitlement override with empty reason is rejected'
 );
 
--- 26. Entitlement configuration succeeds and is audited
+-- 30. Entitlement configuration succeeds and is audited
 select ok(
   (select (platform.set_workspace_entitlement(
     '20000000-0000-0000-0000-000000000001'::uuid,
@@ -302,14 +311,14 @@ select ok(
 -- Switch to Auditor user
 select set_config('request.jwt.claims', '{"sub": "e0000000-0000-0000-0000-000000000005"}', true);
 
--- 27. Auditor cannot call contract creation RPC
+-- 31. Auditor cannot call contract creation RPC
 select throws_like(
   $$ select platform.create_workspace_contract('20000000-0000-0000-0000-000000000001'::uuid, 'CTR-AUD-01', null, 'EUR', current_date, null, '{}'::jsonb) $$,
   '%access_denied%',
   'auditor cannot call create_workspace_contract RPC'
 );
 
--- 28. Direct UPDATE on audit.events is denied
+-- 32. Direct UPDATE on audit.events is denied
 select throws_like(
   $$ update audit.events set reason = 'Tampered' where id > 0 $$,
   '%permission denied%',
