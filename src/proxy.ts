@@ -6,5 +6,5 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/:lang(ro|en|fa)/app/:path*', '/:lang(ro|en|fa)/login'],
+  matcher: ['/:lang(ro|en|fa)/app/:path*', '/:lang(ro|en|fa)/login', '/:lang(ro|en|fa)/platform/:path+'],
 };
