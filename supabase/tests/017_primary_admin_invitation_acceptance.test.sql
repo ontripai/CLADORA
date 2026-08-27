@@ -120,10 +120,13 @@ select throws_like(
 select set_config('request.jwt.claims','{"sub":"b1000000-0000-0000-0000-000000000002","role":"authenticated"}',true);
 select ok((
   select count(*)=1
-  from acceptance_tokens t
-  cross join lateral platform.accept_primary_admin_invitation(t.token,'Primary Administrator','ro','Europe/Bucharest') a
-  where t.invitation_id=(select id from platform.workspace_invitations where normalized_email='primary.admin@cladora.test')
+  from platform.accept_primary_admin_invitation(
+    (select token from acceptance_tokens where invitation_id=(select id from platform.workspace_invitations where normalized_email='primary.admin@cladora.test')),
+    'Primary Administrator','ro','Europe/Bucharest'
+  )
 ),'matching confirmed user accepts primary admin invitation');
+
+reset role;
 
 select ok((select count(*)=1 from identity.profiles where user_id='b1000000-0000-0000-0000-000000000002' and display_name='Primary Administrator' and locale='ro'),'acceptance creates the identity profile');
 select ok((select count(*)=1 from identity.memberships where tenant_id='b3000000-0000-0000-0000-000000000001' and user_id='b1000000-0000-0000-0000-000000000002' and status='active'),'acceptance creates one active membership');
@@ -132,13 +135,20 @@ select ok((select status='accepted' and accepted_by='b1000000-0000-0000-0000-000
 select ok((select primary_admin_user_id='b1000000-0000-0000-0000-000000000002' and primary_admin_membership_id is not null and primary_admin_accepted_at is not null from platform.customer_workspaces where id='b4000000-0000-0000-0000-000000000001'),'workspace records the primary administrator');
 select ok((select onboarding_completed_at is null from platform.customer_workspaces where id='b4000000-0000-0000-0000-000000000001'),'onboarding remains incomplete after invitation acceptance');
 select ok((select count(*)=1 from audit.events where action='PRIMARY_ADMIN_INVITATION_ACCEPTED'),'acceptance is recorded in audit events');
+select ok((select count(*)=1 from identity.memberships where tenant_id='b3000000-0000-0000-0000-000000000001' and user_id='b1000000-0000-0000-0000-000000000002' and role_id='b5000000-0000-0000-0000-000000000001'),'primary administrator receives the invited role');
+select ok((select count(*)=1 from audit.events where action='PRIMARY_ADMIN_INVITATION_ACCEPTED' and coalesce(reason,'') not like '%'||(select token from acceptance_tokens where invitation_id=(select id from platform.workspace_invitations where normalized_email='primary.admin@cladora.test'))||'%' and before_snapshot::text not like '%'||(select token from acceptance_tokens where invitation_id=(select id from platform.workspace_invitations where normalized_email='primary.admin@cladora.test'))||'%' and after_snapshot::text not like '%'||(select token from acceptance_tokens where invitation_id=(select id from platform.workspace_invitations where normalized_email='primary.admin@cladora.test'))||'%'),'raw invitation token is never written to audit data');
 
+set local role authenticated;
+select set_config('request.jwt.claims','{"sub":"b1000000-0000-0000-0000-000000000002","role":"authenticated"}',true);
 select ok((
   select count(*)=1
-  from acceptance_tokens t
-  cross join lateral platform.accept_primary_admin_invitation(t.token,'Primary Administrator','ro','Europe/Bucharest') a
-  where t.invitation_id=(select id from platform.workspace_invitations where normalized_email='primary.admin@cladora.test')
+  from platform.accept_primary_admin_invitation(
+    (select token from acceptance_tokens where invitation_id=(select id from platform.workspace_invitations where normalized_email='primary.admin@cladora.test')),
+    'Primary Administrator','ro','Europe/Bucharest'
+  )
 ),'same actor retry is idempotent');
+
+reset role;
 select ok((select count(*)=1 from identity.memberships where tenant_id='b3000000-0000-0000-0000-000000000001' and user_id='b1000000-0000-0000-0000-000000000002' and status='active'),'idempotent retry does not duplicate membership');
 select ok((select count(*)=1 from identity.context_grants cg join identity.memberships m on m.id=cg.membership_id where m.user_id='b1000000-0000-0000-0000-000000000002' and cg.scope_type='tenant'),'idempotent retry does not duplicate context grant');
 select ok((select version=2 from platform.customer_workspaces where id='b4000000-0000-0000-0000-000000000001'),'idempotent retry does not increment workspace version twice');
