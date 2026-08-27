@@ -80,7 +80,7 @@ create or replace function platform.enforce_entitlement_quota(
 )
 returns boolean
 language plpgsql security definer
-set search_path = pg_catalog, platform, audit
+set search_path = pg_catalog, platform, audit, app_private
 as $$
 declare
   v_ent platform.workspace_entitlements;
@@ -210,7 +210,7 @@ create or replace function platform.create_workspace_contract(
 )
 returns platform.workspace_contracts
 language plpgsql security definer
-set search_path = pg_catalog, platform, audit
+set search_path = pg_catalog, platform, audit, app_private
 as $$
 declare
   v_contract platform.workspace_contracts;
@@ -299,7 +299,7 @@ create or replace function platform.activate_workspace_contract(
 )
 returns platform.workspace_contracts
 language plpgsql security definer
-set search_path = pg_catalog, platform, audit
+set search_path = pg_catalog, platform, audit, app_private
 as $$
 declare
   v_contract platform.workspace_contracts;

@@ -439,7 +439,7 @@ create or replace function platform.transition_workspace_lifecycle(
 )
 returns platform.customer_workspaces
 language plpgsql security definer
-set search_path = pg_catalog, platform, audit
+set search_path = pg_catalog, platform, audit, app_private
 as $$
 declare
   v_ws platform.customer_workspaces;

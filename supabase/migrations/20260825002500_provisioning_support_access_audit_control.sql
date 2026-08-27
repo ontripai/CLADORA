@@ -70,7 +70,7 @@ create or replace function platform.create_provisioning_run(
 )
 returns platform.provisioning_runs
 language plpgsql security definer
-set search_path = pg_catalog, platform, audit
+set search_path = pg_catalog, platform, audit, app_private
 as $$
 declare
   v_run platform.provisioning_runs;
@@ -156,7 +156,7 @@ create or replace function platform.request_support_access(
 )
 returns platform.support_access_requests
 language plpgsql security definer
-set search_path = pg_catalog, platform, audit
+set search_path = pg_catalog, platform, audit, app_private
 as $$
 declare
   v_req platform.support_access_requests;
@@ -236,7 +236,7 @@ create or replace function platform.approve_support_access(
 )
 returns platform.support_access_grants
 language plpgsql security definer
-set search_path = pg_catalog, platform, audit
+set search_path = pg_catalog, platform, audit, app_private
 as $$
 declare
   v_req platform.support_access_requests;
@@ -324,7 +324,7 @@ create or replace function platform.revoke_support_access(
 )
 returns platform.support_access_grants
 language plpgsql security definer
-set search_path = pg_catalog, platform, audit
+set search_path = pg_catalog, platform, audit, app_private
 as $$
 declare
   v_grant platform.support_access_grants;

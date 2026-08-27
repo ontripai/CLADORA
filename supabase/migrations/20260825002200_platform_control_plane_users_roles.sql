@@ -110,6 +110,7 @@ with check (app_private.has_platform_role('PLATFORM_SUPER_ADMIN'));
 create policy service_platform_users_all on platform.platform_users for all to service_role using (true) with check (true);
 create policy service_platform_role_assignments_all on platform.platform_role_assignments for all to service_role using (true) with check (true);
 
+grant usage on schema app_private to authenticated;
 grant select on platform.platform_users, platform.platform_role_assignments to authenticated;
 grant insert, update on platform.platform_users, platform.platform_role_assignments to authenticated;
 grant all on platform.platform_users, platform.platform_role_assignments to service_role;
