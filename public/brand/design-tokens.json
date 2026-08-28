@@ -1,0 +1,18 @@
+{
+  "$schema": "https://design-tokens.github.io/community-group/format/",
+  "brand": {
+    "name": "CLADORA",
+    "logoConstruction": "[architectural C symbol] + LADORA",
+    "colors": {
+      "deepNavy": { "$value": "#102A43", "$type": "color" },
+      "teal": { "$value": "#0E9F8E", "$type": "color" },
+      "emerald": { "$value": "#10B981", "$type": "color" },
+      "white": { "$value": "#FFFFFF", "$type": "color" }
+    },
+    "typography": {
+      "wordmarkBasis": { "$value": "Manrope SemiBold", "$type": "fontFamily" },
+      "interfacePrimary": { "$value": "Manrope", "$type": "fontFamily" },
+      "interfaceSecondary": { "$value": "Inter", "$type": "fontFamily" }
+    }
+  }
+}

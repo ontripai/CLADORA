@@ -8,6 +8,7 @@ import { ArrowRight, Loader2, Lock, Mail, PlayCircle } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import { isSupabaseConfigured } from '@/lib/supabase/env';
 import { TurnstileWidget } from '@/components/auth/TurnstileWidget';
+import { CladoraBrand } from '@/components/brand/CladoraBrand';
 
 interface LoginFormProps {
   lang: Language;
@@ -85,9 +86,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ lang }) => {
   return (
     <div className="card-proptech p-8 bg-white border-[#D3DCE6] space-y-6 shadow-elevated">
       <div className="text-center space-y-2">
-        <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#102A43] to-[#087A6E] flex items-center justify-center text-white font-display font-extrabold text-2xl mx-auto shadow-md">
-          C
-        </div>
+        <CladoraBrand variant="symbol" decorative className="mx-auto h-12 w-12" />
         <h1 className="text-2xl font-display font-extrabold text-[#102A43]">
           {lang === 'ro' ? 'Autentificare în CLADORA' : lang === 'fa' ? 'ورود به سامانه کلادورا' : 'Sign in to CLADORA'}
         </h1>

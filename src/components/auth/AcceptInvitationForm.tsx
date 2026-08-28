@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Loader2, Lock, UserRound } from 'lucide-react';
 import type { Language } from '@/types';
+import { CladoraBrand } from '@/components/brand/CladoraBrand';
 
 type Props = { lang: Language };
 
@@ -78,7 +79,7 @@ export function AcceptInvitationForm({ lang }: Props) {
   return (
     <div className="card-proptech space-y-6 border-[#D3DCE6] bg-white p-8 shadow-elevated">
       <div className="space-y-2 text-center">
-        <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-[#102A43] to-[#087A6E] text-2xl font-extrabold text-white">C</div>
+        <CladoraBrand variant="symbol" decorative className="mx-auto h-12 w-12" />
         <h1 className="text-2xl font-extrabold text-[#102A43]">{t.title}</h1>
         <p className="text-xs text-[#334E68]">{t.intro}</p>
       </div>

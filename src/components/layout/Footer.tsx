@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { Language } from '@/types';
 import { ShieldCheck, ArrowUpRight } from 'lucide-react';
 import { LanguageSwitcher } from '@/components/ui/LanguageSwitcher';
+import { CladoraBrand } from '@/components/brand/CladoraBrand';
 
 interface FooterProps {
   lang: Language;
@@ -20,14 +21,7 @@ export const Footer: React.FC<FooterProps> = ({ lang }) => {
           
           {/* Brand Column */}
           <div className="lg:col-span-2 space-y-4">
-            <div className="flex items-center gap-2.5">
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#0E9F8E] to-[#10B981] flex items-center justify-center text-white font-display font-extrabold text-lg shadow-md">
-                C
-              </div>
-              <span className="text-2xl font-display font-extrabold tracking-tight text-white">
-                CLADORA
-              </span>
-            </div>
+            <CladoraBrand variant="reverse" className="h-9 w-auto" />
             
             <p className="text-sm text-[#CBD5E1] leading-relaxed max-w-sm">
               {lang === 'ro'
