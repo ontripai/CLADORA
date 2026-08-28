@@ -34,9 +34,10 @@ import {
 } from '@/config/formatters';
 import { formatStatusBadge } from '@/config/statuses';
 
-export default function DashboardPage(props: { params: Promise<{ lang: Language }> }) {
+export default function DashboardPage(props: { params: Promise<{ lang: Language }>; demoMode?: boolean }) {
   const params = use(props.params);
   const { lang } = params;
+  const appBase = `/${lang}/${props.demoMode ? 'demo/app' : 'app'}`;
   const { 
     activeRole, 
     context, 
@@ -91,7 +92,7 @@ export default function DashboardPage(props: { params: Promise<{ lang: Language 
         {/* Quick Action */}
         {activeRole === 'association_admin' && (
           <Link
-            href={`/${lang}/app/accounting/month-close`}
+            href={`${appBase}/accounting/month-close`}
             className="px-5 py-2.5 rounded-xl bg-[#0E9F8E] hover:bg-[#0C8778] text-white text-xs font-bold shadow-sm transition-all flex items-center gap-2 self-start sm:self-auto"
           >
             <CheckCircle2 className="w-4 h-4" />
@@ -100,7 +101,7 @@ export default function DashboardPage(props: { params: Promise<{ lang: Language 
         )}
         {activeRole === 'owner' && (
           <Link
-            href={`/${lang}/app/meters`}
+            href={`${appBase}/meters`}
             className="px-5 py-2.5 rounded-xl bg-[#0E9F8E] hover:bg-[#0C8778] text-white text-xs font-bold shadow-sm transition-all flex items-center gap-2 self-start sm:self-auto"
           >
             <Gauge className="w-4 h-4" />
@@ -175,7 +176,7 @@ export default function DashboardPage(props: { params: Promise<{ lang: Language 
                 <h3 className="text-sm font-bold text-[#102A43]">
                   {lang === 'ro' ? 'Pași Închidere Lunară Octombrie' : lang === 'fa' ? 'مراحل بستن دوره مالی ماه جاری' : 'Month-End Closing Progress'}
                 </h3>
-                <Link href={`/${lang}/app/accounting/month-close`} className="text-xs font-bold text-[#0E9F8E] hover:underline">
+                <Link href={`${appBase}/accounting/month-close`} className="text-xs font-bold text-[#0E9F8E] hover:underline">
                   {lang === 'ro' ? 'Deschide asistentul de închidere →' : lang === 'fa' ? 'مشاهده دستیار بستن دوره ←' : 'Open closing stepper →'}
                 </Link>
               </div>
@@ -237,7 +238,7 @@ export default function DashboardPage(props: { params: Promise<{ lang: Language 
                 <h3 className="text-sm font-bold text-[#102A43]">
                   {lang === 'ro' ? 'Tichete Mentenanță & Urgențe' : lang === 'fa' ? 'تیکت‌های تعمیرات و دیسپچینگ' : 'Maintenance Dispatch'}
                 </h3>
-                <Link href={`/${lang}/app/maintenance`} className="text-xs font-bold text-[#0E9F8E] hover:underline">
+                <Link href={`${appBase}/maintenance`} className="text-xs font-bold text-[#0E9F8E] hover:underline">
                   {lang === 'ro' ? 'Toate tichetele' : lang === 'fa' ? 'مشاهده همه' : 'View all'}
                 </Link>
               </div>
