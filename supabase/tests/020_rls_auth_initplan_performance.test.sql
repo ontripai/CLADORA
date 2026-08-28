@@ -110,7 +110,7 @@ select lives_ok(
   'authenticated actor can still update their own profile'
 );
 select lives_ok(
-  $update identity.profiles set display_name = 'Forbidden Update' where user_id = 'e1000000-0000-0000-0000-000000000002'$,
+  $sql$update identity.profiles set display_name = 'Forbidden Update' where user_id = 'e1000000-0000-0000-0000-000000000002'$sql$,
   'attempting to update another profile is safely filtered by RLS'
 );
 
