@@ -17,9 +17,10 @@ import { Money } from '@/components/ui/Money';
 import { formatNumber } from '@/config/currencies';
 import { getStatusLabel, EntityStatus } from '@/config/statuses';
 
-export default function AccountingPage(props: { params: Promise<{ lang: Language }> }) {
+export default function AccountingPage(props: { params: Promise<{ lang: Language }>; demoMode?: boolean }) {
   const params = use(props.params);
   const { lang } = params;
+  const appBase = `/${lang}/${props.demoMode ? 'demo/app' : 'app'}`;
   const { journalEntries } = useDemoStore();
   const [searchTerm, setSearchTerm] = useState('');
 
@@ -54,13 +55,13 @@ export default function AccountingPage(props: { params: Promise<{ lang: Language
 
         <div className="flex items-center gap-3">
           <Link
-            href={`/${lang}/app/accounting/allocations`}
+            href={`${appBase}/accounting/allocations`}
             className="px-4 py-2.5 rounded-xl bg-[#F0F4F8] hover:bg-[#E2E8F0] text-[#102A43] text-xs font-bold transition-all"
           >
             {lang === 'ro' ? 'Vezi Cote & Alocare CPI' : lang === 'fa' ? 'محاسبه سهام مشاع (CPI)' : 'View CPI Allocations'}
           </Link>
           <Link
-            href={`/${lang}/app/accounting/month-close`}
+            href={`${appBase}/accounting/month-close`}
             className="px-4 py-2.5 rounded-xl bg-[#0E9F8E] hover:bg-[#0C8778] text-white text-xs font-bold shadow-sm transition-all"
           >
             {lang === 'ro' ? 'Închidere Lunară' : lang === 'fa' ? 'بستن دوره ماهانه' : 'Month-End Close'}
