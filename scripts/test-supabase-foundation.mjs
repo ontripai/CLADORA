@@ -52,6 +52,8 @@ check(mfaChallenge.includes('challengeAndVerify'), 'MFA challenge verifies a TOT
 check(accountSecurity.includes("factorType: 'totp'"), 'account security supports TOTP enrollment');
 check(accountSecurity.includes("scope: 'others'"), 'account security can revoke other sessions');
 check(accountSecurity.includes('minLength={12}'), 'password change UI enforces a 12-character minimum');
+check(accountSecurity.includes('current_password: currentPassword'), 'password changes supply the current password to Supabase Auth');
+check(accountSecurity.includes('autoComplete="current-password"'), 'password change UI collects the current password securely');
 check(protectedLayout.includes('getAuthenticatorAssuranceLevel'), 'customer data plane enforces enrolled MFA');
 check(platformLayout.includes('getAuthenticatorAssuranceLevel'), 'platform control plane enforces enrolled MFA');
 check(demoSelector.includes('`/${lang}/demo/app/dashboard`'), 'demo role selection stays in the public demo data plane');
