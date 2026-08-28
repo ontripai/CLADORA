@@ -59,7 +59,7 @@ select ok(has_function_privilege('authenticated','platform.accept_primary_admin_
 select ok((select p.prosecdef and coalesce(array_to_string(p.proconfig,','),'') like '%search_path=%' from pg_proc p join pg_namespace n on n.oid=p.pronamespace where n.nspname='platform' and p.proname='accept_primary_admin_invitation'),'acceptance RPC is security definer with fixed search path');
 
 set local role authenticated;
-select set_config('request.jwt.claims','{"sub":"b1000000-0000-0000-0000-000000000001","role":"authenticated"}',true);
+select set_config('request.jwt.claims','{"sub":"b1000000-0000-0000-0000-000000000001","role":"authenticated","aal":"aal2"}',true);
 
 insert into acceptance_tokens(token,invitation_id,fixture)
 select invitation_token,invitation_id,'primary_admin'
@@ -72,12 +72,12 @@ from platform.create_workspace_invitation(
   'Primary administrator acceptance fixture'
 );
 
-select set_config('request.jwt.claims','{"role":"authenticated"}',true);
+select set_config('request.jwt.claims','{"role":"authenticated","aal":"aal2"}',true);
 select throws_like(
   $$select * from platform.accept_primary_admin_invitation((select token from acceptance_tokens limit 1),'Primary Admin','ro','Europe/Bucharest')$$,
   '%authentication_required%','unauthenticated acceptance is rejected');
 
-select set_config('request.jwt.claims','{"sub":"b1000000-0000-0000-0000-000000000002","role":"authenticated"}',true);
+select set_config('request.jwt.claims','{"sub":"b1000000-0000-0000-0000-000000000002","role":"authenticated","aal":"aal2"}',true);
 select throws_like(
   $$select * from platform.accept_primary_admin_invitation('short','Primary Admin','ro','Europe/Bucharest')$$,
   '%invalid_invitation%','short token is rejected');
@@ -91,17 +91,17 @@ select throws_like(
   $$select * from platform.accept_primary_admin_invitation((select token from acceptance_tokens limit 1),'Primary Admin','ro',' ')$$,
   '%invalid_timezone%','blank timezone is rejected');
 
-select set_config('request.jwt.claims','{"sub":"b1000000-0000-0000-0000-000000000003","role":"authenticated"}',true);
+select set_config('request.jwt.claims','{"sub":"b1000000-0000-0000-0000-000000000003","role":"authenticated","aal":"aal2"}',true);
 select throws_like(
   $$select * from platform.accept_primary_admin_invitation((select token from acceptance_tokens limit 1),'Other Person','en','Europe/Bucharest')$$,
   '%invitation_email_mismatch%','different authenticated email cannot accept invitation');
 
-select set_config('request.jwt.claims','{"sub":"b1000000-0000-0000-0000-000000000004","role":"authenticated"}',true);
+select set_config('request.jwt.claims','{"sub":"b1000000-0000-0000-0000-000000000004","role":"authenticated","aal":"aal2"}',true);
 select throws_like(
   $$select * from platform.accept_primary_admin_invitation((select token from acceptance_tokens limit 1),'Unconfirmed User','en','Europe/Bucharest')$$,
   '%email_not_confirmed%','unconfirmed email cannot accept invitation');
 
-select set_config('request.jwt.claims','{"sub":"b1000000-0000-0000-0000-000000000001","role":"authenticated"}',true);
+select set_config('request.jwt.claims','{"sub":"b1000000-0000-0000-0000-000000000001","role":"authenticated","aal":"aal2"}',true);
 insert into acceptance_tokens(token,invitation_id,fixture)
 select invitation_token,invitation_id,'invalid_role'
 from platform.create_workspace_invitation(
@@ -113,12 +113,12 @@ from platform.create_workspace_invitation(
   'Invalid primary role fixture'
 );
 
-select set_config('request.jwt.claims','{"sub":"b1000000-0000-0000-0000-000000000003","role":"authenticated"}',true);
+select set_config('request.jwt.claims','{"sub":"b1000000-0000-0000-0000-000000000003","role":"authenticated","aal":"aal2"}',true);
 select throws_like(
   $$select * from platform.accept_primary_admin_invitation((select token from acceptance_tokens where fixture='invalid_role'),'Other Person','en','Europe/Bucharest')$$,
   '%invalid_primary_admin_role%','non-admin role cannot become primary administrator');
 
-select set_config('request.jwt.claims','{"sub":"b1000000-0000-0000-0000-000000000002","role":"authenticated"}',true);
+select set_config('request.jwt.claims','{"sub":"b1000000-0000-0000-0000-000000000002","role":"authenticated","aal":"aal2"}',true);
 select ok((
   select count(*)=1
   from platform.accept_primary_admin_invitation(
@@ -140,7 +140,7 @@ select ok((select count(*)=1 from identity.memberships where tenant_id='b3000000
 select ok((select count(*)=1 from audit.events where action='PRIMARY_ADMIN_INVITATION_ACCEPTED' and coalesce(reason,'') not like '%'||(select token from acceptance_tokens where fixture='primary_admin')||'%' and before_snapshot::text not like '%'||(select token from acceptance_tokens where fixture='primary_admin')||'%' and after_snapshot::text not like '%'||(select token from acceptance_tokens where fixture='primary_admin')||'%'),'raw invitation token is never written to audit data');
 
 set local role authenticated;
-select set_config('request.jwt.claims','{"sub":"b1000000-0000-0000-0000-000000000002","role":"authenticated"}',true);
+select set_config('request.jwt.claims','{"sub":"b1000000-0000-0000-0000-000000000002","role":"authenticated","aal":"aal2"}',true);
 select ok((
   select count(*)=1
   from platform.accept_primary_admin_invitation(

@@ -1,6 +1,6 @@
 # ADR-CLD-026 — Supabase Auth Invitation Delivery and Activation
 
-- **Status:** Proposed
+- **Status:** Accepted; SMTP-dependent operational validation deferred
 - **Task:** CLADORA-ENG-010B-AUTH
 - **Depends on:** ADR-CLD-024, ADR-CLD-025
 - **Date:** 2026-08-27

@@ -69,7 +69,7 @@ select ok((select relrowsecurity from pg_class where oid='platform.workspace_inv
 select ok((select data_type='bytea' from information_schema.columns where table_schema='platform' and table_name='workspace_invitations' and column_name='token_hash'),'only a binary token hash is stored');
 
 set local role authenticated;
-select set_config('request.jwt.claims','{"sub":"a1000000-0000-0000-0000-000000000002","role":"authenticated"}',true);
+select set_config('request.jwt.claims','{"sub":"a1000000-0000-0000-0000-000000000002","role":"authenticated","aal":"aal2"}',true);
 
 select throws_like(
   $$insert into platform.workspace_invitations
@@ -84,12 +84,12 @@ select ok((select count(*)=0 from platform.validate_workspace_invitation('invali
 select ok(not has_table_privilege('anon','platform.workspace_invitations','select'),'anon has no direct invitation table access');
 
 set local role authenticated;
-select set_config('request.jwt.claims','{"role":"authenticated"}',true);
+select set_config('request.jwt.claims','{"role":"authenticated","aal":"aal2"}',true);
 select throws_like(
   $$select * from platform.create_workspace_invitation('a4000000-0000-0000-0000-000000000001','person@example.com','a5000000-0000-0000-0000-000000000001','tenant',interval '72 hours','No actor')$$,
   '%access_denied%','missing authenticated actor is denied');
 
-select set_config('request.jwt.claims','{"sub":"a1000000-0000-0000-0000-000000000001","role":"authenticated"}',true);
+select set_config('request.jwt.claims','{"sub":"a1000000-0000-0000-0000-000000000001","role":"authenticated","aal":"aal2"}',true);
 select throws_like(
   $$select * from platform.create_workspace_invitation('a4000000-0000-0000-0000-000000000001','invalid email','a5000000-0000-0000-0000-000000000001','tenant',interval '72 hours','Invalid email')$$,
   '%invalid_email%','invalid email is rejected');
@@ -109,12 +109,12 @@ select throws_like(
   $$select * from platform.create_workspace_invitation('a4000000-0000-0000-0000-000000000001','mismatch@example.com','a5000000-0000-0000-0000-000000000002','tenant',interval '72 hours','Wrong tenant role')$$,
   '%role_workspace_mismatch%','cross-tenant role is rejected');
 
-select set_config('request.jwt.claims','{"sub":"a1000000-0000-0000-0000-000000000002","role":"authenticated"}',true);
+select set_config('request.jwt.claims','{"sub":"a1000000-0000-0000-0000-000000000002","role":"authenticated","aal":"aal2"}',true);
 select throws_like(
   $$select * from platform.create_workspace_invitation('a4000000-0000-0000-0000-000000000002','unassigned@example.com','a5000000-0000-0000-0000-000000000002','tenant',interval '72 hours','Unassigned')$$,
   '%access_denied%','unassigned operations user cannot invite');
 
-select set_config('request.jwt.claims','{"sub":"a1000000-0000-0000-0000-000000000001","role":"authenticated"}',true);
+select set_config('request.jwt.claims','{"sub":"a1000000-0000-0000-0000-000000000001","role":"authenticated","aal":"aal2"}',true);
 insert into invitation_test_tokens(label,invitation_id,token,expires_at)
 select 'admin', invitation_id, invitation_token, invitation_expires_at
 from platform.create_workspace_invitation(
@@ -135,10 +135,10 @@ select throws_like(
   $$select * from platform.create_workspace_invitation('a4000000-0000-0000-0000-000000000001','primary.owner@example.com','a5000000-0000-0000-0000-000000000001','tenant',interval '72 hours','Duplicate')$$,
   '%active_invitation_exists%','duplicate active invitation is rejected');
 
-select set_config('request.jwt.claims','{"sub":"a1000000-0000-0000-0000-000000000003","role":"authenticated"}',true);
+select set_config('request.jwt.claims','{"sub":"a1000000-0000-0000-0000-000000000003","role":"authenticated","aal":"aal2"}',true);
 select ok((select count(*)=1 from audit.events where action='WORKSPACE_INVITATION_CREATED'),'invitation creation is audited');
 
-select set_config('request.jwt.claims','{"sub":"a1000000-0000-0000-0000-000000000002","role":"authenticated"}',true);
+select set_config('request.jwt.claims','{"sub":"a1000000-0000-0000-0000-000000000002","role":"authenticated","aal":"aal2"}',true);
 insert into invitation_test_tokens(label,invitation_id,token,expires_at)
 select 'ops', invitation_id, invitation_token, invitation_expires_at
 from platform.create_workspace_invitation(
@@ -161,10 +161,10 @@ select ok((
 ),'assigned operations user can revoke invitation');
 select ok((select count(*)=0 from invitation_test_tokens t cross join lateral platform.validate_workspace_invitation(t.token) v where t.label='ops'),'revoked token no longer validates');
 
-select set_config('request.jwt.claims','{"sub":"a1000000-0000-0000-0000-000000000003","role":"authenticated"}',true);
+select set_config('request.jwt.claims','{"sub":"a1000000-0000-0000-0000-000000000003","role":"authenticated","aal":"aal2"}',true);
 select ok((select count(*)=1 from audit.events where action='WORKSPACE_INVITATION_REVOKED'),'invitation revocation is audited');
 
-select set_config('request.jwt.claims','{"sub":"a1000000-0000-0000-0000-000000000002","role":"authenticated"}',true);
+select set_config('request.jwt.claims','{"sub":"a1000000-0000-0000-0000-000000000002","role":"authenticated","aal":"aal2"}',true);
 select throws_like(
   $$select platform.revoke_workspace_invitation((select invitation_id from invitation_test_tokens where label='ops'),'Second revoke')$$,
   '%invalid_invitation_state%','revoked invitation cannot be revoked again');

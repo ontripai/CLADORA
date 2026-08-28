@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getPlatformAuthContext, hasPlatformRole } from '@/lib/platform/auth';
+import { getPlatformAuthContext, hasPlatformAal2, hasPlatformRole } from '@/lib/platform/auth';
 import { createClient } from '@/lib/supabase/server';
 
 const NO_CACHE_HEADERS = {
@@ -13,6 +13,13 @@ export async function GET(request: Request) {
     return NextResponse.json(
       { error: { code: 'UNAUTHORIZED_PLATFORM_ACCESS', message: 'Authentication required' } },
       { status: 401, headers: NO_CACHE_HEADERS }
+    );
+  }
+
+  if (!hasPlatformAal2(authCtx)) {
+    return NextResponse.json(
+      { error: { code: 'MFA_REQUIRED', message: 'A verified AAL2 session is required' } },
+      { status: 403, headers: NO_CACHE_HEADERS }
     );
   }
 

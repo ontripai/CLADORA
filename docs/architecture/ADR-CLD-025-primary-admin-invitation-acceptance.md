@@ -1,6 +1,6 @@
 # ADR-CLD-025 — Primary Administrator Invitation Acceptance
 
-- **Status:** Proposed
+- **Status:** Accepted and implemented
 - **Task:** CLADORA-ENG-010B-DB
 - **Depends on:** ADR-CLD-023, ADR-CLD-024
 - **Date:** 2026-08-27
@@ -61,4 +61,4 @@ Auth delivery, callback exchange, and password setup belong to ENG-010B-AUTH. Co
 
 ## Verification
 
-The pgTAP suite covers authentication, email confirmation and matching, input validation, role restrictions, atomic state creation, audit redaction, and idempotent retry. The repository package contract requires 29 migrations, 17 pgTAP files, and 436 assertions.
+The pgTAP suite covers authentication, email confirmation and matching, input validation, role restrictions, atomic state creation, audit redaction, and idempotent retry. The current repository package contract requires 31 migrations, 19 pgTAP files, and 472 assertions.
