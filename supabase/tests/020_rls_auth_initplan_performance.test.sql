@@ -109,22 +109,18 @@ select lives_ok(
   $$update identity.profiles set display_name = 'RLS Actor Updated' where user_id = 'e1000000-0000-0000-0000-000000000001'$$,
   'authenticated actor can still update their own profile'
 );
-select ok((
-  with updated as (
-    update identity.profiles
-    set display_name = 'Forbidden Update'
-    where user_id = 'e1000000-0000-0000-0000-000000000002'
-    returning 1
-  )
-  select count(*) = 0 from updated
-), 'authenticated actor cannot update another profile');
+select lives_ok(
+  $update identity.profiles set display_name = 'Forbidden Update' where user_id = 'e1000000-0000-0000-0000-000000000002'$,
+  'attempting to update another profile is safely filtered by RLS'
+);
 
 reset role;
-select ok((
-  select display_name = 'RLS Actor Updated'
-  from identity.profiles
-  where user_id = 'e1000000-0000-0000-0000-000000000001'
-), 'authorized self-update persisted inside the test transaction');
+select ok(
+  (select display_name = 'RLS Actor Updated' from identity.profiles where user_id = 'e1000000-0000-0000-0000-000000000001')
+  and
+  (select display_name = 'RLS Other' from identity.profiles where user_id = 'e1000000-0000-0000-0000-000000000002'),
+  'self-update persisted while the cross-user update changed no row'
+);
 
 select * from finish();
 rollback;
