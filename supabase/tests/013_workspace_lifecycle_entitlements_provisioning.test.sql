@@ -67,7 +67,7 @@ select throws_like(
 );
 
 -- Set authenticated session claims to Operations user
-select set_config('request.jwt.claims', '{"sub": "a0000000-0000-0000-0000-000000000002", "role": "authenticated"}', true);
+select set_config('request.jwt.claims', '{"sub": "a0000000-0000-0000-0000-000000000002", "role": "authenticated", "aal": "aal2"}', true);
 
 -- Assertion 2: Assigned Operations direct UPDATE on lifecycle fields is denied
 select throws_like(
@@ -84,7 +84,7 @@ select throws_like(
 );
 
 -- Set authenticated session claims to Auditor user
-select set_config('request.jwt.claims', '{"sub": "a0000000-0000-0000-0000-000000000003", "role": "authenticated"}', true);
+select set_config('request.jwt.claims', '{"sub": "a0000000-0000-0000-0000-000000000003", "role": "authenticated", "aal": "aal2"}', true);
 
 -- Assertion 4: Auditor direct UPDATE is denied
 select throws_like(
@@ -94,7 +94,7 @@ select throws_like(
 );
 
 -- Set authenticated session claims to Super Admin user
-select set_config('request.jwt.claims', '{"sub": "a0000000-0000-0000-0000-000000000001", "role": "authenticated"}', true);
+select set_config('request.jwt.claims', '{"sub": "a0000000-0000-0000-0000-000000000001", "role": "authenticated", "aal": "aal2"}', true);
 
 -- Assertion 5: Valid RPC transition LEAD -> UNDER_REVIEW succeeds
 select ok(
@@ -172,7 +172,7 @@ select throws_like(
 );
 
 -- Switch to Operations user (assigned only to Workspace 1)
-select set_config('request.jwt.claims', '{"sub": "a0000000-0000-0000-0000-000000000002", "role": "authenticated"}', true);
+select set_config('request.jwt.claims', '{"sub": "a0000000-0000-0000-0000-000000000002", "role": "authenticated", "aal": "aal2"}', true);
 
 -- Assertion 16: Operations cannot consume quota in unassigned Workspace 3
 select throws_like(
@@ -182,7 +182,7 @@ select throws_like(
 );
 
 -- Switch to Auditor user
-select set_config('request.jwt.claims', '{"sub": "a0000000-0000-0000-0000-000000000003", "role": "authenticated"}', true);
+select set_config('request.jwt.claims', '{"sub": "a0000000-0000-0000-0000-000000000003", "role": "authenticated", "aal": "aal2"}', true);
 
 -- Assertion 17: Auditor cannot consume quota
 select throws_like(
@@ -192,7 +192,7 @@ select throws_like(
 );
 
 -- Switch to Super Admin
-select set_config('request.jwt.claims', '{"sub": "a0000000-0000-0000-0000-000000000001", "role": "authenticated"}', true);
+select set_config('request.jwt.claims', '{"sub": "a0000000-0000-0000-0000-000000000001", "role": "authenticated", "aal": "aal2"}', true);
 
 -- Assertion 18: Quota consumption in ARCHIVED workspace is rejected
 select throws_like(

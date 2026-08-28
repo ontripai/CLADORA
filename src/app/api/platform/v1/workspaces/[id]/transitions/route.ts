@@ -1,10 +1,29 @@
 import { NextResponse } from 'next/server';
-import { getPlatformAuthContext, hasPlatformRole, hasWorkspaceAssignment } from '@/lib/platform/auth';
+import { z } from 'zod';
+import { getPlatformAuthContext, hasPlatformAal2, hasPlatformRole, hasWorkspaceAssignment } from '@/lib/platform/auth';
 import { createClient } from '@/lib/supabase/server';
 
 const NO_CACHE_HEADERS = {
   'Cache-Control': 'no-store, private',
 };
+
+const transitionSchema = z.object({
+  target_status: z.enum([
+    'LEAD',
+    'UNDER_REVIEW',
+    'APPROVED',
+    'CONTRACT_PENDING',
+    'PAYMENT_PENDING',
+    'PROVISIONING',
+    'ACTIVE',
+    'PAST_DUE',
+    'SUSPENDED',
+    'TERMINATED',
+    'ARCHIVED',
+  ]),
+  expected_version: z.number().int().positive(),
+  reason: z.string().trim().min(3).max(500),
+});
 
 export async function POST(
   request: Request,
@@ -17,6 +36,13 @@ export async function POST(
     return NextResponse.json(
       { error: { code: 'UNAUTHORIZED_PLATFORM_ACCESS', message: 'Authentication required' } },
       { status: 401, headers: NO_CACHE_HEADERS }
+    );
+  }
+
+  if (!hasPlatformAal2(authCtx)) {
+    return NextResponse.json(
+      { error: { code: 'MFA_REQUIRED', message: 'A verified AAL2 session is required' } },
+      { status: 403, headers: NO_CACHE_HEADERS }
     );
   }
 
@@ -35,22 +61,21 @@ export async function POST(
   }
 
   try {
-    const body = await request.json();
-    const { target_status, expected_version, reason } = body;
-
-    if (!target_status || typeof expected_version !== 'number' || !reason || typeof reason !== 'string' || reason.trim().length === 0) {
+    const parsed = transitionSchema.safeParse(await request.json());
+    if (!parsed.success) {
       return NextResponse.json(
-        { error: { code: 'INVALID_TRANSITION_PARAMETERS', message: 'target_status, integer expected_version, and non-empty reason are required' } },
+        { error: { code: 'INVALID_TRANSITION_PARAMETERS', message: 'A valid target status, positive version, and reason are required' } },
         { status: 400, headers: NO_CACHE_HEADERS }
       );
     }
+    const { target_status, expected_version, reason } = parsed.data;
 
     const supabase = await createClient();
     const { data, error } = await supabase.rpc('transition_workspace_lifecycle', {
       p_workspace_id: workspaceId,
       p_target_status: target_status,
       p_expected_version: expected_version,
-      p_reason: reason.trim(),
+      p_reason: reason,
     });
 
     if (error) {
@@ -68,7 +93,7 @@ export async function POST(
       }
       if (error.message.includes('activation_blocked')) {
         return NextResponse.json(
-          { error: { code: 'ACTIVATION_BLOCKED', message: 'Production activation requires completed primary administrator invitation (ENG-010).' } },
+          { error: { code: 'ACTIVATION_BLOCKED', message: 'Production activation requires accepted primary-admin access, active membership, verified MFA, and completed onboarding.' } },
           { status: 422, headers: NO_CACHE_HEADERS }
         );
       }

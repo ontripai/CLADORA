@@ -29,6 +29,18 @@ const invitationApi = read('src/app/api/platform/v1/workspaces/[id]/invitations/
 const callback = read('src/app/[lang]/auth/callback/route.ts');
 const acceptanceApi = read('src/app/api/auth/accept-invitation/route.ts');
 const acceptancePage = read('src/app/[lang]/accept-invitation/page.tsx');
+const onboardingPage = read('src/app/[lang]/app/onboarding/page.tsx');
+const platformApiRoutes = [
+  'src/app/api/platform/v1/workspaces/route.ts',
+  'src/app/api/platform/v1/workspaces/[id]/transitions/route.ts',
+  'src/app/api/platform/v1/workspaces/[id]/contracts/route.ts',
+  'src/app/api/platform/v1/workspaces/[id]/entitlements/[key]/route.ts',
+  'src/app/api/platform/v1/workspaces/[id]/provisioning-runs/route.ts',
+  'src/app/api/platform/v1/workspaces/[id]/invitations/route.ts',
+  'src/app/api/platform/v1/assignments/route.ts',
+  'src/app/api/platform/v1/assignments/[id]/revoke/route.ts',
+  'src/app/api/platform/v1/audit-events/route.ts',
+].map(read);
 const example = read('.env.example');
 const nextConfig = read('next.config.mjs');
 const packageJson = JSON.parse(read('package.json'));
@@ -79,6 +91,9 @@ check(acceptanceApi.includes('supabase.auth.getClaims()'), 'acceptance endpoint 
 check(acceptanceApi.includes("'get_my_primary_admin_onboarding'"), 'acceptance resolves onboarding state through an actor-scoped RPC');
 check(!acceptanceApi.includes("from('customer_workspaces')"), 'customer acceptance never bypasses platform workspace RLS with a direct read');
 check(acceptancePage.includes("get('cladora-invitation')"), 'acceptance page reads the server-only invitation cookie');
+check(platformApiRoutes.every((route) => route.includes('hasPlatformAal2')), 'every platform API route independently enforces AAL2');
+check(onboardingPage.includes("rpc('get_my_primary_admin_onboarding'"), 'onboarding page derives state through the actor-scoped RPC');
+check(!onboardingPage.includes('query.version'), 'onboarding page never trusts a caller-supplied workspace version');
 check(example.includes('YOUR_PUBLISHABLE_KEY'), 'example contains placeholders only');
 check(!example.includes('SERVICE_ROLE'), 'example does not request service-role credentials');
 check(nextConfig.includes('https://*.supabase.co'), 'CSP permits Supabase HTTPS');

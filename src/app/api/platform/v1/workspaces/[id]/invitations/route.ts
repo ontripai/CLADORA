@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
-import { getPlatformAuthContext, hasPlatformRole, hasWorkspaceAssignment } from '@/lib/platform/auth';
+import { getPlatformAuthContext, hasPlatformAal2, hasPlatformRole, hasWorkspaceAssignment } from '@/lib/platform/auth';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { getApplicationOrigin } from '@/lib/supabase/server-env';
 import { createClient } from '@/lib/supabase/server';
@@ -37,6 +37,12 @@ export async function POST(
     return NextResponse.json(
       { error: { code: 'UNAUTHORIZED_PLATFORM_ACCESS', message: 'Authentication required.' } },
       { status: 401, headers: NO_CACHE_HEADERS },
+    );
+  }
+  if (!hasPlatformAal2(authCtx)) {
+    return NextResponse.json(
+      { error: { code: 'MFA_REQUIRED', message: 'A verified AAL2 session is required.' } },
+      { status: 403, headers: NO_CACHE_HEADERS },
     );
   }
   if (!hasPlatformRole(authCtx, ['PLATFORM_SUPER_ADMIN', 'PLATFORM_OPERATIONS'])) {

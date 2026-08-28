@@ -199,5 +199,6 @@ export interface PlatformAuthContext {
   platformUser: PlatformUser | null;
   roles: PlatformRole[];
   assignments: PlatformCustomerAssignment[];
+  assuranceLevel: 'aal1' | 'aal2' | null;
   isAuthorized: boolean;
 }

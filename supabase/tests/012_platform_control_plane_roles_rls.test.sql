@@ -78,7 +78,7 @@ end;
 $$;
 
 -- Inactive platform user is denied
-select set_config('request.jwt.claims', '{"sub": "80000000-0000-0000-0000-000000000001"}', true);
+select set_config('request.jwt.claims', '{"sub": "80000000-0000-0000-0000-000000000001", "role": "authenticated", "aal": "aal2"}', true);
 select ok(
   (select not app_private.is_platform_user()),
   'inactive platform user is not recognized as active platform user'
@@ -89,7 +89,7 @@ select ok(
 );
 
 -- Revoked role assignment is denied
-select set_config('request.jwt.claims', '{"sub": "80000000-0000-0000-0000-000000000002"}', true);
+select set_config('request.jwt.claims', '{"sub": "80000000-0000-0000-0000-000000000002", "role": "authenticated", "aal": "aal2"}', true);
 select ok(
   (select app_private.is_platform_user()),
   'platform user with revoked role is recognized as user'

@@ -18,11 +18,13 @@ export async function getPlatformAuthContext(): Promise<PlatformAuthContext> {
       platformUser: null,
       roles: [],
       assignments: [],
+      assuranceLevel: null,
       isAuthorized: false,
     };
   }
 
   const userId = claimsData.claims.sub;
+  const assuranceLevel = claimsData.claims.aal === 'aal2' ? 'aal2' : 'aal1';
 
   const { data: userData, error: userError } = await supabase
     .schema('platform')
@@ -39,6 +41,7 @@ export async function getPlatformAuthContext(): Promise<PlatformAuthContext> {
       platformUser: null,
       roles: [],
       assignments: [],
+      assuranceLevel,
       isAuthorized: false,
     };
   }
@@ -76,8 +79,13 @@ export async function getPlatformAuthContext(): Promise<PlatformAuthContext> {
     platformUser,
     roles,
     assignments,
+    assuranceLevel,
     isAuthorized,
   };
+}
+
+export function hasPlatformAal2(ctx: PlatformAuthContext): boolean {
+  return ctx.isAuthorized && ctx.assuranceLevel === 'aal2';
 }
 
 export function hasPlatformRole(

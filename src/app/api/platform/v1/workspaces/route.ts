@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getPlatformAuthContext, hasPlatformRole } from '@/lib/platform/auth';
+import { getPlatformAuthContext, hasPlatformAal2, hasPlatformRole } from '@/lib/platform/auth';
 import { createClient } from '@/lib/supabase/server';
 import type { Database } from '@/types/database.generated';
 
@@ -13,6 +13,13 @@ export async function GET(request: Request) {
     return NextResponse.json(
       { error: { code: 'UNAUTHORIZED_PLATFORM_ACCESS', message: 'Authentication as a platform user is required' } },
       { status: 401, headers: NO_CACHE_HEADERS }
+    );
+  }
+
+  if (!hasPlatformAal2(authCtx)) {
+    return NextResponse.json(
+      { error: { code: 'MFA_REQUIRED', message: 'A verified AAL2 session is required' } },
+      { status: 403, headers: NO_CACHE_HEADERS }
     );
   }
 
@@ -58,6 +65,18 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
   const authCtx = await getPlatformAuthContext();
+  if (!authCtx.isAuthorized || !authCtx.platformUser) {
+    return NextResponse.json(
+      { error: { code: 'UNAUTHORIZED_PLATFORM_ACCESS', message: 'Authentication as a platform user is required' } },
+      { status: 401, headers: NO_CACHE_HEADERS }
+    );
+  }
+  if (!hasPlatformAal2(authCtx)) {
+    return NextResponse.json(
+      { error: { code: 'MFA_REQUIRED', message: 'A verified AAL2 session is required' } },
+      { status: 403, headers: NO_CACHE_HEADERS }
+    );
+  }
   if (!hasPlatformRole(authCtx, ['PLATFORM_SUPER_ADMIN', 'PLATFORM_OPERATIONS'])) {
     return NextResponse.json(
       { error: { code: 'INSUFFICIENT_ROLE_PRIVILEGES', message: 'Operations or Super Admin role required' } },

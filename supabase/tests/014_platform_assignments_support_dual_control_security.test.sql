@@ -69,7 +69,7 @@ $$;
 set local role authenticated;
 
 -- 1. Direct INSERT on platform_customer_assignments is denied
-select set_config('request.jwt.claims', '{"sub": "e0000000-0000-0000-0000-000000000002", "role": "authenticated"}', true);
+select set_config('request.jwt.claims', '{"sub": "e0000000-0000-0000-0000-000000000002", "role": "authenticated", "aal": "aal2"}', true);
 
 select throws_like(
   $$ insert into platform.platform_customer_assignments (platform_user_id, customer_workspace_id, assignment_reason) values ('f0000000-0000-0000-0000-000000000002'::uuid, '20000000-0000-0000-0000-000000000002'::uuid, 'Bypass') $$,
@@ -99,7 +99,7 @@ select throws_like(
 );
 
 -- 5, 6, 7. Super Admin grants assignment on Workspace A to Operations, Support, and Finance
-select set_config('request.jwt.claims', '{"sub": "e0000000-0000-0000-0000-000000000001", "role": "authenticated"}', true);
+select set_config('request.jwt.claims', '{"sub": "e0000000-0000-0000-0000-000000000001", "role": "authenticated", "aal": "aal2"}', true);
 
 select ok(
   (select (platform.grant_customer_assignment('f0000000-0000-0000-0000-000000000002'::uuid, '20000000-0000-0000-0000-000000000001'::uuid, 'workspace', null, null, 'Legitimate Ops assignment')).status = 'active'),
@@ -117,7 +117,7 @@ select ok(
 );
 
 -- 8. Operations user can delegate sub-assignment on Workspace A
-select set_config('request.jwt.claims', '{"sub": "e0000000-0000-0000-0000-000000000002", "role": "authenticated"}', true);
+select set_config('request.jwt.claims', '{"sub": "e0000000-0000-0000-0000-000000000002", "role": "authenticated", "aal": "aal2"}', true);
 
 select ok(
   (select (platform.grant_customer_assignment('f0000000-0000-0000-0000-000000000003'::uuid, '20000000-0000-0000-0000-000000000001'::uuid, 'technical', null, null, 'Delegated technical assignment')).status = 'active'),
@@ -134,7 +134,7 @@ select ok(
 );
 
 -- Switch to Auditor to inspect audit.events
-select set_config('request.jwt.claims', '{"sub": "e0000000-0000-0000-0000-000000000005", "role": "authenticated"}', true);
+select set_config('request.jwt.claims', '{"sub": "e0000000-0000-0000-0000-000000000005", "role": "authenticated", "aal": "aal2"}', true);
 
 -- 10. Revocation is audited
 select ok(
@@ -143,7 +143,7 @@ select ok(
 );
 
 -- 11. Direct INSERT on support_access_grants is denied
-select set_config('request.jwt.claims', '{"sub": "e0000000-0000-0000-0000-000000000002", "role": "authenticated"}', true);
+select set_config('request.jwt.claims', '{"sub": "e0000000-0000-0000-0000-000000000002", "role": "authenticated", "aal": "aal2"}', true);
 
 select throws_like(
   $$ insert into platform.support_access_grants (request_id, customer_workspace_id, approver_id, expires_at) values (gen_random_uuid(), '20000000-0000-0000-0000-000000000001'::uuid, 'e0000000-0000-0000-0000-000000000002'::uuid, statement_timestamp() + interval '1 hour') $$,
@@ -187,7 +187,7 @@ select throws_like(
 );
 
 -- 17. Support Access: Support user requests access for assigned Workspace A
-select set_config('request.jwt.claims', '{"sub": "e0000000-0000-0000-0000-000000000003", "role": "authenticated"}', true);
+select set_config('request.jwt.claims', '{"sub": "e0000000-0000-0000-0000-000000000003", "role": "authenticated", "aal": "aal2"}', true);
 
 select ok(
   (select (platform.request_support_access('20000000-0000-0000-0000-000000000001'::uuid, 'TCK-2026-DUR', 'Duration test case', 'technical', 'standard')).status = 'requested'),
@@ -209,7 +209,7 @@ select throws_like(
 );
 
 -- 20. Dual-control: Super Admin who creates request cannot approve own request
-select set_config('request.jwt.claims', '{"sub": "e0000000-0000-0000-0000-000000000001", "role": "authenticated"}', true);
+select set_config('request.jwt.claims', '{"sub": "e0000000-0000-0000-0000-000000000001", "role": "authenticated", "aal": "aal2"}', true);
 
 do $$
 declare
@@ -226,7 +226,7 @@ select throws_like(
 );
 
 -- 21. Support Duration Test: Independent authorized Operations approver with 5 hours duration fails with invalid_duration
-select set_config('request.jwt.claims', '{"sub": "e0000000-0000-0000-0000-000000000002", "role": "authenticated"}', true);
+select set_config('request.jwt.claims', '{"sub": "e0000000-0000-0000-0000-000000000002", "role": "authenticated", "aal": "aal2"}', true);
 
 select throws_like(
   $$ select platform.approve_support_access((select id from platform.support_access_requests where ticket_ref = 'TCK-2026-DUR' limit 1), interval '5 hours') $$,
@@ -270,7 +270,7 @@ select ok(
 );
 
 -- Switch to Auditor to inspect audit.events
-select set_config('request.jwt.claims', '{"sub": "e0000000-0000-0000-0000-000000000005", "role": "authenticated"}', true);
+select set_config('request.jwt.claims', '{"sub": "e0000000-0000-0000-0000-000000000005", "role": "authenticated", "aal": "aal2"}', true);
 
 -- 27. Support access approval is audited
 select ok(
@@ -279,7 +279,7 @@ select ok(
 );
 
 -- Switch back to Operations user
-select set_config('request.jwt.claims', '{"sub": "e0000000-0000-0000-0000-000000000002", "role": "authenticated"}', true);
+select set_config('request.jwt.claims', '{"sub": "e0000000-0000-0000-0000-000000000002", "role": "authenticated", "aal": "aal2"}', true);
 
 -- 28. Support access revocation terminates active grant
 select ok(
@@ -291,7 +291,7 @@ select ok(
 );
 
 -- Switch to Auditor to inspect audit.events
-select set_config('request.jwt.claims', '{"sub": "e0000000-0000-0000-0000-000000000005", "role": "authenticated"}', true);
+select set_config('request.jwt.claims', '{"sub": "e0000000-0000-0000-0000-000000000005", "role": "authenticated", "aal": "aal2"}', true);
 
 -- 29. Support access revocation is audited
 select ok(
@@ -300,7 +300,7 @@ select ok(
 );
 
 -- 30. Direct INSERT on workspace_contracts is denied
-select set_config('request.jwt.claims', '{"sub": "e0000000-0000-0000-0000-000000000002", "role": "authenticated"}', true);
+select set_config('request.jwt.claims', '{"sub": "e0000000-0000-0000-0000-000000000002", "role": "authenticated", "aal": "aal2"}', true);
 
 select throws_like(
   $$ insert into platform.workspace_contracts (customer_workspace_id, contract_ref, start_date) values ('20000000-0000-0000-0000-000000000001'::uuid, 'CTR-BYPASS', current_date) $$,
@@ -323,7 +323,7 @@ select throws_like(
 );
 
 -- Switch to Finance user (assigned to Workspace A)
-select set_config('request.jwt.claims', '{"sub": "e0000000-0000-0000-0000-000000000004", "role": "authenticated"}', true);
+select set_config('request.jwt.claims', '{"sub": "e0000000-0000-0000-0000-000000000004", "role": "authenticated", "aal": "aal2"}', true);
 
 -- 33. Contract creation with non-null Plan UUID succeeds and records plan_id
 select ok(
@@ -389,7 +389,7 @@ begin
 end;
 $$;
 set local role authenticated;
-select set_config('request.jwt.claims', '{"sub": "e0000000-0000-0000-0000-000000000004", "role": "authenticated"}', true);
+select set_config('request.jwt.claims', '{"sub": "e0000000-0000-0000-0000-000000000004", "role": "authenticated", "aal": "aal2"}', true);
 
 -- 39. Terminated contract cannot be activated
 select throws_like(
@@ -420,7 +420,7 @@ select throws_like(
 );
 
 -- 43. Auditor cannot activate contract
-select set_config('request.jwt.claims', '{"sub": "e0000000-0000-0000-0000-000000000005", "role": "authenticated"}', true);
+select set_config('request.jwt.claims', '{"sub": "e0000000-0000-0000-0000-000000000005", "role": "authenticated", "aal": "aal2"}', true);
 
 select throws_like(
   $$ select platform.activate_workspace_contract('40000000-0000-0000-0000-000000000004'::uuid, 'Auditor activation') $$,
@@ -429,7 +429,7 @@ select throws_like(
 );
 
 -- 44. Finance without assignment on Workspace B cannot activate contract on Workspace B
-select set_config('request.jwt.claims', '{"sub": "e0000000-0000-0000-0000-000000000004", "role": "authenticated"}', true);
+select set_config('request.jwt.claims', '{"sub": "e0000000-0000-0000-0000-000000000004", "role": "authenticated", "aal": "aal2"}', true);
 
 select throws_like(
   $$ select platform.activate_workspace_contract('40000000-0000-0000-0000-000000000005'::uuid, 'Finance unassigned activation') $$,
@@ -482,7 +482,7 @@ select ok(
 );
 
 -- Switch to Auditor user
-select set_config('request.jwt.claims', '{"sub": "e0000000-0000-0000-0000-000000000005", "role": "authenticated"}', true);
+select set_config('request.jwt.claims', '{"sub": "e0000000-0000-0000-0000-000000000005", "role": "authenticated", "aal": "aal2"}', true);
 
 -- 50. Auditor cannot create an override
 select throws_like(
@@ -492,7 +492,7 @@ select throws_like(
 );
 
 -- Switch to Finance user
-select set_config('request.jwt.claims', '{"sub": "e0000000-0000-0000-0000-000000000004", "role": "authenticated"}', true);
+select set_config('request.jwt.claims', '{"sub": "e0000000-0000-0000-0000-000000000004", "role": "authenticated", "aal": "aal2"}', true);
 
 -- 51. Finance without assignment on Workspace B cannot create override on Workspace B
 select throws_like(
