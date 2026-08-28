@@ -18,8 +18,8 @@ export default async function DemoAppPage({ params }: { params: Promise<{ lang: 
   const route = slug.join('/');
   const pageParams = Promise.resolve({ lang });
   const pages: Record<string, React.ReactNode> = {
-    dashboard: <DashboardPage params={pageParams} />,
-    accounting: <AccountingPage params={pageParams} />,
+    dashboard: <DashboardPage params={pageParams} demoMode />,
+    accounting: <AccountingPage params={pageParams} demoMode />,
     'accounting/month-close': <MonthClosePage params={pageParams} />,
     'accounting/allocations': <AllocationsPage params={pageParams} />,
     meters: <MetersPage params={pageParams} />,
