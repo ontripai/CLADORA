@@ -30,6 +30,8 @@ const callback = read('src/app/[lang]/auth/callback/route.ts');
 const acceptanceApi = read('src/app/api/auth/accept-invitation/route.ts');
 const acceptancePage = read('src/app/[lang]/accept-invitation/page.tsx');
 const onboardingPage = read('src/app/[lang]/app/onboarding/page.tsx');
+const operationalWorkspacesPage = read('src/app/[lang]/platform/(control-plane)/workspaces/page.tsx');
+const operationalWorkspacesTable = read('src/components/platform/OperationalWorkspacesTable.tsx');
 const platformApiRoutes = [
   'src/app/api/platform/v1/workspaces/route.ts',
   'src/app/api/platform/v1/workspaces/[id]/transitions/route.ts',
@@ -94,6 +96,13 @@ check(acceptancePage.includes("get('cladora-invitation')"), 'acceptance page rea
 check(platformApiRoutes.every((route) => route.includes('hasPlatformAal2')), 'every platform API route independently enforces AAL2');
 check(onboardingPage.includes("rpc('get_my_primary_admin_onboarding'"), 'onboarding page derives state through the actor-scoped RPC');
 check(!onboardingPage.includes('query.version'), 'onboarding page never trusts a caller-supplied workspace version');
+check(!operationalWorkspacesPage.includes('mockWorkspaces'), 'operational workspace page contains no demo workspace fixtures');
+check(operationalWorkspacesPage.includes('OperationalWorkspacesTable'), 'operational workspace page renders the live workspace table');
+check(operationalWorkspacesTable.includes('/api/platform/v1/workspaces?limit='), 'workspace table reads through the protected platform API');
+check(operationalWorkspacesTable.includes('cache: "no-store"'), 'workspace requests never use shared browser caching');
+check(operationalWorkspacesTable.includes('credentials: "same-origin"'), 'workspace requests carry only same-origin session credentials');
+check(operationalWorkspacesTable.includes('AbortController'), 'workspace requests are cancelled during navigation');
+check(operationalWorkspacesTable.includes('role="alert"'), 'workspace load failures are announced accessibly');
 check(example.includes('YOUR_PUBLISHABLE_KEY'), 'example contains placeholders only');
 check(!example.includes('SERVICE_ROLE'), 'example does not request service-role credentials');
 check(nextConfig.includes('https://*.supabase.co'), 'CSP permits Supabase HTTPS');
