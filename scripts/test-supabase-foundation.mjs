@@ -32,6 +32,8 @@ const acceptancePage = read('src/app/[lang]/accept-invitation/page.tsx');
 const onboardingPage = read('src/app/[lang]/app/onboarding/page.tsx');
 const operationalWorkspacesPage = read('src/app/[lang]/platform/(control-plane)/workspaces/page.tsx');
 const operationalWorkspacesTable = read('src/components/platform/OperationalWorkspacesTable.tsx');
+const operationalContractsPage = read('src/app/[lang]/platform/(control-plane)/contracts/page.tsx');
+const operationalContractsPanel = read('src/components/platform/OperationalContractsPanel.tsx');
 const platformApiRoutes = [
   'src/app/api/platform/v1/workspaces/route.ts',
   'src/app/api/platform/v1/workspaces/[id]/transitions/route.ts',
@@ -42,6 +44,7 @@ const platformApiRoutes = [
   'src/app/api/platform/v1/assignments/route.ts',
   'src/app/api/platform/v1/assignments/[id]/revoke/route.ts',
   'src/app/api/platform/v1/audit-events/route.ts',
+  'src/app/api/platform/v1/contracts/route.ts',
 ].map(read);
 const example = read('.env.example');
 const nextConfig = read('next.config.mjs');
@@ -103,6 +106,13 @@ check(operationalWorkspacesTable.includes('cache: "no-store"'), 'workspace reque
 check(operationalWorkspacesTable.includes('credentials: "same-origin"'), 'workspace requests carry only same-origin session credentials');
 check(operationalWorkspacesTable.includes('AbortController'), 'workspace requests are cancelled during navigation');
 check(operationalWorkspacesTable.includes('role="alert"'), 'workspace load failures are announced accessibly');
+check(!operationalContractsPage.includes('mockContracts'), 'operational contracts page contains no demo contract fixtures');
+check(operationalContractsPage.includes('OperationalContractsPanel'), 'operational contracts page renders the live contracts panel');
+check(operationalContractsPanel.includes('/api/platform/v1/contracts?limit='), 'contracts panel reads through the protected platform API');
+check(operationalContractsPanel.includes('cache: "no-store"'), 'contract requests never use shared browser caching');
+check(operationalContractsPanel.includes('credentials: "same-origin"'), 'contract requests carry only same-origin session credentials');
+check(operationalContractsPanel.includes('AbortController'), 'contract requests are cancelled during navigation');
+check(operationalContractsPanel.includes('role="alert"'), 'contract load failures are announced accessibly');
 check(example.includes('YOUR_PUBLISHABLE_KEY'), 'example contains placeholders only');
 check(!example.includes('SERVICE_ROLE'), 'example does not request service-role credentials');
 check(nextConfig.includes('https://*.supabase.co'), 'CSP permits Supabase HTTPS');
