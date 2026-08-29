@@ -1,9 +1,11 @@
 import { NextResponse } from 'next/server';
 import { getPlatformAuthContext, hasPlatformAal2, hasPlatformRole } from '@/lib/platform/auth';
 import { createClient } from '@/lib/supabase/server';
+import { hasTrustedMutationOrigin } from '@/lib/security/same-origin';
 
 const NO_CACHE_HEADERS = {
   'Cache-Control': 'no-store, private',
+  Vary: 'Cookie',
 };
 
 export async function POST(
@@ -27,18 +29,20 @@ export async function POST(
     );
   }
 
-  if (!hasPlatformRole(authCtx, ['PLATFORM_SUPER_ADMIN', 'PLATFORM_OPERATIONS'])) {
+  if (!hasPlatformRole(authCtx, 'PLATFORM_SUPER_ADMIN')) {
     return NextResponse.json(
-      { error: { code: 'INSUFFICIENT_ROLE_PRIVILEGES', message: 'Operations or Super Admin role required' } },
+      { error: { code: 'INSUFFICIENT_ROLE_PRIVILEGES', message: 'Super Admin role required' } },
       { status: 403, headers: NO_CACHE_HEADERS }
     );
   }
+
+  if (!hasTrustedMutationOrigin(request)) return NextResponse.json({ error: { code: 'UNTRUSTED_ORIGIN' } }, { status: 403, headers: NO_CACHE_HEADERS });
 
   try {
     const body = await request.json();
     const { revoke_reason } = body;
 
-    if (!revoke_reason || typeof revoke_reason !== 'string' || revoke_reason.trim().length === 0) {
+    if (typeof revoke_reason !== 'string' || revoke_reason.trim().length < 8 || revoke_reason.length > 500) {
       return NextResponse.json(
         { error: { code: 'INVALID_REVOKE_PARAMETERS', message: 'Non-empty revoke_reason is required' } },
         { status: 400, headers: NO_CACHE_HEADERS }

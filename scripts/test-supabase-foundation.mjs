@@ -39,6 +39,15 @@ const operationalContractsApi = read('src/app/api/platform/v1/contracts/route.ts
 const contractsAcceptanceDecision = read('docs/architecture/CLADORA-ENG-011B-acceptance-decisions.md');
 const auditorScopeAdr = read('docs/architecture/ADR-CLD-028-assignment-scoped-auditor.md');
 const auditorScopeMigration = read('supabase/migrations/20260829003500_auditor_assignment_scoped_reads.sql');
+const operationalUsersPage = read('src/app/[lang]/platform/(control-plane)/users/page.tsx');
+const operationalUsersPanel = read('src/components/platform/OperationalPlatformUsersPanel.tsx');
+const operationalUsersApi = read('src/app/api/platform/v1/users/route.ts');
+const operationalAssignmentsPage = read('src/app/[lang]/platform/(control-plane)/assignments/page.tsx');
+const operationalAssignmentsPanel = read('src/components/platform/OperationalAssignmentsPanel.tsx');
+const operationalAssignmentsApi = read('src/app/api/platform/v1/assignments/route.ts');
+const operationalRevokeApi = read('src/app/api/platform/v1/assignments/[id]/revoke/route.ts');
+const operationalAssignmentsMigration = read('supabase/migrations/20260829003600_operational_users_assignments.sql');
+const operationalAssignmentsAdr = read('docs/architecture/ADR-CLD-029-operational-users-assignments.md');
 const platformApiRoutes = [
   'src/app/api/platform/v1/workspaces/route.ts',
   'src/app/api/platform/v1/workspaces/[id]/transitions/route.ts',
@@ -136,6 +145,18 @@ check(contractsAcceptanceDecision.includes('Status: RESOLVED — ASSIGNMENT-SCOP
 check(auditorScopeAdr.includes('missing, revoked, future, expired, wrong-scope, or cross-customer assignment fails closed'), 'architecture records fail-closed Auditor assignment semantics');
 check(auditorScopeMigration.includes("has_customer_assignment(customer_workspace_id, 'audit')"), 'RLS requires audit or umbrella workspace assignment for Auditor data reads');
 check(!auditorScopeMigration.includes("or app_private.has_platform_role('PLATFORM_AUDITOR')\n  or"), 'RLS migration contains no standalone global Auditor bypass');
+check(!operationalUsersPage.includes('mockUsers') && operationalUsersPage.includes('OperationalPlatformUsersPanel'), 'platform users page uses the live operational panel');
+check(operationalUsersPanel.includes('/api/platform/v1/users?') && operationalUsersPanel.includes("cache: 'no-store'"), 'users panel reads the protected non-cached API');
+check(operationalUsersApi.includes('UNAUTHORIZED_PLATFORM_ACCESS') && operationalUsersApi.includes('MFA_REQUIRED'), 'users API explicitly rejects unauthorized and AAL1 callers');
+check(!operationalUsersApi.includes('auth_user_id'), 'users API never returns Auth user identifiers');
+check(!operationalAssignmentsPage.includes('mockAssignments') && operationalAssignmentsPage.includes('OperationalAssignmentsPanel'), 'assignment page uses the live operational panel');
+check(operationalAssignmentsPanel.includes('/api/platform/v1/assignments') && operationalAssignmentsPanel.includes("cache:'no-store'"), 'assignment panel uses the protected non-cached API');
+check(operationalAssignmentsApi.includes("hasPlatformRole(authCtx, 'PLATFORM_SUPER_ADMIN')"), 'only Super Admin may create assignments');
+check(operationalRevokeApi.includes("hasPlatformRole(authCtx, 'PLATFORM_SUPER_ADMIN')"), 'only Super Admin may revoke assignments');
+check(operationalAssignmentsApi.includes('hasTrustedMutationOrigin') && operationalRevokeApi.includes('hasTrustedMutationOrigin'), 'assignment mutations enforce trusted origin');
+check(operationalAssignmentsMigration.includes('duplicate_assignment: overlapping active assignment exists'), 'database rejects overlapping active assignments');
+check(operationalAssignmentsMigration.includes("has_platform_role('PLATFORM_AUDITOR')") && operationalAssignmentsMigration.includes("scope_type in ('workspace', 'audit')"), 'Auditor visibility remains assignment scoped');
+check(operationalAssignmentsAdr.includes('Production acceptance must not create, edit, or revoke'), 'production non-mutation acceptance boundary is documented');
 check(contractsAcceptanceDecision.includes('No environment variable was changed'), 'Preview limitation is recorded without changing environment configuration');
 check(example.includes('YOUR_PUBLISHABLE_KEY'), 'example contains placeholders only');
 check(!example.includes('SERVICE_ROLE'), 'example does not request service-role credentials');
