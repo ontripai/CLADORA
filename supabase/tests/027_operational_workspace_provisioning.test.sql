@@ -72,7 +72,9 @@ select set_config('request.jwt.claims','{"sub":"14000000-0000-0000-0000-00000000
 select lives_ok($$select platform.create_provisioning_run('14300000-0000-0000-0000-000000000001','prov:027:ops',array['validate_workspace'])$$,'assigned Operations can queue run');
 select lives_ok($$select platform.retry_provisioning_task('14700000-0000-0000-0000-000000000001','Operations controlled retry')$$,'assigned Operations can retry failed task');
 select ok((select status='queued' and attempt_count=1 from platform.provisioning_tasks where id='14700000-0000-0000-0000-000000000001'),'retry requeues task and increments attempt');
+reset role;
 select ok((select count(*)=1 from audit.events where action='PROVISIONING_TASK_RETRIED' and entity_id='14700000-0000-0000-0000-000000000001'),'retry is audited');
+set local role authenticated;
 select ok((select count(*)=3 from platform.provisioning_runs where idempotency_key like 'prov:027:%'),'Operations sees assigned runs only');
 
 select set_config('request.jwt.claims','{"sub":"14000000-0000-0000-0000-000000000003","role":"authenticated","aal":"aal2"}',true);
