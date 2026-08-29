@@ -54,6 +54,13 @@ const operationalPlansApi = read('src/app/api/platform/v1/plans/route.ts');
 const operationalPlanActivateApi = read('src/app/api/platform/v1/plans/[id]/activate/route.ts');
 const operationalPlanRetireApi = read('src/app/api/platform/v1/plans/[id]/retire/route.ts');
 const operationalPlansMigration = read('supabase/migrations/20260829003700_operational_subscription_plans.sql');
+const operationalProvisioningPage = read('src/app/[lang]/platform/(control-plane)/provisioning/page.tsx');
+const operationalProvisioningPanel = read('src/components/platform/OperationalProvisioningPanel.tsx');
+const operationalProvisioningApi = read('src/app/api/platform/v1/provisioning/route.ts');
+const operationalProvisioningCancelApi = read('src/app/api/platform/v1/provisioning/[id]/cancel/route.ts');
+const operationalProvisioningRetryApi = read('src/app/api/platform/v1/provisioning/tasks/[id]/retry/route.ts');
+const operationalProvisioningMigration = read('supabase/migrations/20260829003800_operational_workspace_provisioning.sql');
+const operationalProvisioningAdr = read('docs/architecture/ADR-CLD-031-operational-workspace-provisioning.md');
 const platformApiRoutes = [
   'src/app/api/platform/v1/workspaces/route.ts',
   'src/app/api/platform/v1/workspaces/[id]/transitions/route.ts',
@@ -68,6 +75,9 @@ const platformApiRoutes = [
   'src/app/api/platform/v1/plans/route.ts',
   'src/app/api/platform/v1/plans/[id]/activate/route.ts',
   'src/app/api/platform/v1/plans/[id]/retire/route.ts',
+  'src/app/api/platform/v1/provisioning/route.ts',
+  'src/app/api/platform/v1/provisioning/[id]/cancel/route.ts',
+  'src/app/api/platform/v1/provisioning/tasks/[id]/retry/route.ts',
 ].map(read);
 const example = read('.env.example');
 const nextConfig = read('next.config.mjs');
@@ -176,6 +186,18 @@ check([operationalPlansApi, operationalPlanActivateApi, operationalPlanRetireApi
 check(operationalPlansMigration.includes('published_plan_immutable') && operationalPlansMigration.includes('retired_plan_immutable'), 'published and retired versions are immutable');
 check(operationalPlansMigration.includes('active_plan_version_overlap') && operationalPlansMigration.includes('subscription_plans_one_active_code_idx'), 'active version overlap is prevented transactionally and by index');
 check(operationalPlansMigration.includes("has_customer_assignment(c.customer_workspace_id, 'audit')"), 'Auditor plan reads require audit or workspace assignment');
+check(!operationalProvisioningPage.includes('mockRuns') && operationalProvisioningPage.includes('OperationalProvisioningPanel'), 'provisioning page uses the live operational panel');
+check(operationalProvisioningPanel.includes('/api/platform/v1/provisioning?') && operationalProvisioningPanel.includes("cache:'no-store'"), 'provisioning panel reads the protected non-cached API');
+check(operationalProvisioningApi.includes('UNAUTHORIZED_PLATFORM_ACCESS') && operationalProvisioningApi.includes('MFA_REQUIRED'), 'provisioning API rejects unauthorized and AAL1 callers');
+check(operationalProvisioningApi.includes("'PLATFORM_SUPER_ADMIN', 'PLATFORM_OPERATIONS', 'PLATFORM_AUDITOR'"), 'provisioning read roles are explicit');
+check(!operationalProvisioningApi.includes('PLATFORM_FINANCE'), 'Finance is excluded from provisioning API access');
+check([operationalProvisioningApi, operationalProvisioningCancelApi, operationalProvisioningRetryApi].every((route) => route.includes('hasTrustedMutationOrigin')), 'all provisioning mutations require trusted same-origin requests');
+check([operationalProvisioningApi, operationalProvisioningCancelApi, operationalProvisioningRetryApi].every((route) => route.includes('no-store, private')), 'all provisioning API responses prohibit shared caching');
+check(operationalProvisioningMigration.includes("lifecycle_status='PROVISIONING'") && operationalProvisioningMigration.includes('active_contract_plan_required') && operationalProvisioningMigration.includes('active_entitlement_required'), 'run creation verifies workspace, contract, plan, and entitlement eligibility');
+check(operationalProvisioningMigration.includes('provisioning_runs_one_live_workspace_idx') && operationalProvisioningMigration.includes('pg_advisory_xact_lock'), 'concurrent provisioning is prevented transactionally and by index');
+check(operationalProvisioningMigration.includes("has_customer_assignment(p_workspace_id, 'audit')") && operationalProvisioningMigration.includes("has_customer_assignment(p_workspace_id, 'workspace')"), 'Auditor provisioning reads require audit or workspace assignment');
+check(operationalProvisioningMigration.includes('PROVISIONING_RUN_CREATED') && operationalProvisioningMigration.includes('PROVISIONING_TASK_RETRIED') && operationalProvisioningMigration.includes('PROVISIONING_RUN_CANCELLED'), 'provisioning control mutations are audited');
+check(operationalProvisioningAdr.includes('Production release acceptance is read-only'), 'production provisioning acceptance boundary is documented');
 check(contractsAcceptanceDecision.includes('No environment variable was changed'), 'Preview limitation is recorded without changing environment configuration');
 check(example.includes('YOUR_PUBLISHABLE_KEY'), 'example contains placeholders only');
 check(!example.includes('SERVICE_ROLE'), 'example does not request service-role credentials');
