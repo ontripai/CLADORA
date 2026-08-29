@@ -48,6 +48,12 @@ const operationalAssignmentsApi = read('src/app/api/platform/v1/assignments/rout
 const operationalRevokeApi = read('src/app/api/platform/v1/assignments/[id]/revoke/route.ts');
 const operationalAssignmentsMigration = read('supabase/migrations/20260829003600_operational_users_assignments.sql');
 const operationalAssignmentsAdr = read('docs/architecture/ADR-CLD-029-operational-users-assignments.md');
+const operationalPlansPage = read('src/app/[lang]/platform/(control-plane)/plans/page.tsx');
+const operationalPlansPanel = read('src/components/platform/OperationalPlansPanel.tsx');
+const operationalPlansApi = read('src/app/api/platform/v1/plans/route.ts');
+const operationalPlanActivateApi = read('src/app/api/platform/v1/plans/[id]/activate/route.ts');
+const operationalPlanRetireApi = read('src/app/api/platform/v1/plans/[id]/retire/route.ts');
+const operationalPlansMigration = read('supabase/migrations/20260829003700_operational_subscription_plans.sql');
 const platformApiRoutes = [
   'src/app/api/platform/v1/workspaces/route.ts',
   'src/app/api/platform/v1/workspaces/[id]/transitions/route.ts',
@@ -59,6 +65,9 @@ const platformApiRoutes = [
   'src/app/api/platform/v1/assignments/[id]/revoke/route.ts',
   'src/app/api/platform/v1/audit-events/route.ts',
   'src/app/api/platform/v1/contracts/route.ts',
+  'src/app/api/platform/v1/plans/route.ts',
+  'src/app/api/platform/v1/plans/[id]/activate/route.ts',
+  'src/app/api/platform/v1/plans/[id]/retire/route.ts',
 ].map(read);
 const example = read('.env.example');
 const nextConfig = read('next.config.mjs');
@@ -157,6 +166,16 @@ check(operationalAssignmentsApi.includes('hasTrustedMutationOrigin') && operatio
 check(operationalAssignmentsMigration.includes('duplicate_assignment: overlapping active assignment exists'), 'database rejects overlapping active assignments');
 check(operationalAssignmentsMigration.includes("has_platform_role('PLATFORM_AUDITOR')") && operationalAssignmentsMigration.includes("scope_type in ('workspace', 'audit')"), 'Auditor visibility remains assignment scoped');
 check(operationalAssignmentsAdr.includes('Production acceptance must not create, edit, or revoke'), 'production non-mutation acceptance boundary is documented');
+check(!operationalPlansPage.includes('mockPlans') && operationalPlansPage.includes('OperationalPlansPanel'), 'plans page uses the live operational panel');
+check(operationalPlansPanel.includes('/api/platform/v1/plans?') && operationalPlansPanel.includes("cache:'no-store'"), 'plans panel uses the protected non-cached API');
+check(operationalPlansApi.includes('UNAUTHORIZED_PLATFORM_ACCESS') && operationalPlansApi.includes('MFA_REQUIRED'), 'plans API rejects unauthorized and AAL1 callers');
+check(operationalPlansApi.includes("'PLATFORM_OPERATIONS', 'PLATFORM_FINANCE', 'PLATFORM_AUDITOR'"), 'approved plan read roles are explicit');
+check(operationalPlansApi.includes("hasPlatformRole(access.auth, 'PLATFORM_SUPER_ADMIN')"), 'only Super Admin receives plan management capability');
+check([operationalPlansApi, operationalPlanActivateApi, operationalPlanRetireApi].every((route) => route.includes('hasTrustedMutationOrigin')), 'all plan mutations require trusted same-origin requests');
+check([operationalPlansApi, operationalPlanActivateApi, operationalPlanRetireApi].every((route) => route.includes('no-store, private')), 'all plan API responses prohibit shared caching');
+check(operationalPlansMigration.includes('published_plan_immutable') && operationalPlansMigration.includes('retired_plan_immutable'), 'published and retired versions are immutable');
+check(operationalPlansMigration.includes('active_plan_version_overlap') && operationalPlansMigration.includes('subscription_plans_one_active_code_idx'), 'active version overlap is prevented transactionally and by index');
+check(operationalPlansMigration.includes("has_customer_assignment(c.customer_workspace_id, 'audit')"), 'Auditor plan reads require audit or workspace assignment');
 check(contractsAcceptanceDecision.includes('No environment variable was changed'), 'Preview limitation is recorded without changing environment configuration');
 check(example.includes('YOUR_PUBLISHABLE_KEY'), 'example contains placeholders only');
 check(!example.includes('SERVICE_ROLE'), 'example does not request service-role credentials');

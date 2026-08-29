@@ -750,6 +750,16 @@ export type Database = {
       };
     };
     Functions: {
+      get_plan_dependency_counts: {
+        Args: { p_plan_ids: string[] };
+        Returns: Array<{ plan_id: string; workspace_count: number; contract_count: number }>;
+      };
+      create_subscription_plan_version: {
+        Args: { p_plan_code: string; p_display_name: string; p_feature_catalogue: Json; p_limit_schema: Json; p_effective_from: string; p_effective_until: string | null; p_reason: string };
+        Returns: Database['platform']['Tables']['subscription_plans']['Row'];
+      };
+      activate_subscription_plan: { Args: { p_plan_id: string; p_reason: string }; Returns: Database['platform']['Tables']['subscription_plans']['Row'] };
+      retire_subscription_plan: { Args: { p_plan_id: string; p_reason: string }; Returns: Database['platform']['Tables']['subscription_plans']['Row'] };
       create_customer_workspace: {
         Args: {
           p_tenant_id: string;
