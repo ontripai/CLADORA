@@ -1,6 +1,5 @@
-import React from 'react';
 import { LifeBuoy, ShieldAlert, Lock } from 'lucide-react';
-import { DemoEnvironmentBanner } from '@/components/platform/DemoEnvironmentBanner';
+import { OperationalSupportPanel } from '@/components/platform/OperationalSupportPanel';
 
 export const dynamic = 'force-dynamic';
 
@@ -23,7 +22,7 @@ export default async function PlatformSupportPage(props: {
                 ? 'Acces Suport Tehnic (Control Dublu)'
                 : isFa
                 ? 'دسترسی پشتیبانی فنی (کنترل دوطرفه)'
-                : 'Support Access (Dual-Control Foundation)'}
+                : 'Support Access & Dual-Control Security Console'}
             </span>
           </h1>
           <p className="text-xs md:text-sm text-slate-300 mt-1">
@@ -42,9 +41,6 @@ export default async function PlatformSupportPage(props: {
           </span>
         </div>
       </div>
-
-      {/* Demo Banner */}
-      <DemoEnvironmentBanner lang={lang} />
 
       {/* Safety Directive Card */}
       <div className="p-6 bg-[#0F2236] rounded-xl border border-[#1E3A5A] space-y-4">
@@ -73,6 +69,7 @@ export default async function PlatformSupportPage(props: {
           </div>
         </div>
       </div>
+      <OperationalSupportPanel lang={lang} />
     </div>
   );
 }

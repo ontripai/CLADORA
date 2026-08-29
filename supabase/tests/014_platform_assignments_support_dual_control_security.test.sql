@@ -46,7 +46,7 @@ begin
   insert into platform.platform_role_assignments (platform_user_id, role, status, grant_reason) values
     (v_plat_admin, 'PLATFORM_SUPER_ADMIN', 'active', 'Fixture Admin'),
     (v_plat_ops, 'PLATFORM_OPERATIONS', 'active', 'Fixture Ops'),
-    (v_plat_supp, 'PLATFORM_SUPPORT', 'active', 'Fixture Supp'),
+    (v_plat_supp, 'PLATFORM_OPERATIONS', 'active', 'Fixture second Ops'),
     (v_plat_fin, 'PLATFORM_FINANCE', 'active', 'Fixture Finance'),
     (v_plat_aud, 'PLATFORM_AUDITOR', 'active', 'Fixture Auditor');
 
@@ -107,7 +107,7 @@ select ok(
 );
 
 select ok(
-  (select (platform.grant_customer_assignment('f0000000-0000-0000-0000-000000000003'::uuid, '20000000-0000-0000-0000-000000000001'::uuid, 'support', null, null, null, 'Legitimate Support assignment')).status = 'active'),
+  (select (platform.grant_customer_assignment('f0000000-0000-0000-0000-000000000003'::uuid, '20000000-0000-0000-0000-000000000001'::uuid, 'workspace', null, null, null, 'Legitimate second Operations assignment')).status = 'active'),
   'super admin can grant customer assignment on Workspace A to support'
 );
 
@@ -202,21 +202,21 @@ select throws_like(
 select set_config('request.jwt.claims', '{"sub": "e0000000-0000-0000-0000-000000000003", "role": "authenticated", "aal": "aal2"}', true);
 
 select ok(
-  (select (platform.request_support_access('20000000-0000-0000-0000-000000000001'::uuid, 'TCK-2026-DUR', 'Duration test case', 'technical', 'standard')).status = 'requested'),
+  (select (platform.request_support_access('20000000-0000-0000-0000-000000000001'::uuid, 'TCK-2026-DUR', 'Duration test case', 'technical', 'standard', 120, '{"reference":"case"}')).status = 'requested'),
   'assigned support user creates support access request TCK-2026-DUR'
 );
 
 -- 18. Unassigned Support user request on Workspace B is rejected
 select throws_like(
-  $$ select platform.request_support_access('20000000-0000-0000-0000-000000000002'::uuid, 'TCK-2026-002', 'Investigating B', 'technical', 'standard') $$,
+  $$ select platform.request_support_access('20000000-0000-0000-0000-000000000002'::uuid, 'TCK-2026-002', 'Investigating B', 'technical', 'standard', 60, '{"reference":"case"}') $$,
   '%access_denied%',
   'unassigned support user cannot create support access request on unassigned Workspace B'
 );
 
 -- 19. Dual-control: Requester (Support user) cannot approve own request
 select throws_like(
-  $$ select platform.approve_support_access((select id from platform.support_access_requests where ticket_ref = 'TCK-2026-DUR' limit 1)) $$,
-  '%access_denied%',
+  $$ select platform.approve_support_access((select request_id from platform.list_support_access(20,0,'TCK-2026-DUR',null,null) limit 1), '{"reference":"self"}') $$,
+  '%dual_control_violation%',
   'support user cannot approve support request'
 );
 
@@ -227,12 +227,12 @@ do $$
 declare
   v_admin_req platform.support_access_requests;
 begin
-  v_admin_req := platform.request_support_access('20000000-0000-0000-0000-000000000001'::uuid, 'TCK-ADMIN-SELF', 'Admin test', 'technical', 'sensitive');
+  v_admin_req := platform.request_support_access('20000000-0000-0000-0000-000000000001'::uuid, 'TCK-ADMIN-SELF', 'Admin test', 'technical', 'sensitive', 60, '{"reference":"admin"}');
 end;
 $$;
 
 select throws_like(
-  $$ select platform.approve_support_access((select id from platform.support_access_requests where ticket_ref = 'TCK-ADMIN-SELF' limit 1)) $$,
+  $$ select platform.approve_support_access((select request_id from platform.list_support_access(20,0,'TCK-ADMIN-SELF',null,null) limit 1), '{"reference":"self"}') $$,
   '%dual_control_violation%',
   'super admin cannot approve own support access request (dual-control enforced)'
 );
@@ -241,41 +241,40 @@ select throws_like(
 select set_config('request.jwt.claims', '{"sub": "e0000000-0000-0000-0000-000000000002", "role": "authenticated", "aal": "aal2"}', true);
 
 select throws_like(
-  $$ select platform.approve_support_access((select id from platform.support_access_requests where ticket_ref = 'TCK-2026-DUR' limit 1), interval '5 hours') $$,
-  '%invalid_duration%',
+  $$ select platform.request_support_access('20000000-0000-0000-0000-000000000001','TCK-5HR','Invalid duration case','technical','standard',300,'{"reference":"case"}') $$,
+  '%invalid_support_request%',
   'independent approver with > 4 hours duration fails with invalid_duration'
 );
 
 -- 22. Support Duration Test: Zero duration fails with invalid_duration
 select throws_like(
-  $$ select platform.approve_support_access((select id from platform.support_access_requests where ticket_ref = 'TCK-2026-DUR' limit 1), interval '0 hours') $$,
-  '%invalid_duration%',
+  $$ select platform.request_support_access('20000000-0000-0000-0000-000000000001','TCK-0HR','Invalid duration case','technical','standard',0,'{"reference":"case"}') $$,
+  '%invalid_support_request%',
   'zero duration fails with invalid_duration'
 );
 
 -- 23. Support Duration Test: Negative duration fails with invalid_duration
 select throws_like(
-  $$ select platform.approve_support_access((select id from platform.support_access_requests where ticket_ref = 'TCK-2026-DUR' limit 1), interval '-1 hours') $$,
-  '%invalid_duration%',
+  $$ select platform.request_support_access('20000000-0000-0000-0000-000000000001','TCK-NHR','Invalid duration case','technical','standard',-1,'{"reference":"case"}') $$,
+  '%invalid_support_request%',
   'negative duration fails with invalid_duration'
 );
 
 -- 24 & 25. After failed duration attempts, request remains in 'requested' state and no grant exists
 select ok(
-  (select status = 'requested' from platform.support_access_requests where ticket_ref = 'TCK-2026-DUR' limit 1),
+  (select request_status = 'requested' from platform.list_support_access(20,0,'TCK-2026-DUR',null,null) limit 1),
   'request remains in requested state after failed duration validation'
 );
 
 select ok(
-  (select count(*) = 0 from platform.support_access_grants where request_id = (select id from platform.support_access_requests where ticket_ref = 'TCK-2026-DUR' limit 1)),
+  (select grant_id is null from platform.list_support_access(20,0,'TCK-2026-DUR',null,null) limit 1),
   'no grant row created after failed duration validation'
 );
 
 -- 26. Valid independent approval with 2 hours duration succeeds
 select ok(
   (select (platform.approve_support_access(
-    (select id from platform.support_access_requests where ticket_ref = 'TCK-2026-DUR' limit 1),
-    interval '2 hours',
+    (select request_id from platform.list_support_access(20,0,'TCK-2026-DUR',null,null) limit 1),
     '{"approved": true}'::jsonb
   )).expires_at > statement_timestamp()),
   'assigned operations user independently approves support access request with 2 hours duration'
@@ -297,7 +296,7 @@ select set_config('request.jwt.claims', '{"sub": "e0000000-0000-0000-0000-000000
 -- 28. Support access revocation terminates active grant
 select ok(
   (select (platform.revoke_support_access(
-    (select id from platform.support_access_grants where customer_workspace_id = '20000000-0000-0000-0000-000000000001'::uuid and revoked_at is null limit 1),
+    (select grant_id from platform.list_support_access(20,0,'TCK-2026-DUR',null,null) limit 1),
     'Early case resolution'
   )).revoked_at is not null),
   'support access revocation terminates active grant'

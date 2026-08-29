@@ -118,16 +118,17 @@ export type Database = {
           p_workspace_id: string;
           p_ticket_ref: string;
           p_purpose: string;
-          p_requested_scope?: string;
-          p_sensitivity_level?: string;
+          p_requested_scope: string;
+          p_sensitivity_level: string;
+          p_duration_minutes: number;
+          p_evidence: Json;
         };
         Returns: Database['platform']['Tables']['support_access_requests']['Row'];
       };
       approve_support_access: {
         Args: {
           p_request_id: string;
-          p_duration_interval?: string;
-          p_evidence?: Json;
+          p_evidence: Json;
         };
         Returns: Database['platform']['Tables']['support_access_grants']['Row'];
       };
@@ -137,6 +138,18 @@ export type Database = {
           p_reason: string;
         };
         Returns: Database['platform']['Tables']['support_access_grants']['Row'];
+      };
+      list_support_access: {
+        Args: { p_limit?: number; p_offset?: number; p_query?: string | null; p_status?: string | null; p_workspace_id?: string | null };
+        Returns: Array<Record<string, Json> & { total_count: number }>;
+      };
+      list_support_workspaces: {
+        Args: Record<string, never>;
+        Returns: Array<{ workspace_id: string; workspace_label: string }>;
+      };
+      cancel_support_access_request: {
+        Args: { p_request_id: string; p_reason: string };
+        Returns: Database['platform']['Tables']['support_access_requests']['Row'];
       };
       enforce_entitlement_quota: {
         Args: {
@@ -675,6 +688,8 @@ export type Database = {
           requester_id: string;
           status: string;
           created_at: string;
+          requested_duration_minutes: number;
+          request_evidence: Json;
         };
         Insert: {
           id?: string;
@@ -686,6 +701,8 @@ export type Database = {
           requester_id: string;
           status?: string;
           created_at?: string;
+          requested_duration_minutes: number;
+          request_evidence?: Json;
         };
         Update: {
           id?: string;
@@ -697,6 +714,8 @@ export type Database = {
           requester_id?: string;
           status?: string;
           created_at?: string;
+          requested_duration_minutes?: number;
+          request_evidence?: Json;
         };
         Relationships: [];
       };
@@ -852,16 +871,17 @@ export type Database = {
           p_workspace_id: string;
           p_ticket_ref: string;
           p_purpose: string;
-          p_requested_scope?: string;
-          p_sensitivity_level?: string;
+          p_requested_scope: string;
+          p_sensitivity_level: string;
+          p_duration_minutes: number;
+          p_evidence: Json;
         };
         Returns: Database['platform']['Tables']['support_access_requests']['Row'];
       };
       approve_support_access: {
         Args: {
           p_request_id: string;
-          p_duration_interval?: string;
-          p_evidence?: Json;
+          p_evidence: Json;
         };
         Returns: Database['platform']['Tables']['support_access_grants']['Row'];
       };
@@ -871,6 +891,18 @@ export type Database = {
           p_reason: string;
         };
         Returns: Database['platform']['Tables']['support_access_grants']['Row'];
+      };
+      list_support_access: {
+        Args: { p_limit?: number; p_offset?: number; p_query?: string | null; p_status?: string | null; p_workspace_id?: string | null };
+        Returns: Array<Record<string, Json> & { total_count: number }>;
+      };
+      list_support_workspaces: {
+        Args: Record<string, never>;
+        Returns: Array<{ workspace_id: string; workspace_label: string }>;
+      };
+      cancel_support_access_request: {
+        Args: { p_request_id: string; p_reason: string };
+        Returns: Database['platform']['Tables']['support_access_requests']['Row'];
       };
       enforce_entitlement_quota: {
         Args: {
