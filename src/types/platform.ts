@@ -145,7 +145,7 @@ export interface ProvisioningRun {
   id: string;
   customer_workspace_id: string;
   idempotency_key: string;
-  status: 'pending' | 'running' | 'completed' | 'failed' | 'cancelled';
+  status: 'queued' | 'running' | 'completed' | 'failed' | 'cancelled';
   initiated_by: string | null;
   started_at: string;
   completed_at: string | null;
@@ -159,7 +159,7 @@ export interface ProvisioningTask {
   run_id: string;
   task_order: number;
   task_type: string;
-  status: 'pending' | 'running' | 'completed' | 'failed' | 'skipped';
+  status: 'queued' | 'running' | 'completed' | 'failed' | 'skipped';
   attempt_count: number;
   started_at: string | null;
   completed_at: string | null;

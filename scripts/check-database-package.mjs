@@ -8,8 +8,8 @@ const migrations = readdirSync(migrationsDir).filter((name) => name.endsWith(".s
 const tests = readdirSync(testsDir).filter((name) => name.endsWith(".sql")).sort();
 
 const failures = [];
-if (migrations.length !== 38) failures.push(`expected 38 migrations, found ${migrations.length}`);
-if (tests.length !== 26) failures.push(`expected 26 pgTAP files, found ${tests.length}`);
+if (migrations.length !== 39) failures.push(`expected 39 migrations, found ${migrations.length}`);
+if (tests.length !== 27) failures.push(`expected 27 pgTAP files, found ${tests.length}`);
 
 for (const [index, name] of migrations.entries()) {
   const expected = String(index).padStart(3, "0");
@@ -29,7 +29,7 @@ for (const name of tests) {
   assertionTotal += assertions;
   if (plan !== assertions) failures.push(`${name}: plan ${plan} does not match ${assertions} assertions`);
 }
-if (assertionTotal !== 550) failures.push(`expected 550 assertions, found ${assertionTotal}`);
+if (assertionTotal !== 577) failures.push(`expected 577 assertions, found ${assertionTotal}`);
 
 if (failures.length) {
   console.error("Database package contract failed:");
