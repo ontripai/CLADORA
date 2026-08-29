@@ -66,6 +66,7 @@ export type Database = {
           p_customer_workspace_id: string;
           p_scope_type?: string;
           p_scope_id?: string | null;
+          p_valid_from?: string;
           p_valid_until?: string | null;
           p_reason?: string;
         };
@@ -789,6 +790,7 @@ export type Database = {
           p_customer_workspace_id: string;
           p_scope_type?: string;
           p_scope_id?: string | null;
+          p_valid_from?: string;
           p_valid_until?: string | null;
           p_reason?: string;
         };
