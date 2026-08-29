@@ -33,8 +33,12 @@ export async function GET(request: Request) {
     .from('customer_workspaces')
     .select('*', { count: 'exact' });
 
-  if (!hasPlatformRole(authCtx, ['PLATFORM_SUPER_ADMIN', 'PLATFORM_AUDITOR'])) {
-    const assignedIds = authCtx.assignments.map((a) => a.customer_workspace_id);
+  if (!hasPlatformRole(authCtx, 'PLATFORM_SUPER_ADMIN')) {
+    const isAuditorOnly = hasPlatformRole(authCtx, 'PLATFORM_AUDITOR')
+      && authCtx.roles.every((role) => role === 'PLATFORM_AUDITOR');
+    const assignedIds = authCtx.assignments
+      .filter((assignment) => !isAuditorOnly || ['workspace', 'audit'].includes(assignment.scope_type))
+      .map((assignment) => assignment.customer_workspace_id);
     query = query.in('id', assignedIds.length > 0 ? assignedIds : ['00000000-0000-0000-0000-000000000000']);
   }
 
