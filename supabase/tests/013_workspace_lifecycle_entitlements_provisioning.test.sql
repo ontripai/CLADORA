@@ -147,6 +147,7 @@ select ok(
 );
 
 -- Assertion 11 & 12: Verify audit snapshots before_snapshot and after_snapshot (read under Super Admin)
+reset role;
 select ok(
   (select (before_snapshot->>'status') = 'LEAD' from audit.events where entity_id = 'd0000000-0000-0000-0000-000000000001'::uuid and action = 'WORKSPACE_LIFECYCLE_TRANSITION' order by occurred_at asc limit 1),
   'audit before_snapshot captures accurate prior status LEAD'
@@ -156,6 +157,7 @@ select ok(
   (select (after_snapshot->>'status') = 'UNDER_REVIEW' from audit.events where entity_id = 'd0000000-0000-0000-0000-000000000001'::uuid and action = 'WORKSPACE_LIFECYCLE_TRANSITION' order by occurred_at asc limit 1),
   'audit after_snapshot captures accurate subsequent status UNDER_REVIEW'
 );
+set local role authenticated;
 
 -- Assertion 13: Entitlements: Zero quantity is rejected
 select throws_like(

@@ -34,8 +34,8 @@ select ok(exists (
   select 1 from pg_policies where schemaname='platform' and tablename='platform_role_assignments' and policyname='platform_roles_read' and cmd='SELECT'
 ), 'platform roles SELECT policy remains');
 select ok(exists (
-  select 1 from pg_policies where schemaname='audit' and tablename='events' and policyname='audit_events_authenticated_read' and cmd='SELECT'
-), 'consolidated audit SELECT policy exists');
+  select 1 from pg_policies where schemaname='audit' and tablename='events' and policyname='audit_events_assignment_scoped_read' and cmd='SELECT'
+), 'assignment-scoped audit SELECT policy exists');
 
 select ok((
   select qual like '%( SELECT auth.uid() AS uid)%'
@@ -43,10 +43,10 @@ select ok((
   where schemaname='platform' and tablename='platform_users' and policyname='platform_users_read'
 ), 'platform users policy caches auth.uid per statement');
 select ok((
-  select qual like '%( SELECT auth.uid() AS uid)%'
+  select qual like '%can_read_audit_event%'
   from pg_policies
-  where schemaname='audit' and tablename='events' and policyname='audit_events_authenticated_read'
-), 'audit policy caches auth.uid per statement');
+  where schemaname='audit' and tablename='events' and policyname='audit_events_assignment_scoped_read'
+), 'audit policy delegates to the scoped authorization helper');
 
 select ok((
   select count(*) = 1

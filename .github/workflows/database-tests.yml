@@ -41,9 +41,7 @@ jobs:
         with:
           version: 2.84.2
       - name: Start clean local database and apply migrations
-        run: |
-          supabase start
-          supabase db reset
+        run: supabase start
       - name: Run pgTAP database tests
         run: supabase test db
       - name: Show service status on failure
