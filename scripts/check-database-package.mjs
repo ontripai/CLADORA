@@ -29,7 +29,7 @@ for (const name of tests) {
   assertionTotal += assertions;
   if (plan !== assertions) failures.push(`${name}: plan ${plan} does not match ${assertions} assertions`);
 }
-if (assertionTotal !== 577) failures.push(`expected 577 assertions, found ${assertionTotal}`);
+if (assertionTotal !== 581) failures.push(`expected 581 assertions, found ${assertionTotal}`);
 
 if (failures.length) {
   console.error("Database package contract failed:");

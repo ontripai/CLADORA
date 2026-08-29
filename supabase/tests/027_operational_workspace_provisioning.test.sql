@@ -1,10 +1,10 @@
 begin;
-select plan(27);
+select plan(31);
 
-select has_function('app_private','can_read_provisioning_run',array['uuid'],'scoped provisioning read helper exists');
-select has_function('platform','list_provisionable_workspaces',array[]::text[],'eligible workspace lookup exists');
-select has_function('platform','cancel_provisioning_run',array['uuid','text'],'controlled cancellation exists');
-select has_function('platform','retry_provisioning_task',array['uuid','text'],'controlled retry exists');
+select ok(to_regprocedure('app_private.can_read_provisioning_run(uuid)') is not null,'scoped provisioning read helper exists');
+select ok(to_regprocedure('platform.list_provisionable_workspaces()') is not null,'eligible workspace lookup exists');
+select ok(to_regprocedure('platform.cancel_provisioning_run(uuid,text)') is not null,'controlled cancellation exists');
+select ok(to_regprocedure('platform.retry_provisioning_task(uuid,text)') is not null,'controlled retry exists');
 select ok((select c.relrowsecurity from pg_class c join pg_namespace n on n.oid=c.relnamespace where n.nspname='platform' and c.relname='provisioning_runs'),'run RLS remains enabled');
 select ok((select c.relrowsecurity from pg_class c join pg_namespace n on n.oid=c.relnamespace where n.nspname='platform' and c.relname='provisioning_tasks'),'task RLS remains enabled');
 select ok(not has_table_privilege('authenticated','platform.provisioning_runs','INSERT'),'authenticated cannot insert runs directly');

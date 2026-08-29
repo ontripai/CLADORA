@@ -51,6 +51,13 @@ begin
   insert into platform.workspace_entitlements (customer_workspace_id, entitlement_key, value_type, numeric_value) values
     ('d0000000-0000-0000-0000-000000000001'::uuid, 'ocr_meter_quota', 'numeric', 100),
     ('d0000000-0000-0000-0000-000000000003'::uuid, 'ocr_meter_quota', 'numeric', 50);
+
+  insert into platform.subscription_plans (id, plan_code, version, display_name, status, effective_from)
+  values ('e0000000-0000-0000-0000-000000000001'::uuid, 'LEGACY_PROVISIONING_TEST', 1, 'Legacy provisioning fixture', 'active', statement_timestamp() - interval '1 day');
+  insert into platform.workspace_contracts (id, customer_workspace_id, plan_id, contract_ref, status, start_date)
+  values ('e1000000-0000-0000-0000-000000000001'::uuid, 'd0000000-0000-0000-0000-000000000002'::uuid, 'e0000000-0000-0000-0000-000000000001'::uuid, 'LEGACY-PROV-013', 'active', current_date - 1);
+  insert into platform.workspace_entitlements (customer_workspace_id, contract_id, entitlement_key, value_type, boolean_value)
+  values ('d0000000-0000-0000-0000-000000000002'::uuid, 'e1000000-0000-0000-0000-000000000001'::uuid, 'provisioning', 'boolean', true);
 end;
 $$;
 
@@ -228,8 +235,8 @@ select throws_like(
 
 -- Assertion 23: Provisioning run creation succeeds
 select ok(
-  (select (platform.create_provisioning_run('d0000000-0000-0000-0000-000000000003'::uuid, 'run-idemp-101', array['create_tenant','stage_invites'])).status = 'pending'),
-  'provisioning run creation creates pending run'
+  (select (platform.create_provisioning_run('d0000000-0000-0000-0000-000000000002'::uuid, 'run-idemp-101', array['validate_workspace','validate_contract'])).status = 'queued'),
+  'provisioning run creation creates queued run'
 );
 
 -- Assertion 24: Provisioning tasks created with correct count
@@ -240,7 +247,7 @@ select ok(
 
 -- Assertion 25: Duplicate provisioning run idempotency key does not duplicate tasks
 select ok(
-  (select (platform.create_provisioning_run('d0000000-0000-0000-0000-000000000003'::uuid, 'run-idemp-101', array['create_tenant','stage_invites'])).id = (select id from platform.provisioning_runs where idempotency_key = 'run-idemp-101')),
+  (select (platform.create_provisioning_run('d0000000-0000-0000-0000-000000000002'::uuid, 'run-idemp-101', array['validate_workspace','validate_contract'])).id = (select id from platform.provisioning_runs where idempotency_key = 'run-idemp-101')),
   'duplicate provisioning run request returns existing run'
 );
 
