@@ -35,7 +35,13 @@ grant execute on function app_private.can_read_platform_user(uuid) to authentica
 
 drop policy if exists platform_users_read on platform.platform_users;
 create policy platform_users_read on platform.platform_users for select to authenticated
-using (app_private.can_read_platform_user(id));
+using (
+  app_private.has_platform_aal2()
+  and (
+    auth_user_id = (select auth.uid())
+    or app_private.can_read_platform_user(id)
+  )
+);
 
 drop policy if exists platform_roles_read on platform.platform_role_assignments;
 create policy platform_roles_read on platform.platform_role_assignments for select to authenticated

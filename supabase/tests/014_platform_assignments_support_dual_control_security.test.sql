@@ -93,7 +93,7 @@ select throws_like(
 
 -- 4. Unassigned Operations user attempting to assign itself to Workspace B fails
 select throws_like(
-  $$ select platform.grant_customer_assignment('f0000000-0000-0000-0000-000000000002'::uuid, '20000000-0000-0000-0000-000000000002'::uuid, 'workspace', null, null, 'Self escalation attempt') $$,
+  $$ select platform.grant_customer_assignment('f0000000-0000-0000-0000-000000000002'::uuid, '20000000-0000-0000-0000-000000000002'::uuid, 'workspace', null, null, null, 'Self escalation attempt') $$,
   '%access_denied%',
   'unassigned operations user cannot self-assign to customer workspace B'
 );
@@ -102,29 +102,40 @@ select throws_like(
 select set_config('request.jwt.claims', '{"sub": "e0000000-0000-0000-0000-000000000001", "role": "authenticated", "aal": "aal2"}', true);
 
 select ok(
-  (select (platform.grant_customer_assignment('f0000000-0000-0000-0000-000000000002'::uuid, '20000000-0000-0000-0000-000000000001'::uuid, 'workspace', null, null, 'Legitimate Ops assignment')).status = 'active'),
+  (select (platform.grant_customer_assignment('f0000000-0000-0000-0000-000000000002'::uuid, '20000000-0000-0000-0000-000000000001'::uuid, 'workspace', null, null, null, 'Legitimate Ops assignment')).status = 'active'),
   'super admin can grant customer assignment on Workspace A to operations'
 );
 
 select ok(
-  (select (platform.grant_customer_assignment('f0000000-0000-0000-0000-000000000003'::uuid, '20000000-0000-0000-0000-000000000001'::uuid, 'support', null, null, 'Legitimate Support assignment')).status = 'active'),
+  (select (platform.grant_customer_assignment('f0000000-0000-0000-0000-000000000003'::uuid, '20000000-0000-0000-0000-000000000001'::uuid, 'support', null, null, null, 'Legitimate Support assignment')).status = 'active'),
   'super admin can grant customer assignment on Workspace A to support'
 );
 
 select ok(
-  (select (platform.grant_customer_assignment('f0000000-0000-0000-0000-000000000004'::uuid, '20000000-0000-0000-0000-000000000001'::uuid, 'commercial', null, null, 'Legitimate Finance assignment')).status = 'active'),
+  (select (platform.grant_customer_assignment('f0000000-0000-0000-0000-000000000004'::uuid, '20000000-0000-0000-0000-000000000001'::uuid, 'commercial', null, null, null, 'Legitimate Finance assignment')).status = 'active'),
   'super admin can grant commercial assignment on Workspace A to finance'
 );
 
--- 8. Operations user can delegate sub-assignment on Workspace A
+-- 8. Operations user cannot delegate sub-assignment on Workspace A
 select set_config('request.jwt.claims', '{"sub": "e0000000-0000-0000-0000-000000000002", "role": "authenticated", "aal": "aal2"}', true);
 
-select ok(
-  (select (platform.grant_customer_assignment('f0000000-0000-0000-0000-000000000003'::uuid, '20000000-0000-0000-0000-000000000001'::uuid, 'technical', null, null, 'Delegated technical assignment')).status = 'active'),
-  'assigned operations user can delegate sub-assignment on assigned Workspace A'
+select throws_like(
+  $$ select platform.grant_customer_assignment('f0000000-0000-0000-0000-000000000003'::uuid, '20000000-0000-0000-0000-000000000001'::uuid, 'technical', null, null, null, 'Delegated technical assignment') $$,
+  '%access_denied%',
+  'assigned operations user cannot delegate customer assignments'
 );
 
--- 9. Revocation of customer assignment succeeds and is recorded
+-- 9. Super Admin creates and revokes the technical assignment
+select set_config('request.jwt.claims', '{"sub": "e0000000-0000-0000-0000-000000000001", "role": "authenticated", "aal": "aal2"}', true);
+
+do $$ begin
+  perform platform.grant_customer_assignment(
+    'f0000000-0000-0000-0000-000000000003'::uuid,
+    '20000000-0000-0000-0000-000000000001'::uuid,
+    'technical', null, null, null, 'Administrative technical assignment'
+  );
+end $$;
+
 select ok(
   (select (platform.revoke_customer_assignment(
     (select id from platform.platform_customer_assignments where customer_workspace_id = '20000000-0000-0000-0000-000000000001'::uuid and scope_type = 'technical' limit 1),
