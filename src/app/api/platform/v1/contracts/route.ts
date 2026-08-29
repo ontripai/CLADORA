@@ -58,6 +58,7 @@ export async function GET(request: Request) {
 
   const workspaceIds = Array.from(new Set((contracts ?? []).map((row) => row.customer_workspace_id)));
   const planIds = Array.from(new Set((contracts ?? []).flatMap((row) => (row.plan_id ? [row.plan_id] : []))));
+  const now = new Date().toISOString();
   const [workspaces, plans, entitlements] = await Promise.all([
     workspaceIds.length
       ? supabase.schema("platform").from("customer_workspaces").select("id, commercial_owner, workspace_type, environment, lifecycle_status").in("id", workspaceIds)
@@ -66,7 +67,15 @@ export async function GET(request: Request) {
       ? supabase.schema("platform").from("subscription_plans").select("id, plan_code, version, display_name, status").in("id", planIds)
       : Promise.resolve({ data: [], error: null }),
     workspaceIds.length
-      ? supabase.schema("platform").from("workspace_entitlements").select("*").in("customer_workspace_id", workspaceIds).order("entitlement_key").limit(200)
+      ? supabase
+          .schema("platform")
+          .from("workspace_entitlements")
+          .select("*")
+          .in("customer_workspace_id", workspaceIds)
+          .lte("valid_from", now)
+          .or(`valid_until.is.null,valid_until.gt.${now}`)
+          .order("customer_workspace_id")
+          .order("entitlement_key")
       : Promise.resolve({ data: [], error: null }),
   ]);
   if (workspaces.error || plans.error || entitlements.error) {

@@ -34,6 +34,8 @@ const operationalWorkspacesPage = read('src/app/[lang]/platform/(control-plane)/
 const operationalWorkspacesTable = read('src/components/platform/OperationalWorkspacesTable.tsx');
 const operationalContractsPage = read('src/app/[lang]/platform/(control-plane)/contracts/page.tsx');
 const operationalContractsPanel = read('src/components/platform/OperationalContractsPanel.tsx');
+const operationalContractsApi = read('src/app/api/platform/v1/contracts/route.ts');
+const contractsAcceptanceDecision = read('docs/architecture/CLADORA-ENG-011B-acceptance-decisions.md');
 const platformApiRoutes = [
   'src/app/api/platform/v1/workspaces/route.ts',
   'src/app/api/platform/v1/workspaces/[id]/transitions/route.ts',
@@ -113,6 +115,18 @@ check(operationalContractsPanel.includes('cache: "no-store"'), 'contract request
 check(operationalContractsPanel.includes('credentials: "same-origin"'), 'contract requests carry only same-origin session credentials');
 check(operationalContractsPanel.includes('AbortController'), 'contract requests are cancelled during navigation');
 check(operationalContractsPanel.includes('role="alert"'), 'contract load failures are announced accessibly');
+check(operationalContractsApi.includes('UNAUTHORIZED_PLATFORM_ACCESS') && operationalContractsApi.includes('status: 401'), 'contracts API rejects unauthenticated callers');
+check(operationalContractsApi.includes('MFA_REQUIRED') && operationalContractsApi.includes('status: 403'), 'contracts API rejects AAL1 sessions');
+check(operationalContractsApi.includes('["PLATFORM_SUPER_ADMIN", "PLATFORM_FINANCE", "PLATFORM_AUDITOR"]'), 'contracts API allows only the approved read roles');
+check(!operationalContractsApi.includes('["PLATFORM_SUPER_ADMIN", "PLATFORM_OPERATIONS", "PLATFORM_FINANCE", "PLATFORM_AUDITOR"]'), 'Operations is explicitly excluded from contract reads');
+check(operationalContractsApi.includes('"PLATFORM_FINANCE"') && operationalContractsApi.includes('["workspace", "commercial"].includes(assignment.scope_type)'), 'assigned Finance reads require workspace or commercial scope');
+check(operationalContractsApi.includes('workspaceIds.length ? workspaceIds : [EMPTY_UUID]'), 'unassigned Finance access fails closed');
+check(operationalContractsApi.includes('["PLATFORM_SUPER_ADMIN", "PLATFORM_AUDITOR"]'), 'current Auditor global-read exception remains explicit pending architecture decision');
+check(operationalContractsApi.includes('.lte("valid_from", now)') && operationalContractsApi.includes('valid_until.is.null,valid_until.gt.'), 'only currently valid entitlements are returned');
+check(!operationalContractsApi.includes('.limit(200)'), 'entitlement retrieval is not silently capped at 200 rows');
+check(operationalContractsPanel.includes('function hasActiveOverride') && operationalContractsPanel.includes('expiresAt > now'), 'expired entitlement overrides are ignored');
+check(contractsAcceptanceDecision.includes('Status: OPEN — MERGE BLOCKER'), 'Auditor assignment conflict is recorded as an open merge blocker');
+check(contractsAcceptanceDecision.includes('No environment variable was changed'), 'Preview limitation is recorded without changing environment configuration');
 check(example.includes('YOUR_PUBLISHABLE_KEY'), 'example contains placeholders only');
 check(!example.includes('SERVICE_ROLE'), 'example does not request service-role credentials');
 check(nextConfig.includes('https://*.supabase.co'), 'CSP permits Supabase HTTPS');
