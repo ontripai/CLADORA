@@ -74,6 +74,11 @@ const operationalSupportCancelApi = read('src/app/api/platform/v1/support/reques
 const operationalSupportRevokeApi = read('src/app/api/platform/v1/support/grants/[id]/revoke/route.ts');
 const operationalSupportMigration = read('supabase/migrations/20260829004000_operational_support_access_dual_control.sql');
 const operationalSupportAdr = read('docs/architecture/ADR-CLD-033-operational-support-dual-control.md');
+const operationalOverviewPage = read('src/app/[lang]/platform/(control-plane)/overview/page.tsx');
+const operationalOverviewPanel = read('src/components/platform/OperationalOverviewPanel.tsx');
+const operationalOverviewApi = read('src/app/api/platform/v1/overview/route.ts');
+const operationalOverviewMigration = read('supabase/migrations/20260829004100_operational_control_plane_overview.sql');
+const operationalOverviewAdr = read('docs/architecture/ADR-CLD-034-operational-control-plane-overview.md');
 const platformApiRoutes = [
   'src/app/api/platform/v1/workspaces/route.ts',
   'src/app/api/platform/v1/workspaces/[id]/transitions/route.ts',
@@ -96,6 +101,7 @@ const platformApiRoutes = [
   'src/app/api/platform/v1/support/requests/[id]/approve/route.ts',
   'src/app/api/platform/v1/support/requests/[id]/cancel/route.ts',
   'src/app/api/platform/v1/support/grants/[id]/revoke/route.ts',
+  'src/app/api/platform/v1/overview/route.ts',
 ].map(read);
 const example = read('.env.example');
 const nextConfig = read('next.config.mjs');
@@ -238,6 +244,16 @@ check(operationalSupportMigration.includes("has_customer_assignment(p_workspace_
 check(operationalSupportMigration.includes('redact_audit_json') && operationalSupportMigration.includes('revoke select on platform.support_access_requests'), 'support evidence is redacted and raw authenticated reads are blocked');
 check(operationalSupportMigration.includes('between 15 and 240') && operationalSupportMigration.includes('octet_length(p_evidence::text)>4096'), 'support duration and evidence are bounded in the database');
 check(operationalSupportAdr.includes('Production release acceptance is read-only') && operationalSupportAdr.includes('requester and approver may never be the same user'), 'support architecture records dual-control and non-mutation acceptance');
+check(!operationalOverviewPage.includes('12 Active') && operationalOverviewPage.includes('OperationalOverviewPanel'), 'overview page contains no fixed KPI fixtures');
+check(operationalOverviewPanel.includes('/api/platform/v1/overview') && operationalOverviewPanel.includes("cache:'no-store'") && operationalOverviewPanel.includes("credentials:'same-origin'"), 'overview uses the protected non-cached same-origin API');
+check(operationalOverviewPanel.includes('AbortController') && operationalOverviewPanel.includes('RefreshCw'), 'overview supports cancellation and manual refresh');
+check(operationalOverviewApi.includes('UNAUTHORIZED_PLATFORM_ACCESS') && operationalOverviewApi.includes('MFA_REQUIRED'), 'overview API rejects unauthorized and AAL1 callers');
+check(operationalOverviewApi.includes('no-store, private') && operationalOverviewApi.includes("Pragma:'no-cache'"), 'overview responses prohibit caching');
+check(operationalOverviewMigration.includes("has_customer_assignment(w.id,'commercial')") && operationalOverviewMigration.includes("has_customer_assignment(w.id,'audit')"), 'overview projection enforces commercial and audit assignment scopes');
+check(operationalOverviewMigration.includes("else null end") && operationalOverviewMigration.includes("v_super or v_ops or v_aud"), 'commercial and operational KPI domains are separated');
+check(operationalOverviewMigration.includes('limit 12') && operationalOverviewMigration.includes('limit 10'), 'overview queues and events are bounded');
+check(operationalOverviewMigration.includes('redact_audit_text') && !operationalOverviewMigration.includes("'before_snapshot',") && !operationalOverviewMigration.includes("'after_snapshot',"), 'overview event output is redacted and excludes snapshots');
+check(operationalOverviewAdr.includes('caller-supplied workspace scopes are never accepted') && operationalOverviewAdr.includes('Production acceptance is read-only'), 'overview architecture records fail-closed and non-mutation boundaries');
 check(contractsAcceptanceDecision.includes('No environment variable was changed'), 'Preview limitation is recorded without changing environment configuration');
 check(example.includes('YOUR_PUBLISHABLE_KEY'), 'example contains placeholders only');
 check(!example.includes('SERVICE_ROLE'), 'example does not request service-role credentials');
