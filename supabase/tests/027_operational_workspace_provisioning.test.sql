@@ -1,5 +1,5 @@
 begin;
-select plan(31);
+select plan(34);
 
 select ok(to_regprocedure('app_private.can_read_provisioning_run(uuid)') is not null,'scoped provisioning read helper exists');
 select ok(to_regprocedure('platform.list_provisionable_workspaces()') is not null,'eligible workspace lookup exists');
@@ -27,27 +27,36 @@ do $$ declare r record; begin
   end loop;
   insert into platform.tenants(id,legal_name,registration_number) values
     ('14200000-0000-0000-0000-000000000001','Provisioning Tenant','PROV-027-1'),
-    ('14200000-0000-0000-0000-000000000002','Provisioning Hidden','PROV-027-2');
+    ('14200000-0000-0000-0000-000000000002','Provisioning Hidden','PROV-027-2'),
+    ('14200000-0000-0000-0000-000000000003','Provisioning Retry','PROV-027-3');
   insert into platform.customer_workspaces(id,tenant_id,workspace_type,lifecycle_status,commercial_owner,environment) values
     ('14300000-0000-0000-0000-000000000001','14200000-0000-0000-0000-000000000001','ASSOCIATION','PROVISIONING','Eligible','PILOT'),
-    ('14300000-0000-0000-0000-000000000002','14200000-0000-0000-0000-000000000002','ASSOCIATION','PROVISIONING','Hidden','PILOT');
+    ('14300000-0000-0000-0000-000000000002','14200000-0000-0000-0000-000000000002','ASSOCIATION','PROVISIONING','Hidden','PILOT'),
+    ('14300000-0000-0000-0000-000000000003','14200000-0000-0000-0000-000000000003','ASSOCIATION','PROVISIONING','Retry','PILOT');
   insert into platform.subscription_plans(id,plan_code,version,display_name,status,effective_from) values
     ('14400000-0000-0000-0000-000000000001','PROVISION_027',1,'Provision plan','active',statement_timestamp()-interval '1 day');
   insert into platform.workspace_contracts(id,customer_workspace_id,plan_id,contract_ref,status,start_date) values
     ('14500000-0000-0000-0000-000000000001','14300000-0000-0000-0000-000000000001','14400000-0000-0000-0000-000000000001','PROV-CONTRACT-027-1','active',current_date-1),
-    ('14500000-0000-0000-0000-000000000002','14300000-0000-0000-0000-000000000002','14400000-0000-0000-0000-000000000001','PROV-CONTRACT-027-2','active',current_date-1);
+    ('14500000-0000-0000-0000-000000000002','14300000-0000-0000-0000-000000000002','14400000-0000-0000-0000-000000000001','PROV-CONTRACT-027-2','active',current_date-1),
+    ('14500000-0000-0000-0000-000000000003','14300000-0000-0000-0000-000000000003','14400000-0000-0000-0000-000000000001','PROV-CONTRACT-027-3','active',current_date-1);
   insert into platform.workspace_entitlements(customer_workspace_id,contract_id,entitlement_key,value_type,boolean_value,valid_from) values
     ('14300000-0000-0000-0000-000000000001','14500000-0000-0000-0000-000000000001','provisioning','boolean',true,statement_timestamp()-interval '1 day'),
-    ('14300000-0000-0000-0000-000000000002','14500000-0000-0000-0000-000000000002','provisioning','boolean',true,statement_timestamp()-interval '1 day');
+    ('14300000-0000-0000-0000-000000000002','14500000-0000-0000-0000-000000000002','provisioning','boolean',true,statement_timestamp()-interval '1 day'),
+    ('14300000-0000-0000-0000-000000000003','14500000-0000-0000-0000-000000000003','provisioning','boolean',true,statement_timestamp()-interval '1 day');
   insert into platform.platform_customer_assignments(platform_user_id,customer_workspace_id,scope_type,status,valid_from,assignment_reason) values
     ('14100000-0000-0000-0000-000000000002','14300000-0000-0000-0000-000000000001','workspace','active',statement_timestamp()-interval '1 day','Operations fixture'),
+    ('14100000-0000-0000-0000-000000000002','14300000-0000-0000-0000-000000000003','workspace','active',statement_timestamp()-interval '1 day','Operations retry fixture'),
     ('14100000-0000-0000-0000-000000000003','14300000-0000-0000-0000-000000000001','audit','active',statement_timestamp()-interval '1 day','Auditor fixture'),
     ('14100000-0000-0000-0000-000000000004','14300000-0000-0000-0000-000000000001','commercial','active',statement_timestamp()-interval '1 day','Finance fixture');
+  insert into platform.provisioning_runs(id,customer_workspace_id,idempotency_key,status,initiated_by,completed_at,failure_reason)
+  values('14600000-0000-0000-0000-000000000001','14300000-0000-0000-0000-000000000003','prov:027:retry','failed','14000000-0000-0000-0000-000000000001',statement_timestamp(),'Fixture failure');
+  insert into platform.provisioning_tasks(id,run_id,task_order,task_type,status,attempt_count,completed_at,failure_reason)
+  values('14700000-0000-0000-0000-000000000001','14600000-0000-0000-0000-000000000001',0,'validate_workspace','failed',0,statement_timestamp(),'Fixture failure');
 end $$;
 
 set local role authenticated;
 select set_config('request.jwt.claims','{"sub":"14000000-0000-0000-0000-000000000001","role":"authenticated","aal":"aal2"}',true);
-select ok((select count(*)=2 from platform.list_provisionable_workspaces()),'Super Admin sees eligible workspaces');
+select ok((select count(*)=3 from platform.list_provisionable_workspaces()),'Super Admin sees eligible workspaces');
 select lives_ok($$select platform.create_provisioning_run('14300000-0000-0000-0000-000000000001','prov:027:first',array['validate_workspace','validate_contract'])$$,'Super Admin queues eligible run');
 select ok((select status='queued' from platform.provisioning_runs where idempotency_key='prov:027:first'),'new run is queued');
 select ok((select count(*)=2 from platform.provisioning_tasks where run_id=(select id from platform.provisioning_runs where idempotency_key='prov:027:first')),'approved task catalogue materialized');
@@ -61,7 +70,10 @@ select ok((select count(*)=2 from audit.events where action in ('PROVISIONING_RU
 
 select set_config('request.jwt.claims','{"sub":"14000000-0000-0000-0000-000000000002","role":"authenticated","aal":"aal2"}',true);
 select lives_ok($$select platform.create_provisioning_run('14300000-0000-0000-0000-000000000001','prov:027:ops',array['validate_workspace'])$$,'assigned Operations can queue run');
-select ok((select count(*)=2 from platform.provisioning_runs where idempotency_key like 'prov:027:%'),'Operations sees assigned runs only');
+select lives_ok($$select platform.retry_provisioning_task('14700000-0000-0000-0000-000000000001','Operations controlled retry')$$,'assigned Operations can retry failed task');
+select ok((select status='queued' and attempt_count=1 from platform.provisioning_tasks where id='14700000-0000-0000-0000-000000000001'),'retry requeues task and increments attempt');
+select ok((select count(*)=1 from audit.events where action='PROVISIONING_TASK_RETRIED' and entity_id='14700000-0000-0000-0000-000000000001'),'retry is audited');
+select ok((select count(*)=3 from platform.provisioning_runs where idempotency_key like 'prov:027:%'),'Operations sees assigned runs only');
 
 select set_config('request.jwt.claims','{"sub":"14000000-0000-0000-0000-000000000003","role":"authenticated","aal":"aal2"}',true);
 select ok((select count(*)=1 from platform.provisioning_runs where idempotency_key='prov:027:ops'),'assigned Auditor can read run');
