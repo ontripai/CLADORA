@@ -15,10 +15,10 @@ select ok(not has_table_privilege('authenticated','platform.subscription_plans',
 select ok(not has_table_privilege('authenticated','platform.subscription_plans','DELETE'), 'authenticated cannot delete plans directly');
 do $$ declare r record; begin
   for r in select * from (values
-    ('13000000-0000-0000-0000-000000000001'::uuid,'13100000-0000-0000-0000-000000000001'::uuid,'PLAN-OPS-026','PLATFORM_OPERATIONS'::platform.platform_role),
-    ('13000000-0000-0000-0000-000000000002'::uuid,'13100000-0000-0000-0000-000000000002'::uuid,'PLAN-FIN-026','PLATFORM_FINANCE'::platform.platform_role),
-    ('13000000-0000-0000-0000-000000000003'::uuid,'13100000-0000-0000-0000-000000000003'::uuid,'PLAN-AUD-026','PLATFORM_AUDITOR'::platform.platform_role),
-    ('13000000-0000-0000-0000-000000000004'::uuid,'13100000-0000-0000-0000-000000000004'::uuid,'PLAN-ADM-026','PLATFORM_SUPER_ADMIN'::platform.platform_role)
+    ('13000000-0000-0000-0000-000000000001'::uuid,'13100000-0000-0000-0000-000000000001'::uuid,'PLAN-OPS-026','PLATFORM_OPERATIONS'::platform.platform_role_type),
+    ('13000000-0000-0000-0000-000000000002'::uuid,'13100000-0000-0000-0000-000000000002'::uuid,'PLAN-FIN-026','PLATFORM_FINANCE'::platform.platform_role_type),
+    ('13000000-0000-0000-0000-000000000003'::uuid,'13100000-0000-0000-0000-000000000003'::uuid,'PLAN-AUD-026','PLATFORM_AUDITOR'::platform.platform_role_type),
+    ('13000000-0000-0000-0000-000000000004'::uuid,'13100000-0000-0000-0000-000000000004'::uuid,'PLAN-ADM-026','PLATFORM_SUPER_ADMIN'::platform.platform_role_type)
   ) x(auth_id,platform_id,employee_ref,role_name) loop
     insert into auth.users(id,email) values(r.auth_id,lower(r.employee_ref)||'@cladora.test');
     insert into platform.platform_users(id,auth_user_id,employee_ref,display_name,status) values(r.platform_id,r.auth_id,r.employee_ref,r.employee_ref,'active');
