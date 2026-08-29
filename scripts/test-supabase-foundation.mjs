@@ -61,6 +61,11 @@ const operationalProvisioningCancelApi = read('src/app/api/platform/v1/provision
 const operationalProvisioningRetryApi = read('src/app/api/platform/v1/provisioning/tasks/[id]/retry/route.ts');
 const operationalProvisioningMigration = read('supabase/migrations/20260829003800_operational_workspace_provisioning.sql');
 const operationalProvisioningAdr = read('docs/architecture/ADR-CLD-031-operational-workspace-provisioning.md');
+const operationalAuditPage = read('src/app/[lang]/platform/(control-plane)/audit/page.tsx');
+const operationalAuditPanel = read('src/components/platform/OperationalAuditPanel.tsx');
+const operationalAuditApi = read('src/app/api/platform/v1/audit/route.ts');
+const operationalAuditMigration = read('supabase/migrations/20260829003900_operational_audit_trail_security_explorer.sql');
+const operationalAuditAdr = read('docs/architecture/ADR-CLD-032-operational-audit-trail-security-explorer.md');
 const platformApiRoutes = [
   'src/app/api/platform/v1/workspaces/route.ts',
   'src/app/api/platform/v1/workspaces/[id]/transitions/route.ts',
@@ -78,6 +83,7 @@ const platformApiRoutes = [
   'src/app/api/platform/v1/provisioning/route.ts',
   'src/app/api/platform/v1/provisioning/[id]/cancel/route.ts',
   'src/app/api/platform/v1/provisioning/tasks/[id]/retry/route.ts',
+  'src/app/api/platform/v1/audit/route.ts',
 ].map(read);
 const example = read('.env.example');
 const nextConfig = read('next.config.mjs');
@@ -198,6 +204,17 @@ check(operationalProvisioningMigration.includes('provisioning_runs_one_live_work
 check(operationalProvisioningMigration.includes("has_customer_assignment(p_workspace_id, 'audit')") && operationalProvisioningMigration.includes("has_customer_assignment(p_workspace_id, 'workspace')"), 'Auditor provisioning reads require audit or workspace assignment');
 check(operationalProvisioningMigration.includes('PROVISIONING_RUN_CREATED') && operationalProvisioningMigration.includes('PROVISIONING_TASK_RETRIED') && operationalProvisioningMigration.includes('PROVISIONING_RUN_CANCELLED'), 'provisioning control mutations are audited');
 check(operationalProvisioningAdr.includes('Production release acceptance is read-only'), 'production provisioning acceptance boundary is documented');
+check(!operationalAuditPage.includes('mockAuditEvents') && operationalAuditPage.includes('OperationalAuditPanel'), 'audit page uses the live operational panel');
+check(operationalAuditPanel.includes('/api/platform/v1/audit?') && operationalAuditPanel.includes("cache: 'no-store'"), 'audit panel reads the protected non-cached API');
+check(operationalAuditApi.includes('UNAUTHORIZED_PLATFORM_ACCESS') && operationalAuditApi.includes('MFA_REQUIRED'), 'audit API rejects unauthorized and AAL1 callers');
+check(['PLATFORM_SUPER_ADMIN', 'PLATFORM_OPERATIONS', 'PLATFORM_FINANCE', 'PLATFORM_AUDITOR'].every((role) => operationalAuditApi.includes(`'${role}'`)), 'audit API read roles are explicit');
+check(operationalAuditApi.includes('no-store, private'), 'audit API responses prohibit shared caching');
+check(operationalAuditMigration.includes('redact_audit_json_internal') && operationalAuditMigration.includes('[REDACTED]'), 'audit snapshots are recursively redacted');
+check(operationalAuditMigration.includes('revoke select on audit.events from authenticated'), 'authenticated callers cannot bypass the redacted RPC');
+check(operationalAuditMigration.includes('has_platform_aal2()') && operationalAuditMigration.includes("has_customer_assignment(p_workspace_id, 'audit')"), 'audit visibility enforces AAL2 and assignment scope');
+check(operationalAuditMigration.includes("p_action ~ '^(CUSTOMER_WORKSPACE_") && operationalAuditMigration.includes("p_action ~ '^(WORKSPACE_CONTRACT_"), 'Operations and Finance event categories are separated');
+check(operationalAuditMigration.includes('least(greatest(coalesce(p_limit, 20), 1), 50)'), 'audit explorer RPC enforces bounded pagination');
+check(operationalAuditAdr.includes('bounded, read-only') && operationalAuditAdr.includes('underlying ledger remains append-only') && operationalAuditAdr.includes('Production acceptance is read-only'), 'audit architecture records the non-mutation release boundary');
 check(contractsAcceptanceDecision.includes('No environment variable was changed'), 'Preview limitation is recorded without changing environment configuration');
 check(example.includes('YOUR_PUBLISHABLE_KEY'), 'example contains placeholders only');
 check(!example.includes('SERVICE_ROLE'), 'example does not request service-role credentials');
