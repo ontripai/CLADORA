@@ -66,6 +66,14 @@ const operationalAuditPanel = read('src/components/platform/OperationalAuditPane
 const operationalAuditApi = read('src/app/api/platform/v1/audit/route.ts');
 const operationalAuditMigration = read('supabase/migrations/20260829003900_operational_audit_trail_security_explorer.sql');
 const operationalAuditAdr = read('docs/architecture/ADR-CLD-032-operational-audit-trail-security-explorer.md');
+const operationalSupportPage = read('src/app/[lang]/platform/(control-plane)/support/page.tsx');
+const operationalSupportPanel = read('src/components/platform/OperationalSupportPanel.tsx');
+const operationalSupportApi = read('src/app/api/platform/v1/support/route.ts');
+const operationalSupportApproveApi = read('src/app/api/platform/v1/support/requests/[id]/approve/route.ts');
+const operationalSupportCancelApi = read('src/app/api/platform/v1/support/requests/[id]/cancel/route.ts');
+const operationalSupportRevokeApi = read('src/app/api/platform/v1/support/grants/[id]/revoke/route.ts');
+const operationalSupportMigration = read('supabase/migrations/20260829004000_operational_support_access_dual_control.sql');
+const operationalSupportAdr = read('docs/architecture/ADR-CLD-033-operational-support-dual-control.md');
 const platformApiRoutes = [
   'src/app/api/platform/v1/workspaces/route.ts',
   'src/app/api/platform/v1/workspaces/[id]/transitions/route.ts',
@@ -84,6 +92,10 @@ const platformApiRoutes = [
   'src/app/api/platform/v1/provisioning/[id]/cancel/route.ts',
   'src/app/api/platform/v1/provisioning/tasks/[id]/retry/route.ts',
   'src/app/api/platform/v1/audit/route.ts',
+  'src/app/api/platform/v1/support/route.ts',
+  'src/app/api/platform/v1/support/requests/[id]/approve/route.ts',
+  'src/app/api/platform/v1/support/requests/[id]/cancel/route.ts',
+  'src/app/api/platform/v1/support/grants/[id]/revoke/route.ts',
 ].map(read);
 const example = read('.env.example');
 const nextConfig = read('next.config.mjs');
@@ -215,6 +227,17 @@ check(operationalAuditMigration.includes('has_platform_aal2()') && operationalAu
 check(operationalAuditMigration.includes("p_action ~ '^(CUSTOMER_WORKSPACE_") && operationalAuditMigration.includes("p_action ~ '^(WORKSPACE_CONTRACT_"), 'Operations and Finance event categories are separated');
 check(operationalAuditMigration.includes('least(greatest(coalesce(p_limit, 20), 1), 50)'), 'audit explorer RPC enforces bounded pagination');
 check(operationalAuditAdr.includes('bounded, read-only') && operationalAuditAdr.includes('underlying ledger remains append-only') && operationalAuditAdr.includes('Production acceptance is read-only'), 'audit architecture records the non-mutation release boundary');
+check(operationalSupportPage.includes('OperationalSupportPanel'), 'support page renders the live operational console');
+check(operationalSupportPanel.includes('/api/platform/v1/support?') && operationalSupportPanel.includes("cache:'no-store'") && operationalSupportPanel.includes("credentials:'same-origin'"), 'support panel uses the protected non-cached same-origin API');
+check(operationalSupportApi.includes('UNAUTHORIZED_PLATFORM_ACCESS') && operationalSupportApi.includes('MFA_REQUIRED'), 'support API rejects unauthorized and AAL1 callers');
+check(!operationalSupportApi.includes('PLATFORM_FINANCE') && operationalSupportApi.includes('PLATFORM_AUDITOR'), 'Finance is excluded and Auditor is explicitly read-only');
+check([operationalSupportApi, operationalSupportApproveApi, operationalSupportCancelApi, operationalSupportRevokeApi].every((route) => route.includes('hasTrustedMutationOrigin')), 'all support mutations enforce trusted origin');
+check([operationalSupportApi, operationalSupportApproveApi, operationalSupportCancelApi, operationalSupportRevokeApi].every((route) => route.includes('no-store, private')), 'all support API responses prohibit shared caching');
+check(operationalSupportMigration.includes('dual_control_violation') && operationalSupportMigration.includes('for update'), 'support approval enforces independent dual control under a row lock');
+check(operationalSupportMigration.includes("has_customer_assignment(p_workspace_id,'audit')") && operationalSupportMigration.includes("has_customer_assignment(p_workspace_id,'workspace')"), 'Auditor support reads require audit or workspace assignment');
+check(operationalSupportMigration.includes('redact_audit_json') && operationalSupportMigration.includes('revoke select on platform.support_access_requests'), 'support evidence is redacted and raw authenticated reads are blocked');
+check(operationalSupportMigration.includes('between 15 and 240') && operationalSupportMigration.includes('octet_length(p_evidence::text)>4096'), 'support duration and evidence are bounded in the database');
+check(operationalSupportAdr.includes('Production release acceptance is read-only') && operationalSupportAdr.includes('requester and approver may never be the same user'), 'support architecture records dual-control and non-mutation acceptance');
 check(contractsAcceptanceDecision.includes('No environment variable was changed'), 'Preview limitation is recorded without changing environment configuration');
 check(example.includes('YOUR_PUBLISHABLE_KEY'), 'example contains placeholders only');
 check(!example.includes('SERVICE_ROLE'), 'example does not request service-role credentials');
