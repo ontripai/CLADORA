@@ -66,7 +66,9 @@ select throws_like($$select platform.create_provisioning_run('14300000-0000-0000
 select throws_like($$select platform.create_provisioning_run('14300000-0000-0000-0000-000000000002','prov:027:bad',array['unknown_task'])$$,'%invalid_task_catalogue%','unknown task type rejected');
 select lives_ok($$select platform.cancel_provisioning_run((select id from platform.provisioning_runs where idempotency_key='prov:027:first'),'Acceptance cancellation')$$,'controlled cancellation succeeds');
 select ok((select status='cancelled' from platform.provisioning_runs where idempotency_key='prov:027:first'),'run reaches cancelled terminal state');
+reset role;
 select ok((select count(*)=2 from audit.events where action in ('PROVISIONING_RUN_CREATED','PROVISIONING_RUN_CANCELLED') and entity_id=(select id from platform.provisioning_runs where idempotency_key='prov:027:first')),'create and cancel are audited');
+set local role authenticated;
 
 select set_config('request.jwt.claims','{"sub":"14000000-0000-0000-0000-000000000002","role":"authenticated","aal":"aal2"}',true);
 select lives_ok($$select platform.create_provisioning_run('14300000-0000-0000-0000-000000000001','prov:027:ops',array['validate_workspace'])$$,'assigned Operations can queue run');

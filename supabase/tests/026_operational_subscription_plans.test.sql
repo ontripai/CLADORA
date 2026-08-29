@@ -47,6 +47,7 @@ select lives_ok($$select platform.activate_subscription_plan((select id from pla
 select ok((select status='active' from platform.subscription_plans where plan_code='LIFECYCLE_026'),'draft transitions to active');
 select lives_ok($$select platform.retire_subscription_plan((select id from platform.subscription_plans where plan_code='LIFECYCLE_026'),'Retire lifecycle fixture')$$,'Super Admin retires an active version');
 select ok((select status='retired' from platform.subscription_plans where plan_code='LIFECYCLE_026'),'active transitions to retired');
+reset role;
 select ok((select count(*)=3 from audit.events where entity_type='subscription_plan' and entity_id=(select id from platform.subscription_plans where plan_code='LIFECYCLE_026')),'each lifecycle mutation records an audit event');
 set local role authenticated;
 select set_config('request.jwt.claims','{"sub":"00000000-0000-0000-0000-000000000013","role":"authenticated","aal":"aal1"}',true);

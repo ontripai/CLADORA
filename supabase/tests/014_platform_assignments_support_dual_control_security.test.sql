@@ -144,14 +144,15 @@ select ok(
   'revocation of customer assignment succeeds'
 );
 
--- Switch to Auditor to inspect audit.events
-select set_config('request.jwt.claims', '{"sub": "e0000000-0000-0000-0000-000000000005", "role": "authenticated", "aal": "aal2"}', true);
+-- Inspect the immutable ledger as the test owner; application callers use the redacted RPC.
+reset role;
 
 -- 10. Revocation is audited
 select ok(
   (select count(*) > 0 from audit.events where action = 'CUSTOMER_ASSIGNMENT_REVOKED'),
   'customer assignment revocation is recorded in audit.events'
 );
+set local role authenticated;
 
 -- 11. Direct INSERT on support_access_grants is denied
 select set_config('request.jwt.claims', '{"sub": "e0000000-0000-0000-0000-000000000002", "role": "authenticated", "aal": "aal2"}', true);
@@ -280,14 +281,15 @@ select ok(
   'assigned operations user independently approves support access request with 2 hours duration'
 );
 
--- Switch to Auditor to inspect audit.events
-select set_config('request.jwt.claims', '{"sub": "e0000000-0000-0000-0000-000000000005", "role": "authenticated", "aal": "aal2"}', true);
+-- Inspect the immutable ledger as the test owner; application callers use the redacted RPC.
+reset role;
 
 -- 27. Support access approval is audited
 select ok(
   (select count(*) > 0 from audit.events where action = 'SUPPORT_ACCESS_GRANT_APPROVED'),
   'support access approval is recorded in audit.events'
 );
+set local role authenticated;
 
 -- Switch back to Operations user
 select set_config('request.jwt.claims', '{"sub": "e0000000-0000-0000-0000-000000000002", "role": "authenticated", "aal": "aal2"}', true);
@@ -301,14 +303,15 @@ select ok(
   'support access revocation terminates active grant'
 );
 
--- Switch to Auditor to inspect audit.events
-select set_config('request.jwt.claims', '{"sub": "e0000000-0000-0000-0000-000000000005", "role": "authenticated", "aal": "aal2"}', true);
+-- Inspect the immutable ledger as the test owner; application callers use the redacted RPC.
+reset role;
 
 -- 29. Support access revocation is audited
 select ok(
   (select count(*) > 0 from audit.events where action = 'SUPPORT_ACCESS_GRANT_REVOKED'),
   'support access grant revocation is recorded in audit.events'
 );
+set local role authenticated;
 
 -- 30. Direct INSERT on workspace_contracts is denied
 select set_config('request.jwt.claims', '{"sub": "e0000000-0000-0000-0000-000000000002", "role": "authenticated", "aal": "aal2"}', true);

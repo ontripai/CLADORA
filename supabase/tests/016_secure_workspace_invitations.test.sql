@@ -136,7 +136,9 @@ select throws_like(
   '%active_invitation_exists%','duplicate active invitation is rejected');
 
 select set_config('request.jwt.claims','{"sub":"a1000000-0000-0000-0000-000000000003","role":"authenticated","aal":"aal2"}',true);
+reset role;
 select ok((select count(*)=1 from audit.events where action='WORKSPACE_INVITATION_CREATED'),'invitation creation is audited');
+set local role authenticated;
 
 select set_config('request.jwt.claims','{"sub":"a1000000-0000-0000-0000-000000000002","role":"authenticated","aal":"aal2"}',true);
 insert into invitation_test_tokens(label,invitation_id,token,expires_at)
@@ -162,7 +164,9 @@ select ok((
 select ok((select count(*)=0 from invitation_test_tokens t cross join lateral platform.validate_workspace_invitation(t.token) v where t.label='ops'),'revoked token no longer validates');
 
 select set_config('request.jwt.claims','{"sub":"a1000000-0000-0000-0000-000000000003","role":"authenticated","aal":"aal2"}',true);
+reset role;
 select ok((select count(*)=1 from audit.events where action='WORKSPACE_INVITATION_REVOKED'),'invitation revocation is audited');
+set local role authenticated;
 
 select set_config('request.jwt.claims','{"sub":"a1000000-0000-0000-0000-000000000002","role":"authenticated","aal":"aal2"}',true);
 select throws_like(
