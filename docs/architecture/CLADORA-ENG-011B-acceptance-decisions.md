@@ -1,28 +1,32 @@
 # CLADORA-ENG-011B Acceptance Decisions
 
-**Status: OPEN — MERGE BLOCKER**  
-**Applies to:** Draft PR #24  
-**Recorded:** 2026-08-29  
-**Change boundary:** Documentation and application hardening only. No migration, Supabase Remote, Auth, user, customer-data, Vercel environment, Production, or merge action is authorized.
+**Status: RESOLVED — ASSIGNMENT-SCOPED AUDITOR**
+
+**Applies to:** Draft PR #24
+
+**Recorded:** 2026-08-29
+
+**Change boundary:** Application hardening, versioned migration, local/temporary CI validation, and architecture documentation. No Supabase Remote, Auth, user, customer-data, Vercel environment, Production, or merge action is authorized.
 
 ## 1. Auditor contract visibility
 
-The current application route and the existing RLS policy both allow `PLATFORM_AUDITOR` to read all Platform Control Plane contracts without a Customer Assignment. This behavior is preserved by CLADORA-ENG-011B-FIX because changing it would require an explicit architecture decision and potentially a versioned database migration.
+The architecture authority selected the assignment-scoped model on 2026-08-29. A `PLATFORM_AUDITOR` may read a customer Workspace and its related contracts and entitlements only when the actor has a currently active Customer Assignment for that Workspace with scope `audit` or `workspace`.
 
-This conflicts with the literal universal reading of the approved access formula:
+The decision applies the approved access formula without a global Auditor exception:
 
 `Role + Customer Assignment + Scope + Entitlement + Time Constraint + Workspace Lifecycle State`
 
-The role matrix describes Auditor access as read-only, but does not explicitly settle whether contract visibility is global or assignment-scoped.
+`workspace` remains the umbrella assignment scope. `audit` is an explicit least-privilege scope for Auditor reads. Assignment status and `valid_from` / `valid_until` constraints are evaluated by the shared authorization helpers.
 
-### Decision required before merge
+### Implementation record
 
-Choose and record exactly one model:
+- Application APIs filter Auditor workspace and contract reads by active `audit` or `workspace` assignments and fail closed when none exist.
+- Migration `20260829003500_auditor_assignment_scoped_reads.sql` adds `audit` to the database scope constraint and replaces the relevant RLS policies.
+- RLS covers customer Workspaces, contracts, entitlements, related usage rows, and assignment records visible to the Auditor.
+- The Auditor remains read-only; this decision adds no mutation permission.
+- pgTAP test `024_auditor_assignment_scoped_reads.test.sql` proves assigned, wrong-scope, expired, cross-customer, and read-only behavior.
 
-1. **Assignment-scoped Auditor** — require an active `audit` or `workspace` Customer Assignment for each visible workspace.
-2. **Global Control Plane Auditor** — retain global read-only contract visibility and formally document Auditor as an explicit exception to Customer Assignment.
-
-No code or migration in this task selects either model. Draft PR #24 must remain unmerged until the architecture authority records the decision.
+The former global Auditor exception is removed. Draft PR #24 remains unmerged pending the normal acceptance process, not because of an unresolved Auditor-scope decision.
 
 ## 2. Entitlement time semantics
 

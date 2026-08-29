@@ -32,10 +32,13 @@ const acceptancePage = read('src/app/[lang]/accept-invitation/page.tsx');
 const onboardingPage = read('src/app/[lang]/app/onboarding/page.tsx');
 const operationalWorkspacesPage = read('src/app/[lang]/platform/(control-plane)/workspaces/page.tsx');
 const operationalWorkspacesTable = read('src/components/platform/OperationalWorkspacesTable.tsx');
+const operationalWorkspacesApi = read('src/app/api/platform/v1/workspaces/route.ts');
 const operationalContractsPage = read('src/app/[lang]/platform/(control-plane)/contracts/page.tsx');
 const operationalContractsPanel = read('src/components/platform/OperationalContractsPanel.tsx');
 const operationalContractsApi = read('src/app/api/platform/v1/contracts/route.ts');
 const contractsAcceptanceDecision = read('docs/architecture/CLADORA-ENG-011B-acceptance-decisions.md');
+const auditorScopeAdr = read('docs/architecture/ADR-CLD-028-assignment-scoped-auditor.md');
+const auditorScopeMigration = read('supabase/migrations/20260829003500_auditor_assignment_scoped_reads.sql');
 const platformApiRoutes = [
   'src/app/api/platform/v1/workspaces/route.ts',
   'src/app/api/platform/v1/workspaces/[id]/transitions/route.ts',
@@ -108,6 +111,9 @@ check(operationalWorkspacesTable.includes('cache: "no-store"'), 'workspace reque
 check(operationalWorkspacesTable.includes('credentials: "same-origin"'), 'workspace requests carry only same-origin session credentials');
 check(operationalWorkspacesTable.includes('AbortController'), 'workspace requests are cancelled during navigation');
 check(operationalWorkspacesTable.includes('role="alert"'), 'workspace load failures are announced accessibly');
+check(operationalWorkspacesApi.includes("['workspace', 'audit'].includes(assignment.scope_type)"), 'Auditor workspace reads require workspace or audit scope');
+check(operationalWorkspacesApi.includes("authCtx.roles.every((role) => role === 'PLATFORM_AUDITOR')"), 'Auditor-only workspace filtering preserves additive access from separately authorized roles');
+check(!operationalWorkspacesApi.includes("['PLATFORM_SUPER_ADMIN', 'PLATFORM_AUDITOR']"), 'Auditor has no global workspace API bypass');
 check(!operationalContractsPage.includes('mockContracts'), 'operational contracts page contains no demo contract fixtures');
 check(operationalContractsPage.includes('OperationalContractsPanel'), 'operational contracts page renders the live contracts panel');
 check(operationalContractsPanel.includes('/api/platform/v1/contracts?limit='), 'contracts panel reads through the protected platform API');
@@ -119,13 +125,17 @@ check(operationalContractsApi.includes('UNAUTHORIZED_PLATFORM_ACCESS') && operat
 check(operationalContractsApi.includes('MFA_REQUIRED') && operationalContractsApi.includes('status: 403'), 'contracts API rejects AAL1 sessions');
 check(operationalContractsApi.includes('["PLATFORM_SUPER_ADMIN", "PLATFORM_FINANCE", "PLATFORM_AUDITOR"]'), 'contracts API allows only the approved read roles');
 check(!operationalContractsApi.includes('["PLATFORM_SUPER_ADMIN", "PLATFORM_OPERATIONS", "PLATFORM_FINANCE", "PLATFORM_AUDITOR"]'), 'Operations is explicitly excluded from contract reads');
-check(operationalContractsApi.includes('"PLATFORM_FINANCE"') && operationalContractsApi.includes('["workspace", "commercial"].includes(assignment.scope_type)'), 'assigned Finance reads require workspace or commercial scope');
+check(operationalContractsApi.includes('allowedScopes.add("commercial")'), 'assigned Finance reads require workspace or commercial scope');
 check(operationalContractsApi.includes('workspaceIds.length ? workspaceIds : [EMPTY_UUID]'), 'unassigned Finance access fails closed');
-check(operationalContractsApi.includes('["PLATFORM_SUPER_ADMIN", "PLATFORM_AUDITOR"]'), 'current Auditor global-read exception remains explicit pending architecture decision');
+check(operationalContractsApi.includes('allowedScopes.add("audit")'), 'assigned Auditor reads require workspace or audit scope');
+check(!operationalContractsApi.includes('["PLATFORM_SUPER_ADMIN", "PLATFORM_AUDITOR"]'), 'Auditor has no global application read bypass');
 check(operationalContractsApi.includes('.lte("valid_from", now)') && operationalContractsApi.includes('valid_until.is.null,valid_until.gt.'), 'only currently valid entitlements are returned');
 check(!operationalContractsApi.includes('.limit(200)'), 'entitlement retrieval is not silently capped at 200 rows');
 check(operationalContractsPanel.includes('function hasActiveOverride') && operationalContractsPanel.includes('expiresAt > now'), 'expired entitlement overrides are ignored');
-check(contractsAcceptanceDecision.includes('Status: OPEN — MERGE BLOCKER'), 'Auditor assignment conflict is recorded as an open merge blocker');
+check(contractsAcceptanceDecision.includes('Status: RESOLVED — ASSIGNMENT-SCOPED AUDITOR'), 'Auditor assignment decision is recorded as resolved');
+check(auditorScopeAdr.includes('missing, revoked, future, expired, wrong-scope, or cross-customer assignment fails closed'), 'architecture records fail-closed Auditor assignment semantics');
+check(auditorScopeMigration.includes("has_customer_assignment(customer_workspace_id, 'audit')"), 'RLS requires audit or umbrella workspace assignment for Auditor data reads');
+check(!auditorScopeMigration.includes("or app_private.has_platform_role('PLATFORM_AUDITOR')\n  or"), 'RLS migration contains no standalone global Auditor bypass');
 check(contractsAcceptanceDecision.includes('No environment variable was changed'), 'Preview limitation is recorded without changing environment configuration');
 check(example.includes('YOUR_PUBLISHABLE_KEY'), 'example contains placeholders only');
 check(!example.includes('SERVICE_ROLE'), 'example does not request service-role credentials');

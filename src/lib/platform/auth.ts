@@ -104,7 +104,7 @@ export function hasWorkspaceAssignment(
 ): boolean {
   if (!ctx.isAuthorized || !ctx.platformUser) return false;
 
-  if (ctx.roles.includes('PLATFORM_SUPER_ADMIN') || ctx.roles.includes('PLATFORM_AUDITOR')) {
+  if (ctx.roles.includes('PLATFORM_SUPER_ADMIN')) {
     return true;
   }
 

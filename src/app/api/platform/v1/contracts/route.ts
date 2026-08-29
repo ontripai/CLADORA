@@ -39,9 +39,18 @@ export async function GET(request: Request) {
     .from("workspace_contracts")
     .select("*", { count: "exact" });
 
-  if (!hasPlatformRole(authCtx, ["PLATFORM_SUPER_ADMIN", "PLATFORM_AUDITOR"])) {
+  if (!hasPlatformRole(authCtx, "PLATFORM_SUPER_ADMIN")) {
+    const allowedScopes = new Set<string>();
+    if (hasPlatformRole(authCtx, "PLATFORM_FINANCE")) {
+      allowedScopes.add("workspace");
+      allowedScopes.add("commercial");
+    }
+    if (hasPlatformRole(authCtx, "PLATFORM_AUDITOR")) {
+      allowedScopes.add("workspace");
+      allowedScopes.add("audit");
+    }
     const workspaceIds = authCtx.assignments
-      .filter((assignment) => ["workspace", "commercial"].includes(assignment.scope_type))
+      .filter((assignment) => allowedScopes.has(assignment.scope_type))
       .map((assignment) => assignment.customer_workspace_id);
     query = query.in("customer_workspace_id", workspaceIds.length ? workspaceIds : [EMPTY_UUID]);
   }
