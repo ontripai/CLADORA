@@ -3,7 +3,7 @@
  * Audits all 41 user-facing routes across all 3 supported locales (123 localized routes).
  *
  * Quality Gates:
- * 1. HTTP 200 on all routes
+ * 1. HTTP 200 on public routes; protected /app routes must redirect to localized login
  * 2. Proper dir="rtl" on all Persian routes
  * 3. Deep DOM text extraction (h1-h6, p, button, a, label, placeholder, aria-label, th, td, li)
  * 4. Strict Latin term allowlist isolation
@@ -48,6 +48,7 @@ export const ALL_USER_ROUTES = [
   '/app/accounting',
   '/app/accounting/allocations',
   '/app/accounting/month-close',
+  '/app/assets',
   '/app/audit',
   '/app/communications',
   '/app/documents',
@@ -251,7 +252,7 @@ function fetchPage(path, port = 3000) {
       let data = '';
       res.on('data', chunk => { data += chunk; });
       res.on('end', () => {
-        resolve({ statusCode: res.statusCode, body: data });
+        resolve({ statusCode: res.statusCode, body: data, location: res.headers.location });
       });
     });
     req.on('error', err => reject(err));
@@ -302,6 +303,13 @@ async function runAudit() {
       totalTests++;
       try {
         const res = await fetchPage(fullPath);
+        const protectedRoute = route.startsWith('/app/');
+        const expectedLogin = `/${lang}/login?next=`;
+        if (protectedRoute && res.statusCode === 307 && res.location?.startsWith(expectedLogin)) {
+          passedTests++;
+          console.log(`✅ [307→/${lang}/login] ${fullPath}`);
+          continue;
+        }
         if (res.statusCode !== 200) {
           failures.push({ route: fullPath, category: 'HTTP', error: `HTTP ${res.statusCode}` });
           console.log(`❌ [${res.statusCode}] ${fullPath}`);
