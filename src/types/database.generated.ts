@@ -1157,6 +1157,25 @@ export type Database = {
     };
     CompositeTypes: { [key: string]: unknown };
   };
+  assets: {
+    Tables: { [key: string]: { Row: Record<string, unknown>; Insert: Record<string, unknown>; Update: Record<string, unknown>; Relationships: [] } };
+    Views: { [key: string]: { Row: Record<string, unknown>; Relationships: [] } };
+    Functions: { [key: string]: { Args: Record<string, unknown>; Returns: unknown } };
+    Enums: { asset_scope: 'property'|'building'|'unit'|'common_area'; asset_condition: 'unknown'|'good'|'fair'|'poor'|'critical'|'retired' };
+    CompositeTypes: { [key: string]: unknown };
+  };
+  maintenance: {
+    Tables: { [key: string]: { Row: Record<string, unknown>; Insert: Record<string, unknown>; Update: Record<string, unknown>; Relationships: [] } };
+    Views: { [key: string]: { Row: Record<string, unknown>; Relationships: [] } };
+    Functions: {
+      get_customer_maintenance: {
+        Args: { p_context_id: string; p_view?: string; p_query?: string | null; p_status?: string | null; p_priority?: string | null; p_from?: string | null; p_to?: string | null; p_limit?: number; p_offset?: number; p_id?: string | null };
+        Returns: Json;
+      };
+    };
+    Enums: { priority: 'low'|'normal'|'high'|'urgent'|'emergency'; work_order_status: 'draft'|'scheduled'|'assigned'|'in_progress'|'blocked'|'completed'|'verified'|'cancelled' };
+    CompositeTypes: { [key: string]: unknown };
+  };
   audit: {
     Tables: {
       events: {

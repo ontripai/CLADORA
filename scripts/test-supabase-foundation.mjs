@@ -100,6 +100,12 @@ const customerUtilitiesPanel = read('src/components/customer/CustomerUtilitiesDa
 const customerUtilitiesApi = read('src/app/api/customer/v1/utilities/route.ts');
 const customerUtilitiesMigration = read('supabase/migrations/20260829004700_customer_metering_utility_validation.sql');
 const customerUtilitiesAdr = read('docs/architecture/ADR-CLD-040-customer-metering-utility-validation.md');
+const customerAssetsPage = read('src/app/[lang]/app/assets/page.tsx');
+const customerMaintenancePage = read('src/app/[lang]/app/maintenance/page.tsx');
+const customerMaintenancePanel = read('src/components/customer/CustomerMaintenanceDashboard.tsx');
+const customerMaintenanceApi = read('src/app/api/customer/v1/maintenance/route.ts');
+const customerMaintenanceMigration = read('supabase/migrations/20260829004800_customer_assets_maintenance_dashboard.sql');
+const customerMaintenanceAdr = read('docs/architecture/ADR-CLD-041-customer-assets-maintenance.md');
 const platformApiRoutes = [
   'src/app/api/platform/v1/workspaces/route.ts',
   'src/app/api/platform/v1/workspaces/[id]/transitions/route.ts',
@@ -198,6 +204,17 @@ check(customerUtilitiesMigration.includes('negative_consumption') && customerUti
 check(customerUtilitiesMigration.includes('utility_invoice_currency_mismatch') && customerUtilitiesMigration.includes('utility_contract_inactive_or_expired'), 'utility invoice currency and contract validity are enforced');
 check(!customerUtilitiesMigration.includes("'source_object_path',i.source_object_path") && !customerUtilitiesMigration.includes('serial_number_encrypted'), 'utility projection excludes object paths and encrypted meter serials');
 check(customerUtilitiesAdr.includes('read-only') && customerUtilitiesAdr.includes('fails closed'), 'utility ADR records read-only fail-closed architecture');
+check(!customerMaintenancePage.includes('DemoStore') && !customerAssetsPage.includes('DemoStore'), 'production assets and maintenance pages contain no demo fixtures');
+check(customerMaintenancePanel.includes('/api/customer/v1/maintenance?') && customerMaintenancePanel.includes("cache:'no-store'") && customerMaintenancePanel.includes("credentials:'same-origin'"), 'maintenance UI uses protected non-cached same-origin API');
+check(customerMaintenancePanel.includes("'assets','components','plans','work_orders','tasks','vendors','sla','costs','history'"), 'maintenance UI exposes every authorized evidence view');
+check(customerMaintenanceApi.includes('UNAUTHORIZED') && customerMaintenanceApi.includes('MFA_REQUIRED') && !customerMaintenanceApi.includes('export async function POST'), 'maintenance API rejects unauthorized callers and is GET-only');
+check(customerMaintenanceApi.includes('no-store, private') && customerMaintenanceApi.includes("Pragma:'no-cache'"), 'maintenance API prohibits shared caching');
+check(customerMaintenanceMigration.includes("p.code='maintenance.assets.read'") && customerMaintenanceMigration.includes("e.entitlement_key='module.maintenance'"), 'maintenance RPC requires permission and effective entitlement');
+check(customerMaintenanceMigration.includes('work_orders_active_plan_asset_unique') && customerMaintenanceMigration.includes('final_work_order_is_immutable'), 'duplicate active and finalized work orders are database-protected');
+check(customerMaintenanceMigration.includes('work_order_cost_invoice_invalid') && customerMaintenanceMigration.includes('work_order_cost_journal_invalid'), 'maintenance financial relationships are tenant and currency validated');
+check(customerMaintenanceMigration.includes('revoke select on all tables in schema assets from authenticated') && customerMaintenanceMigration.includes('revoke select on all tables in schema maintenance from authenticated'), 'raw sensitive schemas cannot bypass the redacted maintenance RPC');
+check(!customerMaintenanceMigration.includes('serial_number_encrypted') && !customerMaintenanceMigration.includes("'object_path',"), 'maintenance projection excludes encrypted serials and evidence paths');
+check(customerMaintenanceAdr.includes('Production acceptance is read-only') && customerMaintenanceAdr.includes('fails closed'), 'maintenance ADR records read-only fail-closed architecture');
 check(admin.includes("import 'server-only'"), 'admin client is server-only');
 check(admin.includes('persistSession: false'), 'admin client never persists sessions');
 check(serverEnv.includes('SUPABASE_SECRET_KEY'), 'server secret has an isolated environment boundary');
