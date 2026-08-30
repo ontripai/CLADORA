@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation';
 import { isSupportedLocale } from '@/types';
-import { AppShell } from '@/components/app/AppShell';
+import { CustomerAppShell } from '@/components/customer/CustomerAppShell';
 import { isSupabaseConfigured } from '@/lib/supabase/env';
 import { createClient } from '@/lib/supabase/server';
 
@@ -37,9 +37,9 @@ export default async function AppLayout(
 
   const { data: assurance, error: assuranceError } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
   if (assuranceError) redirect(`/${lang}/login?reason=security`);
-  if (assurance.nextLevel === 'aal2' && assurance.currentLevel !== 'aal2') {
+  if (assurance.currentLevel !== 'aal2') {
     redirect(`/${lang}/mfa`);
   }
 
-  return <AppShell params={{ lang }}>{children}</AppShell>;
+  return <CustomerAppShell lang={lang}>{children}</CustomerAppShell>;
 }
