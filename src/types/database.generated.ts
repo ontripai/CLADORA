@@ -1188,6 +1188,18 @@ export type Database = {
     Enums: { meeting_status: 'draft'|'announced'|'open'|'adjourned'|'closed'|'cancelled'; vote_status: 'draft'|'open'|'closed'|'cancelled' };
     CompositeTypes: { [key: string]: unknown };
   };
+  communications: {
+    Tables: { [key: string]: { Row: Record<string, unknown>; Insert: Record<string, unknown>; Update: Record<string, unknown>; Relationships: [] } };
+    Views: { [key: string]: { Row: Record<string, unknown>; Relationships: [] } };
+    Functions: {
+      get_customer_communications: {
+        Args: { p_context_id: string; p_view?: string; p_query?: string | null; p_status?: string | null; p_from?: string | null; p_to?: string | null; p_limit?: number; p_offset?: number; p_id?: string | null };
+        Returns: Json;
+      };
+    };
+    Enums: { channel_scope: 'tenant'|'property'|'building'|'unit'|'role'|'direct'; channel_status: 'active'|'archived'; post_status: 'draft'|'published'|'archived'|'removed' };
+    CompositeTypes: { [key: string]: unknown };
+  };
   audit: {
     Tables: {
       events: {
