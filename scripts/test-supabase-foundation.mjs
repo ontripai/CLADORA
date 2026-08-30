@@ -79,6 +79,11 @@ const operationalOverviewPanel = read('src/components/platform/OperationalOvervi
 const operationalOverviewApi = read('src/app/api/platform/v1/overview/route.ts');
 const operationalOverviewMigration = read('supabase/migrations/20260829004100_operational_control_plane_overview.sql');
 const operationalOverviewAdr = read('docs/architecture/ADR-CLD-034-operational-control-plane-overview.md');
+const customerBillingPage = read('src/app/[lang]/app/billing/page.tsx');
+const customerBillingPanel = read('src/components/customer/CustomerBillingDashboard.tsx');
+const customerBillingApi = read('src/app/api/customer/v1/billing/route.ts');
+const customerBillingMigration = read('supabase/migrations/20260829004400_customer_billing_receivables_dashboard.sql');
+const customerBillingAdr = read('docs/architecture/ADR-CLD-037-customer-billing-receivables.md');
 const platformApiRoutes = [
   'src/app/api/platform/v1/workspaces/route.ts',
   'src/app/api/platform/v1/workspaces/[id]/transitions/route.ts',
@@ -139,6 +144,14 @@ check(demoRouter.includes('<DashboardPage params={pageParams} demoMode />'), 'de
 check(demoRouter.includes('<AccountingPage params={pageParams} demoMode />'), 'demo router enables isolated accounting links');
 check(dashboardPage.includes("props.demoMode ? 'demo/app' : 'app'"), 'dashboard links respect the active data plane');
 check(accountingPage.includes("props.demoMode ? 'demo/app' : 'app'"), 'accounting links respect the active data plane');
+check(customerBillingPage.includes('CustomerBillingDashboard'), 'protected billing page renders the live customer projection');
+check(customerBillingPanel.includes('/api/customer/v1/billing?') && customerBillingPanel.includes("cache:'no-store'"), 'billing panel uses the protected non-cached API');
+check(customerBillingApi.includes("claims.claims.aal!=='aal2'") && customerBillingApi.includes("status:403"), 'billing API rejects AAL1 sessions');
+check(customerBillingApi.includes("'Cache-Control':'no-store, private'"), 'billing API prohibits shared caching');
+check(customerBillingMigration.includes("p.code='billing.receivables.read'") && customerBillingMigration.includes("e.entitlement_key='module.billing'"), 'billing reads require explicit permission and entitlement');
+check(customerBillingMigration.includes('i.liable_party_id=v_party') && customerBillingMigration.includes("l.status='active'"), 'tenant billing visibility requires mapped liable party and active lease');
+check(!customerBillingMigration.includes('iban_encrypted') && !customerBillingMigration.includes('raw_snapshot'), 'billing projection never selects encrypted banking or raw payment data');
+check(customerBillingAdr.includes('Missing, expired, cross-tenant, or mismatched'), 'billing architecture records fail-closed customer isolation');
 check(admin.includes("import 'server-only'"), 'admin client is server-only');
 check(admin.includes('persistSession: false'), 'admin client never persists sessions');
 check(serverEnv.includes('SUPABASE_SECRET_KEY'), 'server secret has an isolated environment boundary');
