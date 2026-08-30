@@ -49,11 +49,15 @@ create table documents.document_audit_links(
  relation_type text not null default 'evidence',created_at timestamptz not null default statement_timestamp(),unique(document_id,audit_event_id,relation_type)
 );
 create index document_permissions_lookup_idx on documents.document_permissions(tenant_id,document_id,valid_from,valid_until,id);
+create index document_permissions_document_id_idx on documents.document_permissions(document_id);
 create index document_permissions_membership_idx on documents.document_permissions(membership_id);
 create index document_permissions_party_idx on documents.document_permissions(party_id);
 create index document_holds_lookup_idx on documents.legal_holds(tenant_id,document_id,status,id);
+create index document_holds_document_id_idx on documents.legal_holds(document_id);
 create index retention_records_lookup_idx on documents.retention_records(tenant_id,document_id,calculated_at desc,id);
+create index retention_records_document_id_idx on documents.retention_records(document_id);
 create index document_lifecycle_lookup_idx on documents.lifecycle_events(tenant_id,document_id,occurred_at desc,id desc);
+create index document_lifecycle_document_id_idx on documents.lifecycle_events(document_id);
 create index document_audit_links_lookup_idx on documents.document_audit_links(tenant_id,document_id,audit_event_id,id);
 create index document_audit_links_event_idx on documents.document_audit_links(audit_event_id);
 create index document_links_entity_lookup_idx on documents.document_links(tenant_id,entity_type,entity_id,document_id);
