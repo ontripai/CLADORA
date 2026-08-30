@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation';
 import type { Language } from '@/types';
 import DashboardPage from '@/components/demo/DemoDashboardPage';
-import AccountingPage from '@/app/[lang]/app/accounting/page';
+import AccountingPage from '@/components/demo/DemoAccountingPage';
 import MonthClosePage from '@/app/[lang]/app/accounting/month-close/page';
 import AllocationsPage from '@/app/[lang]/app/accounting/allocations/page';
 import MetersPage from '@/app/[lang]/app/meters/page';
