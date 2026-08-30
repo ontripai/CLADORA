@@ -118,6 +118,12 @@ const customerCommunicationsPanel = read('src/components/customer/CustomerCommun
 const customerCommunicationsApi = read('src/app/api/customer/v1/communications/route.ts');
 const customerCommunicationsMigration = read('supabase/migrations/20260829005000_customer_communications_notifications_dashboard.sql');
 const customerCommunicationsAdr = read('docs/architecture/ADR-CLD-043-customer-communications-notifications.md');
+const customerDocumentsPage = read('src/app/[lang]/app/documents/page.tsx');
+const customerDocumentDetailsPage = read('src/app/[lang]/app/documents/[id]/page.tsx');
+const customerDocumentsPanel = read('src/components/customer/CustomerDocumentsDashboard.tsx');
+const customerDocumentsApi = read('src/app/api/customer/v1/documents/route.ts');
+const customerDocumentsMigration = read('supabase/migrations/20260829005100_customer_document_vault_secure_evidence.sql');
+const customerDocumentsAdr = read('docs/architecture/ADR-CLD-044-customer-document-vault.md');
 const platformApiRoutes = [
   'src/app/api/platform/v1/workspaces/route.ts',
   'src/app/api/platform/v1/workspaces/[id]/transitions/route.ts',
@@ -249,6 +255,18 @@ check(customerCommunicationsMigration.includes('final_poll_is_immutable') && cus
 check(customerCommunicationsMigration.includes('revoke select on all tables in schema communications from authenticated'), 'raw communications data cannot bypass the safe projection');
 check(!customerCommunicationsMigration.includes('n.payload,') && !customerCommunicationsMigration.includes('n.action_url,') && !customerCommunicationsMigration.includes('r.membership_id,') && !customerCommunicationsMigration.includes("'object_path',"), 'projection excludes notification payloads, response identities and storage paths');
 check(customerCommunicationsAdr.includes('Production acceptance is read-only') && customerCommunicationsAdr.includes('fails closed'), 'communications ADR records privacy and fail-closed release boundaries');
+check(!customerDocumentsPage.includes('DemoStore') && customerDocumentsPage.includes('CustomerDocumentsDashboard') && customerDocumentDetailsPage.includes('initialDocumentId'), 'production document list and details contain no demo fixtures');
+check(customerDocumentsPanel.includes('/api/customer/v1/documents?') && customerDocumentsPanel.includes('cache: "no-store"') && customerDocumentsPanel.includes('credentials: "same-origin"'), 'document UI uses protected non-cached same-origin API');
+check(customerDocumentsPanel.includes('"documents" | "versions" | "categories" | "retention" | "holds" | "evidence" | "links" | "history"'), 'document UI exposes every authorized metadata view');
+check(customerDocumentsApi.includes('UNAUTHORIZED') && customerDocumentsApi.includes('MFA_REQUIRED') && !customerDocumentsApi.includes('export async function POST'), 'document API rejects unauthorized callers and is GET-only');
+check(customerDocumentsApi.includes('no-store, private') && customerDocumentsApi.includes('Pragma: "no-cache"'), 'document API prohibits shared caching');
+check(customerDocumentsMigration.includes("p.code='documents.vault.read'") && customerDocumentsMigration.includes("e.entitlement_key='module.documents'"), 'document RPC requires permission and effective entitlement');
+check(customerDocumentsMigration.includes('document_link_cross_tenant_or_missing') && customerDocumentsMigration.includes('classification_downgrade_forbidden'), 'document links and classification are database-protected');
+check(customerDocumentsMigration.includes('document_under_legal_hold') && customerDocumentsMigration.includes('published_document_is_immutable') && customerDocumentsMigration.includes('final_retention_record_is_immutable'), 'held, published and retained records are immutable');
+check(customerDocumentsMigration.includes('revoke select on all tables in schema documents from authenticated'), 'raw document schema cannot bypass redacted RPC');
+check(!customerDocumentsMigration.includes("'object_path',") && !customerDocumentsMigration.includes("'metadata_json',") && !customerDocumentsMigration.includes("'uploaded_by',") && !customerDocumentsMigration.includes("'signed_url',"), 'document projection excludes storage paths, raw metadata, identities and signed URLs');
+check(customerDocumentsMigration.includes("'storage_access',false") && customerDocumentsMigration.includes("'signed_urls',false"), 'document RPC explicitly disables storage and signed URL access');
+check(customerDocumentsAdr.includes('Production acceptance is read-only') && customerDocumentsAdr.includes('fail closed'), 'document ADR records read-only fail-closed architecture');
 check(admin.includes("import 'server-only'"), 'admin client is server-only');
 check(admin.includes('persistSession: false'), 'admin client never persists sessions');
 check(serverEnv.includes('SUPABASE_SECRET_KEY'), 'server secret has an isolated environment boundary');

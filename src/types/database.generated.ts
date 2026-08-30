@@ -1200,6 +1200,18 @@ export type Database = {
     Enums: { channel_scope: 'tenant'|'property'|'building'|'unit'|'role'|'direct'; channel_status: 'active'|'archived'; post_status: 'draft'|'published'|'archived'|'removed' };
     CompositeTypes: { [key: string]: unknown };
   };
+  documents: {
+    Tables: { [key: string]: { Row: Record<string, unknown>; Insert: Record<string, unknown>; Update: Record<string, unknown>; Relationships: [] } };
+    Views: { [key: string]: { Row: Record<string, unknown>; Relationships: [] } };
+    Functions: {
+      get_customer_documents: {
+        Args: { p_context_id: string; p_view?: string; p_query?: string | null; p_status?: string | null; p_classification?: string | null; p_from?: string | null; p_to?: string | null; p_limit?: number; p_offset?: number; p_id?: string | null };
+        Returns: Json;
+      };
+    };
+    Enums: { classification: 'public'|'internal'|'confidential'|'restricted' };
+    CompositeTypes: { [key: string]: unknown };
+  };
   audit: {
     Tables: {
       events: {
