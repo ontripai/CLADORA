@@ -6,6 +6,7 @@ import {
   Building2,
   CreditCard,
   FileSpreadsheet,
+  FileText,
   Gauge,
   Gavel,
   Home,
@@ -38,6 +39,7 @@ const copy = {
     meetings: "Ședințe",
     communications: "Comunicări",
     notifications: "Notificări",
+    documents: "Documente",
     billing: "Facturi și creanțe",
     payments: "Plăți",
     reconciliation: "Reconciliere",
@@ -56,6 +58,7 @@ const copy = {
     meetings: "Meetings",
     communications: "Communications",
     notifications: "Notifications",
+    documents: "Documents",
     billing: "Billing & receivables",
     payments: "Payments",
     reconciliation: "Reconciliation",
@@ -74,6 +77,7 @@ const copy = {
     meetings: "جلسات",
     communications: "ارتباطات",
     notifications: "اعلان‌ها",
+    documents: "اسناد",
     billing: "صورتحساب‌ها و مطالبات",
     payments: "پرداخت‌ها",
     reconciliation: "تطبیق بانکی",
@@ -99,7 +103,8 @@ function Shell({
     governance = state.dashboard?.entitlements.includes("module.governance"),
     communications = state.dashboard?.entitlements.includes(
       "module.communications",
-    );
+    ),
+    documents = state.dashboard?.entitlements.includes("module.documents");
   return (
     <div
       className="min-h-screen bg-[#F6F9FC] text-[#102A43]"
@@ -235,6 +240,12 @@ function Shell({
                   {t.notifications}
                 </Link>
               </>
+            ) : null}
+            {documents ? (
+              <Link href={`/${lang}/app/documents`} className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs font-bold text-[#102A43] hover:bg-[#F6F9FC]">
+                <FileText className="h-4 w-4 text-[#0E9F8E]" />
+                {t.documents}
+              </Link>
             ) : null}
             {billing ? (
               <Link

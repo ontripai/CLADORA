@@ -53,6 +53,7 @@ export const ALL_USER_ROUTES = [
   '/app/communications',
   '/app/notifications',
   '/app/documents',
+  '/app/documents/00000000-0000-0000-0000-000000000000',
   '/app/governance',
   '/app/meetings',
   '/app/maintenance',
