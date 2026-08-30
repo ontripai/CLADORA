@@ -54,8 +54,7 @@ begin
     if tg_op='DELETE' then if old.status in ('completed','verified') then raise exception 'final_work_order_is_immutable'; end if; return old; end if;
     if new.asset_id is not null then select * into a from assets.assets where id=new.asset_id and tenant_id=new.tenant_id; if not found or a.property_id<>new.property_id or a.building_id is distinct from new.building_id or a.unit_id is distinct from new.unit_id then raise exception 'work_order_asset_scope_invalid'; end if; end if;
     if new.plan_id is not null then select * into p from maintenance.maintenance_plans where id=new.plan_id and tenant_id=new.tenant_id; if not found or new.asset_id is null or p.asset_id<>new.asset_id then raise exception 'work_order_plan_scope_invalid'; end if; end if;
-    if tg_op='UPDATE' and old.status='verified' and new is distinct from old then raise exception 'final_work_order_is_immutable'; end if;
-    if tg_op='UPDATE' and old.status='completed' and new is distinct from old
+    if tg_op='UPDATE' and old.status in ('completed','verified') and new is distinct from old
       and (new.status=old.status or (to_jsonb(new)-'status'-'verified_at'-'completed_at') is distinct from (to_jsonb(old)-'status'-'verified_at'-'completed_at'))
     then raise exception 'final_work_order_is_immutable'; end if;
     return new;
