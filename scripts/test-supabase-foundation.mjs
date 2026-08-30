@@ -112,6 +112,12 @@ const customerGovernancePanel = read('src/components/customer/CustomerGovernance
 const customerGovernanceApi = read('src/app/api/customer/v1/governance/route.ts');
 const customerGovernanceMigration = read('supabase/migrations/20260829004900_customer_governance_meetings_dashboard.sql');
 const customerGovernanceAdr = read('docs/architecture/ADR-CLD-042-customer-governance-meetings.md');
+const customerCommunicationsPage = read('src/app/[lang]/app/communications/page.tsx');
+const customerNotificationsPage = read('src/app/[lang]/app/notifications/page.tsx');
+const customerCommunicationsPanel = read('src/components/customer/CustomerCommunicationsDashboard.tsx');
+const customerCommunicationsApi = read('src/app/api/customer/v1/communications/route.ts');
+const customerCommunicationsMigration = read('supabase/migrations/20260829005000_customer_communications_notifications_dashboard.sql');
+const customerCommunicationsAdr = read('docs/architecture/ADR-CLD-043-customer-communications-notifications.md');
 const platformApiRoutes = [
   'src/app/api/platform/v1/workspaces/route.ts',
   'src/app/api/platform/v1/workspaces/[id]/transitions/route.ts',
@@ -232,6 +238,17 @@ check(customerGovernanceMigration.includes('adopted_resolution_is_immutable') &&
 check(customerGovernanceMigration.includes('revoke select on all tables in schema governance from authenticated'), 'raw governance data cannot bypass the safe RPC');
 check(!customerGovernanceMigration.includes("'object_path',") && !customerGovernanceMigration.includes("'cast_by',") && !customerGovernanceMigration.includes("'receipt_hash',") && !customerGovernanceMigration.includes('r.result_snapshot,') && !customerGovernanceMigration.includes('h.evidence_json,'), 'governance projection excludes paths, ballot identities, and raw evidence snapshots');
 check(customerGovernanceAdr.includes('does not claim or guarantee legal compliance') && customerGovernanceAdr.includes('fails closed'), 'governance ADR records legal boundary and fail-closed architecture');
+check(!customerCommunicationsPage.includes('DemoStore') && !customerNotificationsPage.includes('DemoStore'), 'production communications pages contain no demo fixtures');
+check(customerCommunicationsPanel.includes('/api/customer/v1/communications?') && customerCommunicationsPanel.includes("cache: \"no-store\"") && customerCommunicationsPanel.includes("credentials: \"same-origin\""), 'communications UI uses protected non-cached same-origin API');
+check(customerCommunicationsPanel.includes('"channels"') && customerCommunicationsPanel.includes('"notifications"') && customerCommunicationsPanel.includes('"results"'), 'communications UI exposes authorized content and aggregate result views');
+check(customerCommunicationsApi.includes('UNAUTHORIZED') && customerCommunicationsApi.includes('MFA_REQUIRED') && !customerCommunicationsApi.includes('export async function POST'), 'communications API rejects unauthorized callers and is GET-only');
+check(customerCommunicationsApi.includes('no-store, private') && customerCommunicationsApi.includes('Pragma: "no-cache"'), 'communications API prohibits shared caching');
+check(customerCommunicationsMigration.includes("p.code='communications.feed.read'") && customerCommunicationsMigration.includes("e.entitlement_key='module.communications'"), 'communications RPC requires permission and effective entitlement');
+check(customerCommunicationsMigration.includes('single_choice_poll_allows_one_response') && customerCommunicationsMigration.includes('poll_channel_membership_required'), 'poll response integrity and channel membership are database-enforced');
+check(customerCommunicationsMigration.includes('final_poll_is_immutable') && customerCommunicationsMigration.includes('post_comments_are_closed'), 'final poll results and closed posts are immutable');
+check(customerCommunicationsMigration.includes('revoke select on all tables in schema communications from authenticated'), 'raw communications data cannot bypass the safe projection');
+check(!customerCommunicationsMigration.includes('n.payload,') && !customerCommunicationsMigration.includes('n.action_url,') && !customerCommunicationsMigration.includes('r.membership_id,') && !customerCommunicationsMigration.includes("'object_path',"), 'projection excludes notification payloads, response identities and storage paths');
+check(customerCommunicationsAdr.includes('Production acceptance is read-only') && customerCommunicationsAdr.includes('fails closed'), 'communications ADR records privacy and fail-closed release boundaries');
 check(admin.includes("import 'server-only'"), 'admin client is server-only');
 check(admin.includes('persistSession: false'), 'admin client never persists sessions');
 check(serverEnv.includes('SUPABASE_SECRET_KEY'), 'server secret has an isolated environment boundary');
