@@ -1013,6 +1013,46 @@ export type Database = {
       [key: string]: unknown;
     };
   };
+  finance: {
+    Tables: {
+      [key: string]: {
+        Row: Record<string, unknown>;
+        Insert: Record<string, unknown>;
+        Update: Record<string, unknown>;
+        Relationships: [];
+      };
+    };
+    Views: {
+      [key: string]: {
+        Row: Record<string, unknown>;
+        Relationships: [];
+      };
+    };
+    Functions: {
+      get_customer_ledger: {
+        Args: {
+          p_context_id: string;
+          p_query?: string | null;
+          p_status?: string | null;
+          p_account_type?: string | null;
+          p_from?: string | null;
+          p_to?: string | null;
+          p_limit?: number;
+          p_offset?: number;
+          p_journal_id?: string | null;
+        };
+        Returns: Json;
+      };
+    };
+    Enums: {
+      account_type: 'asset' | 'liability' | 'equity' | 'income' | 'expense';
+      journal_status: 'draft' | 'posted' | 'reversed';
+      entry_side: 'debit' | 'credit';
+    };
+    CompositeTypes: {
+      [key: string]: unknown;
+    };
+  };
   audit: {
     Tables: {
       events: {
