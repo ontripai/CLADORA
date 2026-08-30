@@ -38,8 +38,9 @@ begin
     if v_sum+new.matched_amount>v_payment.amount then raise exception 'payment_overallocated'; end if;
   end if;
   if new.receivable_id is not null then
-    select r,i into v_receivable,v_invoice from billing.receivables r join billing.invoices i on i.id=r.invoice_id
-      where r.id=new.receivable_id and r.tenant_id=new.tenant_id;
+    select * into v_receivable from billing.receivables where id=new.receivable_id and tenant_id=new.tenant_id;
+    if not found then raise exception 'receivable_tenant_mismatch'; end if;
+    select * into v_invoice from billing.invoices where id=v_receivable.invoice_id and tenant_id=new.tenant_id;
     if not found or v_invoice.currency<>v_tx.currency then raise exception 'receivable_currency_mismatch'; end if;
     select coalesce(sum(matched_amount),0) into v_sum from payments.reconciliation_matches
       where receivable_id=new.receivable_id and status='confirmed' and id<>new.id;
