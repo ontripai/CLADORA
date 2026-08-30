@@ -770,6 +770,28 @@ export type Database = {
       };
     };
     Functions: {
+      list_my_customer_contexts: {
+        Args: Record<PropertyKey, never>;
+        Returns: Array<{
+          context_id: string;
+          membership_id: string;
+          tenant_id: string;
+          tenant_name: string;
+          role_code: string;
+          role_name: string;
+          scope_type: string;
+          property_id: string | null;
+          building_id: string | null;
+          unit_id: string | null;
+          context_label: string;
+          starts_at: string;
+          ends_at: string | null;
+        }>;
+      };
+      get_customer_dashboard: {
+        Args: { p_context_id: string };
+        Returns: Json;
+      };
       get_plan_dependency_counts: {
         Args: { p_plan_ids: string[] };
         Returns: Array<{ plan_id: string; workspace_count: number; contract_count: number }>;

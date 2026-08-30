@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation';
 import type { Language } from '@/types';
-import DashboardPage from '@/app/[lang]/app/dashboard/page';
+import DashboardPage from '@/components/demo/DemoDashboardPage';
 import AccountingPage from '@/app/[lang]/app/accounting/page';
 import MonthClosePage from '@/app/[lang]/app/accounting/month-close/page';
 import AllocationsPage from '@/app/[lang]/app/accounting/allocations/page';
