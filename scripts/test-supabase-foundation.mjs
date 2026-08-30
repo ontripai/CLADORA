@@ -95,6 +95,11 @@ const customerAllocationsPanel = read('src/components/customer/CustomerAllocatio
 const customerAllocationsApi = read('src/app/api/customer/v1/allocations/route.ts');
 const customerAllocationsMigration = read('supabase/migrations/20260829004600_customer_charge_allocation_financial_rights.sql');
 const customerAllocationsAdr = read('docs/architecture/ADR-CLD-039-customer-charge-allocation-financial-rights.md');
+const customerUtilitiesPage = read('src/app/[lang]/app/meters/page.tsx');
+const customerUtilitiesPanel = read('src/components/customer/CustomerUtilitiesDashboard.tsx');
+const customerUtilitiesApi = read('src/app/api/customer/v1/utilities/route.ts');
+const customerUtilitiesMigration = read('supabase/migrations/20260829004700_customer_metering_utility_validation.sql');
+const customerUtilitiesAdr = read('docs/architecture/ADR-CLD-040-customer-metering-utility-validation.md');
 const platformApiRoutes = [
   'src/app/api/platform/v1/workspaces/route.ts',
   'src/app/api/platform/v1/workspaces/[id]/transitions/route.ts',
@@ -183,6 +188,16 @@ check(customerAllocationsMigration.includes('final_allocation_children_are_immut
 check(customerAllocationsMigration.includes('allocation_source_currency_mismatch') && customerAllocationsMigration.includes('allocation_source_amount_mismatch'), 'source currency and amount integrity are database-enforced');
 check(customerAllocationsMigration.includes("array['rule_id','version','formula']") && customerAllocationsMigration.includes("array['legal_debtor','operational_payer','evidence','reason']"), 'rule version, formula, evidence, reason, and payer semantics are mandatory');
 check(customerAllocationsAdr.includes('Production acceptance is read-only') && customerAllocationsAdr.includes('fail closed'), 'allocation ADR records read-only acceptance and fail-closed controls');
+check(!customerUtilitiesPage.includes('DemoStore') && customerUtilitiesPage.includes('CustomerUtilitiesDashboard'), 'production metering page contains no demo fixtures');
+check(customerUtilitiesPanel.includes('/api/customer/v1/utilities?') && customerUtilitiesPanel.includes("cache:'no-store'") && customerUtilitiesPanel.includes("credentials:'same-origin'"), 'utility UI uses protected non-cached same-origin API');
+check(customerUtilitiesPanel.includes("'meters','readings','periods','contracts','invoices','comparisons','anomalies'"), 'utility UI exposes all read-only evidence views');
+check(customerUtilitiesApi.includes('UNAUTHORIZED') && customerUtilitiesApi.includes('MFA_REQUIRED') && !customerUtilitiesApi.includes('export async function POST'), 'utility API rejects unauthorized callers and is GET-only');
+check(customerUtilitiesApi.includes('no-store, private') && customerUtilitiesApi.includes("Pragma:'no-cache'"), 'utility API prohibits shared caching');
+check(customerUtilitiesMigration.includes("p.code='utilities.metering.read'") && customerUtilitiesMigration.includes("e.entitlement_key='module.utilities'"), 'utility RPC requires permission and entitlement');
+check(customerUtilitiesMigration.includes('negative_consumption') && customerUtilitiesMigration.includes('delta_times_multiplier'), 'consumption is database-calculated and cannot be negative');
+check(customerUtilitiesMigration.includes('utility_invoice_currency_mismatch') && customerUtilitiesMigration.includes('utility_contract_inactive_or_expired'), 'utility invoice currency and contract validity are enforced');
+check(!customerUtilitiesMigration.includes("'source_object_path',i.source_object_path") && !customerUtilitiesMigration.includes('serial_number_encrypted'), 'utility projection excludes object paths and encrypted meter serials');
+check(customerUtilitiesAdr.includes('read-only') && customerUtilitiesAdr.includes('fails closed'), 'utility ADR records read-only fail-closed architecture');
 check(admin.includes("import 'server-only'"), 'admin client is server-only');
 check(admin.includes('persistSession: false'), 'admin client never persists sessions');
 check(serverEnv.includes('SUPABASE_SECRET_KEY'), 'server secret has an isolated environment boundary');
