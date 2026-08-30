@@ -90,6 +90,11 @@ const customerPaymentsPanel = read('src/components/customer/CustomerPaymentsDash
 const customerPaymentsApi = read('src/app/api/customer/v1/payments/route.ts');
 const customerPaymentsMigration = read('supabase/migrations/20260829004500_customer_payments_reconciliation_dashboard.sql');
 const customerPaymentsAdr = read('docs/architecture/ADR-CLD-038-customer-payments-reconciliation.md');
+const customerAllocationsPage = read('src/app/[lang]/app/accounting/allocations/page.tsx');
+const customerAllocationsPanel = read('src/components/customer/CustomerAllocationDashboard.tsx');
+const customerAllocationsApi = read('src/app/api/customer/v1/allocations/route.ts');
+const customerAllocationsMigration = read('supabase/migrations/20260829004600_customer_charge_allocation_financial_rights.sql');
+const customerAllocationsAdr = read('docs/architecture/ADR-CLD-039-customer-charge-allocation-financial-rights.md');
 const platformApiRoutes = [
   'src/app/api/platform/v1/workspaces/route.ts',
   'src/app/api/platform/v1/workspaces/[id]/transitions/route.ts',
@@ -167,6 +172,17 @@ check(customerPaymentsMigration.includes('p.payer_party_id=v_party') && customer
 check(!customerPaymentsMigration.includes('iban_encrypted') && !customerPaymentsMigration.includes('raw_snapshot') && !customerPaymentsMigration.includes('remittance_text'), 'payment projection never selects encrypted or raw banking data');
 check(customerPaymentsMigration.includes('bank_transaction_overallocated') && customerPaymentsMigration.includes('currency_mismatch'), 'database blocks double allocation and currency mismatch');
 check(customerPaymentsAdr.includes('Missing, expired, cross-tenant or mismatched'), 'payments architecture records fail-closed customer isolation');
+check(!customerAllocationsPage.includes('DemoStore') && !customerAllocationsPage.includes('MOCK_CHARGE_BREAKDOWN') && customerAllocationsPage.includes('CustomerAllocationDashboard'), 'production allocation page contains no demo fixtures');
+check(customerAllocationsPanel.includes('/api/customer/v1/allocations?') && customerAllocationsPanel.includes("cache:'no-store'") && customerAllocationsPanel.includes("credentials:'same-origin'"), 'allocation UI uses protected non-cached same-origin API');
+check(customerAllocationsPanel.includes("'runs','rules','lines'") && customerAllocationsPanel.includes('rule_snapshot') && customerAllocationsPanel.includes('explanation'), 'allocation UI exposes runs, rules, lines, and explainability evidence');
+check(customerAllocationsApi.includes('UNAUTHORIZED') && customerAllocationsApi.includes('MFA_REQUIRED'), 'allocation API rejects unauthenticated and AAL1 callers');
+check(customerAllocationsApi.includes('no-store, private') && customerAllocationsApi.includes("Pragma:'no-cache'") && !customerAllocationsApi.includes('export async function POST'), 'allocation API is non-cached and GET-only');
+check(customerAllocationsMigration.includes("p.code='finance.allocations.read'") && customerAllocationsMigration.includes("e.entitlement_key='module.accounting'"), 'allocation RPC requires permission and entitlement');
+check(customerAllocationsMigration.includes('a.responsible_party_id=v_party') && customerAllocationsMigration.includes("in ('owner','shared')"), 'tenant and owner financial-rights visibility is separated');
+check(customerAllocationsMigration.includes('final_allocation_children_are_immutable') && customerAllocationsMigration.includes('allocation_input_overallocated'), 'final allocation evidence is immutable and over-allocation is blocked');
+check(customerAllocationsMigration.includes('allocation_source_currency_mismatch') && customerAllocationsMigration.includes('allocation_source_amount_mismatch'), 'source currency and amount integrity are database-enforced');
+check(customerAllocationsMigration.includes("array['rule_id','version','formula']") && customerAllocationsMigration.includes("array['legal_debtor','operational_payer','evidence','reason']"), 'rule version, formula, evidence, reason, and payer semantics are mandatory');
+check(customerAllocationsAdr.includes('Production acceptance is read-only') && customerAllocationsAdr.includes('fail closed'), 'allocation ADR records read-only acceptance and fail-closed controls');
 check(admin.includes("import 'server-only'"), 'admin client is server-only');
 check(admin.includes('persistSession: false'), 'admin client never persists sessions');
 check(serverEnv.includes('SUPABASE_SECRET_KEY'), 'server secret has an isolated environment boundary');
