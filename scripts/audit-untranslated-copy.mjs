@@ -53,6 +53,7 @@ export const ALL_USER_ROUTES = [
   '/app/communications',
   '/app/documents',
   '/app/governance',
+  '/app/meetings',
   '/app/maintenance',
   '/app/meters',
   '/app/migration/shadow-ledger',

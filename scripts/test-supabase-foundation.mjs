@@ -106,6 +106,12 @@ const customerMaintenancePanel = read('src/components/customer/CustomerMaintenan
 const customerMaintenanceApi = read('src/app/api/customer/v1/maintenance/route.ts');
 const customerMaintenanceMigration = read('supabase/migrations/20260829004800_customer_assets_maintenance_dashboard.sql');
 const customerMaintenanceAdr = read('docs/architecture/ADR-CLD-041-customer-assets-maintenance.md');
+const customerGovernancePage = read('src/app/[lang]/app/governance/page.tsx');
+const customerMeetingsPage = read('src/app/[lang]/app/meetings/page.tsx');
+const customerGovernancePanel = read('src/components/customer/CustomerGovernanceDashboard.tsx');
+const customerGovernanceApi = read('src/app/api/customer/v1/governance/route.ts');
+const customerGovernanceMigration = read('supabase/migrations/20260829004900_customer_governance_meetings_dashboard.sql');
+const customerGovernanceAdr = read('docs/architecture/ADR-CLD-042-customer-governance-meetings.md');
 const platformApiRoutes = [
   'src/app/api/platform/v1/workspaces/route.ts',
   'src/app/api/platform/v1/workspaces/[id]/transitions/route.ts',
@@ -215,6 +221,17 @@ check(customerMaintenanceMigration.includes('work_order_cost_invoice_invalid') &
 check(customerMaintenanceMigration.includes('revoke select on all tables in schema assets from authenticated') && customerMaintenanceMigration.includes('revoke select on all tables in schema maintenance from authenticated'), 'raw sensitive schemas cannot bypass the redacted maintenance RPC');
 check(!customerMaintenanceMigration.includes('serial_number_encrypted') && !customerMaintenanceMigration.includes("'object_path',"), 'maintenance projection excludes encrypted serials and evidence paths');
 check(customerMaintenanceAdr.includes('Production acceptance is read-only') && customerMaintenanceAdr.includes('fails closed'), 'maintenance ADR records read-only fail-closed architecture');
+check(!customerGovernancePage.includes('DemoStore') && !customerMeetingsPage.includes('DemoStore'), 'production governance pages contain no demo fixtures');
+check(customerGovernancePanel.includes('/api/customer/v1/governance?') && customerGovernancePanel.includes("cache:'no-store'") && customerGovernancePanel.includes("credentials:'same-origin'"), 'governance UI uses protected non-cached same-origin API');
+check(customerGovernancePanel.includes("'meetings','agenda','invitations','attendance','quorum','proxies','votes','resolutions','minutes','documents','history'"), 'governance UI exposes every authorized evidence view');
+check(customerGovernanceApi.includes('UNAUTHORIZED') && customerGovernanceApi.includes('MFA_REQUIRED') && !customerGovernanceApi.includes('export async function POST'), 'governance API rejects unauthorized callers and is GET-only');
+check(customerGovernanceApi.includes('no-store, private') && customerGovernanceApi.includes("Pragma:'no-cache'"), 'governance API prohibits shared caching');
+check(customerGovernanceMigration.includes("p.code='governance.meetings.read'") && customerGovernanceMigration.includes("e.entitlement_key='module.governance'"), 'governance RPC requires permission and effective entitlement');
+check(customerGovernanceMigration.includes('ballot_eligibility_or_time_invalid') && customerGovernanceMigration.includes('overlapping_active_proxy'), 'ballot and proxy integrity is database-enforced');
+check(customerGovernanceMigration.includes('adopted_resolution_is_immutable') && customerGovernanceMigration.includes('approved_minutes_are_immutable'), 'final governance records are immutable');
+check(customerGovernanceMigration.includes('revoke select on all tables in schema governance from authenticated'), 'raw governance data cannot bypass the safe RPC');
+check(!customerGovernanceMigration.includes("'object_path',") && !customerGovernanceMigration.includes("'cast_by',") && !customerGovernanceMigration.includes("'receipt_hash',") && !customerGovernanceMigration.includes('r.result_snapshot,') && !customerGovernanceMigration.includes('h.evidence_json,'), 'governance projection excludes paths, ballot identities, and raw evidence snapshots');
+check(customerGovernanceAdr.includes('does not claim or guarantee legal compliance') && customerGovernanceAdr.includes('fails closed'), 'governance ADR records legal boundary and fail-closed architecture');
 check(admin.includes("import 'server-only'"), 'admin client is server-only');
 check(admin.includes('persistSession: false'), 'admin client never persists sessions');
 check(serverEnv.includes('SUPABASE_SECRET_KEY'), 'server secret has an isolated environment boundary');
