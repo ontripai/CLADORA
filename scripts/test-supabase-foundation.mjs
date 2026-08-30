@@ -84,6 +84,12 @@ const customerBillingPanel = read('src/components/customer/CustomerBillingDashbo
 const customerBillingApi = read('src/app/api/customer/v1/billing/route.ts');
 const customerBillingMigration = read('supabase/migrations/20260829004400_customer_billing_receivables_dashboard.sql');
 const customerBillingAdr = read('docs/architecture/ADR-CLD-037-customer-billing-receivables.md');
+const customerPaymentsPage = read('src/app/[lang]/app/payments/page.tsx');
+const customerReconciliationPage = read('src/app/[lang]/app/reconciliation/page.tsx');
+const customerPaymentsPanel = read('src/components/customer/CustomerPaymentsDashboard.tsx');
+const customerPaymentsApi = read('src/app/api/customer/v1/payments/route.ts');
+const customerPaymentsMigration = read('supabase/migrations/20260829004500_customer_payments_reconciliation_dashboard.sql');
+const customerPaymentsAdr = read('docs/architecture/ADR-CLD-038-customer-payments-reconciliation.md');
 const platformApiRoutes = [
   'src/app/api/platform/v1/workspaces/route.ts',
   'src/app/api/platform/v1/workspaces/[id]/transitions/route.ts',
@@ -152,6 +158,15 @@ check(customerBillingMigration.includes("p.code='billing.receivables.read'") && 
 check(customerBillingMigration.includes('i.liable_party_id=v_party') && customerBillingMigration.includes("l.status='active'"), 'tenant billing visibility requires mapped liable party and active lease');
 check(!customerBillingMigration.includes('iban_encrypted') && !customerBillingMigration.includes('raw_snapshot'), 'billing projection never selects encrypted banking or raw payment data');
 check(customerBillingAdr.includes('Missing, expired, cross-tenant, or mismatched'), 'billing architecture records fail-closed customer isolation');
+check(customerPaymentsPage.includes('CustomerPaymentsDashboard') && customerReconciliationPage.includes('CustomerPaymentsDashboard'), 'protected payment routes render the live customer projection');
+check(customerPaymentsPanel.includes('/api/customer/v1/payments?') && customerPaymentsPanel.includes("cache:'no-store'"), 'payments panel uses the protected non-cached API');
+check(customerPaymentsApi.includes("claims.claims.aal!=='aal2'") && customerPaymentsApi.includes("status:403"), 'payments API rejects AAL1 sessions');
+check(customerPaymentsApi.includes("'Cache-Control':'no-store, private'"), 'payments API prohibits shared caching');
+check(customerPaymentsMigration.includes("p.code='payments.reconciliation.read'") && customerPaymentsMigration.includes("e.entitlement_key='module.payments'"), 'payment reads require explicit permission and entitlement');
+check(customerPaymentsMigration.includes('p.payer_party_id=v_party') && customerPaymentsMigration.includes("l.status='active'"), 'tenant payment visibility requires mapped payer party and active lease');
+check(!customerPaymentsMigration.includes('iban_encrypted') && !customerPaymentsMigration.includes('raw_snapshot') && !customerPaymentsMigration.includes('remittance_text'), 'payment projection never selects encrypted or raw banking data');
+check(customerPaymentsMigration.includes('bank_transaction_overallocated') && customerPaymentsMigration.includes('currency_mismatch'), 'database blocks double allocation and currency mismatch');
+check(customerPaymentsAdr.includes('Missing, expired, cross-tenant or mismatched'), 'payments architecture records fail-closed customer isolation');
 check(admin.includes("import 'server-only'"), 'admin client is server-only');
 check(admin.includes('persistSession: false'), 'admin client never persists sessions');
 check(serverEnv.includes('SUPABASE_SECRET_KEY'), 'server secret has an isolated environment boundary');
