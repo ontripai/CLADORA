@@ -32,10 +32,13 @@ as $$
 declare a assets.assets; w maintenance.work_orders; p maintenance.maintenance_plans; v maintenance.vendors; c maintenance.vendor_contracts;
 begin
   if tg_table_schema='assets' and tg_table_name='assets' then
-    if tg_op='DELETE' then return old; end if;
+    if tg_op='DELETE' then
+      if old.condition='retired' or old.retired_at is not null then raise exception 'retired_asset_is_immutable'; end if;
+      return old;
+    end if;
     if new.building_id is not null and not exists(select 1 from portfolio.buildings b where b.id=new.building_id and b.tenant_id=new.tenant_id and b.property_id=new.property_id) then raise exception 'asset_building_scope_invalid'; end if;
     if new.unit_id is not null and not exists(select 1 from portfolio.units u join portfolio.buildings b on b.id=u.building_id where u.id=new.unit_id and u.tenant_id=new.tenant_id and b.property_id=new.property_id and (new.building_id is null or b.id=new.building_id)) then raise exception 'asset_unit_scope_invalid'; end if;
-    if tg_op='UPDATE' and old.status='retired' and new is distinct from old then raise exception 'retired_asset_is_immutable'; end if;
+    if tg_op='UPDATE' and (old.condition='retired' or old.retired_at is not null) and new is distinct from old then raise exception 'retired_asset_is_immutable'; end if;
     return new;
   elsif tg_table_schema='assets' and tg_table_name='asset_components' then
     if tg_op='DELETE' then return old; end if;
