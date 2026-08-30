@@ -9,7 +9,7 @@ select ok((select prorettype='jsonb'::regtype from pg_proc where oid='payments.g
 select ok((select provolatile='s' from pg_proc where oid='payments.get_customer_payments(uuid,text,text,text,date,date,integer,integer,uuid)'::regprocedure),'RPC is read-only stable');
 select ok((select prosecdef from pg_proc where oid='payments.get_customer_payments(uuid,text,text,text,date,date,integer,integer,uuid)'::regprocedure),'RPC owns its authorization boundary');
 select ok(position('auth.uid() is null' in pg_get_functiondef('payments.get_customer_payments(uuid,text,text,text,date,date,integer,integer,uuid)'::regprocedure))>0,'RPC rejects unauthenticated callers');
-select ok(position("auth.jwt()->>'aal'" in pg_get_functiondef('payments.get_customer_payments(uuid,text,text,text,date,date,integer,integer,uuid)'::regprocedure))>0,'RPC requires AAL2');
+select ok(position($needle$auth.jwt()->>'aal'$needle$ in pg_get_functiondef('payments.get_customer_payments(uuid,text,text,text,date,date,integer,integer,uuid)'::regprocedure))>0,'RPC requires AAL2');
 select ok(position("p.code='payments.reconciliation.read'" in pg_get_functiondef('payments.get_customer_payments(uuid,text,text,text,date,date,integer,integer,uuid)'::regprocedure))>0,'RPC requires explicit permission');
 select ok(position("e.entitlement_key='module.payments'" in pg_get_functiondef('payments.get_customer_payments(uuid,text,text,text,date,date,integer,integer,uuid)'::regprocedure))>0,'RPC requires effective entitlement');
 select ok(position("l.status='active'" in pg_get_functiondef('payments.get_customer_payments(uuid,text,text,text,date,date,integer,integer,uuid)'::regprocedure))>0,'tenant visibility requires active lease');
