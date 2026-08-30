@@ -1013,6 +1013,41 @@ export type Database = {
       [key: string]: unknown;
     };
   };
+  billing: {
+    Tables: {
+      [key: string]: {
+        Row: Record<string, unknown>;
+        Insert: Record<string, unknown>;
+        Update: Record<string, unknown>;
+        Relationships: [];
+      };
+    };
+    Views: {
+      [key: string]: {
+        Row: Record<string, unknown>;
+        Relationships: [];
+      };
+    };
+    Functions: {
+      get_customer_billing: {
+        Args: {
+          p_context_id: string;
+          p_query?: string | null;
+          p_status?: string | null;
+          p_from?: string | null;
+          p_to?: string | null;
+          p_limit?: number;
+          p_offset?: number;
+          p_invoice_id?: string | null;
+        };
+        Returns: Json;
+      };
+    };
+    Enums: {
+      invoice_status: 'draft' | 'issued' | 'partially_paid' | 'paid' | 'void' | 'credited';
+    };
+    CompositeTypes: {[key: string]: unknown};
+  };
   finance: {
     Tables: {
       [key: string]: {
