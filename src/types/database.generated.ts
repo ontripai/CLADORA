@@ -1140,6 +1140,23 @@ export type Database = {
     };
     CompositeTypes: { [key: string]: unknown };
   };
+  utilities: {
+    Tables: { [key: string]: { Row: Record<string, unknown>; Insert: Record<string, unknown>; Update: Record<string, unknown>; Relationships: [] } };
+    Views: { [key: string]: { Row: Record<string, unknown>; Relationships: [] } };
+    Functions: {
+      get_customer_utilities: {
+        Args: { p_context_id: string; p_view?: string; p_query?: string | null; p_status?: string | null; p_service?: string | null; p_from?: string | null; p_to?: string | null; p_limit?: number; p_offset?: number; p_id?: string | null };
+        Returns: Json;
+      };
+    };
+    Enums: {
+      service_type: 'water'|'electricity'|'gas'|'heat'|'sewer'|'waste'|'internet'|'telephone'|'other';
+      meter_scope: 'property'|'building'|'unit'|'common_area'|'submeter';
+      reading_method: 'manual'|'photo_ocr'|'bulk_import'|'iot'|'provider';
+      reading_status: 'captured'|'validated'|'rejected'|'superseded';
+    };
+    CompositeTypes: { [key: string]: unknown };
+  };
   audit: {
     Tables: {
       events: {
