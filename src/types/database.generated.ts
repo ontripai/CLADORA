@@ -1064,6 +1064,21 @@ export type Database = {
       };
     };
     Functions: {
+      get_customer_allocations: {
+        Args: {
+          p_context_id: string;
+          p_view?: string;
+          p_query?: string | null;
+          p_status?: string | null;
+          p_method?: string | null;
+          p_from?: string | null;
+          p_to?: string | null;
+          p_limit?: number;
+          p_offset?: number;
+          p_id?: string | null;
+        };
+        Returns: Json;
+      };
       get_customer_ledger: {
         Args: {
           p_context_id: string;
@@ -1083,6 +1098,8 @@ export type Database = {
       account_type: 'asset' | 'liability' | 'equity' | 'income' | 'expense';
       journal_status: 'draft' | 'posted' | 'reversed';
       entry_side: 'debit' | 'credit';
+      allocation_method: 'meter_consumption' | 'cpi' | 'per_person' | 'surface_m2' | 'direct' | 'fixed';
+      run_status: 'draft' | 'calculated' | 'approved' | 'posted' | 'cancelled';
     };
     CompositeTypes: {
       [key: string]: unknown;
