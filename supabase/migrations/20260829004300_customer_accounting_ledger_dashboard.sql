@@ -17,6 +17,7 @@ create table finance.accounting_periods (
     (status='closed' and closed_at is not null and snapshot_json is not null))
 );
 create index accounting_periods_scope_date_idx on finance.accounting_periods(tenant_id,property_id,starts_on,ends_on);
+create index accounting_periods_property_id_idx on finance.accounting_periods(property_id);
 create or replace function finance.protect_accounting_period()
 returns trigger language plpgsql security definer set search_path=pg_catalog,finance
 as $$ begin
@@ -41,6 +42,7 @@ create table identity.membership_parties (
   unique (tenant_id, party_id)
 );
 create index membership_parties_tenant_party_idx on identity.membership_parties(tenant_id,party_id);
+create index membership_parties_party_id_idx on identity.membership_parties(party_id);
 alter table identity.membership_parties enable row level security;
 create policy membership_parties_self_read on identity.membership_parties for select to authenticated
 using (exists(select 1 from identity.memberships m where m.id=membership_id and m.user_id=(select auth.uid()) and m.tenant_id=tenant_id));
