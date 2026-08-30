@@ -36,8 +36,18 @@ create table governance.meeting_history(
  occurred_at timestamptz not null default statement_timestamp()
 );
 create index governance_invitations_meeting_status_idx on governance.meeting_invitations(tenant_id,meeting_id,invitation_status,id);
+create index governance_invitations_meeting_id_idx on governance.meeting_invitations(meeting_id);
+create index governance_invitations_party_id_idx on governance.meeting_invitations(party_id);
+create index governance_invitations_unit_id_idx on governance.meeting_invitations(unit_id);
+create index governance_invitations_evidence_document_id_idx on governance.meeting_invitations(evidence_document_id);
 create index governance_proxies_meeting_period_idx on governance.proxies(tenant_id,meeting_id,valid_from,valid_until,status,id);
+create index governance_proxies_meeting_id_idx on governance.proxies(meeting_id);
+create index governance_proxies_eligibility_id_idx on governance.proxies(eligibility_id);
+create index governance_proxies_grantor_party_id_idx on governance.proxies(grantor_party_id);
+create index governance_proxies_representative_party_id_idx on governance.proxies(representative_party_id);
+create index governance_proxies_evidence_document_id_idx on governance.proxies(evidence_document_id);
 create index governance_history_meeting_time_idx on governance.meeting_history(tenant_id,meeting_id,occurred_at desc,id desc);
+create index governance_history_meeting_id_idx on governance.meeting_history(meeting_id);
 create index governance_meetings_property_schedule_idx on governance.meetings(tenant_id,property_id,scheduled_at desc,id);
 create index governance_votes_meeting_status_idx on governance.votes(tenant_id,meeting_id,status,id);
 
