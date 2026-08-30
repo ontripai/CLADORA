@@ -26,6 +26,7 @@ export type Database = {
       };
     };
     Functions: {
+      get_control_plane_overview: { Args: Record<PropertyKey, never>; Returns: Json };
       create_customer_workspace: {
         Args: {
           p_tenant_id: string;
