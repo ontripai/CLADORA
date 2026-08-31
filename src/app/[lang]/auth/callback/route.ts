@@ -12,11 +12,28 @@ const OTP_TYPES = new Set<EmailOtpType>([
   'email_change',
 ]);
 const INVITATION_COOKIE = 'cladora-invitation';
+const NO_STORE_HEADERS = {
+  'Cache-Control': 'no-store, private',
+  Pragma: 'no-cache',
+  Vary: 'Cookie',
+};
 
 function safeNext(value: string | null, lang: string): string {
   const fallback = `/${lang}/login`;
   if (!value || !value.startsWith(`/${lang}/`) || value.startsWith('//')) return fallback;
   return value;
+}
+
+function noStore(response: NextResponse): NextResponse {
+  Object.entries(NO_STORE_HEADERS).forEach(([name, value]) => response.headers.set(name, value));
+  return response;
+}
+
+function invalidCallbackUrl(request: NextRequest, lang: string, next: string): URL {
+  if (next === `/${lang}/reset-password`) {
+    return new URL(`/${lang}/password-recovery-result?status=invalid`, request.url);
+  }
+  return new URL(`/${lang}/login?reason=invalid_callback`, request.url);
 }
 
 export async function GET(
@@ -25,7 +42,7 @@ export async function GET(
 ) {
   const { lang } = await props.params;
   if (!LANGUAGES.has(lang)) {
-    return NextResponse.redirect(new URL('/ro/login?reason=invalid_callback', request.url));
+    return noStore(NextResponse.redirect(new URL('/ro/login?reason=invalid_callback', request.url)));
   }
 
   const next = safeNext(request.nextUrl.searchParams.get('next'), lang);
@@ -49,15 +66,18 @@ export async function GET(
   }
 
   if (error) {
-    return NextResponse.redirect(new URL(`/${lang}/login?reason=invalid_callback`, request.url));
+    return noStore(NextResponse.redirect(invalidCallbackUrl(request, lang, next)));
   }
 
   const destination = new URL(next, request.url);
   const invitationToken = destination.searchParams.get('token');
   if (destination.pathname === `/${lang}/accept-invitation` && invitationToken) {
     if (invitationToken.length < 40 || invitationToken.length > 128) {
-      return NextResponse.redirect(new URL(`/${lang}/login?reason=invalid_invitation`, request.url));
+      return noStore(
+        NextResponse.redirect(new URL(`/${lang}/login?reason=invalid_invitation`, request.url)),
+      );
     }
+
     destination.searchParams.delete('token');
     const response = NextResponse.redirect(destination);
     response.cookies.set(INVITATION_COOKIE, invitationToken, {
@@ -67,8 +87,8 @@ export async function GET(
       maxAge: 60 * 60 * 72,
       path: '/',
     });
-    return response;
+    return noStore(response);
   }
 
-  return NextResponse.redirect(destination);
+  return noStore(NextResponse.redirect(destination));
 }
