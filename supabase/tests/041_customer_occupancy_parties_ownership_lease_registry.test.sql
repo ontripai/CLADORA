@@ -1,7 +1,7 @@
 begin;
 create extension if not exists pgtap with schema extensions;
 set search_path=public,extensions;
-select plan(40);
+select plan(46);
 select ok(exists(select 1 from identity.permissions where code='occupancy.registry.read'),'registry permission exists');
 select has_table('occupancy','lifecycle_events','registry lifecycle exists');
 select ok(exists(select 1 from pg_proc where oid='occupancy.get_customer_registry(uuid,text,text,text,text,date,date,integer,integer,uuid)'::regprocedure),'registry RPC exists');
@@ -28,6 +28,7 @@ select ok(exists(select 1 from pg_trigger where tgname='customer_party_mapping_i
 select ok(exists(select 1 from pg_trigger where tgname='customer_occupancy_lifecycle_integrity'and tgenabled='O'),'lifecycle integrity enabled');
 select ok(position('ownership_cross_tenant_or_invalid_link' in pg_get_functiondef('occupancy.enforce_customer_registry_integrity()'::regprocedure))>0,'cross-tenant ownership rejected');
 select ok(position('ownership_share_exceeds_one' in pg_get_functiondef('occupancy.enforce_customer_registry_integrity()'::regprocedure))>0,'ownership total guarded');
+select ok(position('overlapping_party_ownership' in pg_get_functiondef('occupancy.enforce_customer_registry_integrity()'::regprocedure))>0,'overlapping ownership for the same party rejected');
 select ok(position('lease_cross_tenant_or_invalid_link' in pg_get_functiondef('occupancy.enforce_customer_registry_integrity()'::regprocedure))>0,'cross-tenant lease rejected');
 select ok(position('lease_landlord_ownership_required' in pg_get_functiondef('occupancy.enforce_customer_registry_integrity()'::regprocedure))>0,'landlord ownership required');
 select ok(position('overlapping_active_lease' in pg_get_functiondef('occupancy.enforce_customer_registry_integrity()'::regprocedure))>0,'active lease overlap rejected');
@@ -39,6 +40,11 @@ select ok(position('final_lease_snapshot_is_immutable' in pg_get_functiondef('oc
 select ok(position('final_occupancy_snapshot_is_immutable' in pg_get_functiondef('occupancy.enforce_customer_registry_integrity()'::regprocedure))>0,'final occupancy immutable');
 select ok(position('final_party_mapping_is_immutable' in pg_get_functiondef('occupancy.enforce_customer_registry_integrity()'::regprocedure))>0,'final party mapping immutable');
 select ok(position('occupancy_lifecycle_is_append_only' in pg_get_functiondef('occupancy.enforce_customer_registry_integrity()'::regprocedure))>0,'lifecycle append only');
+select ok(position('occupancy_lifecycle_cross_tenant_or_invalid_link' in pg_get_functiondef('occupancy.enforce_customer_registry_integrity()'::regprocedure))>0,'lifecycle entity tenant boundary enforced');
+select ok(position('z.occupancy_id=o.idandz.party_id=v_party' in regexp_replace(pg_get_functiondef('occupancy.get_customer_registry(uuid,text,text,text,text,date,date,integer,integer,uuid)'::regprocedure),'\s+','','g'))>0,'tenant sees only own occupancy rows');
+select ok(position('l.starts_on<=o.starts_at::date' in regexp_replace(pg_get_functiondef('occupancy.get_customer_registry(uuid,text,text,text,text,date,date,integer,integer,uuid)'::regprocedure),'\s+','','g'))>0,'tenant occupancy is bounded by active lease period');
+select ok(position('receivable_count' in pg_get_functiondef('occupancy.get_customer_registry(uuid,text,text,text,text,date,date,integer,integer,uuid)'::regprocedure))>0,'receivable relationships projected');
+select ok(position('meeting_count' in pg_get_functiondef('occupancy.get_customer_registry(uuid,text,text,text,text,date,date,integer,integer,uuid)'::regprocedure))>0,'meeting relationships projected');
 select ok(position($n$'pii_redacted',true$n$ in regexp_replace(pg_get_functiondef('occupancy.get_customer_registry(uuid,text,text,text,text,date,date,integer,integer,uuid)'::regprocedure),'\s+','','g'))>0,'PII redaction declared');
 select ok(not has_function_privilege('anon','occupancy.get_customer_registry(uuid,text,text,text,text,date,date,integer,integer,uuid)','EXECUTE'),'anon cannot execute');
 select ok(has_function_privilege('authenticated','occupancy.get_customer_registry(uuid,text,text,text,text,date,date,integer,integer,uuid)','EXECUTE'),'authenticated can execute gated RPC');
