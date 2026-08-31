@@ -86,18 +86,12 @@ export function ForgotPasswordForm({ lang, captchaRequired, captchaSiteKey }: Pr
     setBusy(true);
     try {
       const redirectTo = `${window.location.origin}/${lang}/auth/callback?next=/${lang}/reset-password`;
-      const { error: recoveryError } = await createClient().auth.resetPasswordForEmail(email.trim(), {
+      await createClient().auth.resetPasswordForEmail(email.trim(), {
         redirectTo,
         captchaToken: captchaToken ?? undefined,
       });
 
-      if (recoveryError) {
-        setCaptchaToken(null);
-        setCaptchaAttempt((value) => value + 1);
-        setError(t.failed);
-        return;
-      }
-
+      // Keep the observable response identical for eligible and unknown addresses.
       router.replace(`/${lang}/password-recovery-result?status=requested`);
       router.refresh();
     } catch {
