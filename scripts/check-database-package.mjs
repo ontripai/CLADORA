@@ -8,7 +8,7 @@ const migrations = readdirSync(migrationsDir).filter((name) => name.endsWith(".s
 const tests = readdirSync(testsDir).filter((name) => name.endsWith(".sql")).sort();
 
 const failures = [];
-if (migrations.length !== 55) failures.push(`expected 55 migrations, found ${migrations.length}`);
+if (migrations.length !== 56) failures.push(`expected 56 migrations, found ${migrations.length}`);
 if (tests.length !== 43) failures.push(`expected 43 pgTAP files, found ${tests.length}`);
 
 for (const [index, name] of migrations.entries()) {
