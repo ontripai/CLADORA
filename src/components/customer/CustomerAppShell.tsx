@@ -3,6 +3,7 @@ import Link from "next/link";
 import {
   Bell,
   Boxes,
+  BriefcaseBusiness,
   Building2,
   CreditCard,
   FileSpreadsheet,
@@ -36,6 +37,7 @@ const copy = {
     utilities: "Contoare și utilități",
     assets: "Active",
     maintenance: "Mentenanță",
+    procurement: "Furnizori și achiziții",
     governance: "Guvernanță",
     meetings: "Ședințe",
     communications: "Comunicări",
@@ -58,6 +60,7 @@ const copy = {
     utilities: "Meters & utilities",
     assets: "Assets",
     maintenance: "Maintenance",
+    procurement: "Vendors & procurement",
     governance: "Governance",
     meetings: "Meetings",
     communications: "Communications",
@@ -80,6 +83,7 @@ const copy = {
     utilities: "کنتورها و خدمات",
     assets: "دارایی‌ها",
     maintenance: "نگهداری",
+    procurement: "فروشندگان و تدارکات",
     governance: "حاکمیت",
     meetings: "جلسات",
     communications: "ارتباطات",
@@ -110,6 +114,7 @@ function Shell({
     payments = state.dashboard?.modules.includes("payments"),
     utilities = state.dashboard?.entitlements.includes("module.utilities"),
     maintenance = state.dashboard?.entitlements.includes("module.maintenance"),
+    procurement = maintenance && state.dashboard?.permissions.includes("maintenance.procurement.read"),
     governance = state.dashboard?.entitlements.includes("module.governance"),
     communications = state.dashboard?.entitlements.includes(
       "module.communications",
@@ -222,6 +227,15 @@ function Shell({
                   {t.maintenance}
                 </Link>
               </>
+            ) : null}
+            {procurement ? (
+              <Link
+                href={`/${lang}/app/vendors`}
+                className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs font-bold text-[#102A43] hover:bg-[#F6F9FC]"
+              >
+                <BriefcaseBusiness className="h-4 w-4 text-[#0E9F8E]" />
+                {t.procurement}
+              </Link>
             ) : null}
             {governance ? (
               <>
