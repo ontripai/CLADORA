@@ -49,6 +49,8 @@ insert into portfolio.parties(id,tenant_id,type,legal_name) values
  ('20900000-0000-0000-0000-000000000002','20100000-0000-0000-0000-000000000001','person','Other Party');
 insert into identity.membership_parties(membership_id,tenant_id,party_id) values
  ('20300000-0000-0000-0000-000000000002','20100000-0000-0000-0000-000000000001','20900000-0000-0000-0000-000000000001');
+insert into portfolio.ownerships(tenant_id,unit_id,party_id,share,valid_from) values
+ ('20100000-0000-0000-0000-000000000001','20700000-0000-0000-0000-000000000001','20900000-0000-0000-0000-000000000002',1,current_date-1);
 insert into occupancy.leases(tenant_id,unit_id,landlord_party_id,tenant_party_id,starts_on,status) values
  ('20100000-0000-0000-0000-000000000001','20700000-0000-0000-0000-000000000001','20900000-0000-0000-0000-000000000002','20900000-0000-0000-0000-000000000001',current_date-1,'active');
 insert into finance.accounts(id,tenant_id,property_id,code,name,type,currency) values

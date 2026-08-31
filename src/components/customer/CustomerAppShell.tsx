@@ -40,6 +40,8 @@ const copy = {
     communications: "Comunicări",
     notifications: "Notificări",
     documents: "Documente",
+    occupancy: "Ocupare și rezidenți",
+    ownership: "Proprietate și contracte",
     billing: "Facturi și creanțe",
     payments: "Plăți",
     reconciliation: "Reconciliere",
@@ -59,6 +61,8 @@ const copy = {
     communications: "Communications",
     notifications: "Notifications",
     documents: "Documents",
+    occupancy: "Occupancy & residents",
+    ownership: "Ownership & leases",
     billing: "Billing & receivables",
     payments: "Payments",
     reconciliation: "Reconciliation",
@@ -78,6 +82,8 @@ const copy = {
     communications: "ارتباطات",
     notifications: "اعلان‌ها",
     documents: "اسناد",
+    occupancy: "سکونت و ساکنان",
+    ownership: "مالکیت و اجاره‌ها",
     billing: "صورتحساب‌ها و مطالبات",
     payments: "پرداخت‌ها",
     reconciliation: "تطبیق بانکی",
@@ -104,7 +110,8 @@ function Shell({
     communications = state.dashboard?.entitlements.includes(
       "module.communications",
     ),
-    documents = state.dashboard?.entitlements.includes("module.documents");
+    documents = state.dashboard?.entitlements.includes("module.documents"),
+    occupancy = state.dashboard?.entitlements.includes("module.occupancy");
   return (
     <div
       className="min-h-screen bg-[#F6F9FC] text-[#102A43]"
@@ -246,6 +253,18 @@ function Shell({
                 <FileText className="h-4 w-4 text-[#0E9F8E]" />
                 {t.documents}
               </Link>
+            ) : null}
+            {occupancy ? (
+              <>
+                <Link href={`/${lang}/app/occupancy`} className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs font-bold text-[#102A43] hover:bg-[#F6F9FC]">
+                  <UsersRound className="h-4 w-4 text-[#0E9F8E]" />
+                  {t.occupancy}
+                </Link>
+                <Link href={`/${lang}/app/ownership`} className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs font-bold text-[#102A43] hover:bg-[#F6F9FC]">
+                  <Landmark className="h-4 w-4 text-[#0E9F8E]" />
+                  {t.ownership}
+                </Link>
+              </>
             ) : null}
             {billing ? (
               <Link
