@@ -1244,6 +1244,25 @@ export type Database = {
     Enums: { classification: 'public'|'internal'|'confidential'|'restricted' };
     CompositeTypes: { [key: string]: unknown };
   };
+  security_access: {
+    Tables: { [key: string]: { Row: Record<string, unknown>; Insert: Record<string, unknown>; Update: Record<string, unknown>; Relationships: [] } };
+    Views: { [key: string]: { Row: Record<string, unknown>; Relationships: [] } };
+    Functions: {
+      get_customer_security_access: {
+        Args: { p_context_id: string; p_view?: string; p_query?: string | null; p_status?: string | null; p_kind?: string | null; p_from?: string | null; p_to?: string | null; p_limit?: number; p_offset?: number; p_id?: string | null };
+        Returns: Json;
+      };
+    };
+    Enums: {
+      access_point_type: 'entrance'|'door'|'gate';
+      credential_kind: 'key'|'fob'|'access_card';
+      credential_status: 'active'|'suspended'|'expired'|'revoked'|'lost'|'returned';
+      visitor_access_type: 'visitor'|'contractor'|'delivery'|'vehicle';
+      visitor_status: 'scheduled'|'active'|'used'|'expired'|'cancelled'|'denied';
+      access_decision: 'allowed'|'denied';
+    };
+    CompositeTypes: { [key: string]: unknown };
+  };
   audit: {
     Tables: {
       events: {

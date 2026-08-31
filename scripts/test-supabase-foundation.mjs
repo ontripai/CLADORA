@@ -130,6 +130,14 @@ const customerOccupancyPanel = read('src/components/customer/CustomerOccupancyDa
 const customerOccupancyApi = read('src/app/api/customer/v1/occupancy/route.ts');
 const customerOccupancyMigration = read('supabase/migrations/20260829005200_customer_occupancy_parties_ownership_lease_registry.sql');
 const customerOccupancyAdr = read('docs/architecture/ADR-CLD-045-customer-occupancy-registry.md');
+const customerSecurityPage = read('src/app/[lang]/app/security-access/page.tsx');
+const customerCredentialsPage = read('src/app/[lang]/app/credentials/page.tsx');
+const customerVisitorsPage = read('src/app/[lang]/app/visitors/page.tsx');
+const customerAccessLogsPage = read('src/app/[lang]/app/access-logs/page.tsx');
+const customerSecurityPanel = read('src/components/customer/CustomerSecurityAccessDashboard.tsx');
+const customerSecurityApi = read('src/app/api/customer/v1/security-access/route.ts');
+const customerSecurityMigration = read('supabase/migrations/20260829005300_customer_security_access_credentials_visitors.sql');
+const customerSecurityAdr = read('docs/architecture/ADR-CLD-046-customer-security-access.md');
 const platformApiRoutes = [
   'src/app/api/platform/v1/workspaces/route.ts',
   'src/app/api/platform/v1/workspaces/[id]/transitions/route.ts',
@@ -286,6 +294,18 @@ check(customerOccupancyMigration.includes('revoke select on all tables in schema
 check(!customerOccupancyMigration.includes('tax_ref_encrypted,') && !customerOccupancyMigration.includes('email_encrypted,') && !customerOccupancyMigration.includes('phone_encrypted,'), 'registry projection excludes encrypted personal fields');
 check(customerOccupancyMigration.includes("'pii_redacted',true"), 'registry RPC declares personal data redaction');
 check(customerOccupancyAdr.includes('Production acceptance is read-only') && customerOccupancyAdr.includes('fail closed'), 'occupancy ADR records privacy and fail-closed release boundaries');
+check([customerSecurityPage,customerCredentialsPage,customerVisitorsPage,customerAccessLogsPage].every(page=>!page.includes('DemoStore')&&page.includes('CustomerSecurityAccessDashboard')), 'production security access pages contain no demo fixtures');
+check(customerSecurityPanel.includes('/api/customer/v1/security-access?')&&customerSecurityPanel.includes('cache:"no-store"')&&customerSecurityPanel.includes('credentials:"same-origin"'), 'security UI uses protected non-cached same-origin API');
+check(customerSecurityPanel.includes('"access_points"|"credentials"|"visitors"|"access_logs"|"credential_history"|"visitor_history"|"links"'), 'security UI exposes every authorized registry view');
+check(customerSecurityApi.includes('UNAUTHORIZED')&&customerSecurityApi.includes('MFA_REQUIRED')&&!customerSecurityApi.includes('export async function POST'), 'security API rejects unauthorized callers and is GET-only');
+check(customerSecurityApi.includes('no-store, private')&&customerSecurityApi.includes('Pragma: "no-cache"'), 'security API prohibits shared caching');
+check(customerSecurityMigration.includes("p.code='security.access.read'")&&customerSecurityMigration.includes("e.entitlement_key='module.security'"), 'security RPC requires permission and effective entitlement');
+check(customerSecurityMigration.includes('overlapping_credential_assignment')&&customerSecurityMigration.includes('visitor_access_outside_invitation'), 'credential overlap and visitor periods are database-protected');
+check(customerSecurityMigration.includes('access_history_is_append_only')&&customerSecurityMigration.includes('final_credential_snapshot_is_immutable'), 'access history and final snapshots are immutable');
+check(customerSecurityMigration.includes('revoke select,insert,update,delete on all tables in schema security_access from authenticated,anon'), 'raw security tables cannot bypass masked RPC');
+check(!customerSecurityMigration.includes('raw_uid')&&!customerSecurityMigration.includes('pin_code')&&!customerSecurityMigration.includes('qr_token')&&!customerSecurityMigration.includes('unlock_token'), 'raw credentials and control tokens are absent');
+check(customerSecurityMigration.includes("'credential_data_masked',true")&&customerSecurityMigration.includes("'physical_control',false"), 'security RPC declares masking and disables physical control');
+check(customerSecurityAdr.includes('Production acceptance is read-only')&&customerSecurityAdr.includes('fail closed'), 'security ADR records read-only fail-closed boundaries');
 check(admin.includes("import 'server-only'"), 'admin client is server-only');
 check(admin.includes('persistSession: false'), 'admin client never persists sessions');
 check(serverEnv.includes('SUPABASE_SECRET_KEY'), 'server secret has an isolated environment boundary');
