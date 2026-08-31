@@ -1,6 +1,6 @@
 /**
  * Authoritative Rendered DOM & Copy Leak Audit for CLADORA
- * Audits all 41 user-facing routes across all 3 supported locales (123 localized routes).
+ * Audits all 65 user-facing routes across all 3 supported locales (195 localized routes).
  *
  * Quality Gates:
  * 1. HTTP 200 on public routes; protected /app routes must redirect to localized login
@@ -66,6 +66,11 @@ export const ALL_USER_ROUTES = [
   '/app/governance',
   '/app/meetings',
   '/app/maintenance',
+  '/app/vendors',
+  '/app/vendor-contracts',
+  '/app/procurement',
+  '/app/purchase-orders',
+  '/app/vendor-sla',
   '/app/meters',
   '/app/migration/shadow-ledger',
   '/app/portfolio',
@@ -256,7 +261,7 @@ export const DISALLOWED_ROMANIAN_PHRASES = [
 function fetchPage(path, port = 3000) {
   return new Promise((resolve, reject) => {
     const req = http.get({
-      host: 'localhost',
+      host: '127.0.0.1',
       port,
       path,
       headers: { 'Accept': 'text/html' }

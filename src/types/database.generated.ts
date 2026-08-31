@@ -1172,6 +1172,10 @@ export type Database = {
         Args: { p_context_id: string; p_view?: string; p_query?: string | null; p_status?: string | null; p_priority?: string | null; p_from?: string | null; p_to?: string | null; p_limit?: number; p_offset?: number; p_id?: string | null };
         Returns: Json;
       };
+      get_customer_procurement: {
+        Args: { p_context_id: string; p_view?: string; p_query?: string | null; p_status?: string | null; p_currency?: string | null; p_from?: string | null; p_to?: string | null; p_limit?: number; p_offset?: number; p_id?: string | null };
+        Returns: Json;
+      };
     };
     Enums: { priority: 'low'|'normal'|'high'|'urgent'|'emergency'; work_order_status: 'draft'|'scheduled'|'assigned'|'in_progress'|'blocked'|'completed'|'verified'|'cancelled' };
     CompositeTypes: { [key: string]: unknown };

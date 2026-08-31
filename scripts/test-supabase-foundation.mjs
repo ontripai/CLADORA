@@ -138,6 +138,16 @@ const customerSecurityPanel = read('src/components/customer/CustomerSecurityAcce
 const customerSecurityApi = read('src/app/api/customer/v1/security-access/route.ts');
 const customerSecurityMigration = read('supabase/migrations/20260829005300_customer_security_access_credentials_visitors.sql');
 const customerSecurityAdr = read('docs/architecture/ADR-CLD-046-customer-security-access.md');
+const customerVendorsPage = read('src/app/[lang]/app/vendors/page.tsx');
+const customerVendorContractsPage = read('src/app/[lang]/app/vendor-contracts/page.tsx');
+const customerProcurementPage = read('src/app/[lang]/app/procurement/page.tsx');
+const customerPurchaseOrdersPage = read('src/app/[lang]/app/purchase-orders/page.tsx');
+const customerVendorSlaPage = read('src/app/[lang]/app/vendor-sla/page.tsx');
+const customerProcurementPanel = read('src/components/customer/CustomerProcurementDashboard.tsx');
+const customerProcurementApi = read('src/app/api/customer/v1/procurement/route.ts');
+const customerProcurementMigration = read('supabase/migrations/20260831005400_customer_vendors_contracts_procurement_registry.sql');
+const customerProcurementAdr = read('docs/architecture/ADR-CLD-047-customer-vendors-procurement.md');
+const customerAppShell = read('src/components/customer/CustomerAppShell.tsx');
 const platformApiRoutes = [
   'src/app/api/platform/v1/workspaces/route.ts',
   'src/app/api/platform/v1/workspaces/[id]/transitions/route.ts',
@@ -310,6 +320,21 @@ check(customerSecurityMigration.includes('revoke select,insert,update,delete on 
 check(!customerSecurityMigration.includes('raw_uid')&&!customerSecurityMigration.includes('pin_code')&&!customerSecurityMigration.includes('qr_token')&&!customerSecurityMigration.includes('unlock_token'), 'raw credentials and control tokens are absent');
 check(customerSecurityMigration.includes("'credential_data_masked',true")&&customerSecurityMigration.includes("'physical_control',false"), 'security RPC declares masking and disables physical control');
 check(customerSecurityAdr.includes('Production acceptance is read-only')&&customerSecurityAdr.includes('fail closed'), 'security ADR records read-only fail-closed boundaries');
+check([customerVendorsPage,customerVendorContractsPage,customerProcurementPage,customerPurchaseOrdersPage,customerVendorSlaPage].every(page=>!page.includes('DemoStore')&&page.includes('CustomerProcurementDashboard')), 'production procurement routes contain no demo fixtures');
+check(customerProcurementPanel.includes('/api/customer/v1/procurement?')&&customerProcurementPanel.includes('cache: "no-store"')&&customerProcurementPanel.includes('credentials: "same-origin"'), 'procurement UI uses protected non-cached same-origin API');
+check(["vendors", "contracts", "quotes", "purchase_orders", "sla"].every(view=>customerProcurementPanel.includes(`"${view}"`)), 'procurement UI exposes every authorized registry view');
+check(customerProcurementPanel.includes('title: "Furnizori, contracte și achiziții"')&&customerProcurementPanel.includes('title: "فروشندگان، قراردادها و تدارکات"'), 'procurement UI localizes Romanian and Persian headings');
+check(customerProcurementPanel.includes('role="status"')&&customerProcurementPanel.includes('role="alert"')&&customerProcurementPanel.includes('setOffset'), 'procurement UI implements loading, error and pagination states');
+check(customerProcurementApi.includes('UNAUTHORIZED')&&customerProcurementApi.includes('MFA_REQUIRED')&&!customerProcurementApi.includes('export async function POST'), 'procurement API rejects unauthorized callers and is GET-only');
+check(customerProcurementApi.includes('no-store, private')&&customerProcurementApi.includes('Pragma: "no-cache"'), 'procurement API prohibits shared caching');
+check(customerProcurementApi.includes('PROCUREMENT_UNAVAILABLE')&&customerProcurementApi.includes('status: 503'), 'procurement API fails closed when Preview configuration is unavailable');
+check(customerProcurementMigration.includes("p.code='maintenance.procurement.read'")&&customerProcurementMigration.includes("e.entitlement_key='module.maintenance'"), 'procurement RPC requires explicit permission and effective entitlement');
+check(customerProcurementMigration.includes("lower(v.role_code) not in ('association_admin','property_manager','president','censor')"), 'procurement RPC limits commercial records to approved oversight roles');
+check(!customerProcurementMigration.includes('contract_ref_encrypted')&&!customerProcurementMigration.includes('scope_snapshot')&&!customerProcurementMigration.includes('snapshot_json')&&!customerProcurementMigration.includes('approved_by'), 'procurement projection excludes encrypted references, snapshots and approver identity');
+check(customerProcurementMigration.includes("'commercial_data_redacted',true")&&customerProcurementMigration.includes("'read_only',true"), 'procurement RPC declares redacted read-only output');
+check(customerProcurementMigration.includes('revoke select,insert,update,delete on maintenance.vendors'), 'raw procurement tables cannot bypass the safe projection');
+check(customerAppShell.includes('maintenance.procurement.read')&&customerAppShell.includes('module.maintenance')&&customerAppShell.includes('/app/vendors'), 'customer navigation requires permission and entitlement');
+check(customerProcurementAdr.includes('Owner and tenant-resident roles are denied')&&customerProcurementAdr.includes('/demo/app` is unchanged'), 'procurement ADR records commercial access and demo boundaries');
 check(admin.includes("import 'server-only'"), 'admin client is server-only');
 check(admin.includes('persistSession: false'), 'admin client never persists sessions');
 check(serverEnv.includes('SUPABASE_SECRET_KEY'), 'server secret has an isolated environment boundary');
