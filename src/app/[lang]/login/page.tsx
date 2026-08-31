@@ -1,32 +1,31 @@
 import type { Metadata } from 'next';
 import { getRouteMetadata } from '@/config/routes-metadata';
-import React from 'react';
-import { Language } from '@/types';
 import { LoginForm } from '@/components/auth/LoginForm';
+import type { Language } from '@/types';
 
-
-
-
-export async function generateStaticParams() {
-  return [{ lang: 'en' }, { lang: 'ro' }, { lang: 'fa' }];
-}
-
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 export async function generateMetadata(
-  props: {
-    params: Promise<{ lang: Language }>;
-  }
+  props: { params: Promise<{ lang: Language }> },
 ): Promise<Metadata> {
-  const params = await props.params;
-  return getRouteMetadata('/login', params.lang);
+  const { lang } = await props.params;
+  return getRouteMetadata('/login', lang);
 }
 
 export default async function LoginPage(props: { params: Promise<{ lang: Language }> }) {
-  const params = await props.params;
+  const { lang } = await props.params;
+  const captchaSiteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY?.trim() || undefined;
+  const captchaRequired = process.env.VERCEL_ENV === 'production';
+
   return (
-    <main className="min-h-screen pt-32 pb-24 bg-[#F6F9FC] flex items-center justify-center">
-      <div className="max-w-md w-full mx-auto px-4">
-        <LoginForm lang={params.lang} />
+    <main className="flex min-h-screen items-center justify-center bg-[#F6F9FC] pb-24 pt-32">
+      <div className="mx-auto w-full max-w-md px-4">
+        <LoginForm
+          lang={lang}
+          captchaRequired={captchaRequired}
+          captchaSiteKey={captchaSiteKey}
+        />
       </div>
     </main>
   );
