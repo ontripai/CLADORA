@@ -295,8 +295,12 @@ check(!customerOccupancyMigration.includes('tax_ref_encrypted,') && !customerOcc
 check(customerOccupancyMigration.includes("'pii_redacted',true"), 'registry RPC declares personal data redaction');
 check(customerOccupancyAdr.includes('Production acceptance is read-only') && customerOccupancyAdr.includes('fail closed'), 'occupancy ADR records privacy and fail-closed release boundaries');
 check([customerSecurityPage,customerCredentialsPage,customerVisitorsPage,customerAccessLogsPage].every(page=>!page.includes('DemoStore')&&page.includes('CustomerSecurityAccessDashboard')), 'production security access pages contain no demo fixtures');
-check(customerSecurityPanel.includes('/api/customer/v1/security-access?')&&customerSecurityPanel.includes('cache:"no-store"')&&customerSecurityPanel.includes('credentials:"same-origin"'), 'security UI uses protected non-cached same-origin API');
-check(customerSecurityPanel.includes('"access_points"|"credentials"|"visitors"|"access_logs"|"credential_history"|"visitor_history"|"links"'), 'security UI exposes every authorized registry view');
+check(customerSecurityPanel.includes('/api/customer/v1/security-access?')&&/cache:\s*"no-store"/.test(customerSecurityPanel)&&/credentials:\s*"same-origin"/.test(customerSecurityPanel), 'security UI uses protected non-cached same-origin API');
+check(["access_points", "credentials", "visitors", "access_logs", "credential_history", "visitor_history", "links"].every(view=>customerSecurityPanel.includes(`"${view}"`)), 'security UI exposes every authorized registry view');
+check(customerSecurityPanel.includes('eyebrow: "CLADORA · Acces de securitate"')&&customerSecurityPanel.includes('eyebrow: "کلادورا · دسترسی امنیتی"'), 'security UI localizes visible headings in Romanian and Persian');
+check(customerSecurityPanel.includes('allStatuses: "Toate stările"')&&customerSecurityPanel.includes('allStatuses: "همه وضعیت‌ها"'), 'security UI localizes status filters in Romanian and Persian');
+check(customerSecurityPanel.includes('point_type: "Tip punct"')&&customerSecurityPanel.includes('point_type: "نوع نقطه"'), 'security UI localizes database field labels in Romanian and Persian');
+check(customerSecurityPanel.includes('access_card: "Card de acces"')&&customerSecurityPanel.includes('access_card: "کارت دسترسی"'), 'security UI localizes credential and access enum values');
 check(customerSecurityApi.includes('UNAUTHORIZED')&&customerSecurityApi.includes('MFA_REQUIRED')&&!customerSecurityApi.includes('export async function POST'), 'security API rejects unauthorized callers and is GET-only');
 check(customerSecurityApi.includes('no-store, private')&&customerSecurityApi.includes('Pragma: "no-cache"'), 'security API prohibits shared caching');
 check(customerSecurityMigration.includes("p.code='security.access.read'")&&customerSecurityMigration.includes("e.entitlement_key='module.security'"), 'security RPC requires permission and effective entitlement');
