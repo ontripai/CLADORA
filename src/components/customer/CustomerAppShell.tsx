@@ -10,6 +10,7 @@ import {
   Gauge,
   Gavel,
   Home,
+  KeyRound,
   Landmark,
   LogOut,
   Megaphone,
@@ -42,6 +43,7 @@ const copy = {
     documents: "Documente",
     occupancy: "Ocupare și rezidenți",
     ownership: "Proprietate și contracte",
+    security: "Acces și securitate",
     billing: "Facturi și creanțe",
     payments: "Plăți",
     reconciliation: "Reconciliere",
@@ -63,6 +65,7 @@ const copy = {
     documents: "Documents",
     occupancy: "Occupancy & residents",
     ownership: "Ownership & leases",
+    security: "Access & security",
     billing: "Billing & receivables",
     payments: "Payments",
     reconciliation: "Reconciliation",
@@ -84,6 +87,7 @@ const copy = {
     documents: "اسناد",
     occupancy: "سکونت و ساکنان",
     ownership: "مالکیت و اجاره‌ها",
+    security: "دسترسی و امنیت",
     billing: "صورتحساب‌ها و مطالبات",
     payments: "پرداخت‌ها",
     reconciliation: "تطبیق بانکی",
@@ -111,7 +115,8 @@ function Shell({
       "module.communications",
     ),
     documents = state.dashboard?.entitlements.includes("module.documents"),
-    occupancy = state.dashboard?.entitlements.includes("module.occupancy");
+    occupancy = state.dashboard?.entitlements.includes("module.occupancy"),
+    security = state.dashboard?.entitlements.includes("module.security");
   return (
     <div
       className="min-h-screen bg-[#F6F9FC] text-[#102A43]"
@@ -265,6 +270,12 @@ function Shell({
                   {t.ownership}
                 </Link>
               </>
+            ) : null}
+            {security ? (
+              <Link href={`/${lang}/app/security-access`} className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs font-bold text-[#102A43] hover:bg-[#F6F9FC]">
+                <KeyRound className="h-4 w-4 text-[#0E9F8E]" />
+                {t.security}
+              </Link>
             ) : null}
             {billing ? (
               <Link
