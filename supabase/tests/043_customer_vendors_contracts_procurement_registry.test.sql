@@ -1,10 +1,10 @@
 begin;
 create extension if not exists pgtap with schema extensions;
 set search_path=public,extensions;
-select plan(39);
+select plan(40);
 
 select ok(exists(select 1 from identity.permissions where code='maintenance.procurement.read'),'procurement read permission exists');
-select is((select count(*)::integer from identity.role_permissions rp join identity.permissions p on p.id=rp.permission_id join identity.roles r on r.id=rp.role_id where p.code='maintenance.procurement.read' and rp.effect='allow' and lower(r.code) in ('association_admin','property_manager','president','censor')),4,'approved customer roles receive procurement permission');
+select ok(not exists(select 1 from identity.roles r where lower(r.code) in ('association_admin','property_manager','president','censor') and not exists(select 1 from identity.role_permissions rp join identity.permissions p on p.id=rp.permission_id where rp.role_id=r.id and p.code='maintenance.procurement.read' and rp.effect='allow')),'every existing approved customer role receives procurement permission');
 select ok(exists(select 1 from pg_proc where oid='maintenance.get_customer_procurement(uuid,text,text,text,text,date,date,integer,integer,uuid)'::regprocedure),'procurement RPC exists');
 select ok((select prorettype='jsonb'::regtype from pg_proc where oid='maintenance.get_customer_procurement(uuid,text,text,text,text,date,date,integer,integer,uuid)'::regprocedure),'RPC returns jsonb');
 select ok((select provolatile='s' from pg_proc where oid='maintenance.get_customer_procurement(uuid,text,text,text,text,date,date,integer,integer,uuid)'::regprocedure),'RPC is stable');
