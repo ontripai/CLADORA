@@ -8,7 +8,7 @@ select ok(exists(select 1 from pg_proc where oid='occupancy.get_customer_registr
 select ok((select prorettype='jsonb'::regtype from pg_proc where oid='occupancy.get_customer_registry(uuid,text,text,text,text,date,date,integer,integer,uuid)'::regprocedure),'RPC returns jsonb');
 select ok((select provolatile='s' from pg_proc where oid='occupancy.get_customer_registry(uuid,text,text,text,text,date,date,integer,integer,uuid)'::regprocedure),'RPC is stable');
 select ok((select prosecdef from pg_proc where oid='occupancy.get_customer_registry(uuid,text,text,text,text,date,date,integer,integer,uuid)'::regprocedure),'RPC owns authorization');
-select ok(position('auth.uid()is null' in regexp_replace(pg_get_functiondef('occupancy.get_customer_registry(uuid,text,text,text,text,date,date,integer,integer,uuid)'::regprocedure),'\s+','','g'))>0,'unauthorized rejected');
+select ok(position('auth.uid()isnull' in lower(regexp_replace(pg_get_functiondef('occupancy.get_customer_registry(uuid,text,text,text,text,date,date,integer,integer,uuid)'::regprocedure),'\s+','','g')))>0,'unauthorized rejected');
 select ok(position($n$auth.jwt()->>'aal'$n$ in pg_get_functiondef('occupancy.get_customer_registry(uuid,text,text,text,text,date,date,integer,integer,uuid)'::regprocedure))>0,'AAL2 required');
 select ok(position($n$p.code='occupancy.registry.read'$n$ in pg_get_functiondef('occupancy.get_customer_registry(uuid,text,text,text,text,date,date,integer,integer,uuid)'::regprocedure))>0,'permission required');
 select ok(position($n$e.entitlement_key='module.occupancy'$n$ in pg_get_functiondef('occupancy.get_customer_registry(uuid,text,text,text,text,date,date,integer,integer,uuid)'::regprocedure))>0,'entitlement required');
