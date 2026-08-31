@@ -77,14 +77,14 @@ begin
   end if;return case when tg_op='DELETE'then old else new end;
  elsif tg_table_name='lifecycle_events'then
   if tg_op<>'INSERT'then raise exception 'occupancy_lifecycle_is_append_only';end if;
-  if not case new.entity_type
+  if not (case new.entity_type
    when'party'then exists(select 1 from portfolio.parties p where p.id=new.entity_id and p.tenant_id=new.tenant_id)
    when'ownership'then exists(select 1 from portfolio.ownerships o where o.id=new.entity_id and o.tenant_id=new.tenant_id)
    when'lease'then exists(select 1 from occupancy.leases l where l.id=new.entity_id and l.tenant_id=new.tenant_id)
    when'occupancy'then exists(select 1 from occupancy.occupancies o where o.id=new.entity_id and o.tenant_id=new.tenant_id)
    when'resident'then exists(select 1 from portfolio.parties p where p.id=new.entity_id and p.tenant_id=new.tenant_id)
    when'party_mapping'then exists(select 1 from identity.membership_parties mp where mp.party_id=new.entity_id and mp.tenant_id=new.tenant_id)
-   else false end then raise exception 'occupancy_lifecycle_cross_tenant_or_invalid_link';end if;
+   else false end) then raise exception 'occupancy_lifecycle_cross_tenant_or_invalid_link';end if;
   return new;
  end if;return case when tg_op='DELETE'then old else new end;
 end $$;
