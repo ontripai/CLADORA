@@ -39,6 +39,29 @@ const securityHeaders = [
   },
 ];
 
+const sensitiveAuthHeaders = [
+  {
+    key: 'Cache-Control',
+    value: 'no-store, private',
+  },
+  {
+    key: 'Pragma',
+    value: 'no-cache',
+  },
+  {
+    key: 'Vary',
+    value: 'Cookie',
+  },
+];
+
+const sensitiveAuthRoutes = [
+  '/:lang(ro|en|fa)/login',
+  '/:lang(ro|en|fa)/forgot-password',
+  '/:lang(ro|en|fa)/reset-password',
+  '/:lang(ro|en|fa)/password-recovery-result',
+  '/:lang(ro|en|fa)/auth/callback',
+];
+
 const nextConfig = {
   reactStrictMode: true,
   images: {
@@ -56,6 +79,10 @@ const nextConfig = {
         source: '/:path*',
         headers: securityHeaders,
       },
+      ...sensitiveAuthRoutes.map((source) => ({
+        source,
+        headers: sensitiveAuthHeaders,
+      })),
     ];
   },
 };
