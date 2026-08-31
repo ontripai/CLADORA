@@ -6,5 +6,12 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/:lang(ro|en|fa)/app/:path*', '/:lang(ro|en|fa)/login', '/:lang(ro|en|fa)/platform/:path+'],
+  matcher: [
+    '/:lang(ro|en|fa)/app/:path*',
+    '/:lang(ro|en|fa)/login',
+    '/:lang(ro|en|fa)/forgot-password',
+    '/:lang(ro|en|fa)/reset-password',
+    '/:lang(ro|en|fa)/password-recovery-result',
+    '/:lang(ro|en|fa)/platform/:path+',
+  ],
 };
