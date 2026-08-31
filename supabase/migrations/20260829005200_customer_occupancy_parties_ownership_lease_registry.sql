@@ -23,13 +23,13 @@ create table occupancy.lifecycle_events(
  entity_id uuid not null,event_type text not null,status_from text,status_to text,reason text,
  rule_version integer not null default 1 check(rule_version>0),occurred_at timestamptz not null default statement_timestamp()
 );
-create index occupancy_lifecycle_lookup_idx on occupancy.lifecycle_events(tenant_id,entity_type,entity_id,occurred_at desc,id desc);
-create index ownerships_party_id_idx on portfolio.ownerships(party_id);
-create index leases_landlord_party_idx on occupancy.leases(landlord_party_id);
-create index leases_tenant_party_idx on occupancy.leases(tenant_party_id);
-create index occupants_party_id_idx on occupancy.occupants(party_id);
-create index occupancy_events_entity_idx on occupancy.lifecycle_events(entity_id);
-create index membership_parties_validity_idx on identity.membership_parties(tenant_id,party_id,valid_from,valid_until);
+create index if not exists occupancy_lifecycle_lookup_idx on occupancy.lifecycle_events(tenant_id,entity_type,entity_id,occurred_at desc,id desc);
+create index if not exists ownerships_party_id_idx on portfolio.ownerships(party_id);
+create index if not exists leases_landlord_party_idx on occupancy.leases(landlord_party_id);
+create index if not exists leases_tenant_party_idx on occupancy.leases(tenant_party_id);
+create index if not exists occupants_party_id_idx on occupancy.occupants(party_id);
+create index if not exists occupancy_events_entity_idx on occupancy.lifecycle_events(entity_id);
+create index if not exists membership_parties_validity_idx on identity.membership_parties(tenant_id,party_id,valid_from,valid_until);
 
 create or replace function occupancy.enforce_customer_registry_integrity()
 returns trigger language plpgsql security definer set search_path=pg_catalog,portfolio,occupancy,identity
