@@ -124,6 +124,12 @@ const customerDocumentsPanel = read('src/components/customer/CustomerDocumentsDa
 const customerDocumentsApi = read('src/app/api/customer/v1/documents/route.ts');
 const customerDocumentsMigration = read('supabase/migrations/20260829005100_customer_document_vault_secure_evidence.sql');
 const customerDocumentsAdr = read('docs/architecture/ADR-CLD-044-customer-document-vault.md');
+const customerOccupancyPage = read('src/app/[lang]/app/occupancy/page.tsx');
+const customerOccupancyDetailsPage = read('src/app/[lang]/app/occupancy/[id]/page.tsx');
+const customerOccupancyPanel = read('src/components/customer/CustomerOccupancyDashboard.tsx');
+const customerOccupancyApi = read('src/app/api/customer/v1/occupancy/route.ts');
+const customerOccupancyMigration = read('supabase/migrations/20260829005200_customer_occupancy_parties_ownership_lease_registry.sql');
+const customerOccupancyAdr = read('docs/architecture/ADR-CLD-045-customer-occupancy-registry.md');
 const platformApiRoutes = [
   'src/app/api/platform/v1/workspaces/route.ts',
   'src/app/api/platform/v1/workspaces/[id]/transitions/route.ts',
@@ -267,6 +273,19 @@ check(customerDocumentsMigration.includes('revoke select on all tables in schema
 check(!customerDocumentsMigration.includes("'object_path',") && !customerDocumentsMigration.includes("'metadata_json',") && !customerDocumentsMigration.includes("'uploaded_by',") && !customerDocumentsMigration.includes("'signed_url',"), 'document projection excludes storage paths, raw metadata, identities and signed URLs');
 check(customerDocumentsMigration.includes("'storage_access',false") && customerDocumentsMigration.includes("'signed_urls',false"), 'document RPC explicitly disables storage and signed URL access');
 check(customerDocumentsAdr.includes('Production acceptance is read-only') && customerDocumentsAdr.includes('fail closed'), 'document ADR records read-only fail-closed architecture');
+check(!customerOccupancyPage.includes('DemoStore') && customerOccupancyPage.includes('CustomerOccupancyDashboard') && customerOccupancyDetailsPage.includes('initialId'), 'production occupancy list and details contain no demo fixtures');
+check(customerOccupancyPanel.includes('/api/customer/v1/occupancy?') && customerOccupancyPanel.includes('cache: "no-store"') && customerOccupancyPanel.includes('credentials: "same-origin"'), 'occupancy UI uses protected non-cached same-origin API');
+check(customerOccupancyPanel.includes('"parties" | "residents" | "ownerships" | "leases" | "occupancies" | "mappings" | "links" | "history"'), 'occupancy UI exposes every authorized registry view');
+check(customerOccupancyApi.includes('UNAUTHORIZED') && customerOccupancyApi.includes('MFA_REQUIRED') && !customerOccupancyApi.includes('export async function POST'), 'occupancy API rejects unauthorized callers and is GET-only');
+check(customerOccupancyApi.includes('no-store, private') && customerOccupancyApi.includes('Pragma: "no-cache"'), 'occupancy API prohibits shared caching');
+check(customerOccupancyMigration.includes("p.code='occupancy.registry.read'") && customerOccupancyMigration.includes("e.entitlement_key='module.occupancy'"), 'occupancy RPC requires permission and effective entitlement');
+check(customerOccupancyMigration.includes('ownership_share_exceeds_one') && customerOccupancyMigration.includes('overlapping_active_lease'), 'ownership totals and lease overlap are database-protected');
+check(customerOccupancyMigration.includes('occupant_outside_active_lease') && customerOccupancyMigration.includes('party_mapping_cross_tenant_or_invalid'), 'resident period and party mapping are database-protected');
+check(customerOccupancyMigration.includes('final_ownership_snapshot_is_immutable') && customerOccupancyMigration.includes('occupancy_lifecycle_is_append_only'), 'final registry snapshots and lifecycle are immutable');
+check(customerOccupancyMigration.includes('revoke select on all tables in schema occupancy from authenticated'), 'raw occupancy data cannot bypass redacted RPC');
+check(!customerOccupancyMigration.includes('tax_ref_encrypted,') && !customerOccupancyMigration.includes('email_encrypted,') && !customerOccupancyMigration.includes('phone_encrypted,'), 'registry projection excludes encrypted personal fields');
+check(customerOccupancyMigration.includes("'pii_redacted',true"), 'registry RPC declares personal data redaction');
+check(customerOccupancyAdr.includes('Production acceptance is read-only') && customerOccupancyAdr.includes('fail closed'), 'occupancy ADR records privacy and fail-closed release boundaries');
 check(admin.includes("import 'server-only'"), 'admin client is server-only');
 check(admin.includes('persistSession: false'), 'admin client never persists sessions');
 check(serverEnv.includes('SUPABASE_SECRET_KEY'), 'server secret has an isolated environment boundary');
