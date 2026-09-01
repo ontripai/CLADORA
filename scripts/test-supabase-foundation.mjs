@@ -371,8 +371,8 @@ check(serverEnv.includes("startsWith('sb_secret_')"), 'only new server secret ke
 check(invitationApi.includes('inviteUserByEmail'), 'platform invitation dispatch uses Supabase Auth admin');
 check(invitationApi.includes('revoke_workspace_invitation'), 'failed Auth delivery compensates by revoking database invitation');
 check(!invitationApi.includes('invitation_token: row.invitation_token'), 'raw invitation token is absent from API responses');
-check(callback.includes('httpOnly: true'), 'callback stores invitation token in an HttpOnly cookie');
-check(callback.includes("destination.searchParams.delete('token')"), 'callback removes invitation token from the browser URL');
+check(!callback.includes('cladora-invitation') && !callback.includes("searchParams.get('token')"), 'secure email callback never ingests the workspace invitation secret');
+check(authEmailPolicy.includes('parsed.search') && authEmailPolicy.includes('parsed.hash'), 'query- or fragment-bearing invitation destinations fail closed');
 check(acceptanceApi.includes("request.headers.get('origin')"), 'acceptance POST enforces same-origin requests');
 check(acceptanceApi.includes('supabase.auth.getClaims()'), 'acceptance endpoint verifies signed claims');
 check(acceptanceApi.includes("'get_my_primary_admin_onboarding'"), 'acceptance resolves onboarding state through an actor-scoped RPC');
