@@ -45,8 +45,24 @@ const sensitiveAuthHeaders = [
     value: 'no-store, private',
   },
   {
+    key: 'CDN-Cache-Control',
+    value: 'no-store',
+  },
+  {
+    key: 'Surrogate-Control',
+    value: 'no-store',
+  },
+  {
     key: 'Pragma',
     value: 'no-cache',
+  },
+  {
+    key: 'Referrer-Policy',
+    value: 'no-referrer',
+  },
+  {
+    key: 'X-Robots-Tag',
+    value: 'noindex, nofollow, noarchive',
   },
   {
     key: 'Vary',
@@ -60,6 +76,7 @@ const sensitiveAuthRoutes = [
   '/:lang(ro|en|fa)/reset-password',
   '/:lang(ro|en|fa)/password-recovery-result',
   '/:lang(ro|en|fa)/auth/callback',
+  '/:lang(ro|en|fa)/auth-result',
 ];
 
 const nextConfig = {
