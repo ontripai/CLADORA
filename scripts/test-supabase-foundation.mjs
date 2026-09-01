@@ -216,7 +216,7 @@ check(!callback.includes('console.') && !callback.includes('location.hash'), 'ca
 check(authEmailPolicy.includes("'access_token'") && authEmailPolicy.includes("'refresh_token'") && authEmailPolicy.includes("'code'"), 'access, refresh, session, and code query credentials are fail-closed');
 check(authEmailPolicy.includes("parsed.search") && authEmailPolicy.includes("parsed.hash") && authEmailPolicy.includes('ALLOWED_NEXT_PATHS'), 'callback destinations reject query, fragment, and non-allowlisted redirects');
 check(authEmailPolicy.includes("invite: (lang) => [\`/\${lang}/reset-password\`]") && authEmailPolicy.includes("recovery: (lang) => [\`/\${lang}/reset-password\`]"), 'verified Invite and Recovery flows enter secure password setup');
-check(['confirmed', 'invalid', 'expired', 'reused', 'missing'].every((status) => authResultPage.includes(\`'\${status}'\`)), 'localized callback result UI covers success, invalid, expired, reused, and missing token states');
+check(['confirmed', 'invalid', 'expired', 'reused', 'missing'].every((status) => authResultPage.includes(`'${status}'`)), 'localized callback result UI covers success, invalid, expired, reused, and missing token states');
 check(['ro:', 'en:', 'fa:'].every((locale) => authResultPage.includes(locale)) && authResultPage.includes("dir={lang === 'fa' ? 'rtl' : 'ltr'}"), 'callback results cover RO, EN, FA and explicit Persian RTL');
 check(!authResultPage.includes('access_token') && !authResultPage.includes('refresh_token') && !authResultPage.includes('token_hash'), 'callback result HTML contains no Auth credential names or values');
 check(!proxy.includes('/auth/callback') && !proxy.includes('/auth-result'), 'Auth callback and result bypass Proxy query processing');
