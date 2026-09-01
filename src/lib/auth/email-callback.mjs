@@ -21,7 +21,7 @@ const FORBIDDEN_AUTH_QUERY_KEYS = new Set([
 
 const DEFAULT_DESTINATIONS = {
   email: (lang) => `/${lang}/auth-result?status=confirmed`,
-  invite: (lang) => `/${lang}/accept-invitation`,
+  invite: (lang) => `/${lang}/reset-password`,
   magiclink: (lang) => `/${lang}/app/dashboard`,
   recovery: (lang) => `/${lang}/reset-password`,
   signup: (lang) => `/${lang}/auth-result?status=confirmed`,
@@ -30,7 +30,7 @@ const DEFAULT_DESTINATIONS = {
 
 const ALLOWED_NEXT_PATHS = {
   email: (lang) => [`/${lang}/app/dashboard`],
-  invite: (lang) => [`/${lang}/accept-invitation`],
+  invite: (lang) => [`/${lang}/reset-password`],
   magiclink: (lang) => [`/${lang}/app/dashboard`],
   recovery: (lang) => [`/${lang}/reset-password`],
   signup: (lang) => [`/${lang}/app/dashboard`],
