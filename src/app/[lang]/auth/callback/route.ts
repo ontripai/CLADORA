@@ -35,10 +35,11 @@ function reject(request: NextRequest, lang: string, status: string): NextRespons
 }
 
 function hasUnexpectedQuery(searchParams: URLSearchParams): boolean {
-  for (const key of searchParams.keys()) {
-    if (!ALLOWED_QUERY_KEYS.has(key)) return true;
-  }
-  return false;
+  let unexpected = false;
+  searchParams.forEach((_, key) => {
+    if (!ALLOWED_QUERY_KEYS.has(key)) unexpected = true;
+  });
+  return unexpected;
 }
 
 export async function GET(
