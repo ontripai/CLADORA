@@ -203,6 +203,31 @@ export type Database = {
           onboarding_required: boolean;
         }>;
       };
+      list_my_claimable_workspace_invitations: {
+        Args: Record<PropertyKey, never>;
+        Returns: Array<{
+          invitation_id: string;
+          workspace_label: string;
+          workspace_type: string;
+          workspace_environment: string;
+          access_label: string;
+          invitation_expires_at: string;
+        }>;
+      };
+      claim_workspace_invitation: {
+        Args: {
+          p_invitation_id: string;
+          p_display_name: string;
+          p_locale?: string;
+          p_timezone?: string;
+        };
+        Returns: Array<{
+          claim_status: 'claimed' | 'already_claimed_by_you';
+          customer_workspace_id: string;
+          membership_id: string;
+          onboarding_required: boolean;
+        }>;
+      };
       complete_primary_admin_onboarding: {
         Args: { p_workspace_id: string; p_expected_version: number; p_reason: string };
         Returns: Database['platform']['Tables']['customer_workspaces']['Row'];
@@ -973,6 +998,31 @@ export type Database = {
           p_timezone?: string;
         };
         Returns: Array<{
+          customer_workspace_id: string;
+          membership_id: string;
+          onboarding_required: boolean;
+        }>;
+      };
+      list_my_claimable_workspace_invitations: {
+        Args: Record<PropertyKey, never>;
+        Returns: Array<{
+          invitation_id: string;
+          workspace_label: string;
+          workspace_type: string;
+          workspace_environment: string;
+          access_label: string;
+          invitation_expires_at: string;
+        }>;
+      };
+      claim_workspace_invitation: {
+        Args: {
+          p_invitation_id: string;
+          p_display_name: string;
+          p_locale?: string;
+          p_timezone?: string;
+        };
+        Returns: Array<{
+          claim_status: 'claimed' | 'already_claimed_by_you';
           customer_workspace_id: string;
           membership_id: string;
           onboarding_required: boolean;

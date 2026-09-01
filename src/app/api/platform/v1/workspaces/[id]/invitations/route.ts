@@ -16,7 +16,6 @@ const requestSchema = z.object({
 
 type InvitationRpcRow = {
   invitation_id: string;
-  invitation_token: string;
   invitation_expires_at: string;
 };
 
@@ -93,7 +92,7 @@ export async function POST(
   }
 
   const row = (Array.isArray(data) ? data[0] : data) as InvitationRpcRow | null;
-  if (!row?.invitation_id || !row.invitation_token) {
+  if (!row?.invitation_id) {
     return NextResponse.json(
       { error: { code: 'INVITATION_CREATION_FAILED', message: 'Invitation result was incomplete.' } },
       { status: 500, headers: NO_CACHE_HEADERS },
@@ -102,8 +101,7 @@ export async function POST(
 
   try {
     const origin = getApplicationOrigin();
-    const next = `/${parsed.lang}/accept-invitation?token=${encodeURIComponent(row.invitation_token)}`;
-    const redirectTo = `${origin}/${parsed.lang}/auth/callback?next=${encodeURIComponent(next)}`;
+    const redirectTo = `${origin}/${parsed.lang}/auth/callback`;
     const admin = createAdminClient();
     const { error: inviteError } = await admin.auth.admin.inviteUserByEmail(parsed.email, { redirectTo });
     if (inviteError) throw inviteError;

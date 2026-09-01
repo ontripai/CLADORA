@@ -44,6 +44,8 @@ jobs:
         run: supabase start
       - name: Run pgTAP database tests
         run: supabase test db
+      - name: Run local database security and performance advisors
+        run: supabase db lint --local --level warning
       - name: Show service status on failure
         if: failure()
         run: supabase status || true
