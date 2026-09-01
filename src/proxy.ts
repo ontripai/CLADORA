@@ -5,6 +5,7 @@ export async function proxy(request: NextRequest) {
   return updateSession(request);
 }
 
+// Auth callback and result routes intentionally bypass Proxy so credentials are handled only by the callback route.
 export const config = {
   matcher: [
     '/:lang(ro|en|fa)/app/:path*',
