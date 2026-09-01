@@ -35,6 +35,12 @@ export default async function AppLayout(
     redirect(`/${lang}/login`);
   }
 
+  const { data: factors, error: factorsError } = await supabase.auth.mfa.listFactors();
+  if (factorsError) redirect(`/${lang}/login?reason=security`);
+  if (!factors.totp.some((factor) => factor.status === 'verified')) {
+    redirect(`/${lang}/mfa/setup?reason=customer_required`);
+  }
+
   const { data: assurance, error: assuranceError } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
   if (assuranceError) redirect(`/${lang}/login?reason=security`);
   if (assurance.currentLevel !== 'aal2') {

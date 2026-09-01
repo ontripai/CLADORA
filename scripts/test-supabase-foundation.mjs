@@ -239,13 +239,15 @@ check(tokenlessInvitationTest.includes('same-user retry is idempotent') && token
 check(!proxy.includes('/auth/callback') && !proxy.includes('/auth-result'), 'Auth callback and result bypass Proxy query processing');
 check(nextConfig.includes('/forgot-password') && nextConfig.includes('/reset-password') && nextConfig.includes('/auth-result') && nextConfig.includes('sensitiveAuthHeaders'), 'all recovery and callback result pages receive explicit no-store headers');
 check(mfaPage.includes('supabase.auth.getClaims()'), 'MFA page requires an authenticated session');
+check(mfaPage.includes("assurance.currentLevel === 'aal2'") && mfaPage.includes("assurance.nextLevel !== 'aal2'") && mfaPage.includes('/mfa/setup?reason=customer_required'), 'MFA routing separates satisfied, challengeable, and unenrolled sessions without a dashboard loop');
 check(mfaChallenge.includes('challengeAndVerify'), 'MFA challenge verifies a TOTP factor');
 check(accountSecurity.includes("factorType: 'totp'"), 'account security supports TOTP enrollment');
 check(accountSecurity.includes("scope: 'others'"), 'account security can revoke other sessions');
 check(accountSecurity.includes('minLength={12}'), 'password change UI enforces a 12-character minimum');
 check(accountSecurity.includes('current_password: currentPassword'), 'password changes supply the current password to Supabase Auth');
 check(accountSecurity.includes('autoComplete="current-password"'), 'password change UI collects the current password securely');
-check(protectedLayout.includes('getAuthenticatorAssuranceLevel'), 'customer data plane enforces enrolled MFA');
+check(protectedLayout.includes('listFactors') && protectedLayout.includes("factor.status === 'verified'") && protectedLayout.includes('/mfa/setup?reason=customer_required') && protectedLayout.includes('getAuthenticatorAssuranceLevel'), 'customer data plane requires verified enrollment before enforcing AAL2');
+check(login.includes("assurance.nextLevel === 'aal2'") && login.includes('/mfa/setup?reason=customer_required'), 'login routes challengeable and unenrolled sessions to distinct MFA flows');
 check(platformLayout.includes('getAuthenticatorAssuranceLevel'), 'platform control plane enforces enrolled MFA');
 check(demoSelector.includes('`/${lang}/demo/app/dashboard`'), 'demo role selection stays in the public demo data plane');
 check(!demoSelector.includes('`/${lang}/app/dashboard`'), 'demo role selection never enters the protected customer app');

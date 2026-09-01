@@ -13,7 +13,9 @@ export default async function MfaPage({ params }: { params: Promise<{ lang: stri
   const supabase = await createClient();
   const { data, error } = await supabase.auth.getClaims();
   if (error || !data?.claims) redirect(`/${lang}/login`);
-  const { data: assurance } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
-  if (assurance?.currentLevel === 'aal2' || assurance?.nextLevel !== 'aal2') redirect(`/${lang}/app/dashboard`);
+  const { data: assurance, error: assuranceError } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
+  if (assuranceError || !assurance) redirect(`/${lang}/login?reason=security`);
+  if (assurance.currentLevel === 'aal2') redirect(`/${lang}/app/dashboard`);
+  if (assurance.nextLevel !== 'aal2') redirect(`/${lang}/mfa/setup?reason=customer_required`);
   return <main className="flex min-h-screen items-center justify-center bg-[#F6F9FC] p-6"><MfaChallengeForm lang={lang} /></main>;
 }
