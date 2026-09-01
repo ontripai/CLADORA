@@ -67,10 +67,13 @@ export function AccountSecurityPanel({ lang }: { lang: Language }) {
     event.preventDefault();
     if (!enrollment || !/^\d{6}$/.test(code)) return;
     void act(async () => {
-      const { error: verifyError } = await createClient().auth.mfa.challengeAndVerify({ factorId: enrollment.id, code });
+      const supabase = createClient();
+      const { error: verifyError } = await supabase.auth.mfa.challengeAndVerify({ factorId: enrollment.id, code });
       if (verifyError) throw verifyError;
-      setEnrollment(null); setCode(''); setMessage(t.saved);
-      await refreshFactors(); router.refresh();
+      const { data: assurance, error: assuranceError } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
+      if (assuranceError || assurance.currentLevel !== 'aal2') throw assuranceError ?? new Error('MFA assurance level was not elevated.');
+      router.replace(`/${lang}/app/dashboard`);
+      router.refresh();
     });
   }
 
