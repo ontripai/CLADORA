@@ -9,8 +9,6 @@ import {
 } from '@/lib/auth/email-callback.mjs';
 import { createClient } from '@/lib/supabase/server';
 
-const INVITATION_COOKIE = 'cladora-invitation';
-const INVITATION_METADATA_KEY = 'cladora_invitation_token';
 const ALLOWED_QUERY_KEYS = new Set(['token_hash', 'type', 'next']);
 const NO_STORE_HEADERS = {
   'Cache-Control': 'no-store, private',
@@ -41,10 +39,6 @@ function hasUnexpectedQuery(searchParams: URLSearchParams): boolean {
     if (!ALLOWED_QUERY_KEYS.has(key)) return true;
   }
   return false;
-}
-
-function validInvitationToken(value: unknown): value is string {
-  return typeof value === 'string' && value.length >= 40 && value.length <= 128;
 }
 
 export async function GET(
@@ -90,33 +84,5 @@ export async function GET(
     return reject(request, lang, mapOtpErrorStatus(verification.error.code));
   }
 
-  const response = noStore(NextResponse.redirect(new URL(destination, request.url)));
-
-  if (rawType === 'invite') {
-    const invitationToken =
-      verification.data.user?.user_metadata?.[INVITATION_METADATA_KEY];
-
-    if (!validInvitationToken(invitationToken)) {
-      await supabase.auth.signOut({ scope: 'local' });
-      return reject(request, lang, 'invalid');
-    }
-
-    const { error: metadataError } = await supabase.auth.updateUser({
-      data: { [INVITATION_METADATA_KEY]: null },
-    });
-    if (metadataError) {
-      await supabase.auth.signOut({ scope: 'local' });
-      return reject(request, lang, 'invalid');
-    }
-
-    response.cookies.set(INVITATION_COOKIE, invitationToken, {
-      httpOnly: true,
-      secure: true,
-      sameSite: 'lax',
-      maxAge: 60 * 60 * 72,
-      path: '/',
-    });
-  }
-
-  return response;
+  return noStore(NextResponse.redirect(new URL(destination, request.url)));
 }
