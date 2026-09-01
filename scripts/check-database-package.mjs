@@ -8,12 +8,15 @@ const migrations = readdirSync(migrationsDir).filter((name) => name.endsWith(".s
 const tests = readdirSync(testsDir).filter((name) => name.endsWith(".sql")).sort();
 
 const failures = [];
-if (migrations.length !== 56) failures.push(`expected 56 migrations, found ${migrations.length}`);
-if (tests.length !== 43) failures.push(`expected 43 pgTAP files, found ${tests.length}`);
+if (migrations.length !== 57) failures.push(`expected 57 migrations, found ${migrations.length}`);
+if (tests.length !== 44) failures.push(`expected 44 pgTAP files, found ${tests.length}`);
 
-for (const [index, name] of migrations.entries()) {
-  const expected = String(index).padStart(3, "0");
-  if (!name.includes(`${expected}00_`)) failures.push(`${name}: expected migration slot ${expected}`);
+let previousVersion = '';
+for (const name of migrations) {
+  const version = name.match(/^(\d{14})_[a-z0-9_]+\.sql$/)?.[1];
+  if (!version) failures.push(`${name}: expected a 14-digit Supabase CLI migration version and snake_case name`);
+  if (version && previousVersion && version <= previousVersion) failures.push(`${name}: migration version must be strictly increasing`);
+  if (version) previousVersion = version;
   const sql = readFileSync(join(migrationsDir, name), "utf8");
   const begins = (sql.match(/^begin;/gim) ?? []).length;
   const ends = (sql.match(/^(commit|rollback);/gim) ?? []).length;
@@ -29,7 +32,7 @@ for (const name of tests) {
   assertionTotal += assertions;
   if (plan !== assertions) failures.push(`${name}: plan ${plan} does not match ${assertions} assertions`);
 }
-if (assertionTotal !== 1088) failures.push(`expected 1088 assertions, found ${assertionTotal}`);
+if (assertionTotal !== 1133) failures.push(`expected 1133 assertions, found ${assertionTotal}`);
 
 if (failures.length) {
   console.error("Database package contract failed:");

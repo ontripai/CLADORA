@@ -77,6 +77,9 @@ const sensitiveAuthRoutes = [
   '/:lang(ro|en|fa)/password-recovery-result',
   '/:lang(ro|en|fa)/auth/callback',
   '/:lang(ro|en|fa)/auth-result',
+  '/:lang(ro|en|fa)/invitation-continuation',
+  '/:lang(ro|en|fa)/set-password',
+  '/:lang(ro|en|fa)/invitation-result',
 ];
 
 const nextConfig = {

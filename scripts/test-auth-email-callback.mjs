@@ -31,7 +31,7 @@ assert.equal(isSupportedAuthEmailType('invite'), true);
 assert.equal(isSupportedAuthEmailType('recovery'), true);
 assert.equal(isSupportedAuthEmailType('unknown'), false);
 
-assert.equal(resolveAuthEmailDestination('ro', 'invite', null), '/ro/reset-password');
+assert.equal(resolveAuthEmailDestination('ro', 'invite', null), '/ro/invitation-continuation');
 assert.equal(resolveAuthEmailDestination('en', 'recovery', null), '/en/reset-password');
 assert.equal(resolveAuthEmailDestination('fa', 'magiclink', null), '/fa/app/dashboard');
 assert.equal(resolveAuthEmailDestination('en', 'signup', '/en/app/dashboard'), '/en/app/dashboard');
@@ -49,6 +49,8 @@ for (const unsafeNext of [
 }
 assert.equal(resolveAuthEmailDestination('de', 'recovery', null), null);
 assert.equal(resolveAuthEmailDestination('en', 'invite', '/en/app/dashboard'), null);
+assert.equal(resolveAuthEmailDestination('en', 'invite', '/en/invitation-continuation'), '/en/invitation-continuation');
+assert.equal(resolveAuthEmailDestination('en', 'invite', '/en/invitation-continuation?workspace=unsafe'), null);
 
 for (const key of [
   'access_token',

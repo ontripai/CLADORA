@@ -7,7 +7,7 @@ import { CladoraBrand } from '@/components/brand/CladoraBrand';
 import { createClient } from '@/lib/supabase/client';
 import type { Language } from '@/types';
 
-type Props = { lang: Language };
+type Props = { lang: Language; flow?: 'recovery' | 'invitation' };
 
 const copy = {
   ro: {
@@ -20,6 +20,9 @@ const copy = {
     mismatch: 'Parolele nu coincid.',
     weak: 'Parola trebuie să aibă cel puțin 12 caractere.',
     failed: 'Parola nu a putut fi actualizată. Linkul poate fi expirat sau nevalid.',
+    invitationTitle: 'Setează parola contului',
+    invitationIntro: 'Finalizează activarea contului cu o parolă unică de cel puțin 12 caractere.',
+    invitationFailed: 'Parola nu a putut fi setată. Reia invitația sau solicită asistență.',
   },
   en: {
     title: 'Choose a new password',
@@ -31,6 +34,9 @@ const copy = {
     mismatch: 'Passwords do not match.',
     weak: 'The password must contain at least 12 characters.',
     failed: 'The password could not be updated. The recovery link may be expired or invalid.',
+    invitationTitle: 'Set your account password',
+    invitationIntro: 'Complete account activation with a unique password containing at least 12 characters.',
+    invitationFailed: 'The password could not be set. Restart the invitation or request assistance.',
   },
   fa: {
     title: 'انتخاب رمز عبور جدید',
@@ -42,11 +48,17 @@ const copy = {
     mismatch: 'رمزهای عبور یکسان نیستند.',
     weak: 'رمز عبور باید حداقل ۱۲ نویسه داشته باشد.',
     failed: 'رمز عبور به‌روزرسانی نشد. ممکن است پیوند بازیابی منقضی یا نامعتبر باشد.',
+    invitationTitle: 'تعیین رمز عبور حساب',
+    invitationIntro: 'فعال‌سازی حساب را با یک رمز عبور منحصربه‌فرد و حداقل ۱۲ نویسه تکمیل کنید.',
+    invitationFailed: 'تعیین رمز عبور انجام نشد. دعوت‌نامه را دوباره آغاز کنید یا پشتیبانی بخواهید.',
   },
 } as const;
 
-export function ResetPasswordForm({ lang }: Props) {
+export function ResetPasswordForm({ lang, flow = 'recovery' }: Props) {
   const t = copy[lang];
+  const title = flow === 'invitation' ? t.invitationTitle : t.title;
+  const intro = flow === 'invitation' ? t.invitationIntro : t.intro;
+  const failed = flow === 'invitation' ? t.invitationFailed : t.failed;
   const router = useRouter();
   const [password, setPassword] = useState('');
   const [confirmation, setConfirmation] = useState('');
@@ -71,15 +83,19 @@ export function ResetPasswordForm({ lang }: Props) {
       const supabase = createClient();
       const { error: updateError } = await supabase.auth.updateUser({ password });
       if (updateError) {
-        setError(t.failed);
+        setError(failed);
         return;
       }
 
       await supabase.auth.signOut({ scope: 'global' });
-      router.replace(`/${lang}/password-recovery-result?status=updated`);
+      router.replace(
+        flow === 'invitation'
+          ? `/${lang}/invitation-result?status=completed`
+          : `/${lang}/password-recovery-result?status=updated`,
+      );
       router.refresh();
     } catch {
-      setError(t.failed);
+      setError(failed);
     } finally {
       setBusy(false);
     }
@@ -89,8 +105,8 @@ export function ResetPasswordForm({ lang }: Props) {
     <div className="card-proptech space-y-6 border-[#D3DCE6] bg-white p-8 shadow-elevated">
       <div className="space-y-2 text-center">
         <CladoraBrand variant="symbol" decorative className="mx-auto h-12 w-12" />
-        <h1 className="text-2xl font-extrabold text-[#102A43]">{t.title}</h1>
-        <p className="text-xs leading-5 text-[#334E68]">{t.intro}</p>
+        <h1 className="text-2xl font-extrabold text-[#102A43]">{title}</h1>
+        <p className="text-xs leading-5 text-[#334E68]">{intro}</p>
       </div>
 
       <form onSubmit={submit} className="space-y-4">
