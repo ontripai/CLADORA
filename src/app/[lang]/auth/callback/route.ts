@@ -1,39 +1,50 @@
 import { NextResponse, type NextRequest } from 'next/server';
-import type { EmailOtpType } from '@supabase/supabase-js';
+import {
+  hasDuplicateCallbackParameters,
+  hasForbiddenAuthQuery,
+  isSupportedAuthEmailType,
+  isSupportedLocale,
+  mapOtpErrorStatus,
+  resolveAuthEmailDestination,
+} from '@/lib/auth/email-callback.mjs';
 import { createClient } from '@/lib/supabase/server';
 
-const LANGUAGES = new Set(['ro', 'en', 'fa']);
-const OTP_TYPES = new Set<EmailOtpType>([
-  'email',
-  'invite',
-  'magiclink',
-  'recovery',
-  'signup',
-  'email_change',
-]);
 const INVITATION_COOKIE = 'cladora-invitation';
+const INVITATION_METADATA_KEY = 'cladora_invitation_token';
+const ALLOWED_QUERY_KEYS = new Set(['token_hash', 'type', 'next']);
 const NO_STORE_HEADERS = {
   'Cache-Control': 'no-store, private',
+  'CDN-Cache-Control': 'no-store',
+  'Surrogate-Control': 'no-store',
   Pragma: 'no-cache',
+  'Referrer-Policy': 'no-referrer',
+  'X-Robots-Tag': 'noindex, nofollow, noarchive',
   Vary: 'Cookie',
 };
-
-function safeNext(value: string | null, lang: string): string {
-  const fallback = `/${lang}/login`;
-  if (!value || !value.startsWith(`/${lang}/`) || value.startsWith('//')) return fallback;
-  return value;
-}
 
 function noStore(response: NextResponse): NextResponse {
   Object.entries(NO_STORE_HEADERS).forEach(([name, value]) => response.headers.set(name, value));
   return response;
 }
 
-function invalidCallbackUrl(request: NextRequest, lang: string, next: string): URL {
-  if (next === `/${lang}/reset-password`) {
-    return new URL(`/${lang}/password-recovery-result?status=invalid`, request.url);
+function resultUrl(request: NextRequest, lang: string, status: string): URL {
+  const locale = isSupportedLocale(lang) ? lang : 'ro';
+  return new URL(`/${locale}/auth-result?status=${status}`, request.url);
+}
+
+function reject(request: NextRequest, lang: string, status: string): NextResponse {
+  return noStore(NextResponse.redirect(resultUrl(request, lang, status)));
+}
+
+function hasUnexpectedQuery(searchParams: URLSearchParams): boolean {
+  for (const key of searchParams.keys()) {
+    if (!ALLOWED_QUERY_KEYS.has(key)) return true;
   }
-  return new URL(`/${lang}/login?reason=invalid_callback`, request.url);
+  return false;
+}
+
+function validInvitationToken(value: unknown): value is string {
+  return typeof value === 'string' && value.length >= 40 && value.length <= 128;
 }
 
 export async function GET(
@@ -41,45 +52,63 @@ export async function GET(
   props: { params: Promise<{ lang: string }> },
 ) {
   const { lang } = await props.params;
-  if (!LANGUAGES.has(lang)) {
-    return noStore(NextResponse.redirect(new URL('/ro/login?reason=invalid_callback', request.url)));
+  if (!isSupportedLocale(lang)) {
+    return reject(request, 'ro', 'invalid_locale');
   }
 
-  const next = safeNext(request.nextUrl.searchParams.get('next'), lang);
-  const code = request.nextUrl.searchParams.get('code');
-  const tokenHash = request.nextUrl.searchParams.get('token_hash');
-  const rawType = request.nextUrl.searchParams.get('type');
+  const searchParams = request.nextUrl.searchParams;
+  if (
+    hasForbiddenAuthQuery(searchParams) ||
+    hasDuplicateCallbackParameters(searchParams) ||
+    hasUnexpectedQuery(searchParams)
+  ) {
+    return reject(request, lang, 'unsafe');
+  }
+
+  const tokenHash = searchParams.get('token_hash');
+  if (!tokenHash || tokenHash.length < 16 || tokenHash.length > 256 || /\s/.test(tokenHash)) {
+    return reject(request, lang, 'missing');
+  }
+
+  const rawType = searchParams.get('type');
+  if (!isSupportedAuthEmailType(rawType)) {
+    return reject(request, lang, 'invalid_type');
+  }
+
+  const destination = resolveAuthEmailDestination(lang, rawType, searchParams.get('next'));
+  if (!destination) {
+    return reject(request, lang, 'unsafe');
+  }
+
   const supabase = await createClient();
+  const verification = await supabase.auth.verifyOtp({
+    token_hash: tokenHash,
+    type: rawType,
+  });
 
-  let error: Error | null = null;
-  if (code) {
-    const result = await supabase.auth.exchangeCodeForSession(code);
-    error = result.error;
-  } else if (tokenHash && rawType && OTP_TYPES.has(rawType as EmailOtpType)) {
-    const result = await supabase.auth.verifyOtp({
-      token_hash: tokenHash,
-      type: rawType as EmailOtpType,
-    });
-    error = result.error;
-  } else {
-    error = new Error('Missing callback credentials');
+  if (verification.error) {
+    return reject(request, lang, mapOtpErrorStatus(verification.error.code));
   }
 
-  if (error) {
-    return noStore(NextResponse.redirect(invalidCallbackUrl(request, lang, next)));
-  }
+  const response = noStore(NextResponse.redirect(new URL(destination, request.url)));
 
-  const destination = new URL(next, request.url);
-  const invitationToken = destination.searchParams.get('token');
-  if (destination.pathname === `/${lang}/accept-invitation` && invitationToken) {
-    if (invitationToken.length < 40 || invitationToken.length > 128) {
-      return noStore(
-        NextResponse.redirect(new URL(`/${lang}/login?reason=invalid_invitation`, request.url)),
-      );
+  if (rawType === 'invite') {
+    const invitationToken =
+      verification.data.user?.user_metadata?.[INVITATION_METADATA_KEY];
+
+    if (!validInvitationToken(invitationToken)) {
+      await supabase.auth.signOut({ scope: 'local' });
+      return reject(request, lang, 'invalid');
     }
 
-    destination.searchParams.delete('token');
-    const response = NextResponse.redirect(destination);
+    const { error: metadataError } = await supabase.auth.updateUser({
+      data: { [INVITATION_METADATA_KEY]: null },
+    });
+    if (metadataError) {
+      await supabase.auth.signOut({ scope: 'local' });
+      return reject(request, lang, 'invalid');
+    }
+
     response.cookies.set(INVITATION_COOKIE, invitationToken, {
       httpOnly: true,
       secure: true,
@@ -87,8 +116,7 @@ export async function GET(
       maxAge: 60 * 60 * 72,
       path: '/',
     });
-    return noStore(response);
   }
 
-  return noStore(NextResponse.redirect(destination));
+  return response;
 }
