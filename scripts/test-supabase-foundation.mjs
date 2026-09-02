@@ -242,6 +242,7 @@ check(mfaPage.includes('supabase.auth.getClaims()'), 'MFA page requires an authe
 check(mfaPage.includes("assurance.currentLevel === 'aal2'") && mfaPage.includes("assurance.nextLevel !== 'aal2'") && mfaPage.includes('/mfa/setup?reason=customer_required'), 'MFA routing separates satisfied, challengeable, and unenrolled sessions without a dashboard loop');
 check(mfaChallenge.includes('challengeAndVerify'), 'MFA challenge verifies a TOTP factor');
 check(accountSecurity.includes("factorType: 'totp'"), 'account security supports TOTP enrollment');
+check(accountSecurity.includes("assurance.currentLevel !== 'aal2'") && accountSecurity.includes('router.replace(`/${lang}/app/dashboard`)'), 'successful TOTP enrollment proves AAL2 before localized dashboard navigation');
 check(accountSecurity.includes("scope: 'others'"), 'account security can revoke other sessions');
 check(accountSecurity.includes('minLength={12}'), 'password change UI enforces a 12-character minimum');
 check(accountSecurity.includes('current_password: currentPassword'), 'password changes supply the current password to Supabase Auth');
