@@ -795,6 +795,10 @@ export type Database = {
       };
     };
     Functions: {
+      my_customer_mfa_requirement: {
+        Args: Record<PropertyKey, never>;
+        Returns: boolean;
+      };
       list_my_customer_contexts: {
         Args: Record<PropertyKey, never>;
         Returns: Array<{

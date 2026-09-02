@@ -107,12 +107,6 @@ export const LoginForm: React.FC<LoginFormProps> = ({ lang, captchaRequired, cap
         return;
       }
 
-      if (assurance.currentLevel !== 'aal2') {
-        router.replace(`/${lang}/mfa/setup?reason=customer_required`);
-        router.refresh();
-        return;
-      }
-
       router.replace(`/${lang}/app/dashboard`);
       router.refresh();
     } catch {

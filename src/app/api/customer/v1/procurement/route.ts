@@ -29,9 +29,7 @@ export async function GET(request: NextRequest) {
   if (error || !claims?.claims?.sub) {
     return NextResponse.json({ error: { code: "UNAUTHORIZED" } }, { status: 401, headers: HEADERS });
   }
-  if (claims.claims.aal !== "aal2") {
-    return NextResponse.json({ error: { code: "MFA_REQUIRED" } }, { status: 403, headers: HEADERS });
-  }
+
   const p = parsed.data;
   const { data, error: queryError } = await supabase.schema("maintenance").rpc("get_customer_procurement", {
     p_context_id: p.context_id,

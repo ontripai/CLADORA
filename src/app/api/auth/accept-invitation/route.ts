@@ -3,12 +3,13 @@ import { cookies } from 'next/headers';
 import { z } from 'zod';
 import { getApplicationOrigin } from '@/lib/supabase/server-env';
 import { createClient } from '@/lib/supabase/server';
+import { meetsPasswordPolicy, MIN_PASSWORD_LENGTH } from '@/lib/auth/password-policy';
 
 const NO_CACHE_HEADERS = { 'Cache-Control': 'no-store, private' };
 const INVITATION_COOKIE = 'cladora-invitation';
 const schema = z.object({
   display_name: z.string().trim().min(2).max(120),
-  password: z.string().min(12).max(128),
+  password: z.string().min(MIN_PASSWORD_LENGTH).max(128).refine(meetsPasswordPolicy),
   locale: z.enum(['ro', 'en', 'fa']),
   timezone: z.string().trim().min(1).max(100),
 });
