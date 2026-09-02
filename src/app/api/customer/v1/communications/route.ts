@@ -45,11 +45,7 @@ export async function GET(request: NextRequest) {
       { error: { code: "UNAUTHORIZED" } },
       { status: 401, headers: HEADERS },
     );
-  if (claims.claims.aal !== "aal2")
-    return NextResponse.json(
-      { error: { code: "MFA_REQUIRED" } },
-      { status: 403, headers: HEADERS },
-    );
+
   const p = parsed.data;
   const { data, error: queryError } = await supabase
     .schema("communications")

@@ -26,6 +26,9 @@ const authEmailPolicy = read('src/lib/auth/email-callback.mjs');
 const mfaPage = read('src/app/[lang]/mfa/page.tsx');
 const mfaChallenge = read('src/components/auth/MfaChallengeForm.tsx');
 const accountSecurity = read('src/components/auth/AccountSecurityPanel.tsx');
+const passwordPolicy = read('src/lib/auth/password-policy.ts');
+const customerMfaPolicyMigration = read('supabase/migrations/20260902074312_customer_password_optional_mfa_policy.sql');
+const customerMfaPolicyTest = read('supabase/tests/045_customer_password_optional_mfa_policy.test.sql');
 const platformLayout = read('src/app/[lang]/platform/(control-plane)/layout.tsx');
 const demoSelector = read('src/components/demo/DemoRoleSelector.tsx');
 const demoRouter = read('src/app/[lang]/demo/app/[...slug]/page.tsx');
@@ -244,11 +247,15 @@ check(mfaChallenge.includes('challengeAndVerify'), 'MFA challenge verifies a TOT
 check(accountSecurity.includes("factorType: 'totp'"), 'account security supports TOTP enrollment');
 check(accountSecurity.includes("assurance.currentLevel !== 'aal2'") && accountSecurity.includes('router.replace(`/${lang}/app/dashboard`)'), 'successful TOTP enrollment proves AAL2 before localized dashboard navigation');
 check(accountSecurity.includes("scope: 'others'"), 'account security can revoke other sessions');
-check(accountSecurity.includes('minLength={12}'), 'password change UI enforces a 12-character minimum');
+check(passwordPolicy.includes('MIN_PASSWORD_LENGTH = 8') && passwordPolicy.includes('/[A-Za-z]/') && passwordPolicy.includes('/[0-9]/'), 'shared password policy requires eight characters, a letter, and a number');
+check(accountSecurity.includes('minLength={MIN_PASSWORD_LENGTH}') && accountSecurity.includes('meetsPasswordPolicy(password)'), 'password change UI uses the shared balanced password policy');
 check(accountSecurity.includes('current_password: currentPassword'), 'password changes supply the current password to Supabase Auth');
 check(accountSecurity.includes('autoComplete="current-password"'), 'password change UI collects the current password securely');
-check(protectedLayout.includes('listFactors') && protectedLayout.includes("factor.status === 'verified'") && protectedLayout.includes('/mfa/setup?reason=customer_required') && protectedLayout.includes('getAuthenticatorAssuranceLevel'), 'customer data plane requires verified enrollment before enforcing AAL2');
-check(login.includes("assurance.nextLevel === 'aal2'") && login.includes('/mfa/setup?reason=customer_required'), 'login routes challengeable and unenrolled sessions to distinct MFA flows');
+check(protectedLayout.includes('my_customer_mfa_requirement') && protectedLayout.includes('mfaRequired && !hasVerifiedFactor') && protectedLayout.includes('!mfaRequired && !hasVerifiedFactor'), 'customer layout makes MFA optional only when the server role policy permits it');
+check(login.includes("assurance.nextLevel === 'aal2'") && !login.includes('/mfa/setup?reason=customer_required'), 'login challenges enrolled factors while role-aware layout handles unenrolled sessions');
+check(customerMfaPolicyMigration.includes("lower(r.code) in ('association_admin','property_manager','president','censor')") && customerMfaPolicyMigration.includes('app_private.customer_mfa_required() and coalesce'), 'database migration preserves AAL2 for sensitive customer roles');
+check(customerMfaPolicyMigration.includes('not app_private.customer_mfa_required()') && customerMfaPolicyMigration.includes('platform.my_customer_mfa_requirement()'), 'database migration allows optional MFA only through the server-owned role predicate');
+check(customerMfaPolicyTest.includes('mixed owner and active sensitive membership requires MFA globally') && customerMfaPolicyTest.includes('tenant resident AAL1 can list its context'), 'pgTAP covers mixed-role fail-closed behavior and resident AAL1 access');
 check(platformLayout.includes('getAuthenticatorAssuranceLevel'), 'platform control plane enforces enrolled MFA');
 check(demoSelector.includes('`/${lang}/demo/app/dashboard`'), 'demo role selection stays in the public demo data plane');
 check(!demoSelector.includes('`/${lang}/app/dashboard`'), 'demo role selection never enters the protected customer app');
@@ -259,7 +266,7 @@ check(dashboardPage.includes("props.demoMode ? 'demo/app' : 'app'"), 'dashboard 
 check(accountingPage.includes("props.demoMode ? 'demo/app' : 'app'"), 'accounting links respect the active data plane');
 check(customerBillingPage.includes('CustomerBillingDashboard'), 'protected billing page renders the live customer projection');
 check(customerBillingPanel.includes('/api/customer/v1/billing?') && customerBillingPanel.includes("cache:'no-store'"), 'billing panel uses the protected non-cached API');
-check(customerBillingApi.includes("claims.claims.aal!=='aal2'") && customerBillingApi.includes("status:403"), 'billing API rejects AAL1 sessions');
+check(!customerBillingApi.includes('claims.claims.aal') && customerMfaPolicyMigration.includes('billing.get_customer_billing'), 'billing delegates role-aware AAL enforcement to the database contract');
 check(customerBillingApi.includes("'Cache-Control':'no-store, private'"), 'billing API prohibits shared caching');
 check(customerBillingMigration.includes("p.code='billing.receivables.read'") && customerBillingMigration.includes("e.entitlement_key='module.billing'"), 'billing reads require explicit permission and entitlement');
 check(customerBillingMigration.includes('i.liable_party_id=v_party') && customerBillingMigration.includes("l.status='active'"), 'tenant billing visibility requires mapped liable party and active lease');
@@ -267,7 +274,7 @@ check(!customerBillingMigration.includes('iban_encrypted') && !customerBillingMi
 check(customerBillingAdr.includes('Missing, expired, cross-tenant, or mismatched'), 'billing architecture records fail-closed customer isolation');
 check(customerPaymentsPage.includes('CustomerPaymentsDashboard') && customerReconciliationPage.includes('CustomerPaymentsDashboard'), 'protected payment routes render the live customer projection');
 check(customerPaymentsPanel.includes('/api/customer/v1/payments?') && customerPaymentsPanel.includes("cache:'no-store'"), 'payments panel uses the protected non-cached API');
-check(customerPaymentsApi.includes("claims.claims.aal!=='aal2'") && customerPaymentsApi.includes("status:403"), 'payments API rejects AAL1 sessions');
+check(!customerPaymentsApi.includes('claims.claims.aal') && customerMfaPolicyMigration.includes('payments.get_customer_payments'), 'payments delegates role-aware AAL enforcement to the database contract');
 check(customerPaymentsApi.includes("'Cache-Control':'no-store, private'"), 'payments API prohibits shared caching');
 check(customerPaymentsMigration.includes("p.code='payments.reconciliation.read'") && customerPaymentsMigration.includes("e.entitlement_key='module.payments'"), 'payment reads require explicit permission and entitlement');
 check(customerPaymentsMigration.includes('p.payer_party_id=v_party') && customerPaymentsMigration.includes("l.status='active'"), 'tenant payment visibility requires mapped payer party and active lease');
@@ -277,7 +284,7 @@ check(customerPaymentsAdr.includes('Missing, expired, cross-tenant or mismatched
 check(!customerAllocationsPage.includes('DemoStore') && !customerAllocationsPage.includes('MOCK_CHARGE_BREAKDOWN') && customerAllocationsPage.includes('CustomerAllocationDashboard'), 'production allocation page contains no demo fixtures');
 check(customerAllocationsPanel.includes('/api/customer/v1/allocations?') && customerAllocationsPanel.includes("cache:'no-store'") && customerAllocationsPanel.includes("credentials:'same-origin'"), 'allocation UI uses protected non-cached same-origin API');
 check(customerAllocationsPanel.includes("'runs','rules','lines'") && customerAllocationsPanel.includes('rule_snapshot') && customerAllocationsPanel.includes('explanation'), 'allocation UI exposes runs, rules, lines, and explainability evidence');
-check(customerAllocationsApi.includes('UNAUTHORIZED') && customerAllocationsApi.includes('MFA_REQUIRED'), 'allocation API rejects unauthenticated and AAL1 callers');
+check(customerAllocationsApi.includes('UNAUTHORIZED') && !customerAllocationsApi.includes('claims.claims.aal') && customerMfaPolicyMigration.includes('finance.get_customer_allocations'), 'allocation API authenticates callers and delegates role-aware AAL enforcement to the database contract');
 check(customerAllocationsApi.includes('no-store, private') && customerAllocationsApi.includes("Pragma:'no-cache'") && !customerAllocationsApi.includes('export async function POST'), 'allocation API is non-cached and GET-only');
 check(customerAllocationsMigration.includes("p.code='finance.allocations.read'") && customerAllocationsMigration.includes("e.entitlement_key='module.accounting'"), 'allocation RPC requires permission and entitlement');
 check(customerAllocationsMigration.includes('a.responsible_party_id=v_party') && customerAllocationsMigration.includes("in ('owner','shared')"), 'tenant and owner financial-rights visibility is separated');
@@ -288,7 +295,7 @@ check(customerAllocationsAdr.includes('Production acceptance is read-only') && c
 check(!customerUtilitiesPage.includes('DemoStore') && customerUtilitiesPage.includes('CustomerUtilitiesDashboard'), 'production metering page contains no demo fixtures');
 check(customerUtilitiesPanel.includes('/api/customer/v1/utilities?') && customerUtilitiesPanel.includes("cache:'no-store'") && customerUtilitiesPanel.includes("credentials:'same-origin'"), 'utility UI uses protected non-cached same-origin API');
 check(customerUtilitiesPanel.includes("'meters','readings','periods','contracts','invoices','comparisons','anomalies'"), 'utility UI exposes all read-only evidence views');
-check(customerUtilitiesApi.includes('UNAUTHORIZED') && customerUtilitiesApi.includes('MFA_REQUIRED') && !customerUtilitiesApi.includes('export async function POST'), 'utility API rejects unauthorized callers and is GET-only');
+check(customerUtilitiesApi.includes('UNAUTHORIZED') && !customerUtilitiesApi.includes('claims.claims.aal') && customerMfaPolicyMigration.includes('utilities.get_customer_utilities') && !customerUtilitiesApi.includes('export async function POST'), 'utility API delegates role-aware AAL enforcement and is GET-only');
 check(customerUtilitiesApi.includes('no-store, private') && customerUtilitiesApi.includes("Pragma:'no-cache'"), 'utility API prohibits shared caching');
 check(customerUtilitiesMigration.includes("p.code='utilities.metering.read'") && customerUtilitiesMigration.includes("e.entitlement_key='module.utilities'"), 'utility RPC requires permission and entitlement');
 check(customerUtilitiesMigration.includes('negative_consumption') && customerUtilitiesMigration.includes('delta_times_multiplier'), 'consumption is database-calculated and cannot be negative');
@@ -298,7 +305,7 @@ check(customerUtilitiesAdr.includes('read-only') && customerUtilitiesAdr.include
 check(!customerMaintenancePage.includes('DemoStore') && !customerAssetsPage.includes('DemoStore'), 'production assets and maintenance pages contain no demo fixtures');
 check(customerMaintenancePanel.includes('/api/customer/v1/maintenance?') && customerMaintenancePanel.includes("cache:'no-store'") && customerMaintenancePanel.includes("credentials:'same-origin'"), 'maintenance UI uses protected non-cached same-origin API');
 check(customerMaintenancePanel.includes("'assets','components','plans','work_orders','tasks','vendors','sla','costs','history'"), 'maintenance UI exposes every authorized evidence view');
-check(customerMaintenanceApi.includes('UNAUTHORIZED') && customerMaintenanceApi.includes('MFA_REQUIRED') && !customerMaintenanceApi.includes('export async function POST'), 'maintenance API rejects unauthorized callers and is GET-only');
+check(customerMaintenanceApi.includes('UNAUTHORIZED') && !customerMaintenanceApi.includes('claims.claims.aal') && customerMfaPolicyMigration.includes('maintenance.get_customer_maintenance') && !customerMaintenanceApi.includes('export async function POST'), 'maintenance API delegates role-aware AAL enforcement and is GET-only');
 check(customerMaintenanceApi.includes('no-store, private') && customerMaintenanceApi.includes("Pragma:'no-cache'"), 'maintenance API prohibits shared caching');
 check(customerMaintenanceMigration.includes("p.code='maintenance.assets.read'") && customerMaintenanceMigration.includes("e.entitlement_key='module.maintenance'"), 'maintenance RPC requires permission and effective entitlement');
 check(customerMaintenanceMigration.includes('work_orders_active_plan_asset_unique') && customerMaintenanceMigration.includes('final_work_order_is_immutable'), 'duplicate active and finalized work orders are database-protected');
@@ -309,7 +316,7 @@ check(customerMaintenanceAdr.includes('Production acceptance is read-only') && c
 check(!customerGovernancePage.includes('DemoStore') && !customerMeetingsPage.includes('DemoStore'), 'production governance pages contain no demo fixtures');
 check(customerGovernancePanel.includes('/api/customer/v1/governance?') && customerGovernancePanel.includes("cache:'no-store'") && customerGovernancePanel.includes("credentials:'same-origin'"), 'governance UI uses protected non-cached same-origin API');
 check(customerGovernancePanel.includes("'meetings','agenda','invitations','attendance','quorum','proxies','votes','resolutions','minutes','documents','history'"), 'governance UI exposes every authorized evidence view');
-check(customerGovernanceApi.includes('UNAUTHORIZED') && customerGovernanceApi.includes('MFA_REQUIRED') && !customerGovernanceApi.includes('export async function POST'), 'governance API rejects unauthorized callers and is GET-only');
+check(customerGovernanceApi.includes('UNAUTHORIZED') && !customerGovernanceApi.includes('claims.claims.aal') && customerMfaPolicyMigration.includes('governance.get_customer_governance') && !customerGovernanceApi.includes('export async function POST'), 'governance API delegates role-aware AAL enforcement and is GET-only');
 check(customerGovernanceApi.includes('no-store, private') && customerGovernanceApi.includes("Pragma:'no-cache'"), 'governance API prohibits shared caching');
 check(customerGovernanceMigration.includes("p.code='governance.meetings.read'") && customerGovernanceMigration.includes("e.entitlement_key='module.governance'"), 'governance RPC requires permission and effective entitlement');
 check(customerGovernanceMigration.includes('ballot_eligibility_or_time_invalid') && customerGovernanceMigration.includes('overlapping_active_proxy'), 'ballot and proxy integrity is database-enforced');
@@ -320,7 +327,7 @@ check(customerGovernanceAdr.includes('does not claim or guarantee legal complian
 check(!customerCommunicationsPage.includes('DemoStore') && !customerNotificationsPage.includes('DemoStore'), 'production communications pages contain no demo fixtures');
 check(customerCommunicationsPanel.includes('/api/customer/v1/communications?') && customerCommunicationsPanel.includes("cache: \"no-store\"") && customerCommunicationsPanel.includes("credentials: \"same-origin\""), 'communications UI uses protected non-cached same-origin API');
 check(customerCommunicationsPanel.includes('"channels"') && customerCommunicationsPanel.includes('"notifications"') && customerCommunicationsPanel.includes('"results"'), 'communications UI exposes authorized content and aggregate result views');
-check(customerCommunicationsApi.includes('UNAUTHORIZED') && customerCommunicationsApi.includes('MFA_REQUIRED') && !customerCommunicationsApi.includes('export async function POST'), 'communications API rejects unauthorized callers and is GET-only');
+check(customerCommunicationsApi.includes('UNAUTHORIZED') && !customerCommunicationsApi.includes('claims.claims.aal') && customerMfaPolicyMigration.includes('communications.get_customer_communications') && !customerCommunicationsApi.includes('export async function POST'), 'communications API delegates role-aware AAL enforcement and is GET-only');
 check(customerCommunicationsApi.includes('no-store, private') && customerCommunicationsApi.includes('Pragma: "no-cache"'), 'communications API prohibits shared caching');
 check(customerCommunicationsMigration.includes("p.code='communications.feed.read'") && customerCommunicationsMigration.includes("e.entitlement_key='module.communications'"), 'communications RPC requires permission and effective entitlement');
 check(customerCommunicationsMigration.includes('single_choice_poll_allows_one_response') && customerCommunicationsMigration.includes('poll_channel_membership_required'), 'poll response integrity and channel membership are database-enforced');
@@ -331,7 +338,7 @@ check(customerCommunicationsAdr.includes('Production acceptance is read-only') &
 check(!customerDocumentsPage.includes('DemoStore') && customerDocumentsPage.includes('CustomerDocumentsDashboard') && customerDocumentDetailsPage.includes('initialDocumentId'), 'production document list and details contain no demo fixtures');
 check(customerDocumentsPanel.includes('/api/customer/v1/documents?') && customerDocumentsPanel.includes('cache: "no-store"') && customerDocumentsPanel.includes('credentials: "same-origin"'), 'document UI uses protected non-cached same-origin API');
 check(customerDocumentsPanel.includes('"documents" | "versions" | "categories" | "retention" | "holds" | "evidence" | "links" | "history"'), 'document UI exposes every authorized metadata view');
-check(customerDocumentsApi.includes('UNAUTHORIZED') && customerDocumentsApi.includes('MFA_REQUIRED') && !customerDocumentsApi.includes('export async function POST'), 'document API rejects unauthorized callers and is GET-only');
+check(customerDocumentsApi.includes('UNAUTHORIZED') && !customerDocumentsApi.includes('claims.claims.aal') && customerMfaPolicyMigration.includes('documents.get_customer_documents') && !customerDocumentsApi.includes('export async function POST'), 'document API delegates role-aware AAL enforcement and is GET-only');
 check(customerDocumentsApi.includes('no-store, private') && customerDocumentsApi.includes('Pragma: "no-cache"'), 'document API prohibits shared caching');
 check(customerDocumentsMigration.includes("p.code='documents.vault.read'") && customerDocumentsMigration.includes("e.entitlement_key='module.documents'"), 'document RPC requires permission and effective entitlement');
 check(customerDocumentsMigration.includes('document_link_cross_tenant_or_missing') && customerDocumentsMigration.includes('classification_downgrade_forbidden'), 'document links and classification are database-protected');
@@ -343,7 +350,7 @@ check(customerDocumentsAdr.includes('Production acceptance is read-only') && cus
 check(!customerOccupancyPage.includes('DemoStore') && customerOccupancyPage.includes('CustomerOccupancyDashboard') && customerOccupancyDetailsPage.includes('initialId'), 'production occupancy list and details contain no demo fixtures');
 check(customerOccupancyPanel.includes('/api/customer/v1/occupancy?') && customerOccupancyPanel.includes('cache: "no-store"') && customerOccupancyPanel.includes('credentials: "same-origin"'), 'occupancy UI uses protected non-cached same-origin API');
 check(customerOccupancyPanel.includes('"parties" | "residents" | "ownerships" | "leases" | "occupancies" | "mappings" | "links" | "history"'), 'occupancy UI exposes every authorized registry view');
-check(customerOccupancyApi.includes('UNAUTHORIZED') && customerOccupancyApi.includes('MFA_REQUIRED') && !customerOccupancyApi.includes('export async function POST'), 'occupancy API rejects unauthorized callers and is GET-only');
+check(customerOccupancyApi.includes('UNAUTHORIZED') && !customerOccupancyApi.includes('claims.claims.aal') && customerMfaPolicyMigration.includes('occupancy.get_customer_registry') && !customerOccupancyApi.includes('export async function POST'), 'occupancy API delegates role-aware AAL enforcement and is GET-only');
 check(customerOccupancyApi.includes('no-store, private') && customerOccupancyApi.includes('Pragma: "no-cache"'), 'occupancy API prohibits shared caching');
 check(customerOccupancyMigration.includes("p.code='occupancy.registry.read'") && customerOccupancyMigration.includes("e.entitlement_key='module.occupancy'"), 'occupancy RPC requires permission and effective entitlement');
 check(customerOccupancyMigration.includes('ownership_share_exceeds_one') && customerOccupancyMigration.includes('overlapping_active_lease'), 'ownership totals and lease overlap are database-protected');
@@ -360,7 +367,7 @@ check(customerSecurityPanel.includes('eyebrow: "CLADORA · Acces de securitate"'
 check(customerSecurityPanel.includes('allStatuses: "Toate stările"')&&customerSecurityPanel.includes('allStatuses: "همه وضعیت‌ها"'), 'security UI localizes status filters in Romanian and Persian');
 check(customerSecurityPanel.includes('point_type: "Tip punct"')&&customerSecurityPanel.includes('point_type: "نوع نقطه"'), 'security UI localizes database field labels in Romanian and Persian');
 check(customerSecurityPanel.includes('access_card: "Card de acces"')&&customerSecurityPanel.includes('access_card: "کارت دسترسی"'), 'security UI localizes credential and access enum values');
-check(customerSecurityApi.includes('UNAUTHORIZED')&&customerSecurityApi.includes('MFA_REQUIRED')&&!customerSecurityApi.includes('export async function POST'), 'security API rejects unauthorized callers and is GET-only');
+check(customerSecurityApi.includes('UNAUTHORIZED')&&!customerSecurityApi.includes('claims.claims.aal')&&customerMfaPolicyMigration.includes('security_access.get_customer_security_access')&&!customerSecurityApi.includes('export async function POST'), 'security API delegates role-aware AAL enforcement and is GET-only');
 check(customerSecurityApi.includes('no-store, private')&&customerSecurityApi.includes('Pragma: "no-cache"'), 'security API prohibits shared caching');
 check(customerSecurityMigration.includes("p.code='security.access.read'")&&customerSecurityMigration.includes("e.entitlement_key='module.security'"), 'security RPC requires permission and effective entitlement');
 check(customerSecurityMigration.includes('overlapping_credential_assignment')&&customerSecurityMigration.includes('visitor_access_outside_invitation'), 'credential overlap and visitor periods are database-protected');
@@ -374,7 +381,7 @@ check(customerProcurementPanel.includes('/api/customer/v1/procurement?')&&custom
 check(["vendors", "contracts", "quotes", "purchase_orders", "sla"].every(view=>customerProcurementPanel.includes(`"${view}"`)), 'procurement UI exposes every authorized registry view');
 check(customerProcurementPanel.includes('title: "Furnizori, contracte și achiziții"')&&customerProcurementPanel.includes('title: "فروشندگان، قراردادها و تدارکات"'), 'procurement UI localizes Romanian and Persian headings');
 check(customerProcurementPanel.includes('role="status"')&&customerProcurementPanel.includes('role="alert"')&&customerProcurementPanel.includes('setOffset'), 'procurement UI implements loading, error and pagination states');
-check(customerProcurementApi.includes('UNAUTHORIZED')&&customerProcurementApi.includes('MFA_REQUIRED')&&!customerProcurementApi.includes('export async function POST'), 'procurement API rejects unauthorized callers and is GET-only');
+check(customerProcurementApi.includes('UNAUTHORIZED')&&!customerProcurementApi.includes('claims.claims.aal')&&customerMfaPolicyMigration.includes('maintenance.get_customer_procurement')&&!customerProcurementApi.includes('export async function POST'), 'procurement API delegates role-aware AAL enforcement and is GET-only');
 check(customerProcurementApi.includes('no-store, private')&&customerProcurementApi.includes('Pragma: "no-cache"'), 'procurement API prohibits shared caching');
 check(customerProcurementApi.includes('PROCUREMENT_UNAVAILABLE')&&customerProcurementApi.includes('status: 503'), 'procurement API fails closed when Preview configuration is unavailable');
 check(customerProcurementMigration.includes("p.code='maintenance.procurement.read'")&&customerProcurementMigration.includes("e.entitlement_key='module.maintenance'"), 'procurement RPC requires explicit permission and effective entitlement');

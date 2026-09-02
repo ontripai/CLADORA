@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { Loader2, Lock, UserRound } from 'lucide-react';
 import type { Language } from '@/types';
 import { CladoraBrand } from '@/components/brand/CladoraBrand';
+import { meetsPasswordPolicy, MIN_PASSWORD_LENGTH } from '@/lib/auth/password-policy';
 
 type Props = { lang: Language };
 
@@ -14,7 +15,7 @@ const copy = {
     intro: 'Alege parola și confirmă profilul pentru spațiul de lucru CLADORA.',
     name: 'Nume complet', password: 'Parolă nouă', confirm: 'Confirmă parola',
     submit: 'Activează contul', working: 'Se activează…',
-    mismatch: 'Parolele nu coincid.', weak: 'Parola trebuie să aibă cel puțin 12 caractere.',
+    mismatch: 'Parolele nu coincid.', weak: 'Parola trebuie să aibă minimum 8 caractere, o literă și o cifră.',
     failed: 'Invitația nu a putut fi acceptată. Verifică dacă linkul este încă valabil.',
   },
   en: {
@@ -22,7 +23,7 @@ const copy = {
     intro: 'Choose a password and confirm your profile for the CLADORA workspace.',
     name: 'Full name', password: 'New password', confirm: 'Confirm password',
     submit: 'Activate account', working: 'Activating…',
-    mismatch: 'Passwords do not match.', weak: 'Password must contain at least 12 characters.',
+    mismatch: 'Passwords do not match.', weak: 'Password must contain at least 8 characters, one letter, and one number.',
     failed: 'The invitation could not be accepted. Check that the link is still valid.',
   },
   fa: {
@@ -30,7 +31,7 @@ const copy = {
     intro: 'رمز عبور و مشخصات خود را برای فضای کاری کلادورا تأیید کنید.',
     name: 'نام و نام خانوادگی', password: 'رمز عبور جدید', confirm: 'تکرار رمز عبور',
     submit: 'فعال‌سازی حساب', working: 'در حال فعال‌سازی…',
-    mismatch: 'رمزهای عبور یکسان نیستند.', weak: 'رمز عبور باید حداقل ۱۲ نویسه داشته باشد.',
+    mismatch: 'رمزهای عبور یکسان نیستند.', weak: 'رمز عبور باید حداقل ۸ نویسه و شامل یک حرف و یک عدد باشد.',
     failed: 'پذیرش دعوت انجام نشد. اعتبار لینک دعوت را بررسی کنید.',
   },
 } as const;
@@ -47,7 +48,7 @@ export function AcceptInvitationForm({ lang }: Props) {
   async function submit(event: React.FormEvent) {
     event.preventDefault();
     setError(null);
-    if (password.length < 12) return setError(t.weak);
+    if (!meetsPasswordPolicy(password)) return setError(t.weak);
     if (password !== confirmation) return setError(t.mismatch);
 
     setBusy(true);
@@ -95,12 +96,12 @@ export function AcceptInvitationForm({ lang }: Props) {
           {t.password}
           <span className="relative mt-1 block">
             <Lock className="pointer-events-none absolute start-3 top-3 h-4 w-4 text-[#486581]" />
-            <input required minLength={12} type="password" autoComplete="new-password" value={password} onChange={(e) => setPassword(e.target.value)} className="w-full rounded-xl border border-[#D3DCE6] py-2.5 pe-3 ps-9 text-xs focus:ring-2 focus:ring-[#087A6E]" />
+            <input required minLength={MIN_PASSWORD_LENGTH} type="password" autoComplete="new-password" value={password} onChange={(e) => setPassword(e.target.value)} className="w-full rounded-xl border border-[#D3DCE6] py-2.5 pe-3 ps-9 text-xs focus:ring-2 focus:ring-[#087A6E]" />
           </span>
         </label>
         <label className="block text-xs font-bold text-[#102A43]">
           {t.confirm}
-          <input required minLength={12} type="password" autoComplete="new-password" value={confirmation} onChange={(e) => setConfirmation(e.target.value)} className="mt-1 w-full rounded-xl border border-[#D3DCE6] px-3 py-2.5 text-xs focus:ring-2 focus:ring-[#087A6E]" />
+          <input required minLength={MIN_PASSWORD_LENGTH} type="password" autoComplete="new-password" value={confirmation} onChange={(e) => setConfirmation(e.target.value)} className="mt-1 w-full rounded-xl border border-[#D3DCE6] px-3 py-2.5 text-xs focus:ring-2 focus:ring-[#087A6E]" />
         </label>
         <button disabled={busy} className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#087A6E] px-4 py-3 text-xs font-extrabold text-white disabled:opacity-60">
           {busy ? t.working : t.submit}

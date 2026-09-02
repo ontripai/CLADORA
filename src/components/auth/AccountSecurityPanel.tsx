@@ -5,14 +5,15 @@ import { useRouter } from 'next/navigation';
 import { KeyRound, Loader2, LogOut, ShieldCheck } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import type { Language } from '@/types';
+import { meetsPasswordPolicy, MIN_PASSWORD_LENGTH } from '@/lib/auth/password-policy';
 
 type TotpFactor = { id: string; friendly_name?: string; status: 'verified' | 'unverified' };
 type Enrollment = { id: string; qrCode: string; secret: string };
 
 const copy = {
-  ro: { title: 'Securitatea reală a contului', mfa: 'Authenticator TOTP', enabled: 'Activat', disabled: 'Neactivat', enroll: 'Configurează 2FA', code: 'Cod de 6 cifre', verify: 'Verifică și activează', remove: 'Elimină factorul', currentPassword: 'Parola actuală', password: 'Parolă nouă (minimum 12 caractere)', confirm: 'Confirmă parola', update: 'Schimbă parola', sessions: 'Deconectează celelalte sesiuni', logout: 'Ieșire securizată', saved: 'Modificarea a fost salvată.', generic: 'Operațiunea nu a putut fi finalizată.' },
-  en: { title: 'Live account security', mfa: 'Authenticator TOTP', enabled: 'Enabled', disabled: 'Not enabled', enroll: 'Set up 2FA', code: '6-digit code', verify: 'Verify and enable', remove: 'Remove factor', currentPassword: 'Current password', password: 'New password (minimum 12 characters)', confirm: 'Confirm password', update: 'Change password', sessions: 'Sign out other sessions', logout: 'Secure sign out', saved: 'The change was saved.', generic: 'The operation could not be completed.' },
-  fa: { title: 'امنیت واقعی حساب', mfa: 'برنامه Authenticator و TOTP', enabled: 'فعال', disabled: 'فعال نشده', enroll: 'راه‌اندازی 2FA', code: 'کد ۶ رقمی', verify: 'تأیید و فعال‌سازی', remove: 'حذف عامل دوم', currentPassword: 'رمز عبور فعلی', password: 'رمز جدید (حداقل ۱۲ نویسه)', confirm: 'تکرار رمز جدید', update: 'تغییر رمز عبور', sessions: 'خروج سایر نشست‌ها', logout: 'خروج امن', saved: 'تغییر با موفقیت ذخیره شد.', generic: 'انجام عملیات ممکن نشد.' },
+  ro: { title: 'Securitatea reală a contului', mfa: 'Authenticator TOTP', enabled: 'Activat', disabled: 'Opțional · neactivat', enroll: 'Configurează 2FA', code: 'Cod de 6 cifre', verify: 'Verifică și activează', remove: 'Elimină factorul', currentPassword: 'Parola actuală', password: 'Parolă nouă (minimum 8 caractere, o literă și o cifră)', confirm: 'Confirmă parola', update: 'Schimbă parola', sessions: 'Deconectează celelalte sesiuni', logout: 'Ieșire securizată', saved: 'Modificarea a fost salvată.', generic: 'Operațiunea nu a putut fi finalizată.' },
+  en: { title: 'Live account security', mfa: 'Authenticator TOTP', enabled: 'Enabled', disabled: 'Optional · not enabled', enroll: 'Set up 2FA', code: '6-digit code', verify: 'Verify and enable', remove: 'Remove factor', currentPassword: 'Current password', password: 'New password (minimum 8 characters, one letter and one number)', confirm: 'Confirm password', update: 'Change password', sessions: 'Sign out other sessions', logout: 'Secure sign out', saved: 'The change was saved.', generic: 'The operation could not be completed.' },
+  fa: { title: 'امنیت واقعی حساب', mfa: 'برنامه Authenticator و TOTP', enabled: 'فعال', disabled: 'اختیاری · فعال نشده', enroll: 'راه‌اندازی 2FA', code: 'کد ۶ رقمی', verify: 'تأیید و فعال‌سازی', remove: 'حذف عامل دوم', currentPassword: 'رمز عبور فعلی', password: 'رمز جدید (حداقل ۸ نویسه، یک حرف و یک عدد)', confirm: 'تکرار رمز جدید', update: 'تغییر رمز عبور', sessions: 'خروج سایر نشست‌ها', logout: 'خروج امن', saved: 'تغییر با موفقیت ذخیره شد.', generic: 'انجام عملیات ممکن نشد.' },
 } as const;
 
 export function AccountSecurityPanel({ lang }: { lang: Language }) {
@@ -87,7 +88,7 @@ export function AccountSecurityPanel({ lang }: { lang: Language }) {
 
   function changePassword(event: FormEvent) {
     event.preventDefault();
-    if (!currentPassword || password.length < 12 || password !== confirmPassword) { setError(t.generic); return; }
+    if (!currentPassword || !meetsPasswordPolicy(password) || password !== confirmPassword) { setError(t.generic); return; }
     void act(async () => {
       const { error: updateError } = await createClient().auth.updateUser({ password, current_password: currentPassword });
       if (updateError) throw updateError;
@@ -115,9 +116,9 @@ export function AccountSecurityPanel({ lang }: { lang: Language }) {
       {verified.map((factor) => <div key={factor.id} className="flex items-center justify-between rounded-xl border border-[#D3DCE6] p-3 text-xs"><span>{factor.friendly_name || t.mfa}</span><button type="button" disabled={busy} onClick={() => removeFactor(factor.id)} className="font-bold text-[#B42318]">{t.remove}</button></div>)}
       <form onSubmit={changePassword} className="grid gap-3 border-t border-[#F0F4F8] pt-5 md:grid-cols-4">
         <input type="password" autoComplete="current-password" required value={currentPassword} onChange={(e) => setCurrentPassword(e.target.value)} placeholder={t.currentPassword} className="rounded-xl border border-[#D3DCE6] px-3 py-2.5 text-xs" />
-        <input type="password" autoComplete="new-password" minLength={12} value={password} onChange={(e) => setPassword(e.target.value)} placeholder={t.password} className="rounded-xl border border-[#D3DCE6] px-3 py-2.5 text-xs" />
-        <input type="password" autoComplete="new-password" minLength={12} value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} placeholder={t.confirm} className="rounded-xl border border-[#D3DCE6] px-3 py-2.5 text-xs" />
-        <button disabled={busy || !currentPassword || password.length < 12 || password !== confirmPassword} className="flex items-center justify-center gap-2 rounded-xl bg-[#102A43] px-4 py-2.5 text-xs font-bold text-white disabled:opacity-60"><KeyRound className="h-4 w-4" />{t.update}</button>
+        <input type="password" autoComplete="new-password" minLength={MIN_PASSWORD_LENGTH} value={password} onChange={(e) => setPassword(e.target.value)} placeholder={t.password} className="rounded-xl border border-[#D3DCE6] px-3 py-2.5 text-xs" />
+        <input type="password" autoComplete="new-password" minLength={MIN_PASSWORD_LENGTH} value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} placeholder={t.confirm} className="rounded-xl border border-[#D3DCE6] px-3 py-2.5 text-xs" />
+        <button disabled={busy || !currentPassword || !meetsPasswordPolicy(password) || password !== confirmPassword} className="flex items-center justify-center gap-2 rounded-xl bg-[#102A43] px-4 py-2.5 text-xs font-bold text-white disabled:opacity-60"><KeyRound className="h-4 w-4" />{t.update}</button>
       </form>
       <div className="flex flex-wrap gap-3 border-t border-[#F0F4F8] pt-5">
         <button type="button" disabled={busy} onClick={() => void act(async () => { const { error: e } = await createClient().auth.signOut({ scope: 'others' }); if (e) throw e; setMessage(t.saved); })} className="rounded-xl border border-[#D3DCE6] px-4 py-2.5 text-xs font-bold text-[#102A43]">{t.sessions}</button>

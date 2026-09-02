@@ -17,7 +17,7 @@ export async function GET(request:NextRequest){
   const supabase=await createClient();
   const{data:claims,error}=await supabase.auth.getClaims();
   if(error||!claims?.claims?.sub)return NextResponse.json({error:{code:'UNAUTHORIZED'}},{status:401,headers:HEADERS});
-  if(claims.claims.aal!=='aal2')return NextResponse.json({error:{code:'MFA_REQUIRED'}},{status:403,headers:HEADERS});
+
   const p=parsed.data;
   const{data,error:queryError}=await supabase.schema('finance').rpc('get_customer_allocations',{
     p_context_id:p.context_id,p_view:p.view,p_query:p.query??null,p_status:p.status??null,p_method:p.method??null,

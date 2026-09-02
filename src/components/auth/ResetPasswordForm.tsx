@@ -6,50 +6,51 @@ import { useRouter } from 'next/navigation';
 import { CladoraBrand } from '@/components/brand/CladoraBrand';
 import { createClient } from '@/lib/supabase/client';
 import type { Language } from '@/types';
+import { meetsPasswordPolicy, MIN_PASSWORD_LENGTH } from '@/lib/auth/password-policy';
 
 type Props = { lang: Language; flow?: 'recovery' | 'invitation' };
 
 const copy = {
   ro: {
     title: 'Alege o parolă nouă',
-    intro: 'Setează o parolă unică de cel puțin 12 caractere.',
+    intro: 'Setează o parolă de cel puțin 8 caractere, cu minimum o literă și o cifră.',
     password: 'Parolă nouă',
     confirm: 'Confirmă parola',
     submit: 'Actualizează parola',
     working: 'Se actualizează…',
     mismatch: 'Parolele nu coincid.',
-    weak: 'Parola trebuie să aibă cel puțin 12 caractere.',
+    weak: 'Parola trebuie să aibă cel puțin 8 caractere, o literă și o cifră.',
     failed: 'Parola nu a putut fi actualizată. Linkul poate fi expirat sau nevalid.',
     invitationTitle: 'Setează parola contului',
-    invitationIntro: 'Finalizează activarea contului cu o parolă unică de cel puțin 12 caractere.',
+    invitationIntro: 'Finalizează activarea cu o parolă de minimum 8 caractere, o literă și o cifră.',
     invitationFailed: 'Parola nu a putut fi setată. Reia invitația sau solicită asistență.',
   },
   en: {
     title: 'Choose a new password',
-    intro: 'Set a unique password containing at least 12 characters.',
+    intro: 'Set a password with at least 8 characters, including one letter and one number.',
     password: 'New password',
     confirm: 'Confirm password',
     submit: 'Update password',
     working: 'Updating…',
     mismatch: 'Passwords do not match.',
-    weak: 'The password must contain at least 12 characters.',
+    weak: 'The password must contain at least 8 characters, one letter, and one number.',
     failed: 'The password could not be updated. The recovery link may be expired or invalid.',
     invitationTitle: 'Set your account password',
-    invitationIntro: 'Complete account activation with a unique password containing at least 12 characters.',
+    invitationIntro: 'Complete activation with at least 8 characters, one letter, and one number.',
     invitationFailed: 'The password could not be set. Restart the invitation or request assistance.',
   },
   fa: {
     title: 'انتخاب رمز عبور جدید',
-    intro: 'یک رمز عبور منحصربه‌فرد با حداقل ۱۲ نویسه تعیین کنید.',
+    intro: 'رمزی با حداقل ۸ نویسه، شامل دست‌کم یک حرف و یک عدد تعیین کنید.',
     password: 'رمز عبور جدید',
     confirm: 'تکرار رمز عبور',
     submit: 'به‌روزرسانی رمز عبور',
     working: 'در حال به‌روزرسانی…',
     mismatch: 'رمزهای عبور یکسان نیستند.',
-    weak: 'رمز عبور باید حداقل ۱۲ نویسه داشته باشد.',
+    weak: 'رمز عبور باید حداقل ۸ نویسه و شامل یک حرف و یک عدد باشد.',
     failed: 'رمز عبور به‌روزرسانی نشد. ممکن است پیوند بازیابی منقضی یا نامعتبر باشد.',
     invitationTitle: 'تعیین رمز عبور حساب',
-    invitationIntro: 'فعال‌سازی حساب را با یک رمز عبور منحصربه‌فرد و حداقل ۱۲ نویسه تکمیل کنید.',
+    invitationIntro: 'فعال‌سازی را با رمزی حداقل ۸ نویسه‌ای شامل یک حرف و یک عدد تکمیل کنید.',
     invitationFailed: 'تعیین رمز عبور انجام نشد. دعوت‌نامه را دوباره آغاز کنید یا پشتیبانی بخواهید.',
   },
 } as const;
@@ -69,7 +70,7 @@ export function ResetPasswordForm({ lang, flow = 'recovery' }: Props) {
     event.preventDefault();
     setError(null);
 
-    if (password.length < 12) {
+    if (!meetsPasswordPolicy(password)) {
       setError(t.weak);
       return;
     }
@@ -121,7 +122,7 @@ export function ResetPasswordForm({ lang, flow = 'recovery' }: Props) {
             type="password"
             autoComplete="new-password"
             required
-            minLength={12}
+            minLength={MIN_PASSWORD_LENGTH}
             value={password}
             onChange={(event) => setPassword(event.target.value)}
             className="w-full rounded-xl border border-[#D3DCE6] py-2.5 pe-3 ps-9 text-xs text-[#102A43] focus:outline-none focus:ring-2 focus:ring-[#087A6E]"
@@ -137,7 +138,7 @@ export function ResetPasswordForm({ lang, flow = 'recovery' }: Props) {
           type="password"
           autoComplete="new-password"
           required
-          minLength={12}
+          minLength={MIN_PASSWORD_LENGTH}
           value={confirmation}
           onChange={(event) => setConfirmation(event.target.value)}
           className="w-full rounded-xl border border-[#D3DCE6] px-3 py-2.5 text-xs text-[#102A43] focus:outline-none focus:ring-2 focus:ring-[#087A6E]"
