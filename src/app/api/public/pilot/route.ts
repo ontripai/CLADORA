@@ -9,7 +9,8 @@ import { verifyTurnstileToken } from '@/lib/security/turnstile-server';
 import { notifyNewLead } from '@/lib/notifications/lead-notifier';
 import { isSupabaseConfigured } from '@/lib/supabase/env';
 import { createAdminClient } from '@/lib/supabase/admin';
-import { parseJsonWithLimit } from '@/lib/security/request-body';
+import { isApplicationJson, parseJsonWithLimit } from '@/lib/security/request-body';
+import { validateLeadServiceConfiguration } from '@/lib/security/lead-security-config';
 
 // Enforce dynamic server execution
 export const dynamic = 'force-dynamic';
@@ -98,13 +99,25 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  // 2. Enforce Request Body Size Limit before parsing
+  // 2. Strict Content-Type Enforcement (must be application/json before body parse)
+  if (!isApplicationJson(request.headers.get('content-type'))) {
+    return NextResponse.json(
+      {
+        ok: false,
+        code: 'UNSUPPORTED_MEDIA_TYPE',
+        message: 'Content-Type must be application/json.',
+      },
+      { status: 415 }
+    );
+  }
+
+  // 3. Enforce Request Body Size Limit before parsing (32 KB max)
   const { data: rawBody, errorResponse } = await parseJsonWithLimit(request);
   if (errorResponse) {
     return errorResponse;
   }
 
-  // 3. Honeypot check (silent discard of spam bot submissions)
+  // 4. Honeypot check (silent discard of spam bot submissions)
   if (typeof rawBody === 'object' && rawBody !== null && 'honeypot' in rawBody) {
     const hp = (rawBody as { honeypot?: unknown }).honeypot;
     if (typeof hp === 'string' && hp.trim().length > 0) {
@@ -119,16 +132,35 @@ export async function POST(request: NextRequest) {
     }
   }
 
-  // 4. Strict Schema Validation
+  // 5. Pre-execution Service Configuration Check (Fail-closed 503 before Rate Limiting)
+  const configValidation = validateLeadServiceConfiguration();
+  if (!configValidation.valid) {
+    console.error('[LEAD_SERVICE_CONFIG_ERROR]', {
+      reason: configValidation.reason,
+      leadType: 'pilot',
+    });
+    return NextResponse.json(
+      {
+        ok: false,
+        code: 'SERVICE_UNAVAILABLE',
+        message: 'Service is temporarily unavailable. Please try again later.',
+      },
+      { status: 503 }
+    );
+  }
+
+  // 6. Strict Schema Validation with sanitized safe error response
   const validation = PilotPayloadSchema.safeParse(rawBody);
   if (!validation.success) {
     const firstIssue = validation.error.issues[0];
+    const field = firstIssue?.path?.join('.') || 'unknown';
+    const safeMessage = firstIssue?.message || 'Invalid pilot application submission.';
     return NextResponse.json(
       {
         ok: false,
         code: 'VALIDATION_ERROR',
-        message: firstIssue?.message || 'Invalid pilot application submission.',
-        issues: validation.error.issues,
+        field,
+        message: safeMessage,
       },
       { status: 400 }
     );

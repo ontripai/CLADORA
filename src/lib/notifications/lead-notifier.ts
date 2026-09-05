@@ -96,17 +96,51 @@ export function isSafeHeaderValue(val: string): boolean {
   return !/[\r\n\x00-\x1F]/.test(val);
 }
 
+export interface DnsLookupEntry {
+  address: string;
+  family: number;
+}
+
+export type DnsLookupFunction = (hostname: string) => Promise<DnsLookupEntry[]>;
+
+export interface ValidateWebhookOptions {
+  allowedHostsEnv?: string;
+  lookupImpl?: DnsLookupFunction;
+}
+
+export interface NotifyLeadOptions {
+  fetchImpl?: typeof fetch;
+  lookupImpl?: DnsLookupFunction;
+  timeoutMs?: number;
+  allowedHostsEnv?: string;
+}
+
 /**
  * Validates a webhook destination URL against strict SSRF rules:
+ * - Primary defense: Mandatory Exact Host Allowlist (CONTACT_NOTIFICATION_ALLOWED_HOSTS)
+ *   (Note: DNS pre-lookup does not definitively stop DNS rebinding because fetch re-resolves;
+ *    security is strictly rooted in the exact host allowlist).
  * - Enforces HTTPS protocol
- * - Checks CONTACT_NOTIFICATION_ALLOWED_HOSTS allowlist if configured
- * - Blocks localhost, internal domains, cloud metadata endpoints
+ * - Disallows credentials in URL (user:pass)
+ * - Restricts non-standard ports to development/test environments
+ * - Disallows wildcard (*) or suffix matches in the allowlist
+ * - Secondary defense-in-depth: Blocks localhost, internal domains, cloud metadata endpoints
  * - Resolves DNS and blocks private/loopback/link-local IPs
  */
 export async function validateWebhookDestination(
   urlStr: string,
-  allowedHostsEnv?: string
+  optionsOrAllowedHosts?: string | ValidateWebhookOptions
 ): Promise<{ valid: boolean; reason?: string; url?: URL }> {
+  let allowedHostsEnv: string | undefined;
+  let lookupImpl: DnsLookupFunction | undefined;
+
+  if (typeof optionsOrAllowedHosts === 'string') {
+    allowedHostsEnv = optionsOrAllowedHosts;
+  } else if (optionsOrAllowedHosts) {
+    allowedHostsEnv = optionsOrAllowedHosts.allowedHostsEnv;
+    lookupImpl = optionsOrAllowedHosts.lookupImpl;
+  }
+
   let destination: URL;
   try {
     destination = new URL(urlStr);
@@ -114,25 +148,52 @@ export async function validateWebhookDestination(
     return { valid: false, reason: 'INVALID_URL' };
   }
 
+  // 1. Mandatory HTTPS protocol
   if (destination.protocol !== 'https:') {
     return { valid: false, reason: 'NON_HTTPS_PROTOCOL' };
   }
 
-  const hostname = destination.hostname.toLowerCase().trim();
+  // 2. Reject credentials in URL
+  if (destination.username || destination.password) {
+    return { valid: false, reason: 'CREDENTIALS_IN_URL' };
+  }
 
-  // 1. Check Allowlist if configured
-  const allowedHostsConfig = (allowedHostsEnv ?? process.env.CONTACT_NOTIFICATION_ALLOWED_HOSTS)?.trim();
-  if (allowedHostsConfig) {
-    const allowedList = allowedHostsConfig
-      .split(',')
-      .map((h) => h.trim().toLowerCase())
-      .filter(Boolean);
-    if (!allowedList.includes(hostname)) {
-      return { valid: false, reason: 'HOSTNAME_NOT_IN_ALLOWLIST' };
+  // 3. Port check: Non-standard port (not 443) only permitted in dev/test
+  if (destination.port && destination.port !== '443') {
+    const isDevOrTest = process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test';
+    if (!isDevOrTest) {
+      return { valid: false, reason: 'NON_STANDARD_PORT' };
     }
   }
 
-  // 2. Reject obvious private hostnames and cloud metadata endpoints
+  const hostname = destination.hostname.toLowerCase().trim();
+
+  // 4. Mandatory Exact Host Allowlist
+  const allowedHostsConfig = (allowedHostsEnv ?? process.env.CONTACT_NOTIFICATION_ALLOWED_HOSTS)?.trim();
+  if (!allowedHostsConfig) {
+    return { valid: false, reason: 'MISSING_ALLOWLIST' };
+  }
+
+  const allowedList = allowedHostsConfig
+    .split(',')
+    .map((h) => h.trim().toLowerCase())
+    .filter(Boolean);
+
+  if (allowedList.length === 0) {
+    return { valid: false, reason: 'MISSING_ALLOWLIST' };
+  }
+
+  // Exact match only: reject wildcard or suffix matches
+  const isExactMatch = allowedList.some((allowed) => {
+    if (allowed.includes('*') || allowed.startsWith('.')) return false;
+    return allowed === hostname;
+  });
+
+  if (!isExactMatch) {
+    return { valid: false, reason: 'HOSTNAME_NOT_IN_ALLOWLIST' };
+  }
+
+  // 5. Reject obvious private hostnames and cloud metadata endpoints (defense-in-depth)
   if (
     hostname === 'localhost' ||
     hostname.endsWith('.localhost') ||
@@ -146,7 +207,7 @@ export async function validateWebhookDestination(
     return { valid: false, reason: 'PRIVATE_OR_METADATA_HOSTNAME' };
   }
 
-  // 3. IP address evaluation (literal or via DNS lookup)
+  // 6. IP address evaluation (literal or via DNS lookup as defense-in-depth)
   const ipFamily = isIP(hostname);
   if (ipFamily === 4) {
     if (isPrivateOrReservedIPv4(hostname)) {
@@ -158,8 +219,9 @@ export async function validateWebhookDestination(
     }
   } else {
     // Domain name: resolve DNS and verify all returned addresses
+    const resolver = lookupImpl ?? ((h: string) => lookup(h, { all: true }));
     try {
-      const addresses = await lookup(hostname, { all: true });
+      const addresses = await resolver(hostname);
       if (!addresses || addresses.length === 0) {
         return { valid: false, reason: 'DNS_RESOLUTION_EMPTY' };
       }
@@ -173,12 +235,6 @@ export async function validateWebhookDestination(
         }
       }
     } catch {
-      // In isolated test environments or offline execution, lookup may fail.
-      // If hostname is test/mock domain (e.g. public-host.example or mock-webhook.example)
-      if (hostname.endsWith('.example') || hostname.endsWith('.test')) {
-        // Safe documentation/test host, allow for offline unit tests
-        return { valid: true, url: destination };
-      }
       return { valid: false, reason: 'DNS_RESOLUTION_FAILED' };
     }
   }
@@ -190,9 +246,13 @@ export async function validateWebhookDestination(
  * Dispatches a secure server-side lead notification.
  * 1. Reads destination strictly from server environment (prevents SSRF).
  * 2. Never throws: failure is captured and technical status is logged without PII.
- * 3. Enforces HTTPS, 3s timeout, redirect: 'error', and private IP blocking.
+ * 3. Enforces HTTPS, 2.5s timeout, redirect: 'error', exact host allowlist, and private IP blocking.
+ * 4. Supports dependency injection (fetchImpl, lookupImpl) for automated unit testing.
  */
-export async function notifyNewLead(payload: LeadNotificationPayload): Promise<NotificationResult> {
+export async function notifyNewLead(
+  payload: LeadNotificationPayload,
+  options?: NotifyLeadOptions
+): Promise<NotificationResult> {
   const attemptedAt = new Date().toISOString();
   const webhookUrl = process.env.CONTACT_NOTIFICATION_WEBHOOK_URL?.trim();
 
@@ -207,8 +267,12 @@ export async function notifyNewLead(payload: LeadNotificationPayload): Promise<N
     return { status: 'skipped_no_config', attemptedAt };
   }
 
-  // SSRF Protection
-  const validation = await validateWebhookDestination(webhookUrl);
+  // SSRF & Allowlist Protection
+  const validation = await validateWebhookDestination(webhookUrl, {
+    allowedHostsEnv: options?.allowedHostsEnv,
+    lookupImpl: options?.lookupImpl,
+  });
+
   if (!validation.valid || !validation.url) {
     console.error('[LEAD_NOTIFICATION_SSRF_BLOCKED]', {
       referenceId: payload.referenceId,
@@ -218,8 +282,9 @@ export async function notifyNewLead(payload: LeadNotificationPayload): Promise<N
   }
 
   try {
+    const timeoutDuration = options?.timeoutMs ?? 2500;
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 3000);
+    const timeout = setTimeout(() => controller.abort(), timeoutDuration);
 
     const apiKey = process.env.EMAIL_PROVIDER_API_KEY?.trim();
     if (apiKey && !isSafeHeaderValue(apiKey)) {
@@ -238,7 +303,9 @@ export async function notifyNewLead(payload: LeadNotificationPayload): Promise<N
       headers['Authorization'] = `Bearer ${apiKey.replace(/[\r\n]/g, '').trim()}`;
     }
 
-    const response = await fetch(validation.url.toString(), {
+    const fetcher = options?.fetchImpl ?? fetch;
+
+    const response = await fetcher(validation.url.toString(), {
       method: 'POST',
       headers,
       body: JSON.stringify({
@@ -283,7 +350,9 @@ export async function notifyNewLead(payload: LeadNotificationPayload): Promise<N
 
     return { status: 'sent', attemptedAt };
   } catch (err: unknown) {
-    const isTimeout = err instanceof Error && err.name === 'AbortError';
+    const isTimeout =
+      err instanceof Error &&
+      (err.name === 'AbortError' || err.message.includes('abort') || err.message.includes('timeout'));
     console.error('[LEAD_NOTIFICATION_ERROR]', {
       referenceId: payload.referenceId,
       error: isTimeout ? 'TIMEOUT' : 'NETWORK_ERROR',

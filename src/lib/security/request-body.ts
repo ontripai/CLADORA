@@ -3,6 +3,16 @@ import { NextRequest, NextResponse } from 'next/server.js';
 export const MAX_LEAD_BODY_BYTES = 32 * 1024; // 32 KB
 
 /**
+ * Enforces that the request Content-Type is application/json (optionally with charset parameters).
+ * Rejects all other Content-Types with 415 Unsupported Media Type.
+ */
+export function isApplicationJson(contentType: string | null): boolean {
+  if (!contentType) return false;
+  const mime = contentType.split(';')[0].trim().toLowerCase();
+  return mime === 'application/json';
+}
+
+/**
  * Safely parses request body JSON while enforcing strict byte limits.
  * Protects against memory exhaustion and payload stuffing attacks.
  *
