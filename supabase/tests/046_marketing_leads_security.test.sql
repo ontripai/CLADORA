@@ -130,24 +130,21 @@ select throws_ok(
 );
 
 -- 8. Rate limit function parameter validation
-select throws_ok(
+select throws_like(
   $$ select * from public.consume_marketing_rate_limit('', 5, 900) $$,
-  NULL,
-  'INVALID_ACTION_KEY%',
+  '%INVALID_ACTION_KEY%',
   'empty action key raises exception'
 );
 
-select throws_ok(
+select throws_like(
   $$ select * from public.consume_marketing_rate_limit('test-key', 0, 900) $$,
-  NULL,
-  'INVALID_MAX_REQUESTS%',
+  '%INVALID_MAX_REQUESTS%',
   'max_requests = 0 raises exception'
 );
 
-select throws_ok(
+select throws_like(
   $$ select * from public.consume_marketing_rate_limit('test-key', 5, 0) $$,
-  NULL,
-  'INVALID_WINDOW_SECONDS%',
+  '%INVALID_WINDOW_SECONDS%',
   'window_seconds = 0 raises exception'
 );
 
