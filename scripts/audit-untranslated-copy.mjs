@@ -342,6 +342,22 @@ async function runAudit() {
           console.log(`✅ [307→/${lang}/login] ${fullPath}`);
           continue;
         }
+
+        const devGatedRoutes = [
+          '/information-architecture',
+          '/wireframes/manager',
+          '/ui/manager',
+          '/ui/manager/utility-bills',
+          '/prototype',
+          '/user-testing'
+        ];
+        const isDevGated = devGatedRoutes.some(dev => route === dev || route.startsWith(dev + '/'));
+        if (isDevGated && res.statusCode === 404) {
+          passedTests++;
+          console.log(`✅ [404-GATED] ${fullPath}`);
+          continue;
+        }
+
         if (res.statusCode !== 200) {
           failures.push({ route: fullPath, category: 'HTTP', error: `HTTP ${res.statusCode}` });
           console.log(`❌ [${res.statusCode}] ${fullPath}`);
