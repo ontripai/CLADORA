@@ -25,6 +25,9 @@ import {
 } from '../src/lib/notifications/lead-notifier.ts';
 import { RATE_LIMIT_CONFIG } from '../src/config/rate-limits.ts';
 import { isApplicationJson, parseJsonWithLimit } from '../src/lib/security/request-body.ts';
+import { NextRequest } from 'next/server.js';
+import { POST as contactPost } from '../src/app/api/public/contact/route.ts';
+import { POST as pilotPost } from '../src/app/api/public/pilot/route.ts';
 
 console.log('=== RUNNING AUTHORITATIVE PUBLIC APIS & SECURITY IMPLEMENTATION TESTS ===\n');
 
@@ -417,6 +420,35 @@ console.log('=== RUNNING AUTHORITATIVE PUBLIC APIS & SECURITY IMPLEMENTATION TES
   assert.equal(resTimeout.status, 'failed');
   assert.equal(resTimeout.errorCode, 'TIMEOUT', 'Timeout recorded as TIMEOUT');
 
+  // 5b. Real DNS Lookup Timeout (actual timer deadline via timeoutMs)
+  const hangingLookup = () => new Promise((resolve) => setTimeout(resolve, 500));
+  const resLookupTimeout = await notifyNewLead(mockPayload, {
+    fetchImpl: mockFetch200,
+    lookupImpl: hangingLookup,
+    timeoutMs: 30, // Deadline fires in 30ms before DNS lookup can finish
+  });
+  assert.equal(resLookupTimeout.status, 'failed');
+  assert.equal(resLookupTimeout.errorCode, 'TIMEOUT', 'Real DNS lookup timeout recorded as TIMEOUT');
+
+  // 5c. Real Fetch Timeout (actual timer deadline via timeoutMs)
+  const hangingFetch = (_url, init) =>
+    new Promise((_resolve, reject) => {
+      if (init?.signal) {
+        init.signal.addEventListener('abort', () => {
+          const err = new Error('Fetch aborted by controller');
+          err.name = 'AbortError';
+          reject(err);
+        });
+      }
+    });
+  const resFetchTimeout = await notifyNewLead(mockPayload, {
+    fetchImpl: hangingFetch,
+    lookupImpl: mockDnsResolver,
+    timeoutMs: 30, // Deadline fires in 30ms before fetch can finish
+  });
+  assert.equal(resFetchTimeout.status, 'failed');
+  assert.equal(resFetchTimeout.errorCode, 'TIMEOUT', 'Real fetch timeout recorded as TIMEOUT');
+
   // 6. Redirect error -> status: 'failed', errorCode: 'NETWORK_ERROR'
   const mockFetchRedirect = async () => {
     const err = new TypeError('Failed to fetch: redirect mode is set to error');
@@ -634,5 +666,123 @@ console.log('=== RUNNING AUTHORITATIVE PUBLIC APIS & SECURITY IMPLEMENTATION TES
   console.log('  ✓ Zero forbidden legacy domains found across scripts, source code, and .env.example');
 }
 
+// -----------------------------------------------------------------------------
+// Suite 14: Direct Route Handler Invocations (Contact & Pilot)
+// -----------------------------------------------------------------------------
+{
+  console.log('\n[Suite 14] Direct Route Handler Invocations (Contact & Pilot)');
+
+  const baseOrigin = 'https://cladora.ro';
+
+  for (const { name, postHandler, routePath } of [
+    { name: 'Contact', postHandler: contactPost, routePath: '/api/public/contact' },
+    { name: 'Pilot', postHandler: pilotPost, routePath: '/api/public/pilot' },
+  ]) {
+    // 1. Invalid Content-Type => 415 UNSUPPORTED_MEDIA_TYPE
+    const plainTextReq = new NextRequest(`${baseOrigin}${routePath}`, {
+      method: 'POST',
+      headers: {
+        origin: baseOrigin,
+        'content-type': 'text/plain',
+      },
+      body: 'plain-text-payload',
+    });
+    const res415 = await postHandler(plainTextReq);
+    assert.equal(res415.status, 415, `${name}: text/plain returns 415`);
+    const data415 = await res415.json();
+    assert.equal(data415.ok, false);
+    assert.equal(data415.code, 'UNSUPPORTED_MEDIA_TYPE');
+    assert.equal(data415.message, 'Content-Type must be application/json.');
+
+    // Missing Content-Type => 415
+    const noContentTypeReq = new NextRequest(`${baseOrigin}${routePath}`, {
+      method: 'POST',
+      headers: {
+        origin: baseOrigin,
+      },
+      body: JSON.stringify({ test: 123 }),
+    });
+    const resNoCt = await postHandler(noContentTypeReq);
+    assert.equal(resNoCt.status, 415, `${name}: missing Content-Type returns 415`);
+
+    // 2. Incomplete Supabase Configuration in Production => 503 SERVICE_UNAVAILABLE (before rate limiter)
+    const prevNodeEnv = process.env.NODE_ENV;
+    const prevSupabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const prevPublishableKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
+    const prevSecretKey = process.env.SUPABASE_SECRET_KEY;
+    const prevHashSecret = process.env.LEAD_IP_HASH_SECRET;
+
+    process.env.NODE_ENV = 'production';
+    delete process.env.NEXT_PUBLIC_SUPABASE_URL;
+    delete process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
+    delete process.env.SUPABASE_SECRET_KEY;
+    process.env.LEAD_IP_HASH_SECRET = 'c'.repeat(32);
+
+    const validPayloadReq = new NextRequest(`${baseOrigin}${routePath}`, {
+      method: 'POST',
+      headers: {
+        origin: baseOrigin,
+        'content-type': 'application/json',
+      },
+      body: JSON.stringify({
+        fullName: 'Ioan Popescu',
+        email: 'ioan@example.ro',
+        message: 'Direct route test inquiry message exceeding minimum length.',
+        locale: 'ro',
+        consentPrivacy: true,
+      }),
+    });
+    const res503 = await postHandler(validPayloadReq);
+    assert.equal(
+      res503.status,
+      503,
+      `${name}: missing Supabase in production returns 503 (not 429 rate limited)`
+    );
+    const data503 = await res503.json();
+    assert.equal(data503.ok, false);
+    assert.equal(data503.code, 'SERVICE_UNAVAILABLE');
+    assert.equal(data503.message, 'Service is temporarily unavailable. Please try again later.');
+
+    // Restore environment
+    process.env.NODE_ENV = 'test';
+    if (prevSupabaseUrl) process.env.NEXT_PUBLIC_SUPABASE_URL = prevSupabaseUrl;
+    if (prevPublishableKey) process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY = prevPublishableKey;
+    if (prevSecretKey) process.env.SUPABASE_SECRET_KEY = prevSecretKey;
+    process.env.LEAD_IP_HASH_SECRET = prevHashSecret || 'a'.repeat(32);
+    process.env.ALLOW_MOCK_LEAD_CAPTURE = 'true';
+
+    // 3. Zod Validation Error => 400 with sanitized structure (strictly ok, code, field, message; NO issues array)
+    const invalidPayloadReq = new NextRequest(`${baseOrigin}${routePath}`, {
+      method: 'POST',
+      headers: {
+        origin: baseOrigin,
+        'content-type': 'application/json',
+      },
+      body: JSON.stringify({
+        fullName: 'X', // too short (< 2 chars)
+      }),
+    });
+    const res400 = await postHandler(invalidPayloadReq);
+    assert.equal(res400.status, 400, `${name}: invalid body schema returns 400`);
+    const data400 = await res400.json();
+    assert.equal(data400.ok, false, `${name}: ok is false`);
+    assert.equal(data400.code, 'VALIDATION_ERROR', `${name}: code is VALIDATION_ERROR`);
+    assert.equal(typeof data400.field, 'string', `${name}: field is present as a string`);
+    assert.equal(typeof data400.message, 'string', `${name}: message is present as a string`);
+    assert.equal(data400.issues, undefined, `${name}: issues array MUST NOT be exposed`);
+    assert.equal(data400.stack, undefined, `${name}: stack traces MUST NOT be exposed`);
+
+    // Verify sanitized object contains ONLY allowed keys
+    const allowedKeys = new Set(['ok', 'code', 'field', 'message']);
+    const extraKeys = Object.keys(data400).filter((k) => !allowedKeys.has(k));
+    assert.equal(extraKeys.length, 0, `${name}: response contains no extra internal keys: ${extraKeys.join(', ')}`);
+  }
+
+  // Clean up
+  delete process.env.ALLOW_MOCK_LEAD_CAPTURE;
+
+  console.log('  ✓ Direct Route Handler tests verified for Contact and Pilot (415, 503 before rate-limit, and sanitized 400 validation error)');
+}
+
 console.log('\n=======================================');
-console.log('🎉 ALL 13 SUITES PASSED! 100% REAL SOURCE IMPLEMENTATION TESTS CLEAN!');
+console.log('🎉 ALL 14 SUITES PASSED! 100% REAL SOURCE IMPLEMENTATION TESTS CLEAN!');

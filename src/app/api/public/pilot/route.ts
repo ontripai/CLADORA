@@ -1,16 +1,15 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server.js';
 import { z } from 'zod';
-import { validateRequestOrigin } from '@/lib/security/origin';
-import { getClientIp, hashClientIp } from '@/lib/security/ip-hash';
-import { generateReferenceId } from '@/lib/security/reference-id';
-import { computeSubmissionFingerprint } from '@/lib/security/fingerprint';
-import { checkRateLimit } from '@/lib/security/rate-limiter';
-import { verifyTurnstileToken } from '@/lib/security/turnstile-server';
-import { notifyNewLead } from '@/lib/notifications/lead-notifier';
-import { isSupabaseConfigured } from '@/lib/supabase/env';
-import { createAdminClient } from '@/lib/supabase/admin';
-import { isApplicationJson, parseJsonWithLimit } from '@/lib/security/request-body';
-import { validateLeadServiceConfiguration } from '@/lib/security/lead-security-config';
+import { validateRequestOrigin } from '../../../../lib/security/origin.ts';
+import { getClientIp, hashClientIp } from '../../../../lib/security/ip-hash.ts';
+import { generateReferenceId } from '../../../../lib/security/reference-id.ts';
+import { computeSubmissionFingerprint } from '../../../../lib/security/fingerprint.ts';
+import { checkRateLimit } from '../../../../lib/security/rate-limiter.ts';
+import { verifyTurnstileToken } from '../../../../lib/security/turnstile-server.ts';
+import { notifyNewLead } from '../../../../lib/notifications/lead-notifier.ts';
+import { isSupabaseConfigured } from '../../../../lib/supabase/env.ts';
+import { isApplicationJson, parseJsonWithLimit } from '../../../../lib/security/request-body.ts';
+import { validateLeadServiceConfiguration } from '../../../../lib/security/lead-security-config.ts';
 
 // Enforce dynamic server execution
 export const dynamic = 'force-dynamic';
@@ -262,6 +261,7 @@ export async function POST(request: NextRequest) {
   const MAX_RETRIES = 3;
 
   try {
+    const { createAdminClient } = await import('../../../../lib/supabase/admin.ts');
     const supabase = createAdminClient();
 
     for (let attempt = 0; attempt < MAX_RETRIES; attempt++) {
@@ -379,8 +379,9 @@ export async function POST(request: NextRequest) {
   });
 
   try {
+    const { createAdminClient } = await import('../../../../lib/supabase/admin.ts');
     const supabase = createAdminClient();
-    await supabase
+    const { error: metadataUpdateError } = await supabase
       .from('marketing_leads')
       .update({
         metadata: {
@@ -393,8 +394,19 @@ export async function POST(request: NextRequest) {
         },
       })
       .eq('reference_id', savedReferenceId);
-  } catch (updateErr) {
-    console.error('[METADATA_UPDATE_ERROR] Failed to record notification status in lead record:', updateErr);
+
+    if (metadataUpdateError) {
+      console.error('[METADATA_UPDATE_ERROR] Failed to record notification status in pilot lead record:', {
+        referenceId: savedReferenceId,
+        code: metadataUpdateError.code,
+        message: metadataUpdateError.message,
+      });
+    }
+  } catch (updateErr: unknown) {
+    console.error('[METADATA_UPDATE_EXCEPTION] Exception while recording pilot notification status:', {
+      referenceId: savedReferenceId,
+      errorName: updateErr instanceof Error ? updateErr.name : 'UnknownError',
+    });
   }
 
   return NextResponse.json(

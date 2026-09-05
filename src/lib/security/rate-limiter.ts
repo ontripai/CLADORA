@@ -1,6 +1,5 @@
-import { isSupabaseConfigured } from '@/lib/supabase/env';
-import { createAdminClient } from '@/lib/supabase/admin';
-import { RATE_LIMIT_CONFIG, RateLimitAction } from '@/config/rate-limits';
+import { isSupabaseConfigured } from '../supabase/env.ts';
+import { RATE_LIMIT_CONFIG, type RateLimitAction } from '../../config/rate-limits.ts';
 
 export interface RateLimitResult {
   allowed: boolean;
@@ -60,6 +59,7 @@ export async function checkRateLimit(
   }
 
   try {
+    const { createAdminClient } = await import('../supabase/admin.ts');
     const supabase = createAdminClient();
     const { data, error } = await supabase.rpc('consume_marketing_rate_limit', {
       p_action_key: actionKey,

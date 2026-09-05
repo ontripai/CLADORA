@@ -106,6 +106,7 @@ export type DnsLookupFunction = (hostname: string) => Promise<DnsLookupEntry[]>;
 export interface ValidateWebhookOptions {
   allowedHostsEnv?: string;
   lookupImpl?: DnsLookupFunction;
+  signal?: AbortSignal;
 }
 
 export interface NotifyLeadOptions {
@@ -125,7 +126,7 @@ export interface NotifyLeadOptions {
  * - Restricts non-standard ports to development/test environments
  * - Disallows wildcard (*) or suffix matches in the allowlist
  * - Secondary defense-in-depth: Blocks localhost, internal domains, cloud metadata endpoints
- * - Resolves DNS and blocks private/loopback/link-local IPs
+ * - Resolves DNS and blocks private/loopback/link-local IPs (bound to deadline signal)
  */
 export async function validateWebhookDestination(
   urlStr: string,
@@ -133,12 +134,14 @@ export async function validateWebhookDestination(
 ): Promise<{ valid: boolean; reason?: string; url?: URL }> {
   let allowedHostsEnv: string | undefined;
   let lookupImpl: DnsLookupFunction | undefined;
+  let signal: AbortSignal | undefined;
 
   if (typeof optionsOrAllowedHosts === 'string') {
     allowedHostsEnv = optionsOrAllowedHosts;
   } else if (optionsOrAllowedHosts) {
     allowedHostsEnv = optionsOrAllowedHosts.allowedHostsEnv;
     lookupImpl = optionsOrAllowedHosts.lookupImpl;
+    signal = optionsOrAllowedHosts.signal;
   }
 
   let destination: URL;
@@ -218,10 +221,36 @@ export async function validateWebhookDestination(
       return { valid: false, reason: 'PRIVATE_IPV6_ADDRESS' };
     }
   } else {
-    // Domain name: resolve DNS and verify all returned addresses
+    if (signal?.aborted) {
+      return { valid: false, reason: 'TIMEOUT' };
+    }
+
+    // Domain name: resolve DNS and verify all returned addresses with signal deadline
     const resolver = lookupImpl ?? ((h: string) => lookup(h, { all: true }));
     try {
-      const addresses = await resolver(hostname);
+      let addresses: DnsLookupEntry[];
+      if (signal) {
+        addresses = await new Promise<DnsLookupEntry[]>((resolve, reject) => {
+          const onAbort = () => {
+            const err = new Error('DNS lookup timed out');
+            err.name = 'AbortError';
+            reject(err);
+          };
+          signal.addEventListener('abort', onAbort, { once: true });
+          resolver(hostname)
+            .then((res) => {
+              signal.removeEventListener('abort', onAbort);
+              resolve(res);
+            })
+            .catch((err) => {
+              signal.removeEventListener('abort', onAbort);
+              reject(err);
+            });
+        });
+      } else {
+        addresses = await resolver(hostname);
+      }
+
       if (!addresses || addresses.length === 0) {
         return { valid: false, reason: 'DNS_RESOLUTION_EMPTY' };
       }
@@ -234,7 +263,10 @@ export async function validateWebhookDestination(
           return { valid: false, reason: `DNS_RESOLVED_PRIVATE_IPV6: ${entry.address}` };
         }
       }
-    } catch {
+    } catch (err: unknown) {
+      if (signal?.aborted || (err instanceof Error && (err.name === 'AbortError' || err.message.includes('timeout')))) {
+        return { valid: false, reason: 'TIMEOUT' };
+      }
       return { valid: false, reason: 'DNS_RESOLUTION_FAILED' };
     }
   }
@@ -246,8 +278,9 @@ export async function validateWebhookDestination(
  * Dispatches a secure server-side lead notification.
  * 1. Reads destination strictly from server environment (prevents SSRF).
  * 2. Never throws: failure is captured and technical status is logged without PII.
- * 3. Enforces HTTPS, 2.5s timeout, redirect: 'error', exact host allowlist, and private IP blocking.
- * 4. Supports dependency injection (fetchImpl, lookupImpl) for automated unit testing.
+ * 3. Enforces HTTPS, 2.5s overall timeout (covering validation, DNS, and fetch), redirect: 'error', exact host allowlist, and private IP blocking.
+ * 4. Guaranteed timeout cleanup in finally block.
+ * 5. Supports dependency injection (fetchImpl, lookupImpl) for automated unit testing.
  */
 export async function notifyNewLead(
   payload: LeadNotificationPayload,
@@ -267,28 +300,36 @@ export async function notifyNewLead(
     return { status: 'skipped_no_config', attemptedAt };
   }
 
-  // SSRF & Allowlist Protection
-  const validation = await validateWebhookDestination(webhookUrl, {
-    allowedHostsEnv: options?.allowedHostsEnv,
-    lookupImpl: options?.lookupImpl,
-  });
-
-  if (!validation.valid || !validation.url) {
-    console.error('[LEAD_NOTIFICATION_SSRF_BLOCKED]', {
-      referenceId: payload.referenceId,
-      reason: validation.reason,
-    });
-    return { status: 'failed', attemptedAt, errorCode: `SSRF_BLOCKED_${validation.reason}` };
-  }
+  const timeoutDuration = options?.timeoutMs ?? 2500;
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), timeoutDuration);
 
   try {
-    const timeoutDuration = options?.timeoutMs ?? 2500;
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), timeoutDuration);
+    // 1. SSRF & Allowlist Protection (DNS lookup covered by overall controller.signal deadline)
+    const validation = await validateWebhookDestination(webhookUrl, {
+      allowedHostsEnv: options?.allowedHostsEnv,
+      lookupImpl: options?.lookupImpl,
+      signal: controller.signal,
+    });
+
+    if (!validation.valid || !validation.url) {
+      if (validation.reason === 'TIMEOUT') {
+        console.error('[LEAD_NOTIFICATION_ERROR] Validation/DNS timeout', {
+          referenceId: payload.referenceId,
+          error: 'TIMEOUT',
+        });
+        return { status: 'failed', attemptedAt, errorCode: 'TIMEOUT' };
+      }
+
+      console.error('[LEAD_NOTIFICATION_SSRF_BLOCKED]', {
+        referenceId: payload.referenceId,
+        reason: validation.reason,
+      });
+      return { status: 'failed', attemptedAt, errorCode: `SSRF_BLOCKED_${validation.reason}` };
+    }
 
     const apiKey = process.env.EMAIL_PROVIDER_API_KEY?.trim();
     if (apiKey && !isSafeHeaderValue(apiKey)) {
-      clearTimeout(timeout);
       console.error('[LEAD_NOTIFICATION_ERROR] Malformed API key contains illegal header characters.', {
         referenceId: payload.referenceId,
       });
@@ -329,7 +370,6 @@ export async function notifyNewLead(
       redirect: 'error', // Prevent SSRF via HTTP redirects
       signal: controller.signal,
     });
-    clearTimeout(timeout);
 
     if (!response.ok) {
       console.error('[LEAD_NOTIFICATION_FAILED]', {
@@ -351,8 +391,9 @@ export async function notifyNewLead(
     return { status: 'sent', attemptedAt };
   } catch (err: unknown) {
     const isTimeout =
-      err instanceof Error &&
-      (err.name === 'AbortError' || err.message.includes('abort') || err.message.includes('timeout'));
+      controller.signal.aborted ||
+      (err instanceof Error &&
+        (err.name === 'AbortError' || err.message.includes('abort') || err.message.includes('timeout')));
     console.error('[LEAD_NOTIFICATION_ERROR]', {
       referenceId: payload.referenceId,
       error: isTimeout ? 'TIMEOUT' : 'NETWORK_ERROR',
@@ -362,5 +403,7 @@ export async function notifyNewLead(
       attemptedAt,
       errorCode: isTimeout ? 'TIMEOUT' : 'NETWORK_ERROR',
     };
+  } finally {
+    clearTimeout(timeoutId);
   }
 }

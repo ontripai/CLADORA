@@ -58,7 +58,7 @@ export function validateLeadServiceConfiguration(): LeadServiceConfigValidation 
     process.env.VERCEL_ENV === 'production' ||
     process.env.VERCEL_ENV === 'preview';
 
-  const allowLocalMock = process.env.ALLOW_LOCAL_MOCK_LEAD_CAPTURE === 'true';
+  const allowLocalMock = process.env.ALLOW_MOCK_LEAD_CAPTURE === 'true';
 
   // 1. Supabase credentials check:
   // In production/preview (or in dev/test without explicit local mock flag), Supabase is mandatory.
