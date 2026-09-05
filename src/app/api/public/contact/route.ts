@@ -1,182 +1,214 @@
-import { NextResponse, type NextRequest } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
-import { validateRequestOrigin } from '@/lib/security/origin';
+import { isAllowedOrigin, validateRequestOrigin } from '@/lib/security/origin';
 import { getClientIp, hashClientIp } from '@/lib/security/ip-hash';
-import { checkRateLimit } from '@/lib/security/rate-limiter';
-import { verifyTurnstileToken } from '@/lib/security/turnstile-server';
 import { generateReferenceId } from '@/lib/security/reference-id';
 import { computeSubmissionFingerprint } from '@/lib/security/fingerprint';
+import { checkRateLimit } from '@/lib/security/rate-limiter';
+import { verifyTurnstileToken } from '@/lib/security/turnstile-server';
 import { notifyNewLead } from '@/lib/notifications/lead-notifier';
 import { isSupabaseConfigured } from '@/lib/supabase/env';
 import { createAdminClient } from '@/lib/supabase/admin';
+import { parseJsonWithLimit } from '@/lib/security/request-body';
 
-const responseHeaders = {
-  'Cache-Control': 'no-store, private',
-  'Content-Type': 'application/json',
-};
+// Enforce dynamic server execution
+export const dynamic = 'force-dynamic';
 
-const ContactSchema = z
+const ContactPayloadSchema = z
   .object({
-    fullName: z.string().trim().min(1, 'Name is required').max(255),
-    email: z.string().trim().email('Invalid email address').max(255),
-    phone: z.string().trim().max(50).optional().nullable(),
-    message: z.string().trim().min(1, 'Message is required').max(5000),
-    locale: z.enum(['ro', 'en', 'fa']),
-    sourcePage: z.string().trim().max(255).optional().nullable(),
-    consentPrivacy: z.literal(true, {
-      message: 'Privacy consent is mandatory',
-    }),
-    honeypot: z.string().optional().nullable(),
-    turnstileToken: z.string().optional().nullable(),
+    fullName: z
+      .string({ message: 'Full name is required.' })
+      .trim()
+      .min(2, { message: 'Full name must be at least 2 characters.' })
+      .max(255, { message: 'Full name cannot exceed 255 characters.' }),
+    email: z
+      .string({ message: 'Email address is required.' })
+      .trim()
+      .email({ message: 'Please enter a valid email address.' })
+      .max(255, { message: 'Email address cannot exceed 255 characters.' }),
+    phone: z
+      .string()
+      .trim()
+      .max(50, { message: 'Phone number cannot exceed 50 characters.' })
+      .optional()
+      .nullable(),
+    message: z
+      .string({ message: 'Message content is required.' })
+      .trim()
+      .min(10, { message: 'Message must be at least 10 characters.' })
+      .max(5000, { message: 'Message cannot exceed 5000 characters.' }),
+    locale: z.enum(['ro', 'en', 'fa'], { message: 'Unsupported language.' }),
+    sourcePage: z
+      .string()
+      .trim()
+      .max(255)
+      .optional()
+      .nullable(),
     utm_source: z.string().trim().max(100).optional().nullable(),
     utm_medium: z.string().trim().max(100).optional().nullable(),
     utm_campaign: z.string().trim().max(100).optional().nullable(),
     utm_content: z.string().trim().max(100).optional().nullable(),
     utm_term: z.string().trim().max(100).optional().nullable(),
+    consentPrivacy: z.literal(true, {
+      message: 'You must accept the privacy policy to submit this request.',
+    }),
+    honeypot: z.string().optional(),
+    turnstileToken: z.string().optional().nullable(),
   })
   .strict();
 
 export async function POST(request: NextRequest) {
-  // 1. Same-Origin Protection
+  // 1. Same-Origin Validation
   if (!validateRequestOrigin(request)) {
     return NextResponse.json(
-      { ok: false, code: 'ORIGIN_REJECTED', message: 'Cross-origin submission rejected.' },
-      { status: 403, headers: responseHeaders }
+      {
+        ok: false,
+        code: 'FORBIDDEN_ORIGIN',
+        message: 'Requests from this origin are not permitted.',
+      },
+      { status: 403 }
     );
   }
 
-  // 2. Content-Type Check
-  const contentType = request.headers.get('content-type') || '';
-  if (!contentType.includes('application/json')) {
+  // 2. Enforce Request Body Size Limit before parsing
+  const { data: rawBody, errorResponse } = await parseJsonWithLimit(request);
+  if (errorResponse) {
+    return errorResponse;
+  }
+
+  // 3. Honeypot check (silent discard of spam bot submissions)
+  if (typeof rawBody === 'object' && rawBody !== null && 'honeypot' in rawBody) {
+    const hp = (rawBody as { honeypot?: unknown }).honeypot;
+    if (typeof hp === 'string' && hp.trim().length > 0) {
+      return NextResponse.json(
+        {
+          ok: true,
+          referenceId: generateReferenceId('contact'),
+          message: 'Request received.',
+        },
+        { status: 200 }
+      );
+    }
+  }
+
+  // 4. Strict Schema Validation
+  const validation = ContactPayloadSchema.safeParse(rawBody);
+  if (!validation.success) {
+    const firstIssue = validation.error.issues[0];
     return NextResponse.json(
-      { ok: false, code: 'UNSUPPORTED_MEDIA_TYPE', message: 'JSON body required.' },
-      { status: 415, headers: responseHeaders }
+      {
+        ok: false,
+        code: 'VALIDATION_ERROR',
+        message: firstIssue?.message || 'Invalid form submission.',
+        issues: validation.error.issues,
+      },
+      { status: 400 }
     );
   }
 
-  // 3. Client IP & Rate Limiting (HMAC hashed, no raw IP)
+  const data = validation.data;
   const clientIp = getClientIp(request);
-  const ipHash = hashClientIp(clientIp);
-  const rateLimitKey = `contact:${ipHash}`;
+  const nowIso = new Date().toISOString();
 
-  const rateLimit = await checkRateLimit(rateLimitKey, 5, 900);
+  // 5. Cloudflare Turnstile Verification
+  const turnstile = await verifyTurnstileToken(data.turnstileToken, clientIp);
+  if (!turnstile.success) {
+    return NextResponse.json(
+      {
+        ok: false,
+        code: turnstile.errorCode || 'CAPTCHA_VERIFICATION_FAILED',
+        message: 'Security challenge failed. Please refresh and try again.',
+      },
+      { status: 400 }
+    );
+  }
+
+  // 6. Persistent Database Rate Limiter (Atomic fail-closed in production)
+  const ipHash = hashClientIp(clientIp);
+  const actionKey = `contact:${ipHash}`;
+  const rateLimit = await checkRateLimit(actionKey, 'contact');
+
+  const responseHeaders = new Headers();
+  responseHeaders.set('X-RateLimit-Limit', '5');
+  responseHeaders.set('X-RateLimit-Remaining', String(Math.max(0, 5 - rateLimit.currentCount)));
+
   if (!rateLimit.allowed) {
+    responseHeaders.set('Retry-After', String(rateLimit.retryAfterSeconds));
     return NextResponse.json(
       {
         ok: false,
         code: 'RATE_LIMIT_EXCEEDED',
-        message: 'Too many requests. Please try again later.',
+        message: 'Too many requests. Please wait a few minutes before trying again.',
       },
-      {
-        status: 429,
-        headers: {
-          ...responseHeaders,
-          'Retry-After': String(rateLimit.retryAfterSeconds),
+      { status: 429, headers: responseHeaders }
+    );
+  }
+
+  // 7. Atomic Deduplication via Rolling 15-Minute HMAC Fingerprint & Bucket
+  const normalizedEmail = data.email.toLowerCase();
+  const { fingerprint: submissionFingerprint, bucket: fingerprintBucket } = computeSubmissionFingerprint({
+    leadType: 'contact',
+    normalizedEmail,
+    normalizedPhone: data.phone || undefined,
+    messageSnippet: data.message,
+  });
+
+  // 8. Lead Persistence to Supabase
+  if (!isSupabaseConfigured()) {
+    const isProductionOrPreview =
+      process.env.NODE_ENV === 'production' ||
+      process.env.VERCEL_ENV === 'production' ||
+      process.env.VERCEL_ENV === 'preview';
+
+    if (isProductionOrPreview || process.env.ALLOW_MOCK_LEAD_CAPTURE !== 'true') {
+      console.error('[SERVICE_UNAVAILABLE] Supabase is not configured in production/preview.');
+      return NextResponse.json(
+        {
+          ok: false,
+          code: 'SERVICE_UNAVAILABLE',
+          message: 'Lead submission service is currently unavailable. Please try again later.',
         },
-      }
-    );
-  }
+        { status: 503, headers: responseHeaders }
+      );
+    }
 
-  // 4. Request Payload Parsing & Validation
-  let rawBody: unknown;
-  try {
-    rawBody = await request.json();
-  } catch {
-    return NextResponse.json(
-      { ok: false, code: 'INVALID_JSON', message: 'Malformed JSON payload.' },
-      { status: 400, headers: responseHeaders }
-    );
-  }
-
-  const parseResult = ContactSchema.safeParse(rawBody);
-  if (!parseResult.success) {
+    // Local development mock only when explicitly allowed
+    const mockReferenceId = generateReferenceId('contact');
     return NextResponse.json(
       {
-        ok: false,
-        code: 'VALIDATION_FAILED',
-        message: parseResult.error.issues[0]?.message || 'Invalid input data.',
+        ok: true,
+        referenceId: mockReferenceId,
+        message: 'Request received (mock).',
       },
-      { status: 400, headers: responseHeaders }
-    );
-  }
-
-  const data = parseResult.data;
-
-  // 5. Honeypot check (silently pretend success without saving spam)
-  if (data.honeypot && data.honeypot.trim().length > 0) {
-    const fakeRef = generateReferenceId('contact');
-    return NextResponse.json(
-      { ok: true, referenceId: fakeRef },
       { status: 200, headers: responseHeaders }
     );
   }
 
-  // 6. Turnstile Verification
-  const turnstileCheck = await verifyTurnstileToken(data.turnstileToken, clientIp);
-  if (!turnstileCheck.success) {
-    return NextResponse.json(
-      {
-        ok: false,
-        code: turnstileCheck.errorCode || 'CAPTCHA_FAILED',
-        message: 'Security verification failed. Please refresh and try again.',
-      },
-      { status: 400, headers: responseHeaders }
-    );
-  }
-
-  // 7. Duplicate Submission Control via HMAC Fingerprint
-  const normalizedEmail = data.email.toLowerCase().trim();
-  const submissionFingerprint = computeSubmissionFingerprint({
-    leadType: 'contact',
-    normalizedEmail,
-    normalizedPhone: data.phone ?? undefined,
-    messageSnippet: data.message,
-  });
-
-  const referenceId = generateReferenceId('contact');
-  const nowIso = new Date().toISOString();
   const rawUserAgent = request.headers.get('user-agent') || '';
-  const sanitizedUserAgent = rawUserAgent.slice(0, 255);
+  const sanitizedUserAgent = rawUserAgent.slice(0, 250);
 
-  let leadSaved = false;
+  const initialMetadata = {
+    origin: request.headers.get('origin'),
+    rateLimitCount: rateLimit.currentCount,
+    submissionFingerprint,
+    fingerprintBucket,
+    notification: {
+      status: 'pending',
+      attemptedAt: nowIso,
+    },
+  };
 
-  // 8. Database Persistence (Server-side Admin Client)
-  if (isSupabaseConfigured()) {
-    try {
-      const supabase = createAdminClient();
+  let savedReferenceId: string | null = null;
+  const MAX_RETRIES = 3;
 
-      // Check for duplicate fingerprint in active window
-      const { data: existingLead } = await supabase
-        .from('marketing_leads')
-        .select('reference_id, created_at')
-        .eq('submission_fingerprint', submissionFingerprint)
-        .order('created_at', { ascending: false })
-        .limit(1)
-        .maybeSingle();
+  try {
+    const supabase = createAdminClient();
 
-      if (existingLead) {
-        return NextResponse.json(
-          {
-            ok: false,
-            code: 'DUPLICATE_SUBMISSION',
-            message: 'A matching request was already submitted recently. Please wait a few minutes before resending.',
-          },
-          { status: 409, headers: responseHeaders }
-        );
-      }
-
-      const initialMetadata = {
-        origin: request.headers.get('origin'),
-        rateLimitCount: rateLimit.currentCount,
-        submissionFingerprint,
-        notification: {
-          status: 'pending',
-          attemptedAt: nowIso,
-        },
-      };
+    for (let attempt = 0; attempt < MAX_RETRIES; attempt++) {
+      const candidateReferenceId = generateReferenceId('contact');
 
       const { error: insertError } = await supabase.from('marketing_leads').insert({
-        reference_id: referenceId,
+        reference_id: candidateReferenceId,
         lead_type: 'contact',
         full_name: data.fullName,
         email: normalizedEmail,
@@ -196,23 +228,39 @@ export async function POST(request: NextRequest) {
         user_agent: sanitizedUserAgent,
         metadata: initialMetadata,
         submission_fingerprint: submissionFingerprint,
+        fingerprint_bucket: fingerprintBucket,
       });
 
-      if (insertError) {
-        console.error('[DATABASE_ERROR] Failed to save contact lead:', insertError.message);
+      if (!insertError) {
+        savedReferenceId = candidateReferenceId;
+        break;
+      }
+
+      // Check duplicate fingerprint constraint (atomic 409)
+      if (
+        insertError.code === '23505' &&
+        (insertError.message?.includes('fingerprint') || insertError.details?.includes('fingerprint'))
+      ) {
         return NextResponse.json(
           {
             ok: false,
-            code: 'SUBMISSION_FAILED',
-            message: 'Unable to save request at this time. Please try again later.',
+            code: 'DUPLICATE_SUBMISSION',
+            message: 'A matching request was already submitted recently. Please wait a few minutes before resending.',
           },
-          { status: 500, headers: responseHeaders }
+          { status: 409, headers: responseHeaders }
         );
       }
 
-      leadSaved = true;
-    } catch (err: unknown) {
-      console.error('[DATABASE_EXCEPTION] Contact lead error:', err instanceof Error ? err.message : String(err));
+      // If collision on reference_id, retry with new reference ID
+      if (
+        insertError.code === '23505' &&
+        (insertError.message?.includes('reference_id') || insertError.details?.includes('reference_id'))
+      ) {
+        console.warn(`[REFERENCE_COLLISION] Retrying generation (attempt ${attempt + 1}/${MAX_RETRIES})`);
+        continue;
+      }
+
+      console.error('[DATABASE_ERROR] Failed to save contact lead:', insertError.message);
       return NextResponse.json(
         {
           ok: false,
@@ -222,53 +270,66 @@ export async function POST(request: NextRequest) {
         { status: 500, headers: responseHeaders }
       );
     }
-  } else {
-    // Non-production fallback when Supabase is not configured locally
-    console.warn('[DEV_MODE] Supabase not configured. Lead accepted with reference ID:', referenceId);
-    leadSaved = true;
+
+    if (!savedReferenceId) {
+      return NextResponse.json(
+        {
+          ok: false,
+          code: 'SUBMISSION_FAILED',
+          message: 'Unable to allocate a unique reference. Please try again later.',
+        },
+        { status: 500, headers: responseHeaders }
+      );
+    }
+  } catch (err: unknown) {
+    console.error('[DATABASE_EXCEPTION] Contact lead error:', err instanceof Error ? err.message : String(err));
+    return NextResponse.json(
+      {
+        ok: false,
+        code: 'SUBMISSION_FAILED',
+        message: 'Unable to save request at this time. Please try again later.',
+      },
+      { status: 500, headers: responseHeaders }
+    );
   }
 
-  // 9. Lead Notification Dispatch (non-blocking, never fails lead)
-  if (leadSaved) {
-    notifyNewLead({
-      referenceId,
-      leadType: 'contact',
-      fullName: data.fullName,
-      email: normalizedEmail,
-      phone: data.phone,
-      message: data.message,
-      locale: data.locale,
-      createdAt: nowIso,
-      sourcePage: data.sourcePage,
-    }).then(async (notifResult) => {
-      if (isSupabaseConfigured()) {
-        try {
-          const supabase = createAdminClient();
-          await supabase
-            .from('marketing_leads')
-            .update({
-              metadata: {
-                origin: request.headers.get('origin'),
-                rateLimitCount: rateLimit.currentCount,
-                submissionFingerprint,
-                notification: notifResult,
-              },
-            })
-            .eq('reference_id', referenceId);
-        } catch {
-          // Ignore background update errors
-        }
-      }
-    }).catch(() => {
-      // Ignore background notification exceptions
-    });
+  // 9. Lead Notification Dispatch (awaited, failure does NOT delete or fail saved lead)
+  const notifResult = await notifyNewLead({
+    referenceId: savedReferenceId,
+    leadType: 'contact',
+    fullName: data.fullName,
+    email: normalizedEmail,
+    phone: data.phone,
+    message: data.message,
+    locale: data.locale,
+    createdAt: nowIso,
+    sourcePage: data.sourcePage,
+  });
+
+  try {
+    const supabase = createAdminClient();
+    await supabase
+      .from('marketing_leads')
+      .update({
+        metadata: {
+          ...initialMetadata,
+          notification: {
+            status: notifResult.status,
+            attemptedAt: notifResult.attemptedAt,
+            errorCode: notifResult.errorCode ?? null,
+          },
+        },
+      })
+      .eq('reference_id', savedReferenceId);
+  } catch (updateErr) {
+    console.error('[METADATA_UPDATE_ERROR] Failed to record notification status in lead record:', updateErr);
   }
 
-  // 10. Standard Localized Safe JSON Response
   return NextResponse.json(
     {
       ok: true,
-      referenceId,
+      referenceId: savedReferenceId,
+      message: 'Thank you for reaching out. Your request has been received.',
     },
     { status: 200, headers: responseHeaders }
   );

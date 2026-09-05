@@ -26,16 +26,18 @@ export const LEGAL_CONFIG: LegalCompanyConfig = {
 
 /**
  * Returns a human-friendly, localized string of the document's last update date.
+ * Uses official ECMAScript Intl formatters (including Solar Hijri calendar for Persian).
  */
 export function getLegalDocumentDate(lang: Language): string {
+  const dateObj = new Date(`${LEGAL_DOC_LAST_UPDATED_ISO}T12:00:00Z`);
   switch (lang) {
     case 'ro':
-      return '5 Septembrie 2026';
+      return new Intl.DateTimeFormat('ro-RO', { year: 'numeric', month: 'long', day: 'numeric' }).format(dateObj);
     case 'fa':
-      return '۱۵ شهریور ۱۴۰۵';
+      return new Intl.DateTimeFormat('fa-IR-u-ca-persian', { year: 'numeric', month: 'long', day: 'numeric' }).format(dateObj);
     case 'en':
     default:
-      return 'September 5, 2026';
+      return new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'long', day: 'numeric' }).format(dateObj);
   }
 }
 

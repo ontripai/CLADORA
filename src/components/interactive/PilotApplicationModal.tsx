@@ -14,6 +14,39 @@ interface PilotApplicationModalProps {
   onClose?: () => void;
 }
 
+const BUILDING_TYPE_OPTIONS: Record<Language, Array<{ value: string; label: string }>> = {
+  ro: [
+    { value: 'A1', label: 'A1 — Bloc Standard Urban (40-120 apt)' },
+    { value: 'A2', label: 'A2 — Complex Rezidențial Nou (120+ apt)' },
+    { value: 'A3', label: 'A3 — Imobil Istoric / Interbelic' },
+    { value: 'A4', label: 'A4 — Ansamblu Mixt Rezidențial-Comercial' },
+    { value: 'A5', label: 'A5 — Ansamblu de Vile / Comunitate Închisă' },
+    { value: 'A6', label: 'A6 — Bloc P+4 Reabilitat Termic' },
+    { value: 'A7', label: 'A7 — Turn Rezidențial (10+ etaje)' },
+    { value: 'A8', label: 'A8 — Portofoliu Multi-Imobil Individual' },
+  ],
+  en: [
+    { value: 'A1', label: 'A1 — Standard Urban Block (40-120 apts)' },
+    { value: 'A2', label: 'A2 — New Residential Complex (120+ apts)' },
+    { value: 'A3', label: 'A3 — Historic / Interwar Building' },
+    { value: 'A4', label: 'A4 — Mixed Residential-Commercial Complex' },
+    { value: 'A5', label: 'A5 — Gated Villa Community' },
+    { value: 'A6', label: 'A6 — Thermally Retrofitted P+4 Block' },
+    { value: 'A7', label: 'A7 — High-Rise Residential Tower (10+ floors)' },
+    { value: 'A8', label: 'A8 — Multi-Property Individual Portfolio' },
+  ],
+  fa: [
+    { value: 'A1', label: 'A1 — بلوک شهری استاندارد (۴۰ تا ۱۲۰ واحد)' },
+    { value: 'A2', label: 'A2 — مجتمع مسکونی نوساز (بیش از ۱۲۰ واحد)' },
+    { value: 'A3', label: 'A3 — ساختمان کلاسیک / تاریخی' },
+    { value: 'A4', label: 'A4 — مجتمع ترکیبی مسکونی-تجاری' },
+    { value: 'A5', label: 'A5 — شهرک ویلایی / مجتمع محصور' },
+    { value: 'A6', label: 'A6 — ساختمان ۴ طبقه بازسازی حرارتی‌شده' },
+    { value: 'A7', label: 'A7 — برج مسکونی (۱۰ طبقه به بالا)' },
+    { value: 'A8', label: 'A8 — سبد دارایی‌های چندساختمانی' },
+  ],
+};
+
 export const PilotApplicationModal: React.FC<PilotApplicationModalProps> = ({
   lang,
   isOpen = true,
@@ -425,14 +458,11 @@ export const PilotApplicationModal: React.FC<PilotApplicationModalProps> = ({
                   onChange={(e) => setFormData({ ...formData, buildingType: e.target.value })}
                   className="w-full px-3.5 py-2.5 rounded-xl border border-[#D3DCE6] text-xs text-[#102A43] focus:outline-none focus:ring-2 focus:ring-[#0E9F8E] disabled:bg-slate-50"
                 >
-                  <option value="A1">A1 — Bloc Standard Urban (40-120 apt)</option>
-                  <option value="A2">A2 — Complex Rezidențial Nou (120+ apt)</option>
-                  <option value="A3">A3 — Imobil Istoric / Interbelic</option>
-                  <option value="A4">A4 — Ansamblu Mixt Rezidențial-Comercial</option>
-                  <option value="A5">A5 — Ansamblu de Vile / Comunitate Închisă</option>
-                  <option value="A6">A6 — Bloc P+4 Reabilitat Termic</option>
-                  <option value="A7">A7 — Turn Rezidențial (10+ etaje)</option>
-                  <option value="A8">A8 — Portofoliu Multi-Imobil Individual</option>
+                  {(BUILDING_TYPE_OPTIONS[lang] || BUILDING_TYPE_OPTIONS.en).map((opt) => (
+                    <option key={opt.value} value={opt.value}>
+                      {opt.label}
+                    </option>
+                  ))}
                 </select>
               </div>
 

@@ -1,6 +1,6 @@
-import 'server-only';
 import { isSupabaseConfigured } from '@/lib/supabase/env';
 import { createAdminClient } from '@/lib/supabase/admin';
+import { RATE_LIMIT_CONFIG, RateLimitAction } from '@/config/rate-limits';
 
 export interface RateLimitResult {
   allowed: boolean;
@@ -8,24 +8,54 @@ export interface RateLimitResult {
   currentCount: number;
 }
 
-const DEFAULT_MAX_REQUESTS = 5;
-const DEFAULT_WINDOW_SECONDS = 900; // 15 minutes
+export { RATE_LIMIT_CONFIG };
 
 /**
  * Checks and increments persistent rate limit using Supabase table marketing_rate_limits.
- * Never leaks or stores raw IP.
+ * Operates on an atomic window-bucket UPSERT in the database.
+ *
+ * Security Policy: Fail-Closed in Production and Preview upon any DB/RPC error.
  */
 export async function checkRateLimit(
   actionKey: string,
-  maxRequests: number = DEFAULT_MAX_REQUESTS,
-  windowSeconds: number = DEFAULT_WINDOW_SECONDS
+  action: RateLimitAction
 ): Promise<RateLimitResult> {
-  // If Supabase is not configured (e.g. local unit tests or offline preview)
+  const config = RATE_LIMIT_CONFIG[action];
+  const maxRequests = config.maxRequests;
+  const windowSeconds = config.windowSeconds;
+
+  const isProductionOrPreview =
+    process.env.NODE_ENV === 'production' ||
+    process.env.VERCEL_ENV === 'production' ||
+    process.env.VERCEL_ENV === 'preview';
+
+  // If Supabase is not configured
   if (!isSupabaseConfigured()) {
+    if (isProductionOrPreview) {
+      console.error('[SECURITY_FAIL_CLOSED] Supabase not configured in production/preview. Rejecting rate limit.');
+      return {
+        allowed: false,
+        retryAfterSeconds: windowSeconds,
+        currentCount: maxRequests + 1,
+      };
+    }
+
+    const allowMock =
+      process.env.ALLOW_MOCK_LEAD_CAPTURE === 'true' ||
+      process.env.NODE_ENV === 'test';
+
+    if (allowMock) {
+      return {
+        allowed: true,
+        retryAfterSeconds: 0,
+        currentCount: 1,
+      };
+    }
+
     return {
-      allowed: true,
-      retryAfterSeconds: 0,
-      currentCount: 1,
+      allowed: false,
+      retryAfterSeconds: windowSeconds,
+      currentCount: maxRequests + 1,
     };
   }
 
@@ -37,10 +67,20 @@ export async function checkRateLimit(
       p_window_seconds: windowSeconds,
     });
 
-    const rows = data as unknown as Array<{ allowed: boolean; retry_after_seconds: number; current_count: number }> | null;
+    const rows = data as unknown as Array<{
+      allowed: boolean;
+      retry_after_seconds: number;
+      current_count: number;
+    }> | null;
+
     if (error || !rows || rows.length === 0) {
-      console.error('[SECURITY] Rate limit RPC check failed:', error?.message);
-      return { allowed: true, retryAfterSeconds: 0, currentCount: 1 };
+      console.error('[SECURITY_FAIL_CLOSED] Rate limit RPC check failed:', error?.message);
+      // Fail-closed in production/preview
+      return {
+        allowed: false,
+        retryAfterSeconds: windowSeconds,
+        currentCount: maxRequests + 1,
+      };
     }
 
     const row = rows[0];
@@ -51,7 +91,11 @@ export async function checkRateLimit(
     };
   } catch (err: unknown) {
     const msg = err instanceof Error ? err.message : String(err);
-    console.error('[SECURITY] Rate limit execution error:', msg);
-    return { allowed: true, retryAfterSeconds: 0, currentCount: 1 };
+    console.error('[SECURITY_FAIL_CLOSED] Rate limit execution exception:', msg);
+    return {
+      allowed: false,
+      retryAfterSeconds: windowSeconds,
+      currentCount: maxRequests + 1,
+    };
   }
 }

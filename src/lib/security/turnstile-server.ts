@@ -1,11 +1,21 @@
-import 'server-only';
-
-interface TurnstileVerifyResult {
+export interface TurnstileVerifyResult {
   success: boolean;
   bypassed?: boolean;
   errorCode?: string;
 }
 
+/**
+ * Validates Cloudflare Turnstile token on the server.
+ *
+ * Production Policy:
+ * - If TURNSTILE_REQUIRED=true (or secret key configured), validation is fail-closed.
+ * - Missing or invalid token rejects the request.
+ *
+ * Preview / Local Development Policy:
+ * - If keys are absent, bypass is logged non-sensitively without breaking development.
+ * - If NEXT_PUBLIC_TURNSTILE_SITE_KEY is provided but TURNSTILE_SECRET_KEY is missing,
+ *   a configuration error is produced.
+ */
 export async function verifyTurnstileToken(
   token: string | undefined | null,
   clientIp?: string
@@ -13,7 +23,7 @@ export async function verifyTurnstileToken(
   const secretKey = process.env.TURNSTILE_SECRET_KEY?.trim();
   const siteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY?.trim();
   const isProduction = process.env.NODE_ENV === 'production' && !process.env.VERCEL_ENV?.includes('preview');
-  const isRequired = process.env.TURNSTILE_REQUIRED?.toLowerCase() !== 'false';
+  const isRequired = process.env.TURNSTILE_REQUIRED?.toLowerCase() === 'true' || isProduction;
 
   // 1. Misconfiguration: Site key set on client but secret key missing on server
   if (siteKey && !secretKey) {
@@ -23,7 +33,7 @@ export async function verifyTurnstileToken(
 
   // 2. Keys missing scenario
   if (!secretKey) {
-    if (isProduction && isRequired) {
+    if (isRequired && isProduction) {
       return { success: false, errorCode: 'CAPTCHA_REQUIRED_IN_PRODUCTION' };
     }
     // Local development or preview without keys: clean bypass

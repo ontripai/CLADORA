@@ -1,4 +1,3 @@
-import 'server-only';
 import { randomBytes } from 'node:crypto';
 
 // Unambiguous, human-readable uppercase characters (no 0, O, 1, I)
